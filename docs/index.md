@@ -5,26 +5,40 @@ contracts.
 
 ## Why does Liminal Exist?
 
-Tool and service builders are running into issues regarding representing, sharing and utilizing
-contract metadata for a wide range of use cases, some of which are listed below. Liminal takes––what
-is potentially––a first step towards addressing these issues with a TypeScript DSL for modeling
-contracts and interactions with contracts. It does not directly handle transforming that
-representation into say the JavaScript runtime execution. It is a tool for describing the contract
-and transactions.
+At a high level, Mina's developer community is facing issues related to sharing and utilizing
+representations of contracts and transactions.. Liminal takes a first step towards addressing these
+use cases by providing a TypeScript DSL for modeling contracts and transactions. Liminal does not
+directly handle transforming that representation into targets, such as the JavaScript runtime
+execution.
 
-In the long term, Liminal may also serve as a specification of capabilities supported in any given
-zero-knowledge smart contract. In this case, the Liminal AST would be a common representation
-against which builders could support a wide range of targets, such as block explorer metadata,
-wallet transaction insights, persistent storage adapters and even non-JS runtimes.
+## Use Cases
 
-## What Does Liminal Unblock?
+### Block Explorers & Insight Dashboards
 
-Upgradability
+### Standards
 
-Documentation experiences like Rustdoc
+### Clarity For Treasury Proposals
 
-Contract dependency visualization
-
-exchanges, daos, wallets, indexers, anything dynamic
+### Wallet APIs
 
 https://github.com/MinaFoundation/Core-Grants/issues/33
+
+wallet transaction insights
+
+### Storage Persistence Adapters
+
+### Non-JS Runtimes
+
+### Upgradeability Patterns + Migrations
+
+### Documentation Experiences
+
+like Rustdoc
+
+### Contract Analysis
+
+### Contract registries
+
+### Indexers
+
+### Bridges

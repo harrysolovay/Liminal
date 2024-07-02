@@ -7,7 +7,6 @@ export default defineConfig({
   markdown: {
     codeTransformers: [transformerTwoslash()],
   },
-  base: "/liminal.land/",
   lastUpdated: true,
   cleanUrls: true,
   metaChunk: true,
