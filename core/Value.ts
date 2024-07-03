@@ -33,7 +33,7 @@ export class Value<
     return Union(this, or) as never
   }
 
-  static new<T extends Value>(this: Type<T>, value?: Value.Native<T> | Value.From<T>): T {
+  static new<T extends Value>(this: Type<T>, value?: Value.From<T>): T {
     return new this(new ValueSource.New(value))
   }
 
