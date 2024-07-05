@@ -42,6 +42,7 @@ dxdy
 effectful
 esbenp
 fieldvar
+frontmatter
 funder
 globalslot
 goenv
@@ -106,11 +107,13 @@ rampup
 rizz
 rocksdb
 runtimes
+rustdoc
 rustup
 sandboxable
 schnorr
 secp
 seqp
+shiki
 shikijs
 snarked
 snarkers
