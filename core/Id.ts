@@ -79,7 +79,7 @@ export interface PureProxy<P extends Value.PropTypes = any, Y extends Value = an
 
 export function PureProxy<P extends Value.PropTypes, Y extends Value>(
   propsTypes: Value.Props<P>,
-  statements: EffectStatements<id, [resolved: Value.PropsResolved<P>], Y, Vk>,
+  statements: EffectStatements<id, [resolved: Value.PropsResolved<P>], Y, Vk | void>,
 ) {
   return class extends id {
     readonly brand = "PureProxy"

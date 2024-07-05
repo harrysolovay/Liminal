@@ -15,7 +15,7 @@ export function Struct<const F extends FieldTypes>(fieldTypes: F) {
       Object.entries(fieldTypes).map(([key, type]) => [
         key,
         new (isKey(type) ? Key(type) : type)(
-          new ValueSource.StructField(this, key),
+          new ValueSource.Field(this, key),
         ),
       ]),
     ) as Fields<F>

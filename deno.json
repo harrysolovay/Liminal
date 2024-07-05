@@ -26,7 +26,7 @@
   "lock": false,
   "tasks": {
     "mod": "deno run -A https://deno.land/x/moderate@0.0.5/mod.ts --exclude '**/*.test.ts' && dprint fmt",
-    "check": "deno run -A https://deno.land/x/star@v0.1.0/main.ts -c -e target",
+    "check": "deno run -A https://deno.land/x/star@v0.1.0/main.ts -c -e target -e docs",
     "test": "deno test -A -L=info --ignore=target --parallel",
     "test:update": "deno task test -- --update",
     "udd": "deno run -A https://deno.land/x/udd@0.8.2/main.ts import_map.json"

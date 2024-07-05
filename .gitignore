@@ -1,2 +1,5 @@
 .DS_Store
+docs/.vitepress/cache
+docs/.vitepress/dist
+docs/node_modules
 target

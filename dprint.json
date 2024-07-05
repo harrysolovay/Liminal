@@ -10,7 +10,7 @@
   "markdown": {
     "textWrap": "always"
   },
-  "includes": ["**.{json,md,toml,ts}"],
+  "includes": ["**.{json,md,mts,toml,ts}"],
   "excludes": ["node_modules", "target"],
   "plugins": [
     "https://plugins.dprint.dev/json-0.19.2.wasm",
