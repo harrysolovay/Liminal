@@ -3,7 +3,7 @@ import { unimplemented } from "../util/unimplemented.ts"
 import { bool, BoolSource } from "./Bool.ts"
 import { Result, Statements } from "./Call.ts"
 import { Effect } from "./Effect.ts"
-import { EffectStatements } from "./F.ts"
+import { EffectStatements, FType } from "./F.ts"
 import { PureStatements } from "./Pure.ts"
 import { Union, UnionType } from "./Union.ts"
 
@@ -24,6 +24,13 @@ export class Value<
         super(name, source)
       }
     }
+  }
+
+  static f<V extends Value, Y extends Value, R extends Result>(
+    this: Type<V>,
+    _statements: EffectStatements<{ self: Type<V> }, [V extends Union ? V : V], Y, R>,
+  ): FType<{ self: Type<V> }, {}, Y, R> {
+    unimplemented()
   }
 
   static or<F extends Type, O extends Type>(
