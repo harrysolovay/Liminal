@@ -1,6 +1,6 @@
 import { make, type Ty } from "./_base.ts"
 
-export function literal<V extends number | string>(description: string | undefined, value: V) {
+export function literal<V extends number | string>(description: string | undefined, value: V): LiteralTy<V> {
   return make<LiteralTy<V>>(() => ({
     const: value,
     description,

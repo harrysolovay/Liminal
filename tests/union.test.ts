@@ -38,6 +38,5 @@ Deno.test("Variant Values", async (t) => {
     ],
   )
   const Root = T.object("Root Description", { inner: Inner })
-  const x = null as never as InstanceType<typeof Root>
   await assertSnapshot(t, T.schema({ Root, Inner }, "Root"))
 })
