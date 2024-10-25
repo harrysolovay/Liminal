@@ -9,19 +9,26 @@ export type F = {
   /** The description of the function. */
   description: string
   /** Parameters of the function in JSON Schema. */
-  parameters: unknown
+  parameters?: unknown
 }
 
+export function F(name: string, description: string): F
 export function F<M extends Record<string, Ty>>(
   name: string,
   description: string,
   models: M,
   rootKey: ValidRootKey<M>,
+): F
+export function F<M extends Record<string, Ty>>(
+  name: string,
+  description: string,
+  models?: M,
+  rootKey?: ValidRootKey<M>,
 ): F {
   return {
     type: "function",
     name,
     description,
-    parameters: schema(models, rootKey),
+    parameters: models ? schema(models, rootKey!) : undefined,
   }
 }
