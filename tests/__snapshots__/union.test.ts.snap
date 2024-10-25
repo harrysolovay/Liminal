@@ -1,0 +1,133 @@
+export const snapshot = {};
+
+snapshot[`No Variant Values 1`] = `
+{
+  "\$defs": {
+    Inner: {
+      description: "Inner description",
+      oneOf: [
+        {
+          const: "A",
+          description: undefined,
+        },
+        {
+          const: "B",
+          description: undefined,
+        },
+      ],
+    },
+    Root: {
+      additionalProperties: false,
+      description: "Root description",
+      properties: {
+        inner: {
+          "\$ref": "#/\$defs/Inner",
+        },
+      },
+      required: [
+        "inner",
+      ],
+      type: "object",
+    },
+  },
+  additionalProperties: false,
+  description: "Root description",
+  properties: {
+    inner: {
+      "\$ref": "#/\$defs/Inner",
+    },
+  },
+  required: [
+    "inner",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`Variant Values 1`] = `
+{
+  "\$defs": {
+    Inner: {
+      description: "Inner description",
+      oneOf: [
+        {
+          additionalProperties: false,
+          description: "A description",
+          properties: {
+            type: {
+              const: "A",
+              description: undefined,
+            },
+            value: {
+              description: undefined,
+              type: "number",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+        {
+          additionalProperties: false,
+          description: "B description",
+          properties: {
+            type: {
+              const: "B",
+              description: undefined,
+            },
+            value: {
+              description: undefined,
+              type: "string",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+        {
+          additionalProperties: false,
+          description: "C",
+          properties: {
+            type: {
+              const: "C",
+              description: undefined,
+            },
+          },
+          required: [
+            "type",
+          ],
+          type: "object",
+        },
+      ],
+    },
+    Root: {
+      additionalProperties: false,
+      description: "Root Description",
+      properties: {
+        inner: {
+          "\$ref": "#/\$defs/Inner",
+        },
+      },
+      required: [
+        "inner",
+      ],
+      type: "object",
+    },
+  },
+  additionalProperties: false,
+  description: "Root Description",
+  properties: {
+    inner: {
+      "\$ref": "#/\$defs/Inner",
+    },
+  },
+  required: [
+    "inner",
+  ],
+  type: "object",
+}
+`;
