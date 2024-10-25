@@ -1,4 +1,7 @@
 codegen
+deno
+denoland
+dprint
 harrysolovay
 openai
 solovay

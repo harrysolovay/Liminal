@@ -47,7 +47,6 @@ jobs:
         with:
           path: ${{ env.DENO_DIR }}
           key: ${{ hashFiles('lock.json') }}
-      - run: deno run -A _tasks/use_remote.ts
       - run: deno task test
 
   dprint:
