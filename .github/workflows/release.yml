@@ -15,7 +15,9 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - run: sed -i s/0.0.0-local.0/${{ github.event.release.tag_name }}/ deno.json
+      - run: |
+          tag=${{ github.event.release.tag_name }}
+          sed -i s/0.0.0-local.0/${tag:1}/ deno.json
       - run: deno publish --allow-dirty
 
   npm:
