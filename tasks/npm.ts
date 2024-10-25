@@ -25,6 +25,7 @@ await build({
     importHelpers: true,
     sourceMap: true,
   },
+  test: false,
   package: {
     name: "structured-outputs",
     version,

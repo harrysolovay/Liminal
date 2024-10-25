@@ -32,7 +32,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ${{ env.DENO_DIR }}
-          key: ${{ hashFiles('lock.json') }}
+          key: ${{ hashFiles('deno.lock') }}
       - run: deno check .
 
   test:
@@ -46,7 +46,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ${{ env.DENO_DIR }}
-          key: ${{ hashFiles('lock.json') }}
+          key: ${{ hashFiles('deno.lock') }}
       - run: deno task test
 
   dprint:
