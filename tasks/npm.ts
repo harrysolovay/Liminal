@@ -14,11 +14,14 @@ const { version } = parseArgs(Deno.args, {
 })
 
 await build({
-  entryPoints: ["./mod.ts"],
+  entryPoints: ["./mod.ts", {
+    name: "structured-outputs",
+    path: "./main.ts",
+    kind: "bin",
+  }],
   outDir,
   shims: {
     deno: true,
-    webSocket: true,
   },
   scriptModule: false,
   compilerOptions: {
@@ -26,6 +29,8 @@ await build({
     sourceMap: true,
   },
   test: false,
+  importMap: "deno.json",
+  typeCheck: false,
   package: {
     name: "structured-outputs",
     version,
