@@ -1,4 +1,4 @@
-import * as T from "structured-outputs"
+import * as T from "../mod.ts"
 
 export const Sex = T.union(
   "The biological sex of the character.",
