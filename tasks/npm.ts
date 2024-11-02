@@ -24,6 +24,7 @@ await build({
     deno: true,
   },
   scriptModule: false,
+  declaration: "separate",
   compilerOptions: {
     importHelpers: true,
     sourceMap: true,
