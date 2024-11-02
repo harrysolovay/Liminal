@@ -38,6 +38,7 @@ await build({
     description: "Lightweight virtual types for OpenAI structured outputs.",
     license: "Apache-2.0",
     repository: "github:harrysolovay/structured-outputs.git",
+    main: "./esm/main.js",
   },
 })
 
