@@ -1,18 +1,21 @@
 import { assert } from "@std/assert"
 import type Openai from "openai"
 import type { ResponseFormatJSONSchema } from "openai/resources/index.js"
-import { Ref } from "./Ref.ts"
-import type { Ty } from "./Ty.ts"
+import type { RootTy } from "./core/mod.ts"
 import { recombineTaggedTemplateArgs } from "./util/recombineTaggedTemplateArgs.ts"
 
-export function format<T>(name: string, ty: Ty<T, never>): ResponseFormat<T> {
-  return format_(name, ty)
+export function ResponseFormat<T>(name: string, ty: RootTy<T, never>): ResponseFormat<T> {
+  return ResponseFormat_(name, ty)
 }
 
-function format_<T>(name: string, ty: Ty<T, never>, description?: string): ResponseFormat<T> {
+function ResponseFormat_<T>(
+  name: string,
+  ty: RootTy<T, never>,
+  description?: string,
+): ResponseFormat<T> {
   return Object.assign(
-    (template: TemplateStringsArray, ...quasis: string[]) =>
-      format_(
+    (template: TemplateStringsArray, ...quasis: Array<string>) =>
+      ResponseFormat_(
         name,
         ty,
         description ? `${description} ${recombineTaggedTemplateArgs(template, quasis)}` : undefined,
@@ -22,7 +25,7 @@ function format_<T>(name: string, ty: Ty<T, never>, description?: string): Respo
       json_schema: {
         name,
         description,
-        schema: Ref({})(ty),
+        schema: ty.schema(),
         strict: true,
       },
       parse(completion: ChatCompletion): TypedChatCompletion<T> {
@@ -54,7 +57,7 @@ function format_<T>(name: string, ty: Ty<T, never>, description?: string): Respo
 }
 
 export interface ResponseFormat<T> {
-  (template: TemplateStringsArray, ...quasis: string[]): ResponseFormat<T>
+  (template: TemplateStringsArray, ...quasis: Array<string>): ResponseFormat<T>
   type: "json_schema"
   /** The desired return type in JSON Schema. */
   json_schema: ResponseFormatJSONSchema.JSONSchema

@@ -1,5 +1,5 @@
 import type { Applied, Schema, Ty } from "./Ty.ts"
-import { recombineTaggedTemplateArgs } from "./util/recombineTaggedTemplateArgs.ts"
+import { recombineTaggedTemplateArgs } from "../util/recombineTaggedTemplateArgs.ts"
 
 export type Ref = (ty: Ty) => Schema
 

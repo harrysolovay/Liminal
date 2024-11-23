@@ -1,4 +1,6 @@
-import { Ty } from "./Ty.ts"
+import { Ty } from "../core/Ty.ts"
+
+export type taggedUnion<M extends Record<string, Ty>> = ReturnType<typeof taggedUnion<M>>
 
 export function taggedUnion<M extends Record<string, Ty>>(members: M): Ty<
   {

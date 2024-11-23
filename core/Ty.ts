@@ -1,14 +1,15 @@
 import type { Ref } from "./Ref.ts"
+import { phantoms } from "../util/phantoms.ts"
 
 export function Ty<T, P extends string = never>(
   toSchema: ToSchema,
-  descriptions: Description[] = [],
+  descriptions: Array<Description> = [],
   applied: Applied = {},
 ): Ty<T, P> {
   return Object.assign(
-    <P2 extends string[]>(template: TemplateStringsArray, ...placeheld: P2) =>
+    <P2 extends Array<string>>(template: TemplateStringsArray, ...placeheld: P2) =>
       Ty<T, P | P2[number]>(toSchema, [{ template, placeheld }, ...descriptions], applied),
-    {} as { [Ty.T]: T; [Ty.P]: P },
+    phantoms<{ [Ty.T]: T; [Ty.P]: P }>(),
     {
       toSchema,
       descriptions,
@@ -21,11 +22,14 @@ export function Ty<T, P extends string = never>(
 }
 
 export interface Ty<T = any, P extends string = string> {
-  <P2 extends string[]>(template: TemplateStringsArray, ...placeheld: P2): Ty<T, P | P2[number]>
+  <P2 extends Array<string>>(
+    template: TemplateStringsArray,
+    ...placeheld: P2
+  ): Ty<T, P | P2[number]>
   [Ty.T]: T
   [Ty.P]: P
   toSchema: ToSchema
-  descriptions: Description[]
+  descriptions: Array<Description>
   applied: Applied
   apply: <A extends Partial<Record<P, number | string>>>(values: A) => Ty<T, Exclude<P, keyof A>>
 }
@@ -42,7 +46,7 @@ export type Schema = Record<string, unknown>
 
 export interface Description {
   template: TemplateStringsArray
-  placeheld: string[]
+  placeheld: Array<string>
 }
 
 export type Applied = Record<string, number | string>

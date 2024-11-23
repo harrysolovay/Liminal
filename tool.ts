@@ -1,15 +1,14 @@
-import { Ref } from "./Ref.ts"
-import type { Schema, Ty } from "./Ty.ts"
+import type { RootTy, Schema } from "./core/mod.ts"
 import { recombineTaggedTemplateArgs } from "./util/recombineTaggedTemplateArgs.ts"
 
-export function tool<T>(name: string, ty: Ty<T, never>): Tool<T> {
-  return tool_(name, ty)
+export function Tool<T>(name: string, ty: RootTy<T, never>): Tool<T> {
+  return Tool_(name, ty)
 }
 
-function tool_<T>(name: string, ty: Ty<T, never>, description?: string): Tool<T> {
+function Tool_<T>(name: string, ty: RootTy<T, never>, description?: string): Tool<T> {
   return Object.assign(
-    (template: TemplateStringsArray, ...quasis: string[]) =>
-      tool_(
+    (template: TemplateStringsArray, ...quasis: Array<string>) =>
+      Tool_(
         name,
         ty,
         description ? `${description} ${recombineTaggedTemplateArgs(template, quasis)}` : undefined,
@@ -18,7 +17,7 @@ function tool_<T>(name: string, ty: Ty<T, never>, description?: string): Tool<T>
       type: "function" as const,
       name,
       description,
-      parameters: Ref({})(ty),
+      parameters: ty.schema(),
       toJson() {
         const { type, name, description, parameters } = this
         return { type, name, description, parameters }
@@ -28,7 +27,7 @@ function tool_<T>(name: string, ty: Ty<T, never>, description?: string): Tool<T>
 }
 
 export interface Tool<T = any> {
-  (template: TemplateStringsArray, ...quasis: string[]): Tool<T>
+  (template: TemplateStringsArray, ...quasis: Array<string>): Tool<T>
   type: "function"
   /** The name with which OpenAI recognizes the tool. */
   name: string

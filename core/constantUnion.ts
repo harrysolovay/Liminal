@@ -1,7 +1,9 @@
 import { partition } from "@std/collections"
 import { Ty } from "./Ty.ts"
 
-export function literalUnion<M extends Array<number | string>>(
+export type constantUnion<M extends Array<number | string>> = ReturnType<typeof constantUnion<M>>
+
+export function constantUnion<M extends Array<number | string>>(
   ...members: M
 ): Ty<M[number], never> {
   const [strings, numbers] = partition(members, (v) => typeof v === "string")

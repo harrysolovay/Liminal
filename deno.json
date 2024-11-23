@@ -4,10 +4,8 @@
   "exports": "./mod.ts",
   "exclude": ["target"],
   "tasks": {
-    "mod": "deno run -A https://deno.land/x/moderate@0.0.5/mod.ts && dprint fmt",
     "test": "deno test -A",
-    "test:update": "deno task test -- --update",
-    "openai:check": "deno run -A main.ts -i . -o FEEDBACK.md --o1"
+    "test:update": "deno task test -- --update"
   },
   "lock": false,
   "imports": {
