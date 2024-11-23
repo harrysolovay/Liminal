@@ -25,7 +25,7 @@ deno add jsr:@crosshatch/structured-outputs
 import { ResponseFormat, T } from "structured-outputs"
 
 // 1. Define the shape of the desired response.
-const Character = T.struct({
+const Character = T.object({
   name: T.string,
   age: T.number`Ensure between 1 and 110.`,
 })
@@ -68,7 +68,7 @@ We can also attach a description to the response format.
 ### Dependency Injection
 
 ```ts
-const Character = T.struct({
+const Character = T.object({
   name: T.string`Preferably names common to those who are {"national identity"}.`,
   age: T.number`Ensure between 1 and 110.`,
 })
