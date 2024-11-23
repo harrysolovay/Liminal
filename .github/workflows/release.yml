@@ -14,10 +14,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: denoland/setup-deno@v2
         with:
-          deno-version: v2.1.1
+          deno-version: v2.x
       - run: |
           tag=${{ github.event.release.tag_name }}
-          deno publish --allow-dirty --set-version ${tag:1}
+          sed -i s/0.0.0-local.0/${tag:1}/ deno.json
   npm:
     runs-on: ubuntu-latest
     steps:
