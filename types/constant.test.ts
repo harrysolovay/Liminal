@@ -1,5 +1,5 @@
 import { constant } from "./constant.ts"
-import { assertTySnapshot } from "../test_util.ts"
+import { assertTySnapshot } from "test_util"
 
 Deno.test("constant num", async (t) => {
   await assertTySnapshot(t, constant("Hello"))

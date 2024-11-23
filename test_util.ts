@@ -1,5 +1,5 @@
 import { assertSnapshot } from "@std/testing/snapshot"
-import { std, type T } from "./mod.ts"
+import { T } from "./mod.ts"
 
 export async function assertTySnapshot(
   t: Deno.TestContext,
@@ -13,7 +13,7 @@ export async function assertTySnapshot(
 
 function maybeWrap<T, P extends string>(value: T.Ty<T, P>) {
   if (!value.isRoot()) {
-    return std.Wrapper(value)
+    return T.Wrapper(value)
   }
   return value
 }

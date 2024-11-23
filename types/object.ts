@@ -1,9 +1,7 @@
 import { RootTy } from "./RootTy.ts"
 import type { Ty } from "./Ty.ts"
 
-export type struct<F extends StructFields = StructFields> = ReturnType<typeof struct<F>>
-
-export function struct<F extends StructFields>(fields: F): RootTy<
+export function object<F extends Record<string, Ty>>(fields: F): RootTy<
   { [K in keyof F]: F[K][Ty.T] },
   F[keyof F][Ty.P]
 > {
@@ -15,5 +13,3 @@ export function struct<F extends StructFields>(fields: F): RootTy<
     required: Object.keys(fields),
   }))
 }
-
-export type StructFields = Record<string, Ty>

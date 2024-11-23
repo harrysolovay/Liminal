@@ -1,4 +1,4 @@
-import type { RootTy, Schema } from "./core/mod.ts"
+import type { RootTy, Schema } from "./types/mod.ts"
 import { recombineTaggedTemplateArgs } from "./util/recombineTaggedTemplateArgs.ts"
 
 export function Tool<T>(name: string, ty: RootTy<T, never>): Tool<T> {

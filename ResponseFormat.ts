@@ -1,7 +1,7 @@
 import { assert } from "@std/assert"
 import type Openai from "openai"
 import type { ResponseFormatJSONSchema } from "openai/resources/index.js"
-import type { RootTy } from "./core/mod.ts"
+import type { RootTy } from "./types/mod.ts"
 import { recombineTaggedTemplateArgs } from "./util/recombineTaggedTemplateArgs.ts"
 
 export function ResponseFormat<T>(name: string, ty: RootTy<T, never>): ResponseFormat<T> {
