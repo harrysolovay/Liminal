@@ -1,8 +1,8 @@
 import { Ty } from "./Ty.ts"
 
-export type Vec<E extends Ty> = ReturnType<typeof Vec<E>>
+export type vec<E extends Ty> = ReturnType<typeof vec<E>>
 
-export function Vec<E extends Ty>(element: E): Ty<Array<E[Ty.T]>, E[Ty.P]> {
+export function vec<E extends Ty>(element: E): Ty<Array<E[Ty.T]>, E[Ty.P]> {
   return Ty((description, ref) => ({
     type: "array",
     description,
