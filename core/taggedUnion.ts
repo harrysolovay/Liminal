@@ -1,8 +1,10 @@
 import { Ty } from "../core/Ty.ts"
 
-export type taggedUnion<M extends Record<string, Ty>> = ReturnType<typeof taggedUnion<M>>
+export type taggedUnion<M extends TaggedUnionMembers = TaggedUnionMembers> = ReturnType<
+  typeof taggedUnion<M>
+>
 
-export function taggedUnion<M extends Record<string, Ty>>(members: M): Ty<
+export function taggedUnion<M extends TaggedUnionMembers>(members: M): Ty<
   {
     [K in keyof M]: {
       type: K
@@ -28,3 +30,5 @@ export function taggedUnion<M extends Record<string, Ty>>(members: M): Ty<
     })),
   }))
 }
+
+export type TaggedUnionMembers = Record<string, Ty>

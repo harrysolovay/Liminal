@@ -1,0 +1,220 @@
+export const snapshot = {};
+
+snapshot[`tagged union 1`] = `
+{
+  additionalProperties: false,
+  description: "",
+  properties: {
+    value: {
+      anyOf: [
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "A",
+              type: "string",
+            },
+            value: {
+              description: "",
+              type: "boolean",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "B",
+              type: "string",
+            },
+            value: {
+              description: "",
+              type: "number",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "C",
+              type: "string",
+            },
+            value: {
+              description: "",
+              type: "string",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+      ],
+      description: "",
+      discriminator: "type",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`tagged union 2`] = `
+{
+  additionalProperties: false,
+  description: "",
+  properties: {
+    value: {
+      anyOf: [
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "A",
+              type: "string",
+            },
+            value: {
+              description: "",
+              type: "boolean",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "B",
+              type: "string",
+            },
+            value: {
+              description: "",
+              type: "number",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "C",
+              type: "string",
+            },
+            value: {
+              description: "",
+              type: "string",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+      ],
+      description: "Description one.",
+      discriminator: "type",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`tagged union 3`] = `
+{
+  additionalProperties: false,
+  description: "",
+  properties: {
+    value: {
+      anyOf: [
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "A",
+              type: "string",
+            },
+            value: {
+              description: "",
+              type: "boolean",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "B",
+              type: "string",
+            },
+            value: {
+              description: "",
+              type: "number",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "C",
+              type: "string",
+            },
+            value: {
+              description: "",
+              type: "string",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+      ],
+      description: "Description two. Description one.",
+      discriminator: "type",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;

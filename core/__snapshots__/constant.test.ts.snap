@@ -1,0 +1,103 @@
+export const snapshot = {};
+
+snapshot[`constant num 1`] = `
+{
+  additionalProperties: false,
+  description: "",
+  properties: {
+    value: {
+      const: "Hello",
+      description: "",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`constant num 2`] = `
+{
+  additionalProperties: false,
+  description: "",
+  properties: {
+    value: {
+      const: "Hello",
+      description: "Description one.",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`constant num 3`] = `
+{
+  additionalProperties: false,
+  description: "",
+  properties: {
+    value: {
+      const: "Hello",
+      description: "Description two. Description one.",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`constant str 1`] = `
+{
+  additionalProperties: false,
+  description: "",
+  properties: {
+    value: {
+      const: 42,
+      description: "",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`constant str 2`] = `
+{
+  additionalProperties: false,
+  description: "",
+  properties: {
+    value: {
+      const: 42,
+      description: "Description one.",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`constant str 3`] = `
+{
+  additionalProperties: false,
+  description: "",
+  properties: {
+    value: {
+      const: 42,
+      description: "Description two. Description one.",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;

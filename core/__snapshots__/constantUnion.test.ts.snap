@@ -1,0 +1,97 @@
+export const snapshot = {};
+
+snapshot[`constant union 1`] = `
+{
+  additionalProperties: false,
+  description: "",
+  properties: {
+    value: {
+      anyOf: [
+        {
+          enum: [
+            "Hello",
+            "world!",
+          ],
+          type: "string",
+        },
+        {
+          enum: [
+            42,
+            420,
+          ],
+          type: "number",
+        },
+      ],
+      description: "",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`constant union 2`] = `
+{
+  additionalProperties: false,
+  description: "",
+  properties: {
+    value: {
+      anyOf: [
+        {
+          enum: [
+            "Hello",
+            "world!",
+          ],
+          type: "string",
+        },
+        {
+          enum: [
+            42,
+            420,
+          ],
+          type: "number",
+        },
+      ],
+      description: "Description one.",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`constant union 3`] = `
+{
+  additionalProperties: false,
+  description: "",
+  properties: {
+    value: {
+      anyOf: [
+        {
+          enum: [
+            "Hello",
+            "world!",
+          ],
+          type: "string",
+        },
+        {
+          enum: [
+            42,
+            420,
+          ],
+          type: "number",
+        },
+      ],
+      description: "Description two. Description one.",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;

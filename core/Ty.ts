@@ -1,5 +1,6 @@
 import type { Ref } from "./Ref.ts"
 import { phantoms } from "../util/phantoms.ts"
+import type { RootTy } from "./RootTy.ts"
 
 export function Ty<T, P extends string = never>(
   toSchema: ToSchema,
@@ -17,6 +18,9 @@ export function Ty<T, P extends string = never>(
       apply: <A extends Partial<Record<P, string | number>>>(values: A) => {
         return Ty<T, Exclude<P, keyof A>>(toSchema, descriptions, { ...applied, ...values })
       },
+      isRoot(): this is RootTy {
+        return false
+      },
     },
   )
 }
@@ -32,6 +36,7 @@ export interface Ty<T = any, P extends string = string> {
   descriptions: Array<Description>
   applied: Applied
   apply: <A extends Partial<Record<P, number | string>>>(values: A) => Ty<T, Exclude<P, keyof A>>
+  isRoot(): this is RootTy
 }
 
 export namespace Ty {

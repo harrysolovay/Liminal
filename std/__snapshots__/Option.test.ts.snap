@@ -1,0 +1,166 @@
+export const snapshot = {};
+
+snapshot[`Option 1`] = `
+{
+  additionalProperties: false,
+  description: "",
+  properties: {
+    value: {
+      anyOf: [
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "Some",
+              type: "string",
+            },
+            value: {
+              description: "",
+              type: "string",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "None",
+              type: "string",
+            },
+            value: {
+              description: "",
+              type: "null",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+      ],
+      description: "An option of specified \`some\` type.",
+      discriminator: "type",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`Option 2`] = `
+{
+  additionalProperties: false,
+  description: "",
+  properties: {
+    value: {
+      anyOf: [
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "Some",
+              type: "string",
+            },
+            value: {
+              description: "",
+              type: "string",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "None",
+              type: "string",
+            },
+            value: {
+              description: "",
+              type: "null",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+      ],
+      description: "Description one. An option of specified \`some\` type.",
+      discriminator: "type",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`Option 3`] = `
+{
+  additionalProperties: false,
+  description: "",
+  properties: {
+    value: {
+      anyOf: [
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "Some",
+              type: "string",
+            },
+            value: {
+              description: "",
+              type: "string",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "None",
+              type: "string",
+            },
+            value: {
+              description: "",
+              type: "null",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+      ],
+      description: "Description two. Description one. An option of specified \`some\` type.",
+      discriminator: "type",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;

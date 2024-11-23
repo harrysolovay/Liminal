@@ -21,6 +21,9 @@ export function RootTy<T, P extends string = never>(
       schema(this: RootTy<T, never>) {
         return Ref({})(this)
       },
+      isRoot(): this is RootTy {
+        return true
+      },
     },
   )
 }
