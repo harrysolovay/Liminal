@@ -1,11 +1,15 @@
 export interface Ty<N = any> {
   new(): N
   schema(ctx: Context): Record<string, unknown>
+  parse(unchecked: unknown): N
 }
 
 export function make<Ty_ extends Ty>(schema: (ctx: Context) => unknown) {
   return class Ty {
     static schema = schema
+    static parse(unchecked: string) {
+      return JSON.parse(unchecked)
+    }
   } as Ty_
 }
 
