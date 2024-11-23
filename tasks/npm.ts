@@ -14,28 +14,21 @@ const { version } = parseArgs(Deno.args, {
 })
 
 await build({
-  entryPoints: ["./mod.ts", {
-    name: "structured-outputs",
-    path: "./main.ts",
-    kind: "bin",
-  }],
+  entryPoints: ["./mod.ts"],
   outDir,
-  shims: {
-    deno: true,
-  },
+  shims: {},
   scriptModule: false,
   declaration: "separate",
   compilerOptions: {
     importHelpers: true,
     sourceMap: true,
   },
-  test: false,
-  importMap: "deno.json",
   typeCheck: false,
+  importMap: "./deno.json",
   package: {
     name: "structured-outputs",
     version,
-    description: "Lightweight virtual types for OpenAI structured outputs.",
+    description: "Virtual types purpose-built for OpenAI structured outputs.",
     license: "Apache-2.0",
     repository: "github:harrysolovay/structured-outputs.git",
     main: "./esm/mod.js",

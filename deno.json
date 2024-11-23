@@ -9,11 +9,13 @@
     "test:update": "deno task test -- --update",
     "openai:check": "deno run -A main.ts -i . -o FEEDBACK.md --o1"
   },
+  "lock": false,
   "imports": {
     "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
     "@std/assert": "jsr:@std/assert@1",
     "@std/async": "jsr:@std/async@^1.0.7",
     "@std/cli": "jsr:@std/cli@^1.0.6",
+    "@std/collections": "jsr:@std/collections@^1.0.9",
     "@std/dotenv": "jsr:@std/dotenv@^0.225.2",
     "@std/fs": "jsr:@std/fs@^1.0.4",
     "@std/path": "jsr:@std/path@^1.0.6",
@@ -38,5 +40,9 @@
     "noFallthroughCasesInSwitch": true,
     "noPropertyAccessFromIndexSignature": false,
     "noUncheckedIndexedAccess": true
+  },
+  "fmt": {
+    "lineWidth": 100,
+    "semiColons": false
   }
 }

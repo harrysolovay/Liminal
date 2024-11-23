@@ -1,11 +1,9 @@
-import { make, type Ty } from "./_base.ts"
+import { Ty } from "./Ty.ts"
 
-export function array<E extends Ty>(description: string | undefined, element: E): ArrayTy<E> {
-  return make((ctx) => ({
+export function array<E extends Ty>(element: E): Ty<Array<E[Ty.T]>, E[Ty.P]> {
+  return Ty((description, ref) => ({
     type: "array",
     description,
-    items: ctx.ref(element),
+    items: ref(element),
   }))
 }
-
-export type ArrayTy<E extends Ty = any> = Ty<Array<InstanceType<E>>>

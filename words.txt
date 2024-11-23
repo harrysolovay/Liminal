@@ -4,4 +4,6 @@ denoland
 dprint
 harrysolovay
 openai
+placeheld
+quasis
 solovay
