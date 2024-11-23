@@ -25,6 +25,7 @@ await build({
   },
   typeCheck: false,
   importMap: "./deno.json",
+  test: false,
   package: {
     name: "structured-outputs",
     version,
