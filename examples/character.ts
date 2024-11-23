@@ -1,4 +1,6 @@
-import { T } from "../mod.ts"
+import { ResponseFormat, T } from "../mod.ts"
+import "@std/dotenv/load"
+import Openai from "openai"
 
 export const Sex = T.constantUnion("Male", "Female")`The biological sex of the character.`
 
@@ -22,4 +24,21 @@ export const Character = T.struct({
   details: Details,
 })`A character in a story.`
 
-console.log(Character.schema())
+const openai = new Openai({
+  apiKey: Deno.env.get("OPENAI_API_KEY"),
+})
+
+const response_format = ResponseFormat("create_character", Character)`
+  Create a new character to be the protagonist of a children's story.
+`
+
+const character = await openai.chat.completions.create({
+  model: "gpt-4o",
+  messages: [{
+    role: "system",
+    content: [],
+  }],
+  response_format,
+}).then(response_format.parseFirstOrThrow)
+
+console.log(character)

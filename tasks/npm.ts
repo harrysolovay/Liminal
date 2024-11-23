@@ -29,7 +29,7 @@ await build({
   package: {
     name: "structured-outputs",
     version,
-    description: "Virtual types purpose-built for OpenAI structured outputs.",
+    description: "Compose OpenAI structured output schemas.",
     license: "Apache-2.0",
     repository: "github:harrysolovay/structured-outputs.git",
     main: "./esm/mod.js",
