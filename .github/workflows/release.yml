@@ -15,7 +15,7 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - run: deno publish --set-version ${tag:1}
+      - run: deno publish --set-version "${tag:1}"
   npm:
     runs-on: ubuntu-latest
     steps:
