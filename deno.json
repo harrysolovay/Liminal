@@ -1,5 +1,6 @@
 {
   "name": "@crosshatch/structured-outputs",
+  "version": "0.0.0",
   "exports": "./mod.ts",
   "exclude": ["target"],
   "tasks": {

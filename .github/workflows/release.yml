@@ -17,7 +17,7 @@ jobs:
           deno-version: v2.1.1
       - run: |
           tag=${{ github.event.release.tag_name }}
-          deno publish --set-version ${tag:1}
+          deno publish --allow-dirty --set-version ${tag:1}
   npm:
     runs-on: ubuntu-latest
     steps:
