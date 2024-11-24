@@ -17,11 +17,11 @@ jobs:
       run:
         working-directory: docs
     steps:
-      - run: pwd
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - run: pwd
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
