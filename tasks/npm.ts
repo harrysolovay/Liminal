@@ -26,6 +26,13 @@ await build({
   typeCheck: false,
   importMap: "./deno.json",
   test: false,
+  mappings: {
+    "npm:openai@^4.68.1": {
+      name: "openai",
+      version: "^4.68.1",
+      peerDependency: true,
+    },
+  },
   package: {
     name: "structured-outputs",
     version,
