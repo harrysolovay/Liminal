@@ -26,10 +26,12 @@ deno add jsr:@crosshatch/structured-outputs@0.1.0-beta.X
 > Note: replace "X" with the latest beta version number. Version specificity will be unnecessary
 > upon the first stable release of `structured-outputs`.
 
-## Example
+## Example Usage
+
+### Declare Types
 
 ```ts
-import { ResponseFormat, T } from "structured-outputs"
+import { T } from "structured-outputs"
 
 const Character = T.object({
   name: T.string,
@@ -37,10 +39,24 @@ const Character = T.object({
   home: T.string`The name of a fictional realm of magic and wonder.`,
   disposition: T.literalUnion("Optimistic", "Reserved", "Inquisitive"),
 })
+```
+
+### Create a `ResponseFormat`
+
+```ts
+// ...
+
+import { ResponseFormat } from "structured-outputs"
 
 const response_format = ResponseFormat("create_character", Character)`
   Create a character to be the protagonist of a children's story.
 `
+```
+
+### Utilize The OpenAI Client
+
+```ts
+// ...
 
 const character = await openai.chat.completions
   .create({
@@ -49,6 +65,15 @@ const character = await openai.chat.completions
     response_format,
   })
   .then(response_format.parseFirstChoice)
+```
+
+> Note: we chain off the resulting promise with a `then`, which applies the `ResponseFormat`'s
+> parser.
+
+### Utilize The Typed Object
+
+```ts
+// ...
 
 character satisfies {
   name: string
