@@ -29,7 +29,7 @@ const response_format = ResponseFormat("create_character", Character)`
 
 const character = await openai.chat.completions
   .create({
-    model: "gpt-4o",
+    model: "gpt-4o-mini",
     messages: [{
       role: "system",
       content: [],

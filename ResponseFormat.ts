@@ -1,13 +1,12 @@
-import type Openai from "openai"
-import type { ResponseFormatJSONSchema } from "openai/resources/index.js"
 import type { RootTy } from "./types/mod.ts"
 import { recombineTaggedTemplateArgs } from "./util/recombineTaggedTemplateArgs.ts"
+import type { ChatCompletion, ChatCompletionChoice, JsonSchema } from "./oai.ts"
 
 export interface ResponseFormat<T> {
   (template: TemplateStringsArray, ...quasis: Array<string>): ResponseFormat<T>
   type: "json_schema"
   /** The desired return type in JSON Schema. */
-  json_schema: ResponseFormatJSONSchema.JSONSchema
+  json_schema: JsonSchema
   /** Parse the content of the first choice into a typed object. */
   parseFirstChoice(completion: ChatCompletion): T
   /** Parse all choice contents into an array of typed object. */
@@ -88,16 +87,3 @@ export namespace ResponseFormat {
 export class ResponseFormatUnwrapError extends Error {
   override readonly name = "UnwrapResponseError"
 }
-
-export type TypedChatCompletion<T> = Omit<ChatCompletion, "choices"> & {
-  choices: Array<
-    Omit<ChatCompletionChoice, "message"> & {
-      message: Omit<Openai.Chat.Completions.ChatCompletionMessage, "content"> & {
-        content: T
-      }
-    }
-  >
-}
-
-type ChatCompletion = Openai.Chat.ChatCompletion
-type ChatCompletionChoice = Openai.Chat.Completions.ChatCompletion.Choice
