@@ -1,24 +1,8 @@
 name: Release
-
 on:
   release:
     types: [created]
-
 jobs:
-  jsr:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
-      - run: |
-          tag=${{ github.event.release.tag_name }}
-          sed -i s/0.0.0-local.0/${tag:1}/ deno.json
-      - run: deno publish --allow-dirty
   npm:
     runs-on: ubuntu-latest
     steps:
@@ -36,3 +20,17 @@ jobs:
       - run: cd target/npm && npm version ${{ github.event.release.tag_name }} --no-git-tag-version --allow-same-version && npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  jsr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: |
+          tag=${{ github.event.release.tag_name }}
+          sed -i s/0.0.0-local.0/${tag:1}/ deno.json
+      - run: deno publish --allow-dirty

@@ -1,5 +1,5 @@
-import type { Ref } from "./Ref.ts"
 import { phantoms } from "../util/phantoms.ts"
+import type { Ref } from "./Ref.ts"
 import type { RootTy } from "./RootTy.ts"
 
 export function Ty<T, P extends string = never>(
@@ -10,7 +10,7 @@ export function Ty<T, P extends string = never>(
   return Object.assign(
     <P2 extends Array<string>>(template: TemplateStringsArray, ...placeheld: P2) =>
       Ty<T, P | P2[number]>(toSchema, [{ template, placeheld }, ...descriptions], applied),
-    phantoms<{ [Ty.T]: T; [Ty.P]: P }>(),
+    phantoms<{ T: T; P: P }>(),
     {
       toSchema,
       descriptions,
@@ -30,20 +30,13 @@ export interface Ty<T = any, P extends string = string> {
     template: TemplateStringsArray,
     ...placeheld: P2
   ): Ty<T, P | P2[number]>
-  [Ty.T]: T
-  [Ty.P]: P
+  T: T
+  P: P
   toSchema: ToSchema
   descriptions: Array<Description>
   applied: Applied
   apply: <A extends Partial<Record<P, number | string>>>(values: A) => Ty<T, Exclude<P, keyof A>>
   isRoot(): this is RootTy
-}
-
-export namespace Ty {
-  export type T = typeof T
-  export declare const T: unique symbol
-  export type P = typeof P
-  export declare const P: unique symbol
 }
 
 export type ToSchema = (description: string | undefined, ref: Ref) => Schema

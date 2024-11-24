@@ -4,10 +4,10 @@ export function taggedUnion<M extends Record<string, Ty>>(members: M): Ty<
   {
     [K in keyof M]: {
       type: K
-      value: M[K][Ty.T]
+      value: M[K]["T"]
     }
   }[keyof M],
-  M[keyof M][Ty.P]
+  M[keyof M]["P"]
 > {
   return Ty((description, ref) => ({
     description,

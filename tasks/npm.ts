@@ -2,6 +2,7 @@ import { build } from "@deno/dnt"
 import { parseArgs } from "@std/cli"
 import * as fs from "@std/fs"
 import * as path from "@std/path"
+import { LIB_DESCRIPTION } from "../constants.ts"
 
 const outDir = "target/npm"
 await fs.emptyDir(outDir)
@@ -37,7 +38,7 @@ await build({
   package: {
     name: "structured-outputs",
     version,
-    description: "Compose OpenAI structured output schemas.",
+    description: LIB_DESCRIPTION,
     license: "Apache-2.0",
     repository: "github:harrysolovay/structured-outputs.git",
     main: "./esm/mod.js",

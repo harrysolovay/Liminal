@@ -10,7 +10,7 @@ export function RootTy<T, P extends string = never>(
   return Object.assign(
     <P2 extends Array<string>>(template: TemplateStringsArray, ...placeheld: P2) =>
       RootTy<T, P | P2[number]>(toSchema, [{ template, placeheld }, ...descriptions], applied),
-    phantoms<{ [Ty.T]: T; [Ty.P]: P }>(),
+    phantoms<{ T: T; P: P }>(),
     {
       toSchema,
       descriptions,

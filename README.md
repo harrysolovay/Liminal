@@ -1,6 +1,6 @@
-# Structured Outputs
+# Structured Outputs TypeScript
 
-A TypeScript library for composing
+A library for composing
 [OpenAI structured output schemas](https://platform.openai.com/docs/guides/structured-outputs).
 
 ## Installation
@@ -54,4 +54,4 @@ character satisfies {
 
 ## License
 
-Structured Outputs is [Apache licensed](LICENSE).
+Structured Outputs TypeScript is [Apache licensed](LICENSE).

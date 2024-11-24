@@ -6,4 +6,8 @@ harrysolovay
 openai
 placeheld
 quasis
+shiki
+shikijs
 solovay
+twoslash
+vitepress
