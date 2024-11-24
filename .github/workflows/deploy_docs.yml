@@ -17,7 +17,7 @@ jobs:
       run:
         working-directory: docs
     steps:
-      - run: echo pwd
+      - run: pwd
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -29,12 +29,14 @@ jobs:
           cache: npm
       - name: Setup Pages
         uses: actions/configure-pages@v4
+      - name: Install Dependencies
+        run: npm ci
       - name: Build Dist
-        run: npm ci && npm run build
+        run: npm run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/.vitepress/dist
+          path: .vitepress/dist
   deploy:
     environment:
       name: github-pages
