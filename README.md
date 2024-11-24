@@ -28,7 +28,7 @@ deno add jsr:@crosshatch/structured-outputs@0.1.0-beta.X
 
 ## Example Usage
 
-### Declare Types
+### Declare a Type
 
 ```ts
 import { T } from "structured-outputs"
@@ -53,7 +53,7 @@ const response_format = ResponseFormat("create_character", Character)`
 `
 ```
 
-### Utilize The OpenAI Client
+### Create Chat Completions
 
 ```ts
 // ...
@@ -70,7 +70,7 @@ const character = await openai.chat.completions
 > Note: we chain off the resulting promise with a `then`, which applies the `ResponseFormat`'s
 > parser.
 
-### Utilize The Typed Object
+### Utilize The Typed, Unwrapped Data
 
 ```ts
 // ...
