@@ -48,3 +48,7 @@ character satisfies {
   disposition: "Optimistic" | "Reserved" | "Inquisitive"
 }
 ```
+
+## License
+
+Structured Outputs is [Apache licensed](LICENSE).
