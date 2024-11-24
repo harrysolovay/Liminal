@@ -11,6 +11,6 @@ console.gr
 
 ```ts twoslash
 // @errors: 2339
-const welcome = "Tudo bem gente?"
+const welcome = "Hi"
 const words = welcome.contains(" ")
 ```
