@@ -1,7 +1,13 @@
 # Structured Outputs TypeScript
 
-A library for composing
-[OpenAI structured output schemas](https://platform.openai.com/docs/guides/structured-outputs).
+> A library for working with OpenAI's structured outputs.
+
+- [Documentation &rarr;](https://structured-outputs.dev)<br />Expanded introduction and usage
+  instructions.
+- [OpenAI Guide &rarr;](https://platform.openai.com/docs/guides/structured-outputs)<br />The OpenAI
+  platform's guide on Structured Outputs
+- [Pattern Libraries &rarr;](https://structured-outputs.dev/pattern-libraries)<br />Pattern
+  libraries modeling common schemas using Structured Outputs TypeScript.
 
 ## Installation
 
