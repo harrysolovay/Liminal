@@ -14,8 +14,11 @@ npm i structured-outputs
 ### Deno
 
 ```ts
-deno add jsr:@crosshatch/structured-outputs
+deno add jsr:@crosshatch/structured-outputs@0.1.0-beta.X
 ```
+
+> Note: replace "X" with the latest beta version number. Version specificity will be unnecessary
+> upon the first stable release of `structured-outputs`.
 
 ## Example
 
