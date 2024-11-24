@@ -67,9 +67,6 @@ const character = await openai.chat.completions
   .then(response_format.parseFirstChoice)
 ```
 
-> Note: we chain off the resulting promise with a `then`, which applies the `ResponseFormat`'s
-> parser.
-
 ### Utilize The Typed, Unwrapped Data
 
 ```ts
