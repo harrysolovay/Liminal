@@ -11,6 +11,8 @@ export const openai = new Openai({
 const TMP_DIR = ".tmp"
 await ensureDir(TMP_DIR)
 
-export const dbg = tap((value) =>
-  Deno.writeTextFile(path.join(TMP_DIR, `${Date.now()}.json`), JSON.stringify(value, null, 2))
-)
+export const dbg = tap(async (value) => {
+  const dest = path.join(TMP_DIR, `${Date.now()}.json`)
+  await Deno.writeTextFile(dest, JSON.stringify(value, null, 2))
+  console.log(`Written to ${dest}.`)
+})
