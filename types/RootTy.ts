@@ -1,24 +1,20 @@
 import { phantoms } from "../util/phantoms.ts"
 import { Ref } from "./Ref.ts"
-import type { Applied, Description, Schema, ToSchema, Ty } from "./Ty.ts"
+import type { Applied, Context, Schema, ToSchema, Ty } from "./Ty.ts"
 
 export function RootTy<T, P extends keyof any = never>(
   toSchema: ToSchema,
-  descriptions: Array<Description> = [],
+  context: Array<Context> = [],
   applied: Applied = {},
 ): RootTy<T, P> {
   return Object.assign(
     <P2 extends Array<string>>(template: TemplateStringsArray, ...placeheld: P2) =>
-      RootTy<T, P | P2[number]>(toSchema, [{ template, placeheld }, ...descriptions], applied),
+      RootTy<T, P | P2[number]>(toSchema, [{ template, placeheld }, ...context], applied),
     phantoms<{ T: T; P: P }>(),
     {
-      "": {
-        toSchema,
-        descriptions,
-        applied,
-      },
+      "": { toSchema, context, applied },
       fill: <A extends Partial<Record<P, string | number>>>(values: A) => {
-        return RootTy<T, Exclude<P, keyof A>>(toSchema, descriptions, { ...applied, ...values })
+        return RootTy<T, Exclude<P, keyof A>>(toSchema, context, { ...applied, ...values })
       },
       schema(this: RootTy<T, never>) {
         return Ref({})(this)

@@ -51,7 +51,7 @@ snapshot[`constant union 2`] = `
           type: "number",
         },
       ],
-      description: "Description one.",
+      description: "One.",
     },
   },
   required: [
@@ -82,7 +82,7 @@ snapshot[`constant union 3`] = `
           type: "number",
         },
       ],
-      description: "Description two. Description one.",
+      description: "Two. One.",
     },
   },
   required: [

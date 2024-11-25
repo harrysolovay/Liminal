@@ -20,7 +20,7 @@ snapshot[`boolean 2`] = `
   additionalProperties: false,
   properties: {
     value: {
-      description: "Description one.",
+      description: "One.",
       type: "boolean",
     },
   },
@@ -36,7 +36,7 @@ snapshot[`boolean 3`] = `
   additionalProperties: false,
   properties: {
     value: {
-      description: "Description two. Description one.",
+      description: "Two. One.",
       type: "boolean",
     },
   },
@@ -67,7 +67,7 @@ snapshot[`none 2`] = `
   additionalProperties: false,
   properties: {
     value: {
-      description: "Description one.",
+      description: "One.",
       type: "null",
     },
   },
@@ -83,7 +83,7 @@ snapshot[`none 3`] = `
   additionalProperties: false,
   properties: {
     value: {
-      description: "Description two. Description one.",
+      description: "Two. One.",
       type: "null",
     },
   },
@@ -114,7 +114,7 @@ snapshot[`number 2`] = `
   additionalProperties: false,
   properties: {
     value: {
-      description: "Description one.",
+      description: "One.",
       type: "number",
     },
   },
@@ -130,7 +130,7 @@ snapshot[`number 3`] = `
   additionalProperties: false,
   properties: {
     value: {
-      description: "Description two. Description one.",
+      description: "Two. One.",
       type: "number",
     },
   },
@@ -161,7 +161,7 @@ snapshot[`string 2`] = `
   additionalProperties: false,
   properties: {
     value: {
-      description: "Description one.",
+      description: "One.",
       type: "string",
     },
   },
@@ -177,7 +177,7 @@ snapshot[`string 3`] = `
   additionalProperties: false,
   properties: {
     value: {
-      description: "Description two. Description one.",
+      description: "Two. One.",
       type: "string",
     },
   },

@@ -6,9 +6,9 @@ export async function assertTySnapshot(
   value: T.Ty<unknown, never>,
 ): Promise<void> {
   await assertSnapshot(t, maybeWrap(value).schema())
-  const withDescription = value`Description one.`
-  await assertSnapshot(t, maybeWrap(withDescription).schema())
-  await assertSnapshot(t, maybeWrap(withDescription`Description two.`).schema())
+  const withContext = value`One.`
+  await assertSnapshot(t, maybeWrap(withContext).schema())
+  await assertSnapshot(t, maybeWrap(withContext`Two.`).schema())
 }
 
 function maybeWrap<T, P extends string>(value: T.Ty<T, P>) {

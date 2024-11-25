@@ -1,7 +1,7 @@
 ---
 prev:
-  text: Descriptions
-  link: descriptions
+  text: Context
+  link: context
 next:
   text: Common Errors
   link: common-errors

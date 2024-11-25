@@ -13,7 +13,7 @@ Deno.test("Ty", async (t) => {
 
 const ref = Ref({})
 
-Deno.test("description chaining", () => {
+Deno.test("context chaining", () => {
   const a = any`A.`
   assertEquals(ref(a).description, "A.")
 
@@ -24,23 +24,23 @@ Deno.test("description chaining", () => {
   assertEquals(ref(c).description, "C. B. A.")
 })
 
-Deno.test("description placeholding with number", () => {
+Deno.test("context placeholding with number", () => {
   const t = any`Placeheld ${1}.`
   assertEquals(ref(t.fill({ 1: "value" })).description, "Placeheld value.")
 })
 
-Deno.test("description placeholding with string", () => {
+Deno.test("context placeholding with string", () => {
   const t = any`Placeheld ${"P"}.`
   assertEquals(ref(t.fill({ P: "value" })).description, "Placeheld value.")
 })
 
-Deno.test("description placeholding with symbol", () => {
+Deno.test("context placeholding with symbol", () => {
   const sym = Symbol()
   const t = any`Placeheld ${sym}.`
   assertEquals(ref(t.fill({ [sym]: "value" })).description, "Placeheld value.")
 })
 
-Deno.test("description placeholding with chaining", () => {
+Deno.test("context placeholding with chaining", () => {
   const a = any`a: ${"A"}.`
   const b = a`b: ${"B"}.`
   const c = b`c: ${"C"}.`

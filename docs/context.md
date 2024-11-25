@@ -7,7 +7,7 @@ next:
   link: patterns
 ---
 
-# Descriptions
+# Context
 
 ## Placeholding
 

@@ -1,6 +1,6 @@
+import type { ChatCompletion, ChatCompletionChoice, JsonSchema } from "./oai.ts"
 import type { RootTy } from "./types/mod.ts"
 import { recombineTaggedTemplateArgs } from "./util/recombineTaggedTemplateArgs.ts"
-import type { ChatCompletion, ChatCompletionChoice, JsonSchema } from "./oai.ts"
 
 export interface ResponseFormat<T> {
   (template: TemplateStringsArray, ...quasis: Array<string>): ResponseFormat<T>

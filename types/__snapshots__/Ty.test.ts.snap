@@ -27,7 +27,7 @@ snapshot[`Ty 2`] = `
   additionalProperties: false,
   properties: {
     value: {
-      description: "Description one.",
+      description: "One.",
       type: [
         "string",
         "number",
@@ -50,7 +50,7 @@ snapshot[`Ty 3`] = `
   additionalProperties: false,
   properties: {
     value: {
-      description: "Description two. Description one.",
+      description: "Two. One.",
       type: [
         "string",
         "number",

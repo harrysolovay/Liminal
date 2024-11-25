@@ -3,8 +3,8 @@ prev:
   text: Getting Started
   link: getting-started
 next:
-  text: Descriptions
-  link: descriptions
+  text: Context
+  link: context
 ---
 
 # Types

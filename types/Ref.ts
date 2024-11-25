@@ -6,7 +6,7 @@ export type Ref = (ty: Ty) => Schema
 export function Ref(applied: Applied): Ref {
   return (ty) => {
     applied = { ...applied, ...ty[""].applied }
-    const description = ty[""].descriptions
+    const description = ty[""].context
       .map(({ template, placeheld }) =>
         recombineTaggedTemplateArgs(template, placeheld.map((k) => applied[k]!))
       )

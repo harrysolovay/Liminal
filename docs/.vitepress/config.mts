@@ -35,7 +35,7 @@ export default defineConfig({
             { text: "Setup", link: "setup" },
             { text: "Getting Started", link: "getting-started" },
             { text: "Types", link: "types" },
-            { text: "Descriptions", link: "descriptions" },
+            { text: "Context", link: "context" },
             { text: "Patterns", link: "pattern-libraries" },
             { text: "Common Errors", link: "common-errors" },
           ],

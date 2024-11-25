@@ -42,6 +42,22 @@ const Contact = T.object({
 `
 ```
 
+## Parameterized Context
+
+Placehold context to be filled in later. This simplifies reuse of types for different generation use
+cases.
+
+```ts
+const Person = T.object({
+  hometown: T.string`An ${"nationality"} city.`,
+  favoriteFood: T.string`A delicious ${"nationality"} food.`,
+})
+
+const AmericanPerson = Person.fill({
+  nationality: "American",
+})
+```
+
 ## `ResponseFormat`
 
 Create `ResponseFormat` for use with OpenAI clients.

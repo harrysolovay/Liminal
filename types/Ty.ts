@@ -4,21 +4,17 @@ import type { RootTy } from "./RootTy.ts"
 
 export function Ty<T, P extends keyof any = never>(
   toSchema: ToSchema,
-  descriptions: Array<Description> = [],
+  context: Array<Context> = [],
   applied: Applied = {},
 ): Ty<T, P> {
   return Object.assign(
     <P2 extends Array<keyof any>>(template: TemplateStringsArray, ...placeheld: P2) =>
-      Ty<T, P | P2[number]>(toSchema, [{ template, placeheld }, ...descriptions], applied),
+      Ty<T, P | P2[number]>(toSchema, [{ template, placeheld }, ...context], applied),
     phantoms<{ T: T; P: P }>(),
     {
-      "": {
-        toSchema,
-        descriptions,
-        applied,
-      },
+      "": { toSchema, context, applied },
       fill: <A extends Partial<Record<P, string | number>>>(values: A) => {
-        return Ty<T, Exclude<P, keyof A>>(toSchema, descriptions, { ...applied, ...values })
+        return Ty<T, Exclude<P, keyof A>>(toSchema, context, { ...applied, ...values })
       },
       isRoot(): this is RootTy {
         return false
@@ -36,7 +32,7 @@ export interface Ty<T = any, P extends keyof any = keyof any> {
   P: P
   "": {
     toSchema: ToSchema
-    descriptions: Array<Description>
+    context: Array<Context>
     applied: Applied
   }
   fill: <A extends Partial<Record<P, number | string>>>(values: A) => Ty<T, Exclude<P, keyof A>>
@@ -46,7 +42,7 @@ export interface Ty<T = any, P extends keyof any = keyof any> {
 export type ToSchema = (ref: Ref) => Schema
 export type Schema = Record<string, unknown>
 
-export interface Description {
+export interface Context {
   template: TemplateStringsArray
   placeheld: Array<keyof any>
 }

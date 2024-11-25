@@ -23,7 +23,7 @@ snapshot[`array 2`] = `
   additionalProperties: false,
   properties: {
     value: {
-      description: "Description one.",
+      description: "One.",
       items: {
         type: "string",
       },
@@ -42,7 +42,7 @@ snapshot[`array 3`] = `
   additionalProperties: false,
   properties: {
     value: {
-      description: "Description two. Description one.",
+      description: "Two. One.",
       items: {
         type: "string",
       },

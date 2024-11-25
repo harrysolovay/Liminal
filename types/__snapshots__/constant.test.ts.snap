@@ -21,7 +21,7 @@ snapshot[`constant num 2`] = `
   properties: {
     value: {
       const: "Hello",
-      description: "Description one.",
+      description: "One.",
     },
   },
   required: [
@@ -37,7 +37,7 @@ snapshot[`constant num 3`] = `
   properties: {
     value: {
       const: "Hello",
-      description: "Description two. Description one.",
+      description: "Two. One.",
     },
   },
   required: [
@@ -68,7 +68,7 @@ snapshot[`constant str 2`] = `
   properties: {
     value: {
       const: 42,
-      description: "Description one.",
+      description: "One.",
     },
   },
   required: [
@@ -84,7 +84,7 @@ snapshot[`constant str 3`] = `
   properties: {
     value: {
       const: 42,
-      description: "Description two. Description one.",
+      description: "Two. One.",
     },
   },
   required: [

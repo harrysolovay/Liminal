@@ -18,7 +18,7 @@ snapshot[`Wrapper 1`] = `
 snapshot[`Wrapper 2`] = `
 {
   additionalProperties: false,
-  description: "Description one.",
+  description: "One.",
   properties: {
     value: {
       type: "string",
@@ -34,7 +34,7 @@ snapshot[`Wrapper 2`] = `
 snapshot[`Wrapper 3`] = `
 {
   additionalProperties: false,
-  description: "Description two. Description one.",
+  description: "Two. One.",
   properties: {
     value: {
       type: "string",
