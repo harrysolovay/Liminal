@@ -1,7 +1,7 @@
 ---
 prev:
-  text: Getting Started
-  link: getting-started
+  text: Quickstart
+  link: quickstart
 next:
   text: Context
   link: context

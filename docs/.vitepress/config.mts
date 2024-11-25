@@ -32,11 +32,11 @@ export default defineConfig({
           text: "", // For now
           collapsed: false,
           items: [
-            { text: "Setup", link: "setup" },
-            { text: "Getting Started", link: "getting-started" },
+            { text: "Overview", link: "/" },
+            { text: "Quickstart", link: "quickstart" },
             { text: "Types", link: "types" },
             { text: "Context", link: "context" },
-            { text: "Patterns", link: "pattern-libraries" },
+            { text: "Patterns", link: "patterns" },
             { text: "Common Errors", link: "common-errors" },
           ],
         }],
