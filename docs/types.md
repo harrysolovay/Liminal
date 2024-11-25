@@ -28,7 +28,7 @@ T.string
 
 ## Composite Types
 
-array object literalUnion taggedUnion
+tuple array object literalUnion taggedUnion
 
 ## Transform Types
 
