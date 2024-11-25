@@ -1,0 +1,69 @@
+export const snapshot = {};
+
+snapshot[`Ty 1`] = `
+{
+  additionalProperties: false,
+  properties: {
+    value: {
+      type: [
+        "string",
+        "number",
+        "object",
+        "array",
+        "boolean",
+        "null",
+      ],
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`Ty 2`] = `
+{
+  additionalProperties: false,
+  properties: {
+    value: {
+      description: "Description one.",
+      type: [
+        "string",
+        "number",
+        "object",
+        "array",
+        "boolean",
+        "null",
+      ],
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`Ty 3`] = `
+{
+  additionalProperties: false,
+  properties: {
+    value: {
+      description: "Description two. Description one.",
+      type: [
+        "string",
+        "number",
+        "object",
+        "array",
+        "boolean",
+        "null",
+      ],
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;

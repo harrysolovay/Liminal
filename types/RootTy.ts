@@ -2,7 +2,7 @@ import { phantoms } from "../util/phantoms.ts"
 import { Ref } from "./Ref.ts"
 import type { Applied, Description, Schema, ToSchema, Ty } from "./Ty.ts"
 
-export function RootTy<T, P extends string = never>(
+export function RootTy<T, P extends keyof any = never>(
   toSchema: ToSchema,
   descriptions: Array<Description> = [],
   applied: Applied = {},
@@ -30,8 +30,8 @@ export function RootTy<T, P extends string = never>(
   )
 }
 
-export interface RootTy<T = any, P extends string = string> extends Ty<T, P> {
-  <P2 extends Array<string>>(
+export interface RootTy<T = any, P extends keyof any = keyof any> extends Ty<T, P> {
+  <P2 extends Array<keyof any>>(
     template: TemplateStringsArray,
     ...placeheld: P2
   ): RootTy<T, P | P2[number]>

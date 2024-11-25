@@ -2,13 +2,13 @@ import { phantoms } from "../util/phantoms.ts"
 import type { Ref } from "./Ref.ts"
 import type { RootTy } from "./RootTy.ts"
 
-export function Ty<T, P extends string = never>(
+export function Ty<T, P extends keyof any = never>(
   toSchema: ToSchema,
   descriptions: Array<Description> = [],
   applied: Applied = {},
 ): Ty<T, P> {
   return Object.assign(
-    <P2 extends Array<string>>(template: TemplateStringsArray, ...placeheld: P2) =>
+    <P2 extends Array<keyof any>>(template: TemplateStringsArray, ...placeheld: P2) =>
       Ty<T, P | P2[number]>(toSchema, [{ template, placeheld }, ...descriptions], applied),
     phantoms<{ T: T; P: P }>(),
     {
@@ -27,8 +27,8 @@ export function Ty<T, P extends string = never>(
   )
 }
 
-export interface Ty<T = any, P extends string = string> {
-  <P2 extends Array<string>>(
+export interface Ty<T = any, P extends keyof any = keyof any> {
+  <P2 extends Array<keyof any>>(
     template: TemplateStringsArray,
     ...placeheld: P2
   ): Ty<T, P | P2[number]>
@@ -48,7 +48,7 @@ export type Schema = Record<string, unknown>
 
 export interface Description {
   template: TemplateStringsArray
-  placeheld: Array<string>
+  placeheld: Array<keyof any>
 }
 
-export type Applied = Record<string, number | string>
+export type Applied = Record<keyof any, number | string>
