@@ -17,10 +17,7 @@ const Contact = T.object({
 })
 ```
 
-> See docs for...
->
-> - [Primitive Types](primitive-types.md)
-> - [Composite Types](composite-types.md)
+[Full documentation of types &rarr;](./types.md)
 
 ## Context
 

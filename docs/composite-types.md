@@ -1,3 +1,0 @@
-# Composite Types
-
-TODO

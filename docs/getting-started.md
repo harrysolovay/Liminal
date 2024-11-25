@@ -1,3 +1,12 @@
+---
+prev:
+  text: Setup
+  link: setup
+next:
+  text: Types
+  link: types
+---
+
 # Getting Started
 
 Let's briefly touch on the usage lifecycle.

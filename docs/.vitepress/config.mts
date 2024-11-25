@@ -8,10 +8,16 @@ export default defineConfig({
   markdown: {
     codeTransformers: [transformerTwoslash()],
   },
+  sitemap: {
+    hostname: "http://structured-outputs.dev",
+  },
   lastUpdated: true,
   cleanUrls: true,
   metaChunk: true,
   themeConfig: {
+    editLink: {
+      pattern: "https://github.com/harrysolovay/structured-outputs/edit/main/docs/:path",
+    },
     nav: [{
       text: "Manual",
       link: "/",
@@ -28,12 +34,9 @@ export default defineConfig({
           items: [
             { text: "Setup", link: "setup" },
             { text: "Getting Started", link: "getting-started" },
-            { text: "Primitive Types", link: "primitive-types" },
-            { text: "Composite Types", link: "composite-types" },
-            { text: "Description Composition", link: "description-composition" },
-            { text: "Description Injection", link: "description-injection" },
+            { text: "Types", link: "types" },
+            { text: "Descriptions", link: "descriptions" },
             { text: "Patterns", link: "pattern-libraries" },
-            { text: "Advanced Typing", link: "advanced-typing" },
             { text: "Common Errors", link: "common-errors" },
           ],
         }],

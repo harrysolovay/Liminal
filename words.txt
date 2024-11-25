@@ -6,9 +6,11 @@ esbenp
 harrysolovay
 openai
 placeheld
+placeholding
 quasis
 shiki
 shikijs
 solovay
+subpaths
 twoslash
 vitepress

@@ -1,3 +1,12 @@
+---
+prev:
+  text: Overview
+  link: /
+next:
+  text: Getting Started
+  link: getting-started
+---
+
 # Setup
 
 ::: code-group
@@ -17,9 +26,9 @@ deno add jsr:@crosshatch/structured-outputs
 
 ## Node.js-specifics
 
-### Use Modules
+### ES Modules
 
-The `structured-outputs` NPM package does not contain a CommonJS build; only ESModules are
+The `structured-outputs` NPM package does not contain a CommonJS build; only ES Modules are
 supported. Therefore, we must specify `module` as the value of the `package.json`'s `type` field.
 
 ```diff
