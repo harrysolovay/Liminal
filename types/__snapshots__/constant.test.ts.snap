@@ -3,11 +3,9 @@ export const snapshot = {};
 snapshot[`constant num 1`] = `
 {
   additionalProperties: false,
-  description: "",
   properties: {
     value: {
       const: "Hello",
-      description: "",
     },
   },
   required: [
@@ -20,7 +18,6 @@ snapshot[`constant num 1`] = `
 snapshot[`constant num 2`] = `
 {
   additionalProperties: false,
-  description: "",
   properties: {
     value: {
       const: "Hello",
@@ -37,7 +34,6 @@ snapshot[`constant num 2`] = `
 snapshot[`constant num 3`] = `
 {
   additionalProperties: false,
-  description: "",
   properties: {
     value: {
       const: "Hello",
@@ -54,11 +50,9 @@ snapshot[`constant num 3`] = `
 snapshot[`constant str 1`] = `
 {
   additionalProperties: false,
-  description: "",
   properties: {
     value: {
       const: 42,
-      description: "",
     },
   },
   required: [
@@ -71,7 +65,6 @@ snapshot[`constant str 1`] = `
 snapshot[`constant str 2`] = `
 {
   additionalProperties: false,
-  description: "",
   properties: {
     value: {
       const: 42,
@@ -88,7 +81,6 @@ snapshot[`constant str 2`] = `
 snapshot[`constant str 3`] = `
 {
   additionalProperties: false,
-  description: "",
   properties: {
     value: {
       const: 42,

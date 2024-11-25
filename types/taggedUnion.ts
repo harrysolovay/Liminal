@@ -9,8 +9,7 @@ export function taggedUnion<M extends Record<string, Ty>>(members: M): Ty<
   }[keyof M],
   M[keyof M]["P"]
 > {
-  return Ty((description, ref) => ({
-    description,
+  return Ty((ref) => ({
     discriminator: "type",
     anyOf: Object.entries(members).map(([k, v]) => ({
       type: "object",

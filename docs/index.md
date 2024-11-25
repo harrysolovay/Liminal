@@ -1,6 +1,6 @@
 # Structured Outputs TypeScript
 
-`structured-outputs` is a library for working with
+A library for working with
 [OpenAI structured outputs](https://platform.openai.com/docs/guides/structured-outputs).
 
 ## Overview
@@ -24,16 +24,22 @@ const Contact = T.object({
 
 ## Context
 
-When using OpenAI Structured Outputs, the response format or tool definition effectively serves as
-context for the LLM. We may want to attach context per-type to be used by OpenAI's services.
+Schema definitions effectively serve as additional context for the LLM. We may want to attach
+context per-type to be used by OpenAI's services.
 
 ```ts twoslash
 import { T } from "structured-outputs"
 // ---cut---
 const Contact = T.object({
-  name: T.string`Ensure normal length for a person's full name.`,
-  phone: T.number`Ensure the format is that of a phone number.`,
-  email: T.string`Ensure the format is that of an email address.`,
+  name: T.string`
+    Ensure normal length for a person's full name.
+  `,
+  phone: T.number`
+    Ensure the format is that of a phone number.
+  `,
+  email: T.string`
+    Ensure the format is that of an email address.
+  `,
 })`
   A collection of information common in contact cards.
 `
@@ -41,7 +47,7 @@ const Contact = T.object({
 
 ## `ResponseFormat`
 
-We create the `ResponseFormat` to be used with the OpenAI client.
+Create `ResponseFormat` for use with OpenAI clients.
 
 ```ts twoslash
 import { T } from "structured-outputs"
@@ -58,10 +64,9 @@ const response_format = ResponseFormat("extract_contact_information", Contact)`
 `
 ```
 
-## Extract Native TypeScript Type
+## Native TypeScript Types
 
-Code that depends on the structured output data can reference the type definitions at the
-type-level.
+Refer to the native typescript type.
 
 ```ts twoslash
 import { T } from "structured-outputs"
@@ -72,14 +77,17 @@ const Contact = T.object({
 })
 // ---cut---
 function sendText(args: typeof Contact["T"]): void {
+  //              ^?
   // ...
 }
 ```
 
+<br />
+<br />
+
 ## Parse Typed Objects
 
-We can utilize convenience methods of `ResponseFormat` instances to unwrap typed choice data from
-chat completion responses.
+Utilize convenience methods to unwrap typed data directly from chat completion responses.
 
 ```ts twoslash
 import Openai from "openai"
@@ -117,14 +125,16 @@ const contact = await openai.chat.completions
   })
   .then(response_format.parseFirstChoice)
 
-contact satisfies {
-  name: string
-  phone: number
-  email: string
-}
+contact
+// ^?
 ```
 
-## Generating Standalone JSON Schemas
+<br />
+<br />
+<br />
+<br />
+
+## Use Standalone JSON Schema
 
 ```ts twoslash
 import { T } from "structured-outputs"

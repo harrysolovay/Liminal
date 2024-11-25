@@ -3,10 +3,8 @@ export const snapshot = {};
 snapshot[`Wrapper 1`] = `
 {
   additionalProperties: false,
-  description: "",
   properties: {
     value: {
-      description: "",
       type: "string",
     },
   },
@@ -23,7 +21,6 @@ snapshot[`Wrapper 2`] = `
   description: "Description one.",
   properties: {
     value: {
-      description: "",
       type: "string",
     },
   },
@@ -40,7 +37,6 @@ snapshot[`Wrapper 3`] = `
   description: "Description two. Description one.",
   properties: {
     value: {
-      description: "",
       type: "string",
     },
   },

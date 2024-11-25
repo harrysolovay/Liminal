@@ -1,21 +1,17 @@
 import { Ty } from "./Ty.ts"
 
-export const none: Ty<null, never> = Ty((description) => ({
+export const none: Ty<null, never> = Ty(() => ({
   type: "null",
-  description,
 }))
 
-export const boolean: Ty<boolean, never> = Ty((description) => ({
+export const boolean: Ty<boolean, never> = Ty(() => ({
   type: "boolean",
-  description,
 }))
 
-export const number: Ty<number, never> = Ty((description) => ({
+export const number: Ty<number, never> = Ty(() => ({
   type: "number",
-  description,
 }))
 
-export const string: Ty<string, never> = Ty((description) => ({
+export const string: Ty<string, never> = Ty(() => ({
   type: "string",
-  description,
 }))

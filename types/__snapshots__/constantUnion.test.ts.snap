@@ -3,7 +3,6 @@ export const snapshot = {};
 snapshot[`constant union 1`] = `
 {
   additionalProperties: false,
-  description: "",
   properties: {
     value: {
       anyOf: [
@@ -22,7 +21,6 @@ snapshot[`constant union 1`] = `
           type: "number",
         },
       ],
-      description: "",
     },
   },
   required: [
@@ -35,7 +33,6 @@ snapshot[`constant union 1`] = `
 snapshot[`constant union 2`] = `
 {
   additionalProperties: false,
-  description: "",
   properties: {
     value: {
       anyOf: [
@@ -67,7 +64,6 @@ snapshot[`constant union 2`] = `
 snapshot[`constant union 3`] = `
 {
   additionalProperties: false,
-  description: "",
   properties: {
     value: {
       anyOf: [

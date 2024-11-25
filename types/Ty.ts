@@ -43,7 +43,7 @@ export interface Ty<T = any, P extends string = string> {
   isRoot(): this is RootTy
 }
 
-export type ToSchema = (description: string | undefined, ref: Ref) => Schema
+export type ToSchema = (ref: Ref) => Schema
 export type Schema = Record<string, unknown>
 
 export interface Description {

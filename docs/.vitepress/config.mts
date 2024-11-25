@@ -26,7 +26,7 @@ export default defineConfig({
           text: "", // For now
           collapsed: false,
           items: [
-            { text: "Setup", link: "getting-started" },
+            { text: "Setup", link: "setup" },
             { text: "Getting Started", link: "getting-started" },
             { text: "Primitive Types", link: "primitive-types" },
             { text: "Composite Types", link: "composite-types" },

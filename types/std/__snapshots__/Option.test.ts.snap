@@ -3,7 +3,6 @@ export const snapshot = {};
 snapshot[`Option 1`] = `
 {
   additionalProperties: false,
-  description: "",
   properties: {
     value: {
       anyOf: [
@@ -15,7 +14,6 @@ snapshot[`Option 1`] = `
               type: "string",
             },
             value: {
-              description: "",
               type: "string",
             },
           },
@@ -33,7 +31,6 @@ snapshot[`Option 1`] = `
               type: "string",
             },
             value: {
-              description: "",
               type: "null",
             },
           },
@@ -58,7 +55,6 @@ snapshot[`Option 1`] = `
 snapshot[`Option 2`] = `
 {
   additionalProperties: false,
-  description: "",
   properties: {
     value: {
       anyOf: [
@@ -70,7 +66,6 @@ snapshot[`Option 2`] = `
               type: "string",
             },
             value: {
-              description: "",
               type: "string",
             },
           },
@@ -88,7 +83,6 @@ snapshot[`Option 2`] = `
               type: "string",
             },
             value: {
-              description: "",
               type: "null",
             },
           },
@@ -113,7 +107,6 @@ snapshot[`Option 2`] = `
 snapshot[`Option 3`] = `
 {
   additionalProperties: false,
-  description: "",
   properties: {
     value: {
       anyOf: [
@@ -125,7 +118,6 @@ snapshot[`Option 3`] = `
               type: "string",
             },
             value: {
-              description: "",
               type: "string",
             },
           },
@@ -143,7 +135,6 @@ snapshot[`Option 3`] = `
               type: "string",
             },
             value: {
-              description: "",
               type: "null",
             },
           },

@@ -3,18 +3,14 @@ export const snapshot = {};
 snapshot[`object 1`] = `
 {
   additionalProperties: false,
-  description: "",
   properties: {
     a: {
-      description: "",
       type: "boolean",
     },
     b: {
-      description: "",
       type: "number",
     },
     c: {
-      description: "",
       type: "string",
     },
   },
@@ -33,15 +29,12 @@ snapshot[`object 2`] = `
   description: "Description one.",
   properties: {
     a: {
-      description: "",
       type: "boolean",
     },
     b: {
-      description: "",
       type: "number",
     },
     c: {
-      description: "",
       type: "string",
     },
   },
@@ -60,15 +53,12 @@ snapshot[`object 3`] = `
   description: "Description two. Description one.",
   properties: {
     a: {
-      description: "",
       type: "boolean",
     },
     b: {
-      description: "",
       type: "number",
     },
     c: {
-      description: "",
       type: "string",
     },
   },
