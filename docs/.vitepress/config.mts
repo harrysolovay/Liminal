@@ -23,14 +23,13 @@ export default defineConfig({
       "/": {
         base: "",
         items: [{
-          text: "Introduction",
+          text: "", // For now
           collapsed: false,
           items: [
             { text: "Setup", link: "getting-started" },
             { text: "Getting Started", link: "getting-started" },
             { text: "Primitive Types", link: "primitive-types" },
             { text: "Composite Types", link: "composite-types" },
-            { text: "Root Types", link: "root-types" },
             { text: "Description Composition", link: "description-composition" },
             { text: "Description Injection", link: "description-injection" },
             { text: "Patterns", link: "pattern-libraries" },

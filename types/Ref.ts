@@ -11,6 +11,6 @@ export function Ref(applied: Applied): Ref {
         recombineTaggedTemplateArgs(template, placeheld.map((k) => applied[k]!))
       )
       .join(" ")
-    return ty[""].toSchema(description, Ref(applied))
+    return ty[""].toSchema(description === "" ? undefined : description, Ref(applied))
   }
 }

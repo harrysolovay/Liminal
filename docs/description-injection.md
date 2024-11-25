@@ -10,3 +10,13 @@ const AmericanCharacter = Character.apply({
   "national identity": "american",
 })
 ```
+
+Context can be placeheld and later filled in.
+
+```ts
+const placeheldName = T.string`A name that is common of the ${"nationality"} nationality.`
+
+const name = name.fill({
+  nationality: "American",
+})
+```

@@ -21,6 +21,11 @@
     "openai": "npm:openai@^4.68.1",
     "test_util": "./test_util.ts"
   },
+  "scopes": {
+    "./examples/": {
+      "structured-outputs": "./mod.ts"
+    }
+  },
   "lint": {
     "rules": {
       "include": ["ban-untagged-todo", "guard-for-in"],

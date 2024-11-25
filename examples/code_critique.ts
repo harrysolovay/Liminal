@@ -1,4 +1,4 @@
-import { T } from "../mod.ts"
+import { T } from "structured-outputs"
 
 export const Suggestion = T.object({
   file: T.string`The file containing the span to be potentially replaced.`,

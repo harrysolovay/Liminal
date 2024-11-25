@@ -10,5 +10,8 @@
     "structured-outputs": "file:../target/npm",
     "typescript": "^5.7.2",
     "vitepress": "^1.5.0"
+  },
+  "dependencies": {
+    "openai": "^4.73.0"
   }
 }
