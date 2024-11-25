@@ -28,7 +28,9 @@ export default defineConfig({
           items: [
             { text: "Setup", link: "getting-started" },
             { text: "Getting Started", link: "getting-started" },
-            { text: "Core Types", link: "core-types" },
+            { text: "Primitive Types", link: "primitive-types" },
+            { text: "Composite Types", link: "composite-types" },
+            { text: "Root Types", link: "root-types" },
             { text: "Description Composition", link: "description-composition" },
             { text: "Description Injection", link: "description-injection" },
             { text: "Patterns", link: "pattern-libraries" },

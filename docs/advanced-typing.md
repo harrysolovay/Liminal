@@ -14,3 +14,5 @@ console.gr
 const welcome = "Hi"
 const words = welcome.contains(" ")
 ```
+
+## JSR Slow Types

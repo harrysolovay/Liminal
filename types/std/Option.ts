@@ -1,4 +1,4 @@
-import { none } from "../leaves.ts"
+import { none } from "../primitives.ts"
 import { taggedUnion } from "../taggedUnion.ts"
 import type { Ty } from "../Ty.ts"
 

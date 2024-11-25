@@ -37,7 +37,7 @@ const Character = T.object({
   name: T.string,
   age: T.number`Ensure between 1 and 110.`,
   home: T.string`The name of a fictional realm of magic and wonder.`,
-  disposition: T.literalUnion("Optimistic", "Reserved", "Inquisitive"),
+  disposition: T.constantUnion("Optimistic", "Reserved", "Inquisitive"),
 })
 ```
 
