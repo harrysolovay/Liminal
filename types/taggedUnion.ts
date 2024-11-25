@@ -1,5 +1,4 @@
-import type { Schema } from "./schema.ts"
-import { Ty } from "./Ty.ts"
+import { type Schema, Ty } from "./Ty.ts"
 
 export function taggedUnion<M extends Record<string, Ty>>(members: M): Ty<
   {

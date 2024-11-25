@@ -1,7 +1,6 @@
 import { assertEquals } from "@std/assert"
 import { assertTySnapshot } from "test_util"
-import { SubschemaFactory } from "./schema.ts"
-import { Ty } from "./Ty.ts"
+import { SubschemaFactory, Ty } from "./Ty.ts"
 
 export const any = Ty<unknown, never, true>(() => ({
   type: ["string", "number", "object", "array", "boolean", "null"],

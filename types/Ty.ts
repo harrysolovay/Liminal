@@ -1,4 +1,4 @@
-import { type Schema, type Subschema, SubschemaFactory } from "./schema.ts"
+import { recombine } from "../util/recombine.ts"
 
 export interface Ty<T = any, P extends keyof any = keyof any, R extends boolean = boolean> {
   <P2 extends Array<keyof any>>(
@@ -66,9 +66,26 @@ export function Ty<T, P extends keyof any, R extends boolean, I = T>(
   )
 }
 
-export interface Context {
+export type Subschema = (subschema: SubschemaFactory) => Schema
+
+export type SubschemaFactory = (ty: Ty) => Schema
+export function SubschemaFactory(applied: Applied): SubschemaFactory {
+  return (ty) => {
+    applied = { ...applied, ...ty[""].applied }
+    const description = ty[""].context
+      .map(({ template, placeheld }) => recombine(template, placeheld.map((k) => applied[k]!)))
+      .join(" ")
+    return {
+      ...ty[""].subschema(SubschemaFactory(applied)),
+      ...description ? { description } : {},
+    }
+  }
+}
+
+interface Context {
   template: TemplateStringsArray
   placeheld: Array<keyof any>
 }
+type Applied = Record<keyof any, number | string>
 
-export type Applied = Record<keyof any, number | string>
+export type Schema = Record<string, unknown>
