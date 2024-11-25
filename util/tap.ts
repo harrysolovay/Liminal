@@ -1,6 +1,6 @@
-export function tap(operation: <T>(value: T) => void) {
+export function tap(useValue: <T>(value: T) => void) {
   return <T>(value: T): T => {
-    operation(value)
+    useValue(value)
     return value
   }
 }

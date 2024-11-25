@@ -1,13 +1,16 @@
+import * as path from "@std/path"
 import Openai from "openai"
 import "@std/dotenv/load"
-import { tap } from "../util/tap.ts"
 import { ensureDir } from "@std/fs"
+import { tap } from "../util/tap.ts"
 
 export const openai = new Openai({
   apiKey: Deno.env.get("OPENAI_API_KEY"),
 })
 
-export const dbg = tap(async (value) => {
-  await ensureDir(".tmp")
-  await Deno.writeTextFile(`.tmp/${Date.now()}.json`, JSON.stringify(value, null, 2))
-})
+const TMP_DIR = ".tmp"
+await ensureDir(TMP_DIR)
+
+export const dbg = tap((value) =>
+  Deno.writeTextFile(path.join(TMP_DIR, `${Date.now()}.json`), JSON.stringify(value, null, 2))
+)

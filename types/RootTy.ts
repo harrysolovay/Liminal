@@ -12,10 +12,12 @@ export function RootTy<T, P extends string = never>(
       RootTy<T, P | P2[number]>(toSchema, [{ template, placeheld }, ...descriptions], applied),
     phantoms<{ T: T; P: P }>(),
     {
-      toSchema,
-      descriptions,
-      applied,
-      apply: <A extends Partial<Record<P, string | number>>>(values: A) => {
+      "": {
+        toSchema,
+        descriptions,
+        applied,
+      },
+      fill: <A extends Partial<Record<P, string | number>>>(values: A) => {
         return RootTy<T, Exclude<P, keyof A>>(toSchema, descriptions, { ...applied, ...values })
       },
       schema(this: RootTy<T, never>) {
@@ -33,7 +35,7 @@ export interface RootTy<T = any, P extends string = string> extends Ty<T, P> {
     template: TemplateStringsArray,
     ...placeheld: P2
   ): RootTy<T, P | P2[number]>
-  apply: <A extends Partial<Record<P, number | string>>>(
+  fill: <A extends Partial<Record<P, number | string>>>(
     values: A,
   ) => RootTy<T, Exclude<P, keyof A>>
   schema(this: RootTy<T, never>): Schema
