@@ -18,6 +18,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno run -A ./tasks/npm.ts
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
