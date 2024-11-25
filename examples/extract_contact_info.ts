@@ -1,5 +1,5 @@
+import Openai from "openai"
 import { ResponseFormat, T } from "structured-outputs"
-import { openai } from "./_common.ts"
 
 const Contact = T.object({
   name: T.string,
@@ -11,7 +11,7 @@ const response_format = ResponseFormat("extract_contact_information", Contact)`
   The contact information extracted from the supplied text.
 `
 
-const contact = await openai.chat.completions
+const contact = await new Openai().chat.completions
   .create({
     model: "gpt-4o-mini",
     response_format,
@@ -29,6 +29,6 @@ const contact = await openai.chat.completions
       },
     ],
   })
-  .then(response_format.parseFirstChoice)
+  .then(response_format.into)
 
 console.log(contact)

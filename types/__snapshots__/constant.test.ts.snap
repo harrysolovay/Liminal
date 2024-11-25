@@ -2,94 +2,40 @@ export const snapshot = {};
 
 snapshot[`constant num 1`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      const: "Hello",
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  const: "Hello",
 }
 `;
 
 snapshot[`constant num 2`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      const: "Hello",
-      description: "One.",
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  const: "Hello",
+  description: "One.",
 }
 `;
 
 snapshot[`constant num 3`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      const: "Hello",
-      description: "Two. One.",
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  const: "Hello",
+  description: "Two. One.",
 }
 `;
 
 snapshot[`constant str 1`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      const: 42,
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  const: 42,
 }
 `;
 
 snapshot[`constant str 2`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      const: 42,
-      description: "One.",
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  const: 42,
+  description: "One.",
 }
 `;
 
 snapshot[`constant str 3`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      const: 42,
-      description: "Two. One.",
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  const: 42,
+  description: "Two. One.",
 }
 `;

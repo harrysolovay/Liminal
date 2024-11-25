@@ -1,3 +1,4 @@
+import type { Schema } from "./schema.ts"
 import { Ty } from "./Ty.ts"
 
 export function taggedUnion<M extends Record<string, Ty>>(members: M): Ty<
@@ -7,21 +8,34 @@ export function taggedUnion<M extends Record<string, Ty>>(members: M): Ty<
       value: M[K]["T"]
     }
   }[keyof M],
-  M[keyof M]["P"]
+  M[keyof M]["P"],
+  false
 > {
-  return Ty((ref) => ({
-    discriminator: "type",
-    anyOf: Object.entries(members).map(([k, v]) => ({
-      type: "object",
-      properties: {
-        type: {
-          type: "string",
-          const: k,
+  const entries = Object.entries(members)
+  return Ty(
+    (subschema) =>
+      entries.length === 1
+        ? variant(entries[0]![0], subschema(entries[0]![1]))
+        : {
+          discriminator: "type",
+          anyOf: entries.map(([k, v]) => variant(k, subschema(v))),
         },
-        value: ref(v),
+    false,
+    (v) => members[v.type]![""].transform(v),
+  )
+}
+
+function variant(type: string, value: Schema) {
+  return {
+    type: "object",
+    properties: {
+      type: {
+        type: "string",
+        const: type,
       },
-      required: ["type", "value"],
-      additionalProperties: false,
-    })),
-  }))
+      value,
+    },
+    required: ["type", "value"],
+    additionalProperties: false,
+  }
 }

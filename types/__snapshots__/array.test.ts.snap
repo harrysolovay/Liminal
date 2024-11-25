@@ -2,56 +2,29 @@ export const snapshot = {};
 
 snapshot[`array 1`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      items: {
-        type: "string",
-      },
-      type: "array",
-    },
+  items: {
+    type: "string",
   },
-  required: [
-    "value",
-  ],
-  type: "object",
+  type: "array",
 }
 `;
 
 snapshot[`array 2`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      description: "One.",
-      items: {
-        type: "string",
-      },
-      type: "array",
-    },
+  description: "One.",
+  items: {
+    type: "string",
   },
-  required: [
-    "value",
-  ],
-  type: "object",
+  type: "array",
 }
 `;
 
 snapshot[`array 3`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      description: "Two. One.",
-      items: {
-        type: "string",
-      },
-      type: "array",
-    },
+  description: "Two. One.",
+  items: {
+    type: "string",
   },
-  required: [
-    "value",
-  ],
-  type: "object",
+  type: "array",
 }
 `;

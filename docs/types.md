@@ -30,6 +30,8 @@ T.string
 
 array object literalUnion taggedUnion
 
+## Transform Types
+
 ## Standard Pattern Types
 
 option wrapper date

@@ -1,25 +1,23 @@
 import type { ChatCompletion, ChatCompletionChoice, JsonSchema } from "./oai.ts"
-import type { RootTy } from "./types/mod.ts"
-import { recombineTaggedTemplateArgs } from "./util/recombineTaggedTemplateArgs.ts"
+import type { Ty } from "./types/mod.ts"
+import { recombine } from "./util/recombine.ts"
 
 export interface ResponseFormat<T> {
   (template: TemplateStringsArray, ...quasis: Array<string>): ResponseFormat<T>
   type: "json_schema"
   /** The desired return type in JSON Schema. */
   json_schema: JsonSchema
-  /** Parse the content of the first choice into a typed object. */
-  parseFirstChoice(completion: ChatCompletion): T
-  /** Parse all choice contents into an array of typed object. */
-  parseChoices(completion: ChatCompletion): Array<T>
+  /** Transform the content of the first choice into a typed object. */
+  into(completion: ChatCompletion): T
 }
 
-export function ResponseFormat<T>(name: string, ty: RootTy<T, never>): ResponseFormat<T> {
+export function ResponseFormat<T>(name: string, ty: Ty<T, never, true>): ResponseFormat<T> {
   return ResponseFormat_(name, ty)
 }
 
 function ResponseFormat_<T>(
   name: string,
-  ty: RootTy<T, never>,
+  ty: Ty<T, never>,
   description?: string,
 ): ResponseFormat<T> {
   return Object.assign(
@@ -27,7 +25,7 @@ function ResponseFormat_<T>(
       ResponseFormat_(
         name,
         ty,
-        description ? `${description} ${recombineTaggedTemplateArgs(template, quasis)}` : undefined,
+        description ? `${description} ${recombine(template, quasis)}` : undefined,
       ),
     {
       type: "json_schema" as const,
@@ -37,11 +35,8 @@ function ResponseFormat_<T>(
         schema: ty.schema(),
         strict: true,
       },
-      parseFirstChoice: (completion: ChatCompletion): T => {
-        return JSON.parse(ResponseFormat.unwrapFirstChoice(completion))
-      },
-      parseChoices: (completion: ChatCompletion): Array<T> => {
-        return ResponseFormat.unwrapChoices(completion).map((content) => JSON.parse(content))
+      into: (completion: ChatCompletion): T => {
+        return ty[""].transform(JSON.parse(ResponseFormat.unwrapFirstChoice(completion)))
       },
       toJSON() {
         const { type, json_schema } = this

@@ -1,3 +1,7 @@
+---
+title: Overview
+---
+
 # Structured Outputs TypeScript
 
 A library for working with
@@ -47,7 +51,9 @@ const Contact = T.object({
 Placehold context to be filled in later. This simplifies reuse of types for different generation use
 cases.
 
-```ts
+```ts twoslash
+import { T } from "structured-outputs"
+// ---cut---
 const Person = T.object({
   hometown: T.string`An ${"nationality"} city.`,
   favoriteFood: T.string`A delicious ${"nationality"} food.`,
@@ -98,7 +104,7 @@ function sendText(args: typeof Contact["T"]): void {
 <br />
 <br />
 
-## Parse Typed Objects
+## Get Typed Objects
 
 Utilize convenience methods to unwrap typed data directly from chat completion responses.
 
@@ -136,7 +142,7 @@ const contact = await openai.chat.completions
       },
     ],
   })
-  .then(response_format.parseFirstChoice)
+  .then(response_format.into)
 
 contact
 // ^?

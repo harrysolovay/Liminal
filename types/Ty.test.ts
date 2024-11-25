@@ -1,17 +1,17 @@
 import { assertEquals } from "@std/assert"
 import { assertTySnapshot } from "test_util"
-import { Ref } from "./Ref.ts"
+import { SubschemaFactory } from "./schema.ts"
 import { Ty } from "./Ty.ts"
 
-export const any = Ty(() => ({
+export const any = Ty<unknown, never, true>(() => ({
   type: ["string", "number", "object", "array", "boolean", "null"],
-}))
+}), true)
 
 Deno.test("Ty", async (t) => {
   await assertTySnapshot(t, any)
 })
 
-const ref = Ref({})
+const ref = SubschemaFactory({})
 
 Deno.test("context chaining", () => {
   const a = any`A.`

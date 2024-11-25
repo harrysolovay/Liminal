@@ -5,7 +5,7 @@ import type { Ty } from "../Ty.ts"
 export function option<S extends Ty>(Some: S): ReturnType<
   typeof taggedUnion<{
     Some: S
-    None: Ty<null, never>
+    None: typeof none
   }>
 > {
   return taggedUnion({

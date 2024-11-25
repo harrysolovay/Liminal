@@ -1,18 +1,18 @@
-import type { RootTy, Schema } from "./types/mod.ts"
-import { recombineTaggedTemplateArgs } from "./util/recombineTaggedTemplateArgs.ts"
+import type { Schema, Ty } from "./types/mod.ts"
+import { recombine } from "./util/recombine.ts"
 
 /** @experimental */
-export function Tool<T>(name: string, ty: RootTy<T, never>): Tool<T> {
+export function Tool<T>(name: string, ty: Ty<T, never>): Tool<T> {
   return Tool_(name, ty)
 }
 
-function Tool_<T>(name: string, ty: RootTy<T, never>, description?: string): Tool<T> {
+function Tool_<T>(name: string, ty: Ty<T, never>, description?: string): Tool<T> {
   return Object.assign(
     (template: TemplateStringsArray, ...quasis: Array<string>) =>
       Tool_(
         name,
         ty,
-        description ? `${description} ${recombineTaggedTemplateArgs(template, quasis)}` : undefined,
+        description ? `${description} ${recombine(template, quasis)}` : undefined,
       ),
     {
       type: "function" as const,

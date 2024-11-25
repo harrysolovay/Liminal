@@ -64,7 +64,7 @@ const character = await openai.chat.completions
     messages: [...yourMessages],
     response_format,
   })
-  .then(response_format.parseFirstChoice)
+  .then(response_format.into)
 ```
 
 ### Utilize The Typed, Unwrapped Data

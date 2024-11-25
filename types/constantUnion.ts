@@ -3,7 +3,7 @@ import { Ty } from "./Ty.ts"
 
 export function constantUnion<M extends Array<number | string>>(
   ...members: M
-): Ty<M[number], never> {
+): Ty<M[number], never, false> {
   const [strings, numbers] = partition(members, (v) => typeof v === "string")
   return Ty(() => ({
     anyOf: [
@@ -20,5 +20,5 @@ export function constantUnion<M extends Array<number | string>>(
         }]
         : [],
     ],
-  }))
+  }), false)
 }

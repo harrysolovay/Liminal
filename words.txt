@@ -14,5 +14,6 @@ shiki
 shikijs
 solovay
 subpaths
+subschema
 twoslash
 vitepress

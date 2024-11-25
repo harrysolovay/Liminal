@@ -75,7 +75,7 @@ const response_format = ResponseFormat("create_supe", Supe)
 > ```
 
 Use your OpenAI client normally, then unwrap the structured output choice with
-`response_format.parseFirstChoice`.
+`response_format.into`.
 
 ```ts twoslash
 import Openai from "openai"
@@ -95,7 +95,7 @@ const supe = await openai.chat.completions
     response_format,
     messages: [{ role: "system", content: [] }],
   })
-  .then(response_format.parseFirstChoice)
+  .then(response_format.into)
 
 supe
 // ^?

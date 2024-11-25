@@ -1,6 +1,6 @@
 export const snapshot = {};
 
-snapshot[`Wrapper 1`] = `
+snapshot[`transform 1`] = `
 {
   additionalProperties: false,
   properties: {
@@ -15,7 +15,7 @@ snapshot[`Wrapper 1`] = `
 }
 `;
 
-snapshot[`Wrapper 2`] = `
+snapshot[`transform 2`] = `
 {
   additionalProperties: false,
   description: "One.",
@@ -31,7 +31,7 @@ snapshot[`Wrapper 2`] = `
 }
 `;
 
-snapshot[`Wrapper 3`] = `
+snapshot[`transform 3`] = `
 {
   additionalProperties: false,
   description: "Two. One.",

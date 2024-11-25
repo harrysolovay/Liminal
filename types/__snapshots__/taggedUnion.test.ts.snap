@@ -2,206 +2,179 @@ export const snapshot = {};
 
 snapshot[`tagged union 1`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      anyOf: [
-        {
-          additionalProperties: false,
-          properties: {
-            type: {
-              const: "A",
-              type: "string",
-            },
-            value: {
-              type: "boolean",
-            },
-          },
-          required: [
-            "type",
-            "value",
-          ],
-          type: "object",
+  anyOf: [
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "A",
+          type: "string",
         },
-        {
-          additionalProperties: false,
-          properties: {
-            type: {
-              const: "B",
-              type: "string",
-            },
-            value: {
-              type: "number",
-            },
-          },
-          required: [
-            "type",
-            "value",
-          ],
-          type: "object",
+        value: {
+          type: "boolean",
         },
-        {
-          additionalProperties: false,
-          properties: {
-            type: {
-              const: "C",
-              type: "string",
-            },
-            value: {
-              type: "string",
-            },
-          },
-          required: [
-            "type",
-            "value",
-          ],
-          type: "object",
-        },
+      },
+      required: [
+        "type",
+        "value",
       ],
-      discriminator: "type",
+      type: "object",
     },
-  },
-  required: [
-    "value",
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "B",
+          type: "string",
+        },
+        value: {
+          type: "number",
+        },
+      },
+      required: [
+        "type",
+        "value",
+      ],
+      type: "object",
+    },
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "C",
+          type: "string",
+        },
+        value: {
+          type: "string",
+        },
+      },
+      required: [
+        "type",
+        "value",
+      ],
+      type: "object",
+    },
   ],
-  type: "object",
+  discriminator: "type",
 }
 `;
 
 snapshot[`tagged union 2`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      anyOf: [
-        {
-          additionalProperties: false,
-          properties: {
-            type: {
-              const: "A",
-              type: "string",
-            },
-            value: {
-              type: "boolean",
-            },
-          },
-          required: [
-            "type",
-            "value",
-          ],
-          type: "object",
+  anyOf: [
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "A",
+          type: "string",
         },
-        {
-          additionalProperties: false,
-          properties: {
-            type: {
-              const: "B",
-              type: "string",
-            },
-            value: {
-              type: "number",
-            },
-          },
-          required: [
-            "type",
-            "value",
-          ],
-          type: "object",
+        value: {
+          type: "boolean",
         },
-        {
-          additionalProperties: false,
-          properties: {
-            type: {
-              const: "C",
-              type: "string",
-            },
-            value: {
-              type: "string",
-            },
-          },
-          required: [
-            "type",
-            "value",
-          ],
-          type: "object",
-        },
+      },
+      required: [
+        "type",
+        "value",
       ],
-      description: "One.",
-      discriminator: "type",
+      type: "object",
     },
-  },
-  required: [
-    "value",
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "B",
+          type: "string",
+        },
+        value: {
+          type: "number",
+        },
+      },
+      required: [
+        "type",
+        "value",
+      ],
+      type: "object",
+    },
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "C",
+          type: "string",
+        },
+        value: {
+          type: "string",
+        },
+      },
+      required: [
+        "type",
+        "value",
+      ],
+      type: "object",
+    },
   ],
-  type: "object",
+  description: "One.",
+  discriminator: "type",
 }
 `;
 
 snapshot[`tagged union 3`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      anyOf: [
-        {
-          additionalProperties: false,
-          properties: {
-            type: {
-              const: "A",
-              type: "string",
-            },
-            value: {
-              type: "boolean",
-            },
-          },
-          required: [
-            "type",
-            "value",
-          ],
-          type: "object",
+  anyOf: [
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "A",
+          type: "string",
         },
-        {
-          additionalProperties: false,
-          properties: {
-            type: {
-              const: "B",
-              type: "string",
-            },
-            value: {
-              type: "number",
-            },
-          },
-          required: [
-            "type",
-            "value",
-          ],
-          type: "object",
+        value: {
+          type: "boolean",
         },
-        {
-          additionalProperties: false,
-          properties: {
-            type: {
-              const: "C",
-              type: "string",
-            },
-            value: {
-              type: "string",
-            },
-          },
-          required: [
-            "type",
-            "value",
-          ],
-          type: "object",
-        },
+      },
+      required: [
+        "type",
+        "value",
       ],
-      description: "Two. One.",
-      discriminator: "type",
+      type: "object",
     },
-  },
-  required: [
-    "value",
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "B",
+          type: "string",
+        },
+        value: {
+          type: "number",
+        },
+      },
+      required: [
+        "type",
+        "value",
+      ],
+      type: "object",
+    },
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "C",
+          type: "string",
+        },
+        value: {
+          type: "string",
+        },
+      },
+      required: [
+        "type",
+        "value",
+      ],
+      type: "object",
+    },
   ],
-  type: "object",
+  description: "Two. One.",
+  discriminator: "type",
 }
 `;

@@ -2,92 +2,65 @@ export const snapshot = {};
 
 snapshot[`constant union 1`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      anyOf: [
-        {
-          enum: [
-            "Hello",
-            "world!",
-          ],
-          type: "string",
-        },
-        {
-          enum: [
-            42,
-            420,
-          ],
-          type: "number",
-        },
+  anyOf: [
+    {
+      enum: [
+        "Hello",
+        "world!",
       ],
+      type: "string",
     },
-  },
-  required: [
-    "value",
+    {
+      enum: [
+        42,
+        420,
+      ],
+      type: "number",
+    },
   ],
-  type: "object",
 }
 `;
 
 snapshot[`constant union 2`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      anyOf: [
-        {
-          enum: [
-            "Hello",
-            "world!",
-          ],
-          type: "string",
-        },
-        {
-          enum: [
-            42,
-            420,
-          ],
-          type: "number",
-        },
+  anyOf: [
+    {
+      enum: [
+        "Hello",
+        "world!",
       ],
-      description: "One.",
+      type: "string",
     },
-  },
-  required: [
-    "value",
+    {
+      enum: [
+        42,
+        420,
+      ],
+      type: "number",
+    },
   ],
-  type: "object",
+  description: "One.",
 }
 `;
 
 snapshot[`constant union 3`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      anyOf: [
-        {
-          enum: [
-            "Hello",
-            "world!",
-          ],
-          type: "string",
-        },
-        {
-          enum: [
-            42,
-            420,
-          ],
-          type: "number",
-        },
+  anyOf: [
+    {
+      enum: [
+        "Hello",
+        "world!",
       ],
-      description: "Two. One.",
+      type: "string",
     },
-  },
-  required: [
-    "value",
+    {
+      enum: [
+        42,
+        420,
+      ],
+      type: "number",
+    },
   ],
-  type: "object",
+  description: "Two. One.",
 }
 `;

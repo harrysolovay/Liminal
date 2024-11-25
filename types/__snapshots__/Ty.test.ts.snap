@@ -2,68 +2,41 @@ export const snapshot = {};
 
 snapshot[`Ty 1`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      type: [
-        "string",
-        "number",
-        "object",
-        "array",
-        "boolean",
-        "null",
-      ],
-    },
-  },
-  required: [
-    "value",
+  type: [
+    "string",
+    "number",
+    "object",
+    "array",
+    "boolean",
+    "null",
   ],
-  type: "object",
 }
 `;
 
 snapshot[`Ty 2`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      description: "One.",
-      type: [
-        "string",
-        "number",
-        "object",
-        "array",
-        "boolean",
-        "null",
-      ],
-    },
-  },
-  required: [
-    "value",
+  description: "One.",
+  type: [
+    "string",
+    "number",
+    "object",
+    "array",
+    "boolean",
+    "null",
   ],
-  type: "object",
 }
 `;
 
 snapshot[`Ty 3`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      description: "Two. One.",
-      type: [
-        "string",
-        "number",
-        "object",
-        "array",
-        "boolean",
-        "null",
-      ],
-    },
-  },
-  required: [
-    "value",
+  description: "Two. One.",
+  type: [
+    "string",
+    "number",
+    "object",
+    "array",
+    "boolean",
+    "null",
   ],
-  type: "object",
 }
 `;

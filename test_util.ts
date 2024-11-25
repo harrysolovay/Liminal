@@ -1,19 +1,29 @@
+import { ensureDir } from "@std/fs"
+import * as path from "@std/path"
 import { assertSnapshot } from "@std/testing/snapshot"
-import { T } from "./mod.ts"
+import { TMP_DIR } from "./constants.ts"
+import type { T } from "./mod.ts"
 
 export async function assertTySnapshot(
   t: Deno.TestContext,
   value: T.Ty<unknown, never>,
 ): Promise<void> {
-  await assertSnapshot(t, maybeWrap(value).schema())
+  await assertSnapshot(t, value.schema())
   const withContext = value`One.`
-  await assertSnapshot(t, maybeWrap(withContext).schema())
-  await assertSnapshot(t, maybeWrap(withContext`Two.`).schema())
+  await assertSnapshot(t, withContext.schema())
+  await assertSnapshot(t, withContext`Two.`.schema())
 }
 
-function maybeWrap<T, P extends string>(value: T.Ty<T, P>) {
-  if (!value.isRoot()) {
-    return T.Wrapper(value)
+export function tap(useValue: <T>(value: T) => void) {
+  return <T>(value: T): T => {
+    useValue(value)
+    return value
   }
-  return value
 }
+
+export const dbg = tap(async (value) => {
+  await ensureDir(TMP_DIR)
+  const dest = path.join(TMP_DIR, `${Date.now()}.json`)
+  await Deno.writeTextFile(dest, JSON.stringify(value, null, 2))
+  console.log(`Written to ${dest}.`)
+})

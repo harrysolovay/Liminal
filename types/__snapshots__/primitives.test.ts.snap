@@ -2,188 +2,80 @@ export const snapshot = {};
 
 snapshot[`boolean 1`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      type: "boolean",
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  type: "boolean",
 }
 `;
 
 snapshot[`boolean 2`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      description: "One.",
-      type: "boolean",
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  description: "One.",
+  type: "boolean",
 }
 `;
 
 snapshot[`boolean 3`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      description: "Two. One.",
-      type: "boolean",
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  description: "Two. One.",
+  type: "boolean",
 }
 `;
 
 snapshot[`none 1`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      type: "null",
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  type: "null",
 }
 `;
 
 snapshot[`none 2`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      description: "One.",
-      type: "null",
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  description: "One.",
+  type: "null",
 }
 `;
 
 snapshot[`none 3`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      description: "Two. One.",
-      type: "null",
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  description: "Two. One.",
+  type: "null",
 }
 `;
 
 snapshot[`number 1`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      type: "number",
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  type: "number",
 }
 `;
 
 snapshot[`number 2`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      description: "One.",
-      type: "number",
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  description: "One.",
+  type: "number",
 }
 `;
 
 snapshot[`number 3`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      description: "Two. One.",
-      type: "number",
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  description: "Two. One.",
+  type: "number",
 }
 `;
 
 snapshot[`string 1`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      type: "string",
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  type: "string",
 }
 `;
 
 snapshot[`string 2`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      description: "One.",
-      type: "string",
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  description: "One.",
+  type: "string",
 }
 `;
 
 snapshot[`string 3`] = `
 {
-  additionalProperties: false,
-  properties: {
-    value: {
-      description: "Two. One.",
-      type: "string",
-    },
-  },
-  required: [
-    "value",
-  ],
-  type: "object",
+  description: "Two. One.",
+  type: "string",
 }
 `;
