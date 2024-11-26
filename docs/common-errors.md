@@ -7,16 +7,7 @@ next: false
 
 # Common Errors
 
-`structured-outputs` tries to model OpenAI structured outputs such that would-be service errors are
-identified immediately by the TypeScript checker. We unfortunately cannot identify all errors at
-compile time. The following is broken up into two sections:
-
-1. [Type Errors](#type-errors)
-2. [Service Errors](#service-errors)
-
-## Type Errors
-
-### Root Types Must Be Object Types
+## Root Types Must Be Object Types
 
 OpenAI only supports objects as root types
 ([see the official documentation](https://platform.openai.com/docs/guides/structured-outputs#root-objects-must-not-be-anyof)).
@@ -32,7 +23,7 @@ import { ResponseFormat, T } from "structured-outputs"
 const response_format = ResponseFormat("my_format", T.string)
 ```
 
-### Unfilled Parameters
+## Unfilled Parameters
 
 At the time of `ResponseFormat` creation, arguments must be applied to all parameters of the root
 type.
@@ -62,7 +53,7 @@ const Root = T.object({
 ResponseFormat("my_format", Root.fill({ placeheld_key: "missing context" }))
 ```
 
-### Context Parameter Key Widening
+## Context Parameter Keys
 
 Context parameter keys are tracked within the type system to ensure all have been applied at the
 time of `ResponseFormat` creation. Widening of the union type of all parameter keys would break this
@@ -88,7 +79,3 @@ const MyType = T
   .string`Some text we want to interpolate: ${"_"}.`
   .fill({ _: "the text" })
 ```
-
-## Service Errors
-
-### 500+ Enums
