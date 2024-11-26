@@ -1,4 +1,4 @@
-import type { ChatCompletion, ChatCompletionChoice, JsonSchema } from "./oai.ts"
+import type Openai from "openai"
 import type { Ty } from "./types/mod.ts"
 import { recombine } from "./util/recombine.ts"
 
@@ -6,7 +6,7 @@ export interface ResponseFormat<T> {
   (template: TemplateStringsArray, ...quasis: Array<string>): ResponseFormat<T>
   type: "json_schema"
   /** The desired return type in JSON Schema. */
-  json_schema: JsonSchema
+  json_schema: Openai.ResponseFormatJSONSchema["json_schema"]
   /** Transform the content of the first choice into a typed object. */
   into(completion: ChatCompletion): T
 }
@@ -59,7 +59,7 @@ export namespace ResponseFormat {
     return completions.choices.map(unwrapChoice)
   }
 
-  function unwrapChoice(choice: ChatCompletionChoice) {
+  function unwrapChoice(choice: Openai.Chat.Completions.ChatCompletion.Choice) {
     const { finish_reason, message } = choice
     if (finish_reason !== "stop") {
       throw new ResponseFormatUnwrapError(
@@ -82,3 +82,5 @@ export namespace ResponseFormat {
 export class ResponseFormatUnwrapError extends Error {
   override readonly name = "UnwrapResponseError"
 }
+
+type ChatCompletion = Openai.Chat.ChatCompletion

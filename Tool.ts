@@ -1,12 +1,11 @@
 import type { Schema, Ty } from "./types/mod.ts"
 import { recombine } from "./util/recombine.ts"
 
-/** @experimental */
-export function Tool<T>(name: string, ty: Ty<T, never>): Tool<T> {
+export function Tool<T>(name: string, ty: Ty<T, never, true>): Tool<T> {
   return Tool_(name, ty)
 }
 
-function Tool_<T>(name: string, ty: Ty<T, never>, description?: string): Tool<T> {
+function Tool_<T>(name: string, ty: Ty<T, never, true>, description?: string): Tool<T> {
   return Object.assign(
     (template: TemplateStringsArray, ...quasis: Array<string>) =>
       Tool_(

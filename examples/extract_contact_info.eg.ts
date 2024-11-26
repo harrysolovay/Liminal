@@ -1,4 +1,5 @@
 import Openai from "openai"
+import "@std/dotenv/load"
 import { ResponseFormat, T } from "structured-outputs"
 
 const Contact = T.object({
