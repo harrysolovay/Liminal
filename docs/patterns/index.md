@@ -16,8 +16,8 @@ These types' context can be parameterized, such that end developers can apply co
 
 ## Requesting Patterns
 
-If you have an idea for a `structured-outputs` pattern library, please feel free to open an issue in
-the GitHub.
+If you have an idea for a `structured-outputs` pattern library, please feel free to
+[open an issue](https://github.com/harrysolovay/structured-outputs/issues/new) in the GitHub.
 
 If you already created a library, please feel free to submit a pull request that adds it to the
 "Pattern Libraries" list of this very documentation.

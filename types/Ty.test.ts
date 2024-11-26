@@ -10,33 +10,33 @@ Deno.test("Ty", async (t) => {
   await assertTySnapshot(t, any)
 })
 
-const ref = SubschemaFactory({})
+const subschema = SubschemaFactory({})
 
 Deno.test("context chaining", () => {
   const a = any`A.`
-  assertEquals(ref(a).description, "A.")
+  assertEquals(subschema(a).description, "A.")
 
   const b = a`B.`
-  assertEquals(ref(b).description, "B. A.")
+  assertEquals(subschema(b).description, "B. A.")
 
   const c = b`C.`
-  assertEquals(ref(c).description, "C. B. A.")
+  assertEquals(subschema(c).description, "C. B. A.")
 })
 
 Deno.test("numeric parameter key", () => {
   const t = any`Arg: ${1}.`
-  assertEquals(ref(t.fill({ 1: "value" })).description, "Arg: value.")
+  assertEquals(subschema(t.fill({ 1: "value" })).description, "Arg: value.")
 })
 
 Deno.test("string parameter key", () => {
   const t = any`Arg: ${"P"}.`
-  assertEquals(ref(t.fill({ P: "value" })).description, "Arg: value.")
+  assertEquals(subschema(t.fill({ P: "value" })).description, "Arg: value.")
 })
 
 Deno.test("symbol parameter key", () => {
   const sym = Symbol()
   const t = any`Arg: ${sym}.`
-  assertEquals(ref(t.fill({ [sym]: "value" })).description, "Arg: value.")
+  assertEquals(subschema(t.fill({ [sym]: "value" })).description, "Arg: value.")
 })
 
 Deno.test("parameterized with chaining", () => {
@@ -44,5 +44,5 @@ Deno.test("parameterized with chaining", () => {
   const b = a`b: ${"B"}.`
   const c = b`c: ${"C"}.`
   const d = c.fill({ A: "A", B: "B", C: "C" })
-  assertEquals(ref(d).description, "c: C. b: B. a: A.")
+  assertEquals(subschema(d).description, "c: C. b: B. a: A.")
 })

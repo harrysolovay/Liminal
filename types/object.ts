@@ -4,9 +4,9 @@ export function object<F extends Record<string, Ty>>(
   fields: F,
 ): Ty<{ [K in keyof F]: F[K]["T"] }, F[keyof F]["P"], true> {
   return Ty(
-    (ref) => ({
+    (subschema) => ({
       type: "object",
-      properties: Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, ref(v)])),
+      properties: Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, subschema(v)])),
       additionalProperties: false,
       required: Object.keys(fields),
     }),

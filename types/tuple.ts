@@ -5,9 +5,11 @@ export function tuple<F extends Ty[]>(
 ): Ty<{ [K in keyof F]: F[K]["T"] }, F[number]["P"], true> {
   const { length } = elements
   return Ty(
-    (ref) => ({
+    (subschema) => ({
       type: "object",
-      properties: Object.fromEntries(Array.from({ length }, (_0, i) => [i, ref(elements[i]!)])),
+      properties: Object.fromEntries(
+        Array.from({ length }, (_0, i) => [i, subschema(elements[i]!)]),
+      ),
       additionalProperties: false,
       required: Object.keys(Array.from({ length }, (_0, i) => i)),
     }),

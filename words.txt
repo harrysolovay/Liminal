@@ -12,5 +12,6 @@ shikijs
 solovay
 subpaths
 subschema
+subschemas
 twoslash
 vitepress
