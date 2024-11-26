@@ -106,7 +106,9 @@ In the following example, the return type is simply the sole parameter type.
 ```ts twoslash
 import { T } from "structured-outputs"
 // ---cut---
-export function MostUnlikely<X extends T.Ty>(ty: X): X {
+export function MostUnlikely<T, P extends keyof any, R extends boolean>(
+  ty: T.Ty<T, P, R>,
+): T.Ty<T, P, R> {
   return ty`Ensure that this generated type is the most unlikely instance of itself.`
 }
 ```
