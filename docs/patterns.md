@@ -88,7 +88,7 @@ your pattern library to JSR, be weary of [slow types](https://jsr.io/docs/about-
 In the previous code block––for example––we would need to add an explicit type to avoid static
 analysis degradation.
 
-```ts
+```ts twoslash
 import { T } from "structured-outputs"
 
 export namespace P {
@@ -139,11 +139,13 @@ here's how you can create a custom type.
 
 Let's create an `any` type (not intended to be used in production).
 
-```ts
-const any: Ty<any, never, false> = Ty(
+```ts twoslash
+import { T } from "structured-outputs"
+// ---cut---
+const any: T.Ty<any, never, false> = T.Ty(
   () => ({
-    type: "object",,
-    properties: {}
+    type: "object",
+    properties: {},
   }),
   false,
 )
