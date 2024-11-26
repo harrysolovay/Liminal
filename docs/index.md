@@ -52,8 +52,8 @@ const Contact = T.object({
 
 ## Parameterized Context
 
-Placehold context to be filled in later. This simplifies reuse of types for different generation use
-cases.
+Parameterized context to be filled in later (even when contained within any number of wrapper
+types). This simplifies reuse of types for different generation use cases.
 
 ```ts twoslash
 import { T } from "structured-outputs"

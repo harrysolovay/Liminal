@@ -6,9 +6,6 @@ dprint
 esbenp
 harrysolovay
 openai
-placeheld
-placehold
-placeholding
 quasis
 shiki
 shikijs

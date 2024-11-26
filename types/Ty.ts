@@ -4,12 +4,12 @@ import type { EnsureLiteralKeys } from "../util/util_types.ts"
 export interface Ty<T = any, P extends keyof any = keyof any, R extends boolean = boolean> {
   <P2 extends Array<keyof any>>(
     template: TemplateStringsArray,
-    ...placeheld: EnsureLiteralKeys<P2>
+    ...params: EnsureLiteralKeys<P2>
   ): Ty<T, P | P2[number], R>
 
   /** The native TypeScript type. The runtime value is nonexistent. */
   T: T
-  /** The literal types of the placeheld keys. The runtime value is nonexistent. */
+  /** The literal types of the parameter keys. The runtime value is nonexistent. */
   P: P
 
   "": {
@@ -20,7 +20,7 @@ export interface Ty<T = any, P extends keyof any = keyof any, R extends boolean 
     applied: Applied
   }
 
-  /** Inject context into that which is placeheld. */
+  /** Apply context to parameters. */
   fill: <A extends Partial<Record<P, number | string>>>(
     values: A,
   ) => Ty<T, Exclude<P, keyof A>, R>
@@ -37,12 +37,12 @@ export function Ty<T, P extends keyof any, R extends boolean, I = T>(
   applied: Applied = {},
 ): Ty<T, P, R> {
   return Object.assign(
-    <P2 extends Array<keyof any>>(template: TemplateStringsArray, ...placeheld: P2) =>
+    <P2 extends Array<keyof any>>(template: TemplateStringsArray, ...params: P2) =>
       Ty<T, P | P2[number], R, I>(
         subschema,
         root,
         transform,
-        [{ template, placeheld }, ...context],
+        [{ template, params }, ...context],
         applied,
       ),
     {} as { T: T; P: P },
@@ -74,7 +74,7 @@ export function SubschemaFactory(applied: Applied): SubschemaFactory {
   return (ty) => {
     applied = { ...applied, ...ty[""].applied }
     const description = ty[""].context
-      .map(({ template, placeheld }) => recombine(template, placeheld.map((k) => applied[k]!)))
+      .map(({ template, params }) => recombine(template, params.map((k) => applied[k]!)))
       .join(" ")
     return {
       ...ty[""].subschema(SubschemaFactory(applied)),
@@ -85,7 +85,7 @@ export function SubschemaFactory(applied: Applied): SubschemaFactory {
 
 interface Context {
   template: TemplateStringsArray
-  placeheld: Array<keyof any>
+  params: Array<keyof any>
 }
 type Applied = Record<keyof any, number | string>
 

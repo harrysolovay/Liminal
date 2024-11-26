@@ -35,7 +35,7 @@ Therefore, an error is produced if you try to create a `ResponseFormat` with an 
 import { ResponseFormat, T } from "structured-outputs"
 // ---cut---
 const Root = T.object({
-  value: T.string`Placeheld: ${"placeheld_key"}.`,
+  value: T.string`Arg: ${"param_key"}.`,
 })
 
 ResponseFormat("my_format", Root)
@@ -47,10 +47,10 @@ To solve this error, fill in the missing parameter.
 import { ResponseFormat, T } from "structured-outputs"
 
 const Root = T.object({
-  value: T.string`Placeheld: ${"placeheld_key"}.`,
+  value: T.string`Arg: ${"param_key"}.`,
 })
 // ---cut---
-ResponseFormat("my_format", Root.fill({ placeheld_key: "missing context" }))
+ResponseFormat("my_format", Root.fill({ param_key: "missing context" }))
 ```
 
 ## Context Parameter Keys
@@ -64,9 +64,9 @@ parameterize context with a widened `number`, `string` or `symbol`.
 // @errors: 2345
 import { T } from "structured-outputs"
 // ---cut---
-declare const my_key: string
+declare const param_key: string
 
-const MyType = T.string`Placeheld: ${my_key}`
+const MyType = T.string`Arg: ${param_key}`
 ```
 
 If you see this error, it may indicate that you are trying to interpolate some raw context text

@@ -75,7 +75,10 @@ function patternsItems(): DefaultTheme.SidebarItem[] {
       collapsed: false,
       items: [
         { text: "Overview", link: "patterns" },
+        { text: "Standard Patterns", link: "patterns/std" },
         { text: "Authoring", link: "patterns/authoring" },
+        { text: "Conventions", link: "patterns/conventions" },
+        { text: "Custom Types", link: "patterns/custom-types" },
       ],
     },
     {
