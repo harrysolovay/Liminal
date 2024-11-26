@@ -7,12 +7,88 @@ next: false
 
 # Common Errors
 
-## Root Type Must Be Object
+`structured-outputs` tries to model OpenAI structured outputs such that would-be service errors are
+identified immediately by the TypeScript checker. We unfortunately cannot identify all errors at
+compile time. The following is broken up into two sections:
 
-## Placeholder Widening
+1. [Type Errors](#type-errors)
+2. [Service Errors](#service-errors)
 
-## 500+ Enums
+## Type Errors
 
-## Placeholder with widened key type
+### Root Types Must Be Object Types
 
-Argument of type '[string]' is not assignable to parameter of type 'never'
+OpenAI only supports objects as root types
+([see the official documentation](https://platform.openai.com/docs/guides/structured-outputs#root-objects-must-not-be-anyof)).
+Because of this constraint, each `Ty` is encoded with whether it can be used as a root type.
+
+Therefore, an error is produced if you try to specify a non-root type as the `ResponseFormat` or
+`Tool` root type.
+
+```ts twoslash
+// @errors: 2345
+import { ResponseFormat, T } from "structured-outputs"
+// ---cut---
+const response_format = ResponseFormat("my_format", T.string)
+```
+
+### Unfilled Parameters
+
+At the time of `ResponseFormat` creation, arguments must be applied to all parameters of the root
+type.
+
+Therefore, an error is produced if you try to create a `ResponseFormat` with an unapplied type.
+
+```ts twoslash
+// @errors: 2345
+import { ResponseFormat, T } from "structured-outputs"
+// ---cut---
+const Root = T.object({
+  value: T.string`Placeheld: ${"placeheld_key"}.`,
+})
+
+ResponseFormat("my_format", Root)
+```
+
+To solve this error, fill in the missing parameter.
+
+```ts twoslash
+import { ResponseFormat, T } from "structured-outputs"
+
+const Root = T.object({
+  value: T.string`Placeheld: ${"placeheld_key"}.`,
+})
+// ---cut---
+ResponseFormat("my_format", Root.fill({ placeheld_key: "missing context" }))
+```
+
+### Context Parameter Key Widening
+
+Context parameter keys are tracked within the type system to ensure all have been applied at the
+time of `ResponseFormat` creation. Widening of the union type of all parameter keys would break this
+type-level assurance. Therefore, widened key types are disallowed; it is not possible to
+parameterize context with a widened `number`, `string` or `symbol`.
+
+```ts twoslash
+// @errors: 2345
+import { T } from "structured-outputs"
+// ---cut---
+declare const my_key: string
+
+const MyType = T.string`Placeheld: ${my_key}`
+```
+
+If you see this error, it may indicate that you are trying to interpolate some raw context text
+rather than parameterize the context. In cases such as this, utilize a short-lived key instead.
+
+```ts twoslash
+import { T } from "structured-outputs"
+// ---cut---
+const MyType = T
+  .string`Some text we want to interpolate: ${"_"}.`
+  .fill({ _: "the text" })
+```
+
+## Service Errors
+
+### 500+ Enums

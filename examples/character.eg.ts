@@ -10,7 +10,7 @@ const Character = T.object({
   age: T.number`Ensure between 1 and 110.`,
   home: T.string`The name of a fictional realm of magic and wonder.`,
   disposition: T.constantUnion("Optimistic", "Reserved", "Inquisitive"),
-  dob: T.Date`Prehistoric`,
+  dob: T.Date`Prehistoric $`,
 })
 
 const response_format = ResponseFormat("create_character", Character)`
