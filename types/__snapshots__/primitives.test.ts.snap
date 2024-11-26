@@ -20,26 +20,6 @@ snapshot[`boolean 3`] = `
 }
 `;
 
-snapshot[`none 1`] = `
-{
-  type: "null",
-}
-`;
-
-snapshot[`none 2`] = `
-{
-  description: "One.",
-  type: "null",
-}
-`;
-
-snapshot[`none 3`] = `
-{
-  description: "Two. One.",
-  type: "null",
-}
-`;
-
 snapshot[`number 1`] = `
 {
   type: "number",

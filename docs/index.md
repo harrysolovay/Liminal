@@ -68,19 +68,25 @@ const AmericanPerson = Person.fill({
 
 Create `ResponseFormat` for use with OpenAI clients.
 
-```ts twoslash
-import { T } from "structured-outputs"
+```ts{1-3,7} twoslash
+import Openai from "openai"
+import { ResponseFormat, T } from "structured-outputs"
+declare const openai: Openai
 const Contact = T.object({
   name: T.string,
   phone: T.number,
   email: T.string,
 })
 // ---cut---
-import { ResponseFormat } from "structured-outputs"
-
 const response_format = ResponseFormat("extract_contact_information", Contact)`
   The contact information extracted from the supplied text.
 `
+
+const contact = await openai.chat.completions.create({
+  model: "gpt-4o-mini",
+  response_format,
+  messages: [],
+})
 ```
 
 ## Native TypeScript Types
@@ -112,8 +118,7 @@ Utilize convenience methods to unwrap typed data directly from chat completion r
 import Openai from "openai"
 import { ResponseFormat, T } from "structured-outputs"
 
-declare const OPENAI_API_KEY: string
-export const openai = new Openai({ apiKey: OPENAI_API_KEY })
+declare const openai: Openai
 
 const response_format = ResponseFormat(
   "",
@@ -164,7 +169,9 @@ const Contact = T.object({
 })
 declare function assertEquals<T>(expected: T, actual: T): void
 // ---cut---
-assertEquals(Contact.schema(), {
+const schema = Contact.schema()
+
+assertEquals(schema, {
   type: "object",
   properties: {
     name: {

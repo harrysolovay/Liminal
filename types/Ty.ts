@@ -1,9 +1,10 @@
 import { recombine } from "../util/recombine.ts"
+import type { EnsureLiteralKeys } from "../util/util_types.ts"
 
 export interface Ty<T = any, P extends keyof any = keyof any, R extends boolean = boolean> {
   <P2 extends Array<keyof any>>(
     template: TemplateStringsArray,
-    ...placeheld: P2
+    ...placeheld: EnsureLiteralKeys<P2>
   ): Ty<T, P | P2[number], R>
 
   /** The native TypeScript type. The runtime value is nonexistent. */

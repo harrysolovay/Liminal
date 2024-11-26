@@ -12,3 +12,7 @@ next: false
 ## Placeholder Widening
 
 ## 500+ Enums
+
+## Placeholder with widened key type
+
+Argument of type '[string]' is not assignable to parameter of type 'never'

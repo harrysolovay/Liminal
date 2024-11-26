@@ -28,8 +28,10 @@ deno add jsr:@crosshatch/structured-outputs
 
 ## Node.js-specific Setup
 
-The `structured-outputs` NPM package does not contain a CommonJS build; only ES Modules are
-supported. Therefore, we must specify `module` as the value of the `package.json`'s `type` field.
+`structured-outputs`'s NPM package does not contain a CommonJS build; only ES Modules are supported.
+Therefore, we must specify `module` as the value of the `package.json`'s `type` field.
+
+`package.json`
 
 ```diff
 {
@@ -40,7 +42,8 @@ supported. Therefore, we must specify `module` as the value of the `package.json
 
 ## Basic Example
 
-Let's generate a character with superpowers according to the following shape:
+Let's say we're generating a superhero story. Let's create a type with which we can generate
+character super-abled characters (`Supe`s):
 
 ```ts twoslash
 import { ResponseFormat, T } from "structured-outputs"
@@ -49,6 +52,7 @@ const Supe = T.object({
   name: T.string`The super-abled character's name.`,
   role: T.constantUnion("Hero", "Villain", "Indifferent"),
   age: T.number`Between 18 and 200 years of age.`,
+  power: T.string`The name of a supernatural ability.`,
 })
 ```
 
@@ -64,20 +68,37 @@ const Supe = T.object({
 })
 // ---cut---
 const response_format = ResponseFormat("create_supe", Supe)
+//    ^?
 ```
 
-> Optionally give a description to the response format.
->
-> ```ts
-> const response_format = ResponseFormat("create_supe", Supe)`
->   Information about a super-abled character.
-> `
-> ```
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
 
-Use your OpenAI client normally, then unwrap the structured output choice with
-`response_format.into`.
+We can give a description to the response format if we so choose.
 
 ```ts twoslash
+import { ResponseFormat, T } from "structured-outputs"
+
+const Supe = T.object({
+  name: T.string,
+  role: T.constantUnion("Hero", "Villain", "Indifferent"),
+  age: T.number,
+})
+// ---cut---
+const response_format = ResponseFormat("create_supe", Supe)`
+  Information about a super-abled character.
+`
+```
+
+Finally, send the completion request via the OpenAI TypeScript client, then use the
+`ResponseFormat`'s `into` method to parse the inner JSON and deserialize any sub-values according to
+the `T`-described type.
+
+```ts{7} twoslash
 import Openai from "openai"
 import { ResponseFormat, T } from "structured-outputs"
 
