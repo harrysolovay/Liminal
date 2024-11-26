@@ -1,7 +1,7 @@
 ---
 prev:
-  text: Patterns
-  link: patterns
+  text: Context
+  link: context
 next: false
 ---
 

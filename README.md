@@ -6,8 +6,8 @@
   instructions.
 - [OpenAI Guide &rarr;](https://platform.openai.com/docs/guides/structured-outputs)<br />The OpenAI
   platform's guide on Structured Outputs
-- [Pattern Libraries &rarr;](https://structured-outputs.dev/patterns)<br />Pattern libraries
-  modeling common schemas using Structured Outputs TypeScript.
+- [Pattern Libraries &rarr;](https://structured-outputs.dev/patterns)<br />Pattern libraries for
+  common use cases with Structured Outputs TypeScript.
 
 ## Installation
 

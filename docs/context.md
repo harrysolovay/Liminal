@@ -3,8 +3,8 @@ prev:
   text: Types
   link: types
 next:
-  text: Patterns
-  link: patterns
+  text: Common Errors
+  link: common-errors
 ---
 
 # Context

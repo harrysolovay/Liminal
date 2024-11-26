@@ -1,7 +1,7 @@
 ---
 prev:
   text: Overview
-  link: overview
+  link: /
 next:
   text: Types
   link: types

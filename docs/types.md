@@ -148,8 +148,22 @@ const Organism = T.taggedUnion({
 })
 
 Organism
-// TODO: reenable ^? after union flattening
+// ^?
 ```
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
 
 ## Transform Types
 

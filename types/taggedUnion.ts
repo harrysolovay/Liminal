@@ -1,12 +1,7 @@
 import { Ty } from "./Ty.ts"
 
-// TODO: flatten signature
 export function taggedUnion<M extends Record<string, Ty | null>>(members: M): Ty<
-  {
-    [K in keyof M]:
-      & { type: K }
-      & (M[K] extends Ty ? { value: M[K]["T"] } : {})
-  }[keyof M],
+  { [K in keyof M]: M[K] extends Ty ? { type: K; value: M[K]["T"] } : { type: K } }[keyof M],
   Exclude<M[keyof M], null>["P"],
   false
 > {

@@ -1,5 +1,5 @@
 import { transformerTwoslash } from "@shikijs/vitepress-twoslash"
-import { defineConfig } from "vitepress"
+import { DefaultTheme, defineConfig } from "vitepress"
 import { LIB_DESCRIPTION } from "../../constants.ts"
 
 export default defineConfig({
@@ -7,6 +7,10 @@ export default defineConfig({
   description: LIB_DESCRIPTION,
   markdown: {
     codeTransformers: [transformerTwoslash()],
+    theme: {
+      dark: "github-dark",
+      light: "github-light",
+    },
   },
   sitemap: {
     hostname: "http://structured-outputs.dev",
@@ -18,28 +22,27 @@ export default defineConfig({
     editLink: {
       pattern: "https://github.com/harrysolovay/structured-outputs/edit/main/docs/:path",
     },
-    nav: [{
-      text: "Manual",
-      link: "/",
-    }],
+    nav: [
+      {
+        text: "Manual",
+        link: "/",
+      },
+      {
+        text: "Patterns",
+        link: "/patterns",
+      },
+    ],
     search: {
       provider: "local",
     },
     sidebar: {
       "/": {
         base: "",
-        items: [{
-          text: "", // For now
-          collapsed: false,
-          items: [
-            { text: "Overview", link: "/" },
-            { text: "Quickstart", link: "quickstart" },
-            { text: "Types", link: "types" },
-            { text: "Context", link: "context" },
-            { text: "Patterns", link: "patterns" },
-            { text: "Common Errors", link: "common-errors" },
-          ],
-        }],
+        items: manualItems(),
+      },
+      "/patterns/": {
+        base: "",
+        items: patternsItems(),
       },
     },
     socialLinks: [{
@@ -48,3 +51,39 @@ export default defineConfig({
     }],
   },
 })
+
+function manualItems(): DefaultTheme.SidebarItem[] {
+  return [
+    {
+      text: "Manual",
+      collapsed: false,
+      items: [
+        { text: "Overview", link: "/" },
+        { text: "Quickstart", link: "quickstart" },
+        { text: "Types", link: "types" },
+        { text: "Context", link: "context" },
+        { text: "Common Errors", link: "common-errors" },
+      ],
+    },
+  ]
+}
+
+function patternsItems(): DefaultTheme.SidebarItem[] {
+  return [
+    {
+      text: "Patterns",
+      collapsed: false,
+      items: [
+        { text: "Overview", link: "patterns" },
+        { text: "Authoring", link: "patterns/authoring" },
+      ],
+    },
+    {
+      text: "Pattern Libraries",
+      collapsed: false,
+      items: [
+        { text: "..." },
+      ],
+    },
+  ]
+}

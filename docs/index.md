@@ -1,5 +1,9 @@
 ---
 title: Overview
+prev: false
+next:
+  title: Quickstart
+  link: quickstart
 ---
 
 # Structured Outputs TypeScript

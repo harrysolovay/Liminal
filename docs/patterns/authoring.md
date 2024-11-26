@@ -1,15 +1,11 @@
 ---
 prev:
-  text: Context
-  link: context
-next:
-  text: Common Errors
-  link: common-errors
+  text: Patterns Overview
+  link: patterns
+next: false
 ---
 
-# Patterns
-
-Patterns abstract over the core types described in [the types section](./types.md).
+# Authoring Patterns
 
 ## Functional Patterns
 
@@ -51,8 +47,16 @@ import { T } from "structured-outputs"
 const Critique = T.Option(T.string)
 
 Critique
-// TODO: enable ^? upon union flattening
+// ^?
 ```
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
 
 ### `Date`
 
