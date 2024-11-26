@@ -123,7 +123,7 @@ export namespace P {
 
 export function WithTone<T, P extends keyof any, R extends boolean>(
   ty: T.Ty<T, P, R>,
-): T.Ty<T, P | P.Tone> {
+): T.Ty<T, P | typeof P.Tone> {
   return ty`Generate with a tone of ${P.Tone}.`
 }
 ```
@@ -147,4 +147,5 @@ const any: Ty<any, never, false> = Ty(
 )
 ```
 
-You could similarly create a function that returns the `Ty`.
+You could similarly create a functional pattern, which accepts arguments and uses them to form the
+returned `Ty`.
