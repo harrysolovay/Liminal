@@ -1,5 +1,5 @@
 import { recombine } from "../util/recombine.ts"
-import type { EnsureLiteralKeys } from "../util/util_types.ts"
+import type { EnsureLiteralKeys } from "../util/type_util.ts"
 
 export interface Ty<T = any, P extends keyof any = keyof any, R extends boolean = boolean> {
   <P2 extends Array<keyof any>>(

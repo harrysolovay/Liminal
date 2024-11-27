@@ -11,6 +11,7 @@ const Character = T.object({
   home: T.string`The name of a fictional realm of magic and wonder.`,
   disposition: T.constantUnion("Optimistic", "Reserved", "Inquisitive"),
   dob: T.Date`Prehistoric $`,
+  hash: T.union(T.boolean, T.number, T.string),
 })
 
 const response_format = ResponseFormat("create_character", Character)`

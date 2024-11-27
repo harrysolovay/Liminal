@@ -1,18 +1,28 @@
+import type { Expand } from "../util/type_util.ts"
 import { Ty } from "./Ty.ts"
 
-export function taggedUnion<M extends Record<string, Ty | null>>(members: M): Ty<
-  { [K in keyof M]: M[K] extends Ty ? { type: K; value: M[K]["T"] } : { type: K } }[keyof M],
+export function taggedUnion<K extends keyof any, M extends Record<string, Ty | null>>(
+  tag: K,
+  members: EnsureAtLeast2UnionMembers<M>,
+): Ty<
+  Expand<
+    {
+      [V in keyof M]: (
+        & { [_ in K]: V }
+        & (M[V] extends Ty ? { value: M[V]["T"] } : {})
+      )
+    }[keyof M]
+  >,
   Exclude<M[keyof M], null>["P"],
   false
 > {
-  const entries = Object.entries(members)
   return Ty(
     (subschema) => ({
       discriminator: "type",
-      anyOf: entries.map(([k, v]) => ({
+      anyOf: Object.entries(members).map(([k, v]) => ({
         type: "object",
         properties: {
-          type: {
+          [tag]: {
             type: "string",
             const: k,
           },
@@ -25,6 +35,13 @@ export function taggedUnion<M extends Record<string, Ty | null>>(members: M): Ty
       })),
     }),
     false,
-    (v) => members[v.type]![""].transform(v),
+    (v) => members[v[tag]]![""].transform(v),
   )
 }
+
+export type EnsureAtLeast2UnionMembers<
+  V,
+  T extends keyof V = keyof V,
+  B = T,
+> = T extends any ? ([B] extends [T] ? never : V)
+  : never

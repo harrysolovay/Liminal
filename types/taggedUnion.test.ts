@@ -5,7 +5,7 @@ import { taggedUnion } from "./taggedUnion.ts"
 Deno.test("tagged union", async (t) => {
   await assertTySnapshot(
     t,
-    taggedUnion({
+    taggedUnion("type", {
       A: boolean,
       B: number,
       C: string,
