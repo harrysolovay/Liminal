@@ -1,22 +1,30 @@
-import { Type } from "./Type.ts"
+import { type Refiners, Type } from "./Type.ts"
 import { assert } from "./util/assert.ts"
 
-// TODO: why the need for the explicit return type of `atom`?
-export const string = Type.declare<string, {
-  minLength: number
-  maxLength: number
-}>(
+export const string: Type<
+  string,
+  Refiners<{
+    minLength: number
+    maxLength: number
+  }>,
+  never
+> = Type.declare(
   {
+    name: "string",
+    source: {
+      getType: (): Type => string,
+    },
+    subschema: () => ({ type: "string" }),
+    *assert(value, ctx) {
+      const x = yield* ctx.assertExists(value)
+      const y = yield* ctx.assertString(x)
+    },
+    transform: (value) => value,
     assertRefinementsValid: ({ minLength, maxLength }) => {
       assert(
-        typeof minLength === "number"
-          && typeof maxLength === "number"
-          && minLength <= maxLength,
+        typeof minLength === "number" && typeof maxLength === "number" && minLength <= maxLength,
       )
     },
-    assert: (value) => assert(typeof value === "string"),
-    transform: (value) => value,
-    subschema: () => ({ type: "string" }),
     assertRefinements: {
       minLength: (value, minLength) => assert(value.length >= minLength),
       maxLength: (value, maxLength) => assert(value.length <= maxLength),

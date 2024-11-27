@@ -1,5 +1,12 @@
-import type { EnsureLiteralKeys, Expand } from "../util/type_util.ts"
-import { type Args, Context, type ExcludeArgs, type Params } from "./Context.ts"
+import type { EnsureLiteralKeys } from "../util/type_util.ts"
+import {
+  type Args,
+  type AvailableRefiners,
+  Context,
+  type ExcludeArgs,
+  type ExcludeRefiners,
+  type Params,
+} from "./Context.ts"
 import type { Schema } from "./Schema.ts"
 
 /** The core unit of structure output schema composition. */
@@ -20,20 +27,8 @@ export interface Type<T = any, R extends Refinements = any, P extends keyof any 
   /** Container to be filled with context parts as chaining occurs. */
   ctx: Context<T, R, P>
 
-  refine<
-    const V extends {
-      [K in keyof R as R[K] extends Refiner<infer _> ? K : never]+?: R[K] extends Refiner<infer S>
-        ? S
-        : never
-    },
-  >(refinements: V): Type<
-    T,
-    Expand<
-      & { [K in keyof R as K extends keyof V ? never : K]: R[K] }
-      & { -readonly [K in keyof V as V[K] extends undefined ? never : K]: V[K] }
-    >,
-    P
-  >
+  /** Apply a refinement to the type. */
+  refine<const V extends AvailableRefiners<R>>(refinements: V): Type<T, ExcludeRefiners<R, V>, P>
 
   /** Get the corresponding JSON Schema. */
   schema(this: Type<T, R, never>): Schema
@@ -46,12 +41,18 @@ export type Refinements = Record<string, unknown>
 
 export declare const Refiner: unique symbol
 export type Refiner<T = any> = T & { [_ in typeof Refiner]: true }
+export type Refiners<R extends Refinements> = { [K in keyof R]: Refiner<R[K]> }
 
 export namespace Type {
-  export function declare<T, R extends Refinements = {}, P extends keyof any = never, O = T>(
+  export function declare<
+    T,
+    R extends Refinements = {},
+    P extends keyof any = never,
+    O = T,
+  >(
     declaration: TypeDeclaration<T, R, O>,
-  ): Type<T, { [K in keyof R]: Refiner<R[K]> }, P> {
-    return declare_<T, { [K in keyof R]: Refiner<R[K]> }, P, O>(
+  ): Type<T, Refiners<R>, P> {
+    return declare_<T, Refiners<R>, P, O>(
       declaration,
       new Context([], {}) as never,
     )
@@ -82,14 +83,18 @@ export namespace Type {
 }
 
 export type TypeDeclaration<T, R extends Refinements, O> = {
-  /** Validate the set of specified refinements. */
-  assertRefinementsValid?: (refinements: R) => void
+  /** The name of the type. */
+  name: string
+  /** The origin of the type (a `declare`d type or `declare`d-type-returning function). */
+  source: TypeSource
   /** How to create the JSON schema for the current type. */
   subschema: (subschema: (type: Type) => Schema) => Schema
   /** Validate the raw structured output is of the expected type. */
-  assert: (value: unknown, path: string[]) => asserts value is O
+  assert: (value: unknown, assertionCtx: AssertionContext) => asserts value is O
   /** Transform the structured output into the target `T` value. */
-  transform?: (value: O) => T
+  transform: (value: O) => T
+  /** Validate the set of specified refinements. */
+  assertRefinementsValid?: (refinements: R) => void
   /** Validations corresponding to available refinements. */
   assertRefinements: {
     [K in keyof R]: (value: O, constraint: Exclude<R[K], undefined>) => void
@@ -97,11 +102,31 @@ export type TypeDeclaration<T, R extends Refinements, O> = {
 }
 
 export type TypeSource = {
-  atom: () => Type
+  getType: () => Type
   factory?: never
   args?: never
 } | {
-  atom?: never
+  getType?: never
   factory: (...args: any) => Type
-  args: unknown[]
+  args: Record<string, unknown>
+}
+
+export class AssertionContext {
+  errors: string[] = []
+
+  constructor(readonly path: string[]) {}
+
+  *assertExists<T>(value: T): Generator<{ msg?: string }, Exclude<T, undefined | null>, unknown> {
+    if (value === undefined || value === null) {
+      yield { msg: "DNE" }
+    }
+    return value as never
+  }
+
+  *assertString<T>(value: T): Generator<{ msg?: string }, string, unknown> {
+    if (typeof value !== "string") {
+      yield { msg: "NOT_STRING" }
+    }
+    return value as never
+  }
 }

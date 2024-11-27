@@ -1,4 +1,5 @@
-import type { Refinements } from "./Type.ts"
+import { Expand } from "../util/type_util.ts"
+import type { Refinements, Refiner } from "./Type.ts"
 
 export class Context<T, R extends Refinements, P extends keyof any> {
   constructor(private parts: ContextPart[] = [], private refinements: R) {}
@@ -35,4 +36,14 @@ export type Args<P extends keyof any = any> = Record<P, number | string | undefi
 export type ExcludeArgs<P extends keyof any, A extends Partial<Args<P>>> = Exclude<
   P,
   keyof { [K in keyof A as A[K] extends undefined ? never : K]: never }
+>
+
+export type AvailableRefiners<R extends Refinements> = {
+  [K in keyof R as R[K] extends Refiner<infer _> ? K : never]+?: R[K] extends Refiner<infer S> ? S
+    : never
+}
+
+export type ExcludeRefiners<R extends Refinements, V extends AvailableRefiners<R>> = Expand<
+  & { [K in keyof R as K extends keyof V ? never : K]: R[K] }
+  & { -readonly [K in keyof V as V[K] extends undefined ? never : K]: V[K] }
 >
