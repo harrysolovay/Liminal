@@ -1,67 +1,71 @@
 import type { EnsureLiteralKeys, Expand } from "../util/type_util.ts"
 import { type Args, Context, type ExcludeArgs, type Params } from "./Context.ts"
 import type { Schema } from "./Schema.ts"
-import type { TypeMetadata } from "./TypeMetadata.ts"
 
 /** The core unit of structure output schema composition. */
-export interface Type<
-  M extends TypeMetadata = any,
-  T = any,
-  C extends M["refinements"] = any,
-  P extends keyof any = any,
-> {
+export interface Type<T = any, R extends Refinements = any, P extends keyof any = any> {
   <P2 extends Params>(
     template: TemplateStringsArray,
     ...params: EnsureLiteralKeys<P2>
-  ): Type<M, T, C, P | P2[number]>
+  ): Type<T, R, P | P2[number]>
 
   /** The type into which the structured output is transformed. */
   T: T
   /** The literal types of the parameter keys. */
   P: P
 
-  /** Metadata about the current type. */
-  metadata: M
-
   /** The type declaration. */
-  declaration: TypeDeclaration<M, T>
+  declaration: TypeDeclaration<T, R, any>
 
   /** Container to be filled with context parts as chaining occurs. */
-  ctx: Context<P>
+  ctx: Context<T, R, P>
 
-  /** Get the corresponding JSON Schema. */
-  schema(this: Type<M, T, C, never>): Schema
-
-  refine: <const V extends Omit<M["refinements"], keyof C>>(
-    refinements: V,
-  ) => Type<
-    M,
+  refine<
+    const V extends {
+      [K in keyof R as R[K] extends Refiner<infer _> ? K : never]+?: R[K] extends Refiner<infer S>
+        ? S
+        : never
+    },
+  >(refinements: V): Type<
     T,
-    Expand<C & { -readonly [K in keyof V as V[K] extends undefined ? never : K]: V[K] }>,
+    Expand<
+      & { [K in keyof R as K extends keyof V ? never : K]: R[K] }
+      & { -readonly [K in keyof V as V[K] extends undefined ? never : K]: V[K] }
+    >,
     P
   >
 
+  /** Get the corresponding JSON Schema. */
+  schema(this: Type<T, R, never>): Schema
+
   /** Apply context to parameters. */
-  fill: <A extends Partial<Args<P>>>(args: A) => Type<M, T, C, ExcludeArgs<P, A>>
+  fill: <A extends Partial<Args<P>>>(args: A) => Type<T, R, ExcludeArgs<P, A>>
 }
 
+export type Refinements = Record<string, unknown>
+
+export declare const Refiner: unique symbol
+export type Refiner<T = any> = T & { [_ in typeof Refiner]: true }
+
 export namespace Type {
-  export function declare<
-    M extends TypeMetadata,
-    T,
-    C extends M["refinements"] = {},
-    P extends keyof any = never,
-  >(
-    metadata: M,
-    declaration: TypeDeclaration<M, T>,
-    ctx = new Context<P>(),
-  ): Type<M, T, C, P> {
+  export function declare<T, R extends Refinements = {}, P extends keyof any = never, O = T>(
+    declaration: TypeDeclaration<T, R, O>,
+  ): Type<T, { [K in keyof R]: Refiner<R[K]> }, P> {
+    return declare_<T, { [K in keyof R]: Refiner<R[K]> }, P, O>(
+      declaration,
+      new Context([], {}) as never,
+    )
+  }
+
+  function declare_<T, R extends Refinements, P extends keyof any, O>(
+    declaration: TypeDeclaration<T, R, O>,
+    ctx: Context<T, R, P>,
+  ): Type<T, R, P> {
     return Object.assign(
       <P2 extends Params>(template: TemplateStringsArray, ...params: P2) =>
-        declare<M, T, C, P | P2[number]>(metadata, declaration, ctx.add(template, params)),
+        declare_<T, R, P | P2[number], O>(declaration, ctx.add(template, params)),
       {
         ...{} as { T: T; P: P },
-        metadata,
         declaration,
         ctx,
         refine: () => {
@@ -70,29 +74,34 @@ export namespace Type {
         schema: () => {
           throw 0
         },
-        assert: declaration.assert,
-        transform: declaration.transform,
         fill: <A extends Partial<Args<P>>>(args: A) =>
-          declare<M, T, C, ExcludeArgs<P, A>>(metadata, declaration, ctx.apply(args)),
+          declare_<T, R, ExcludeArgs<P, A>, O>(declaration, ctx.apply(args)),
       },
     )
   }
 }
 
-export type TypeDeclaration<M extends TypeMetadata, T> = {
+export type TypeDeclaration<T, R extends Refinements, O> = {
+  /** Validate the set of specified refinements. */
+  assertRefinementsValid?: (refinements: R) => void
   /** How to create the JSON schema for the current type. */
   subschema: (subschema: (type: Type) => Schema) => Schema
   /** Validate the raw structured output is of the expected type. */
-  assert: (value: unknown) => asserts value is M["output"]
+  assert: (value: unknown, path: string[]) => asserts value is O
   /** Transform the structured output into the target `T` value. */
-  transform: (value: M["output"]) => T
-  /** Validate the set of specified refinements. */
-  validateRefinements: (refinements: M["refinements"]) => void
+  transform?: (value: O) => T
   /** Validations corresponding to available refinements. */
-  refinements: {
-    [K in keyof M["refinements"]]: (
-      value: M["output"],
-      constraint: Exclude<M["refinements"][K], undefined>,
-    ) => void
+  assertRefinements: {
+    [K in keyof R]: (value: O, constraint: Exclude<R[K], undefined>) => void
   }
+}
+
+export type TypeSource = {
+  atom: () => Type
+  factory?: never
+  args?: never
+} | {
+  atom?: never
+  factory: (...args: any) => Type
+  args: unknown[]
 }

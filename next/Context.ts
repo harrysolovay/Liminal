@@ -1,16 +1,19 @@
-export class Context<P extends keyof any = never> {
-  declare P: P
-  constructor(private parts: ContextPart[] = []) {}
+import type { Refinements } from "./Type.ts"
+
+export class Context<T, R extends Refinements, P extends keyof any> {
+  constructor(private parts: ContextPart[] = [], private refinements: R) {}
 
   add(template: TemplateStringsArray, params: Params) {
-    return new Context([{ template, params }, ...this.parts])
+    return new Context([{ template, params }, ...this.parts], this.refinements)
   }
 
-  apply<A extends Partial<Args<P>>>(args: A): Context<ExcludeArgs<P, A>> {
-    return new Context([{ args }, ...this.parts])
+  apply<A extends Partial<Args<P>>>(args: A): Context<T, R, ExcludeArgs<P, A>> {
+    return new Context([{ args }, ...this.parts], this.refinements)
   }
 
-  toString(this: Context<never>): string {
+  refine() {}
+
+  toString(this: Context<T, R, P>): string {
     throw 0
   }
 }
