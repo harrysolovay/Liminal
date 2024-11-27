@@ -24,7 +24,7 @@ export interface Type<
   metadata: M
 
   /** The type declaration. */
-  declaration: Declaration<M, T>
+  declaration: TypeDeclaration<M, T>
 
   /** Container to be filled with context parts as chaining occurs. */
   ctx: Context<P>
@@ -32,18 +32,54 @@ export interface Type<
   /** Get the corresponding JSON Schema. */
   schema(this: Type<M, T, C, never>): Schema
 
-  refine: <V extends Omit<M["refinements"], keyof C>>(
+  refine: <const V extends Omit<M["refinements"], keyof C>>(
     refinements: V,
-  ) => Type<M, T, Expand<C & { [K in keyof V as V[K] extends undefined ? never : K]: V[K] }>, P>
+  ) => Type<
+    M,
+    T,
+    Expand<C & { -readonly [K in keyof V as V[K] extends undefined ? never : K]: V[K] }>,
+    P
+  >
 
   /** Apply context to parameters. */
   fill: <A extends Partial<Args<P>>>(args: A) => Type<M, T, C, ExcludeArgs<P, A>>
-
-  [nodeCustomInspect](_0: unknown, _1: unknown, inspect: (value: unknown) => string): void
-  [denoCustomInspect](inspect: (value: unknown, opts: unknown) => string, opts: unknown): void
 }
 
-export type Declaration<M extends TypeMetadata, T> = {
+export namespace Type {
+  export function declare<
+    M extends TypeMetadata,
+    T,
+    C extends M["refinements"] = {},
+    P extends keyof any = never,
+  >(
+    metadata: M,
+    declaration: TypeDeclaration<M, T>,
+    ctx = new Context<P>(),
+  ): Type<M, T, C, P> {
+    return Object.assign(
+      <P2 extends Params>(template: TemplateStringsArray, ...params: P2) =>
+        declare<M, T, C, P | P2[number]>(metadata, declaration, ctx.add(template, params)),
+      {
+        ...{} as { T: T; P: P },
+        metadata,
+        declaration,
+        ctx,
+        refine: () => {
+          throw 0
+        },
+        schema: () => {
+          throw 0
+        },
+        assert: declaration.assert,
+        transform: declaration.transform,
+        fill: <A extends Partial<Args<P>>>(args: A) =>
+          declare<M, T, C, ExcludeArgs<P, A>>(metadata, declaration, ctx.apply(args)),
+      },
+    )
+  }
+}
+
+export type TypeDeclaration<M extends TypeMetadata, T> = {
   /** How to create the JSON schema for the current type. */
   subschema: (subschema: (type: Type) => Schema) => Schema
   /** Validate the raw structured output is of the expected type. */
@@ -60,44 +96,3 @@ export type Declaration<M extends TypeMetadata, T> = {
     ) => void
   }
 }
-
-export function declare<
-  M extends TypeMetadata,
-  T,
-  C extends M["refinements"] = {},
-  P extends keyof any = never,
->(
-  metadata: M,
-  declaration: Declaration<M, T>,
-  ctx = new Context<P>(),
-): Type<M, T, C, P> {
-  return Object.assign(
-    <P2 extends Params>(template: TemplateStringsArray, ...params: P2) =>
-      declare<M, T, C, P | P2[number]>(metadata, declaration, ctx.add(template, params)),
-    {
-      ...{} as { T: T; P: P },
-      metadata,
-      declaration,
-      ctx,
-      refine: () => {
-        throw 0
-      },
-      schema: () => {
-        throw 0
-      },
-      assert: declaration.assert,
-      transform: declaration.transform,
-      fill: <A extends Partial<Args<P>>>(args: A) =>
-        declare<M, T, C, ExcludeArgs<P, A>>(metadata, declaration, ctx.apply(args)),
-      [nodeCustomInspect](_0: unknown, _1: unknown, _inspect: (value: unknown) => string) {
-        throw 0
-      },
-      [denoCustomInspect](_inspect: (value: unknown, opts: unknown) => string, opts: unknown) {
-        throw 0
-      },
-    },
-  )
-}
-
-const nodeCustomInspect = Symbol.for("nodejs.util.inspect.custom")
-const denoCustomInspect = Symbol.for("Deno.customInspect")

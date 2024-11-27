@@ -5,6 +5,7 @@ denoland
 dprint
 esbenp
 harrysolovay
+inspectable
 openai
 quasis
 shiki

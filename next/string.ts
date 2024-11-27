@@ -1,13 +1,14 @@
-import { assert } from "@std/assert"
-import { declare, type Type } from "./Type.ts"
+import { Type } from "./Type.ts"
 import { TypeMetadata } from "./TypeMetadata.ts"
+import { assert } from "./util/assert.ts"
 
 class M extends TypeMetadata.make("string", false)<string, {
   minLength: number
   maxLength: number
 }> {}
 
-export const string = declare<M, string>(
+// TODO: why the need for the explicit return type of `atom`?
+export const string = Type.declare<M, string>(
   new M({ atom: (): Type => string }),
   {
     assert: (value) => assert(typeof value === "string"),
