@@ -13,7 +13,7 @@ export function transform<From extends Type, IntoT>(
       args: { name, from, f },
     },
     subschema: (ref) => ref(from),
-    transform: (value, visit) => visit(value, from, name),
+    transform: (value, visit) => f(visit(value, from, name)),
     assertRefinementsValid: () => {},
     assertRefinements: {},
   })
