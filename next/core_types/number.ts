@@ -1,17 +1,14 @@
-import { type Refiners, Type } from "./Type.ts"
-import { assert } from "./util/assert.ts"
+import { assert } from "../../util/assert.ts"
+import type { Type } from "../Type.ts"
+import { declare } from "../TypeDeclaration.ts"
 
-export const number: Type<
-  number,
-  Refiners<{
-    min: number
-    max: number
-  }>,
-  never
-> = Type.declare({
+export const number: Type.Initial<number, {
+  min: number
+  max: number
+}> = declare({
   name: "number",
   source: {
-    getType: (): Type => number,
+    getType: () => number,
   },
   subschema: () => ({ type: "number" }),
   assert: (value) => assert(typeof value === "number"),

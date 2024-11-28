@@ -1,11 +1,11 @@
 import { ensureDir } from "@std/fs"
 import * as path from "@std/path"
 import { assertSnapshot } from "@std/testing/snapshot"
-import type { T } from "./mod.ts"
+import type { Type } from "./mod.ts"
 
 export async function assertTySnapshot(
   t: Deno.TestContext,
-  value: T.Ty<unknown, never>,
+  value: Type<any, any, never>,
 ): Promise<void> {
   await assertSnapshot(t, value.schema())
   const withContext = value`One.`

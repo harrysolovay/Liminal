@@ -1,28 +1,26 @@
-import { Type } from "./Type.ts"
-import { assert } from "./util/assert.ts"
+import { assert } from "../../util/assert.ts"
+import type { Type } from "../Type.ts"
+import { declare } from "../TypeDeclaration.ts"
 
 export function object<F extends Record<string, Type>>(
   fields: F,
 ): Type<{ [K in keyof F]: F[K]["T"] }, {}, F[keyof F]["P"]> {
   const keys = Object.keys(fields)
-  return Type.declare({
+  return declare({
     name: "object",
     source: {
       factory: object,
       args: { fields },
     },
-    subschema: (subschema) => ({
+    subschema: (ref) => ({
       type: "object",
-      properties: Object.fromEntries(keys.map((k) => [k, subschema(fields[k]!)])),
+      properties: Object.fromEntries(keys.map((k) => [k, ref(fields[k]!)])),
       additionalProperties: false,
       required: keys,
     }),
-    assert: (value, path) => {
+    assert: (value, ctx) => {
       assert(typeof value === "object" && value !== null)
-      keys.forEach((k) => {
-        const field: F[typeof k] = fields[k] as never
-        field.declaration.assert((value as never)[k], [...path, k])
-      })
+      keys.forEach((k) => ctx.subassert(fields[k]!, value, k))
     },
     transform: (value) =>
       Object.fromEntries(

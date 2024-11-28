@@ -11,8 +11,10 @@ quasis
 shiki
 shikijs
 solovay
+subassert
 subpaths
 subschema
 subschemas
 twoslash
+unapplieds
 vitepress
