@@ -20,7 +20,7 @@ export interface Type<
   P: P
 
   /** The type declaration. */
-  declaration: TypeDeclaration<T, R, any>
+  declaration: TypeDeclaration<T, R, P, any>
 
   /** Container to be filled with context parts as chaining occurs. */
   ctx: SemanticContext<T, R, P>
@@ -36,7 +36,7 @@ export interface Type<
 }
 
 export namespace Type {
-  export type Initial<T, R extends Refinements> = Type<
+  export type Initial<T, R extends Refinements = {}> = Type<
     T,
     { [K in keyof R]: Unapplied<R[K]> },
     never

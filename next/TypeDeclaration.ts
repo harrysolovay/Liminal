@@ -1,19 +1,18 @@
 import type { AssertionContext } from "./AssertionContext.ts"
-import { Ref, type Schema } from "./Schema.ts"
+import { RefSchema, type Schema } from "./Schema.ts"
 import { type Args, type ExcludeArgs, type Params, SemanticContext } from "./SemanticContext.ts"
 import type { Refinements, Type, UnappliedRefiners } from "./Type.ts"
+import type { Visit } from "./Visit.ts"
 
-export type TypeDeclaration<T, R extends Refinements, O> = {
+export type TypeDeclaration<T, R extends Refinements, P extends keyof any, O> = {
   /** The name of the type. */
   name: string
   /** The origin of the type (a `declare`d type or `declare`d-type-returning function). */
   source: TypeSource
   /** How to create the JSON schema for the current type. */
   subschema: (ref: (type: Type) => Schema) => Schema
-  /** Validate the raw structured output is of the expected type. */
-  assert: (value: unknown, assertionCtx: AssertionContext) => asserts value is O
   /** Transform the structured output into the target `T` value. */
-  transform: (value: O) => T
+  transform: (value: O, visit: Visit<T>) => T
   /** Validate the set of specified refinements. */
   assertRefinementsValid?: (refinements: R, assertionCtx: AssertionContext) => void
   /** Validations corresponding to available refinements. */
@@ -32,19 +31,14 @@ export type TypeSource = {
   args: Record<string, unknown>
 }
 
-export function declare<
-  T,
-  R extends Refinements,
-  P extends keyof any,
-  O = T,
->(
-  declaration: TypeDeclaration<T, R, O>,
-): Type<T, R, P> {
-  return declare_<T, R, P, O>(declaration, new SemanticContext([], {} as R))
+export function declare<O>() {
+  return <T, R extends Refinements, P extends keyof any>(
+    declaration: TypeDeclaration<T, R, P, O>,
+  ): Type<T, R, P> => declare_<T, R, P, O>(declaration, new SemanticContext([], {} as R))
 }
 
 function declare_<T, R extends Refinements, P extends keyof any, O>(
-  declaration: TypeDeclaration<T, R, O>,
+  declaration: TypeDeclaration<T, R, P, O>,
   ctx: SemanticContext<T, R, P>,
 ): Type<T, R, P> {
   const type = Object.assign(
@@ -55,12 +49,11 @@ function declare_<T, R extends Refinements, P extends keyof any, O>(
       declaration,
       ctx,
       refine: <const V extends UnappliedRefiners<R>>(refinements: V) => {
-        // TODO: clean up typing.
         return declare_(declaration, ctx.refine(refinements) as never) as never
       },
-      schema: () => Ref()(type),
+      schema: () => RefSchema()(type),
       fill: <A extends Partial<Args<P>>>(args: A) =>
-        declare_<T, R, ExcludeArgs<P, A>, O>(declaration, ctx.apply(args)) as any,
+        declare_<T, R, ExcludeArgs<P, A>, O>(declaration as never, ctx.apply(args)) as never,
     },
   )
   return type

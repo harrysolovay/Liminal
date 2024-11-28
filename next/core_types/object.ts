@@ -1,12 +1,12 @@
-import { assert } from "../../util/assert.ts"
 import type { Type } from "../Type.ts"
 import { declare } from "../TypeDeclaration.ts"
+import type { Expand } from "../util/type_util.ts"
 
 export function object<F extends Record<string, Type>>(
   fields: F,
-): Type<{ [K in keyof F]: F[K]["T"] }, {}, F[keyof F]["P"]> {
+): Type<Expand<NativeObject<F>>, {}, F[keyof F]["P"]> {
   const keys = Object.keys(fields)
-  return declare({
+  return declare<NativeObject<F>>()({
     name: "object",
     source: {
       factory: object,
@@ -18,15 +18,11 @@ export function object<F extends Record<string, Type>>(
       additionalProperties: false,
       required: keys,
     }),
-    assert: (value, ctx) => {
-      assert(typeof value === "object" && value !== null)
-      keys.forEach((k) => ctx.subassert(fields[k]!, value, k))
-    },
-    transform: (value) =>
-      Object.fromEntries(
-        keys.map((k) => [k, fields[k]!.declaration.transform(value[k])]),
-      ) as never,
+    transform: (value, visit) =>
+      Object.fromEntries(keys.map((k) => [k, visit(value[k]!, fields[k]!, k)])) as never,
     assertRefinementsValid: () => {},
     assertRefinements: {},
   })
 }
+
+export type NativeObject<F extends Record<string, Type>> = { [K in keyof F]: F[K]["T"] }

@@ -3,6 +3,7 @@ import type { ResponseFormatJSONSchema } from "openai/resources/shared"
 import type { Type } from "../Type.ts"
 import { assert } from "../util/assert.ts"
 import { recombine } from "../util/recombine.ts"
+import { Visit } from "../Visit.ts"
 
 export interface ResponseFormat<T> extends FinalResponseFormat<T> {
   (template: TemplateStringsArray, ...values: Array<unknown>): FinalResponseFormat<T>
@@ -22,8 +23,6 @@ interface FinalResponseFormat<T> {
   json_schema: ResponseFormatJSONSchema.JSONSchema
   /** Transform the content of the first choice into a typed object. */
   into(completion: ChatCompletion): T
-  /** Prevents `JSON.stringify` from attempting to serialize `into`. */
-  toJSON(): Pick<this, "type" | "json_schema">
 }
 
 function FinalResponseFormat<T>(
@@ -39,12 +38,14 @@ function FinalResponseFormat<T>(
       schema: type.schema(),
       strict: true,
     },
-    into: (completion: ChatCompletion) => {
-      return type.declaration.transform(JSON.parse(unwrap(completion)))
-    },
-    toJSON() {
-      const { type, json_schema } = this
-      return { type, json_schema }
+    into: (completion: ChatCompletion) =>
+      Visit<T>()(JSON.parse(unwrap(completion)), type, "ResponseFormat"),
+    ...{
+      /** Prevents `JSON.stringify` from attempting to serialize `into`. */
+      toJSON() {
+        const { type, json_schema } = this
+        return { type, json_schema }
+      },
     },
   }
 }

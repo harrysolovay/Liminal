@@ -4,11 +4,11 @@ import { recombine } from "./util/recombine.ts"
 
 export type Schema = Record<string, unknown>
 
-export type Subschema = (ref: Ref) => Schema
+export type Subschema = (ref: RefSchema) => Schema
 
-export type Ref = (type: Type) => Schema
+export type RefSchema = (type: Type) => Schema
 
-export function Ref(ctxArgs: Args = {}): Ref {
+export function RefSchema(ctxArgs: Args = {}): RefSchema {
   const nextArgs = { ...ctxArgs }
   return (type) => {
     const ctxSegments: Array<string> = []
@@ -22,7 +22,7 @@ export function Ref(ctxArgs: Args = {}): Ref {
       }
     }
     return {
-      ...type.declaration.subschema(Ref(nextArgs)),
+      ...type.declaration.subschema(RefSchema(nextArgs)),
       ...ctxSegments.length ? { description: ctxSegments.join(" ") } : {},
     }
   }

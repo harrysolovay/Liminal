@@ -1,19 +1,19 @@
-import type { Refinements, Type } from "../Type.ts"
+import type { Type } from "../Type.ts"
 import { declare } from "../TypeDeclaration.ts"
 
-export function transform<T, R extends Refinements, P extends keyof any, O>(
-  from: Type<T, R, P>,
-  f: (from: T) => O,
-): Type<O, {}, P> {
-  return declare({
+export function transform<From extends Type, IntoT>(
+  name: string,
+  from: From,
+  f: (initial: From["T"]) => IntoT,
+): Type<IntoT, {}, From["P"]> {
+  return declare<From["T"]>()({
     name: "transform",
     source: {
       factory: transform,
-      args: { from },
+      args: { name, from, f },
     },
     subschema: (ref) => ref(from),
-    assert: from.declaration.assert,
-    transform: f,
+    transform: (value, visit) => visit(value, from, name),
     assertRefinementsValid: () => {},
     assertRefinements: {},
   })

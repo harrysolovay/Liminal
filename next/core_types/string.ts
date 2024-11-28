@@ -5,17 +5,16 @@ import { declare } from "../TypeDeclaration.ts"
 export const string: Type.Initial<string, {
   minLength: number
   maxLength: number
-}> = declare({
+}> = declare<string>()({
   name: "string",
   source: {
     getType: () => string,
   },
   subschema: () => ({ type: "string" }),
-  assert: (value) => assert(typeof value === "string"),
   transform: (value) => value,
   assertRefinementsValid: ({ minLength, maxLength }) => {
     assert(
-      typeof minLength === "number" && typeof maxLength === "number" && minLength <= maxLength,
+      !(typeof minLength === "number" && typeof maxLength === "number") || minLength <= maxLength,
     )
   },
   assertRefinements: {
