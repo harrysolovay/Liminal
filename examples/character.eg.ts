@@ -29,8 +29,6 @@ const Character = T.object({
   favoriteColor: std.colors.Hex,
 })
 
-// testing: T.number.refine({ max: 0 })`A number greater than 100`,
-
 const response_format = ResponseFormat("create_character", Character)`
   Create a new character to be the protagonist of a children's story.
 `

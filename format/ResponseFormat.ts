@@ -1,9 +1,9 @@
-import type { ChatCompletion } from "openai/resources/chat/completions"
+import type { ChatCompletion, ChatCompletionMessageParam } from "openai/resources/chat/completions"
 import type { ResponseFormatJSONSchema } from "openai/resources/shared"
 import type { Type } from "../Type.ts"
 import { assert } from "../util/assert.ts"
 import { recombine } from "../util/recombine.ts"
-import { Diagnostic, Visit } from "../Visit.ts"
+import { type Diagnostic, Visit } from "../Visit.ts"
 
 export interface ResponseFormat<T> extends FinalResponseFormat<T> {
   (template: TemplateStringsArray, ...values: Array<unknown>): FinalResponseFormat<T>
@@ -23,6 +23,13 @@ interface FinalResponseFormat<T> {
   json_schema: ResponseFormatJSONSchema.JSONSchema
   /** Transform the content of the first choice into a typed object. */
   into(completion: ChatCompletion): T
+  /** Get the completion and then loop refinement assertions and resubmission until all assertions pass. */
+  checked: (
+    create: (
+      response_format: ResponseFormat<any>,
+      messages: Array<ChatCompletionMessageParam>,
+    ) => Promise<ChatCompletion>,
+  ) => Promise<T>
 }
 
 function FinalResponseFormat<T>(
@@ -38,13 +45,16 @@ function FinalResponseFormat<T>(
       schema: type.schema(),
       strict: true,
     },
-    into: (completion: ChatCompletion) => {
+    into: (completion) => {
       const diagnostics: Array<Diagnostic> = []
       const result = Visit<T>(diagnostics)(JSON.parse(unwrap(completion)), type, "ResponseFormat")
       diagnostics.forEach((diagnostic) => {
         console.log(diagnostic.junctions, diagnostic.error.message)
       })
       return result
+    },
+    checked: (_send) => {
+      throw 0
     },
     ...{
       /** Prevents `JSON.stringify` from attempting to serialize `into`. */
