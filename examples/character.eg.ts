@@ -1,24 +1,41 @@
 import Openai from "openai"
 import "@std/dotenv/load"
 import { ResponseFormat, T } from "structured-outputs"
+import * as std from "structured-outputs/std"
 import { dbg } from "test_util"
 
-export const Sex = T.constantUnion("Male", "Female")`The biological sex of the character.`
+const greeting = T.taggedUnion("greeting", {
+  Hi: T.string,
+  Yo: T.number,
+  Hey: null,
+})
 
 const Character = T.object({
-  name: T.string,
-  age: T.number`Ensure between 1 and 110.`,
+  name: T.string.refine({
+    minLength: 4,
+    maxLength: 30,
+  }),
   home: T.string`The name of a fictional realm of magic and wonder.`,
-  disposition: T.constantUnion("Optimistic", "Reserved", "Inquisitive"),
-  dob: T.Date`Prehistoric $`,
-  // hash: T.union(T.boolean, T.number, T.string),
+  disposition: T.enum("Optimistic", "Reserved", "Inquisitive"),
+  born: std.Date`Date the character was born. Make sure it aligns with the age.`,
+  stateOfAffairs: T.tuple(
+    T.string`Home life.`,
+    T.string`Professional life.`,
+    T.string`Health.`,
+  )`How are things going for the character in these various domains?`,
+  randomValue: T.union(T.string, T.number),
+  friends: T.array(T.string)`Names of the character's friends.`,
+  greeting,
+  favoriteColor: std.colors.Hex,
 })
+
+// testing: T.number.refine({ max: 0 })`A number greater than 100`,
 
 const response_format = ResponseFormat("create_character", Character)`
   Create a new character to be the protagonist of a children's story.
 `
 
-const character = await new Openai().chat.completions
+await new Openai().chat.completions
   .create({
     model: "gpt-4o-mini",
     response_format,
@@ -29,5 +46,3 @@ const character = await new Openai().chat.completions
   })
   .then(response_format.into)
   .then(dbg)
-
-console.log(character)
