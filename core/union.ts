@@ -13,7 +13,7 @@ export function union<M extends Array<Type>>(
       factory: union,
       args: { members },
     },
-    subschema: (ref) => ({
+    subschema: (visit) => ({
       discriminator: "type",
       anyOf: members.map((member, i) => ({
         type: "object",
@@ -22,14 +22,12 @@ export function union<M extends Array<Type>>(
             type: "number",
             const: i,
           },
-          value: ref(member),
+          value: visit(member),
         },
         required: ["type", "value"],
         additionalProperties: false,
       })),
     }),
-    visitor: (value, visit) => visit(value.value, members[value.type]!, value.type),
-    assertRefinementsValid: () => {},
-    assertRefinements: {},
+    process: (value, visit) => visit(value.value, members[value.type]!, value.type),
   })
 }

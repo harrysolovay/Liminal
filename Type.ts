@@ -1,6 +1,7 @@
+import type { Args, Context, ExcludeArgs, Params } from "./Context.ts"
 import type { Schema } from "./Schema.ts"
-import type { Args, ExcludeArgs, Params, SemanticContext } from "./SemanticContext.ts"
 import type { TypeDeclaration } from "./TypeDeclaration.ts"
+import type { Inspectable } from "./util/Inspectable.ts"
 import type { EnsureLiteralKeys, Expand } from "./util/type_util.ts"
 
 /** The core unit of structure output schema composition. */
@@ -8,7 +9,7 @@ export interface Type<
   T = any,
   R extends Refinements = any,
   P extends keyof any = keyof any,
-> {
+> extends Inspectable {
   <P2 extends Params>(
     template: TemplateStringsArray,
     ...params: EnsureLiteralKeys<P2>
@@ -20,10 +21,10 @@ export interface Type<
   P: P
 
   /** The type declaration. */
-  declaration: TypeDeclaration<T, R, any>
+  declaration: TypeDeclaration<T, R, P, any>
 
   /** Container to be filled with context parts as chaining occurs. */
-  ctx: SemanticContext<T, R, P>
+  ctx: Context<T, R, P>
 
   /** Apply a refinement to the type. */
   refine<const V extends UnappliedRefiners<R>>(refinements: V): Type<T, ExcludeRefiners<R, V>, P>
@@ -46,7 +47,7 @@ export namespace Type {
 export type Refinements = Record<string, unknown>
 
 export declare const Unapplied: unique symbol
-export type Unapplied<T = any> = T & { [_ in typeof Unapplied]: true }
+export type Unapplied<T = any> = Record<typeof Unapplied, T>
 
 export type UnappliedRefiners<R extends Refinements> = {
   [K in keyof R as R[K] extends Unapplied<infer _> ? K : never]+?: R[K] extends Unapplied<infer S>

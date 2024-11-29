@@ -17,7 +17,7 @@ export function taggedUnion<
       factory: taggedUnion,
       args: { members },
     },
-    subschema: (ref) => ({
+    subschema: (visit) => ({
       discriminator: tagKey,
       anyOf: entries.map(([k, v]) => ({
         type: "object",
@@ -26,13 +26,13 @@ export function taggedUnion<
             type: "string",
             const: k,
           },
-          ...(v === null ? {} : { value: ref(v) }),
+          ...(v === null ? {} : { value: visit(v) }),
         },
         required: [tagKey, ...v === null ? [] : ["value"]],
         additionalProperties: false,
       })),
     }),
-    visitor: (value, visit) => {
+    process: (value, visit) => {
       const tag = value[tagKey]
       const type = members[tag]!
       return ({
@@ -40,8 +40,6 @@ export function taggedUnion<
         ..."value" in value ? { value: visit(value.value, type, tag as string) } : {},
       }) as never
     },
-    assertRefinementsValid: () => {},
-    assertRefinements: {},
   })
 }
 

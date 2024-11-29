@@ -11,7 +11,6 @@ export const string: Type.Initial<string, {
     getType: () => string,
   },
   subschema: () => ({ type: "string" }),
-  visitor: (value) => value,
   assertRefinementsValid: ({ minLength, maxLength }) => {
     assert(
       !(typeof minLength === "number" && typeof maxLength === "number") || minLength <= maxLength,

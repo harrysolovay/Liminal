@@ -7,7 +7,4 @@ export const boolean: Type.Initial<boolean> = declare<boolean>()({
     getType: () => boolean,
   },
   subschema: () => ({ type: "boolean" }),
-  visitor: (value) => value,
-  assertRefinementsValid: () => {},
-  assertRefinements: {},
 })

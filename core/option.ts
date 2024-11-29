@@ -8,12 +8,10 @@ export function option<X extends Type>(Some: X): Type<X["T"] | undefined, {}, X[
       factory: option,
       args: { Some },
     },
-    subschema: (ref) => ({
+    subschema: (visit) => ({
       discriminator: "type",
-      anyOf: [{ type: "null" }, ref(Some)],
+      anyOf: [{ type: "null" }, visit(Some)],
     }),
-    visitor: (value, visit) => value === null ? undefined : visit(value, Some, "Some"),
-    assertRefinementsValid: () => {},
-    assertRefinements: {},
+    process: (value, visit) => value === null ? undefined : visit(value, Some, "Some"),
   })
 }

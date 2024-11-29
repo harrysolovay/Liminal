@@ -12,11 +12,11 @@ export function array<E extends Type>(element: E): Type<Array<E["T"]>, {
       factory: array,
       args: { element },
     },
-    subschema: (ref) => ({
+    subschema: (visit) => ({
       type: "array",
-      items: ref(element),
+      items: visit(element),
     }),
-    visitor: (value, visit) => value.map((v, i) => visit(v, element, i)),
+    process: (value, visit) => value.map((v, i) => visit(v, element, i)),
     assertRefinementsValid: ({ minLength, maxLength }) => {
       assert(
         !(typeof minLength === "number" && typeof maxLength === "number") || minLength <= maxLength,

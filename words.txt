@@ -15,6 +15,7 @@ subassert
 subpaths
 subschema
 subschemas
+subvalue
 twoslash
 unapplieds
 vitepress

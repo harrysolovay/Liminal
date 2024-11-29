@@ -12,16 +12,14 @@ export function object<F extends Record<string, Type>>(
       factory: object,
       args: { fields },
     },
-    subschema: (ref) => ({
+    subschema: (visit) => ({
       type: "object",
-      properties: Object.fromEntries(keys.map((k) => [k, ref(fields[k]!)])),
+      properties: Object.fromEntries(keys.map((k) => [k, visit(fields[k]!)])),
       additionalProperties: false,
       required: keys,
     }),
-    visitor: (value, visit) =>
+    process: (value, visit) =>
       Object.fromEntries(keys.map((k) => [k, visit(value[k]!, fields[k]!, k)])) as never,
-    assertRefinementsValid: () => {},
-    assertRefinements: {},
   })
 }
 

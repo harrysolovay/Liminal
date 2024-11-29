@@ -13,8 +13,5 @@ export function enum_<K extends string>(...members: Array<K>): Type.Initial<K> {
       type: "string",
       enum: members,
     }),
-    visitor: (value) => value,
-    assertRefinementsValid: () => {},
-    assertRefinements: {},
   })
 }

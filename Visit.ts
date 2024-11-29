@@ -1,21 +1,31 @@
 import type { Type } from "./Type.ts"
 
-export type Visit<T> = (value: T, type: Type<T>, junction: Junction) => T
+export type ProcessValue<T> = (value: T, type: Type<T>, junction: Junction) => T
 
-export function Visit<T>(
+export function ProcessValue<T>(
   diagnostics: Array<Diagnostic>,
   junctions: Array<number | string> = [],
-): Visit<T> {
+): ProcessValue<T> {
   return (value, type, junction) => {
     const { assertRefinements } = type.declaration
-    for (const [refinementKey, assertRefinement] of Object.entries(assertRefinements)) {
-      const refinement = type.ctx.refinements[refinementKey]
-      if (refinement !== undefined) {
-        fallible(() => assertRefinement(value, type.ctx.refinements[refinementKey]))
+    if (assertRefinements) {
+      for (const [refinementKey, assertRefinement] of Object.entries(assertRefinements)) {
+        if (assertRefinement) {
+          const refinement = type.ctx.refinements[refinementKey]
+          if (refinement !== undefined) {
+            fallible(() => assertRefinement(value, type.ctx.refinements[refinementKey]))
+          }
+        }
       }
     }
     return fallible(() =>
-      type.declaration.visitor(value, Visit(diagnostics, [...junctions, junction]))
+      type.declaration.process
+        ? type.declaration.process.call(
+          type,
+          value,
+          ProcessValue(diagnostics, [...junctions, junction]),
+        )
+        : value
     )
 
     function fallible<T>(f: () => T) {

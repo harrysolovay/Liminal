@@ -13,21 +13,19 @@ export function tuple<E extends Array<Type>>(
       factory: tuple,
       args: { elements },
     },
-    subschema: (ref) => ({
+    subschema: (visit) => ({
       type: "object",
       properties: Object.fromEntries(
-        Array.from({ length }, (_0, i) => [i, ref(elements[i]!)]),
+        Array.from({ length }, (_0, i) => [i, visit(elements[i]!)]),
       ),
       required,
       additionalProperties: false,
     }),
-    visitor: (value, visit) =>
+    process: (value, visit) =>
       Array.from(
         { length },
         (_0, i) => visit(value[i]!, elements[i]!, i),
       ) as never,
-    assertRefinementsValid: () => {},
-    assertRefinements: {},
   })
 }
 

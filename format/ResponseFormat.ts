@@ -3,7 +3,7 @@ import type { ResponseFormatJSONSchema } from "openai/resources/shared"
 import type { Type } from "../Type.ts"
 import { assert } from "../util/assert.ts"
 import { recombine } from "../util/recombine.ts"
-import { type Diagnostic, Visit } from "../Visit.ts"
+import { type Diagnostic, ProcessValue } from "../Visit.ts"
 
 export interface ResponseFormat<T> extends FinalResponseFormat<T> {
   (template: TemplateStringsArray, ...values: Array<unknown>): FinalResponseFormat<T>
@@ -47,7 +47,11 @@ function FinalResponseFormat<T>(
     },
     into: (completion) => {
       const diagnostics: Array<Diagnostic> = []
-      const result = Visit<T>(diagnostics)(JSON.parse(unwrap(completion)), type, "ResponseFormat")
+      const result = ProcessValue<T>(diagnostics)(
+        JSON.parse(unwrap(completion)),
+        type,
+        "ResponseFormat",
+      )
       diagnostics.forEach((diagnostic) => {
         console.log(diagnostic.junctions, diagnostic.error.message)
       })

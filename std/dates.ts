@@ -34,33 +34,35 @@ export const Millisecond = T.number.refine({
   max: 999,
 })`Millisecond.`
 
-const DateRaw = T.object({
-  year: Year,
-  month: Month,
-  dayOfMonth: DayOfMonth,
-  hour: Hour,
-  minute: Minute,
-  second: Second,
-  millisecond: Millisecond,
-})
-
 export { Date_ as Date }
-const Date_: Type.Initial<Date> = T.transform("Date", DateRaw, ({
-  year,
-  month,
-  dayOfMonth,
-  hour,
-  minute,
-  second,
-  millisecond,
-}) => {
-  const date = new Date(year, month, dayOfMonth, hour, minute, second, millisecond)
-  assert(
-    date.getFullYear() === year && date.getMonth() === month && date.getDate() === dayOfMonth,
-    `Day ${dayOfMonth} is invalid for month ${MONTHS[month]} `,
-  )
-  return date
-})`Date.`
+const Date_: Type.Initial<Date> = T.transform(
+  "Date",
+  T.object({
+    year: Year,
+    month: Month,
+    dayOfMonth: DayOfMonth,
+    hour: Hour,
+    minute: Minute,
+    second: Second,
+    millisecond: Millisecond,
+  }),
+  ({
+    year,
+    month,
+    dayOfMonth,
+    hour,
+    minute,
+    second,
+    millisecond,
+  }) => {
+    const date = new Date(year, month, dayOfMonth, hour, minute, second, millisecond)
+    assert(
+      date.getFullYear() === year && date.getMonth() === month && date.getDate() === dayOfMonth,
+      `Day ${dayOfMonth} is invalid for month ${MONTHS[month]}.`,
+    )
+    return date
+  },
+)`Date.`
 
 const MONTHS = [
   "January",

@@ -10,11 +10,9 @@ export function transform<From extends Type, IntoT>(
     name: "transform",
     source: {
       factory: transform,
-      args: { name, from, f },
+      args: { from, f },
     },
-    subschema: (ref) => ref(from),
-    visitor: (value, visit) => f(visit(value, from, name)),
-    assertRefinementsValid: () => {},
-    assertRefinements: {},
+    subschema: (visit) => visit(from),
+    process: (value, visit) => f(visit(value, from, name)),
   })
 }
