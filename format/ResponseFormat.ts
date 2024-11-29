@@ -1,9 +1,9 @@
-import type { ChatCompletion, ChatCompletionMessageParam } from "openai/resources/chat/completions"
+import type { ChatCompletion } from "openai/resources/chat/completions"
 import type { ResponseFormatJSONSchema } from "openai/resources/shared"
 import type { Type } from "../Type.ts"
 import { assert } from "../util/assert.ts"
 import { recombine } from "../util/recombine.ts"
-import { type Diagnostic, VisitOutput } from "../Visit.ts"
+import { type Diagnostic, VisitOutput } from "../VisitOutput.ts"
 
 export interface ResponseFormat<T> extends FinalResponseFormat<T> {
   (template: TemplateStringsArray, ...values: Array<unknown>): FinalResponseFormat<T>
@@ -17,19 +17,30 @@ export function ResponseFormat<T>(name: string, type: Type<T, any, never>): Resp
   )
 }
 
+export namespace ResponseFormat {
+  export function unwrap(completion: ChatCompletion): string {
+    const { choices: [firstChoice] } = completion
+    assert(firstChoice, "No choices contained within the completion response.")
+    const { finish_reason, message } = firstChoice
+    assert(
+      finish_reason === "stop",
+      `Completion responded with "${finish_reason}" as finish reason; ${message}`,
+    )
+    const { content, refusal } = message
+    assert(!refusal, `Openai refused to fulfill completion request; ${refusal}`)
+    assert(content, "First response choice contained no content.")
+    return content
+  }
+}
+
 interface FinalResponseFormat<T> {
+  "": Type<T, any, never>
+  /** Tag required by the service. */
   type: "json_schema"
   /** The desired return type in JSON Schema. */
   json_schema: ResponseFormatJSONSchema.JSONSchema
   /** Transform the content of the first choice into a typed object. */
   into(completion: ChatCompletion): T
-  /** Get the completion and then loop refinement assertions and resubmission until all assertions pass. */
-  checked: (
-    create: (
-      response_format: ResponseFormat<any>,
-      messages: Array<ChatCompletionMessageParam>,
-    ) => Promise<ChatCompletion>,
-  ) => Promise<T>
 }
 
 function FinalResponseFormat<T>(
@@ -38,6 +49,7 @@ function FinalResponseFormat<T>(
   description?: string,
 ): FinalResponseFormat<T> {
   return {
+    "": type,
     type: "json_schema",
     json_schema: {
       name,
@@ -48,7 +60,7 @@ function FinalResponseFormat<T>(
     into: (completion) => {
       const diagnostics: Array<Diagnostic> = []
       const result = VisitOutput<T>(diagnostics)(
-        JSON.parse(unwrap(completion)),
+        JSON.parse(ResponseFormat.unwrap(completion)),
         type,
         "ResponseFormat",
       )
@@ -56,9 +68,6 @@ function FinalResponseFormat<T>(
         console.log(diagnostic.junctions, diagnostic.error.message)
       })
       return result
-    },
-    checked: (_send) => {
-      throw 0
     },
     ...{
       /** Prevents `JSON.stringify` from attempting to serialize `into`. */
@@ -68,18 +77,4 @@ function FinalResponseFormat<T>(
       },
     },
   }
-}
-
-export function unwrap(completion: ChatCompletion): string {
-  const { choices: [firstChoice] } = completion
-  assert(firstChoice, "No choices contained within the completion response.")
-  const { finish_reason, message } = firstChoice
-  assert(
-    finish_reason === "stop",
-    `Completion responded with "${finish_reason}" as finish reason; ${message}`,
-  )
-  const { content, refusal } = message
-  assert(!refusal, `Openai refused to fulfill completion request; ${refusal}`)
-  assert(content, "First response choice contained no content.")
-  return content
 }

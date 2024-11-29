@@ -4,6 +4,8 @@ import type { TypeDeclaration } from "./TypeDeclaration.ts"
 import type { Inspectable } from "./util/Inspectable.ts"
 import type { EnsureLiteralKeys, Expand } from "./util/type_util.ts"
 
+// TODO: generic refinement
+
 /** The core unit of structure output schema composition. */
 export interface Type<
   T = any,

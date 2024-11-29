@@ -2,7 +2,7 @@ import { type Args, Context, type ExcludeArgs, type Params } from "./Context.ts"
 import { RefSchema, type Schema } from "./Schema.ts"
 import type { ExcludeRefiners, Refinements, Type, Unapplied, UnappliedRefiners } from "./Type.ts"
 import { Inspectable } from "./util/Inspectable.ts"
-import type { VisitOutput } from "./Visit.ts"
+import type { VisitOutput } from "./VisitOutput.ts"
 
 // TODO: get rid of `O`
 export type TypeDeclaration<T, R extends Refinements, P extends keyof any> = {
