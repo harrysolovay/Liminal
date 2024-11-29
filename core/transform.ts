@@ -6,13 +6,16 @@ export function transform<From extends Type, IntoT>(
   from: From,
   f: (initial: From["T"]) => IntoT,
 ): Type<IntoT, {}, From["P"]> {
-  return declare<From["T"]>()({
+  return declare({
     name: "transform",
     source: {
       factory: transform,
-      args: { from, f },
+      args: { name, from, f },
     },
     subschema: (visit) => visit(from),
-    process: (value, visit) => f(visit(value, from, name)),
+    output: (_) =>
+      _<From["T"]>({
+        visitor: (value, visit) => f(visit(value, from, name)),
+      }),
   })
 }

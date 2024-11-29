@@ -1,13 +1,12 @@
 import type { Type } from "../Type.ts"
 import { declare } from "../TypeDeclaration.ts"
-import type { Expand } from "../util/type_util.ts"
 
 export function tuple<E extends Array<Type>>(
   ...elements: E
-): Type<Expand<NativeTuple<E>>, {}, E[number]["P"]> {
+): Type<{ [K in keyof E]: E[K]["T"] }, {}, E[number]["P"]> {
   const { length } = elements
   const required = Array.from({ length }, (_0, i) => i.toString())
-  return declare<NativeTuple<E>>()({
+  return declare({
     name: "tuple",
     source: {
       factory: tuple,
@@ -21,12 +20,13 @@ export function tuple<E extends Array<Type>>(
       required,
       additionalProperties: false,
     }),
-    process: (value, visit) =>
-      Array.from(
-        { length },
-        (_0, i) => visit(value[i]!, elements[i]!, i),
-      ) as never,
+    output: (f) =>
+      f<{ [K in keyof E]: unknown }>({
+        visitor: (value, visit) =>
+          Array.from(
+            { length },
+            (_0, i) => visit(value[i], elements[i]!, i),
+          ) as never,
+      }),
   })
 }
-
-export type NativeTuple<E extends Array<Type>> = { [K in keyof E]: E[K]["T"] }

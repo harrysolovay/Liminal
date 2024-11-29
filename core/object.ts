@@ -6,7 +6,7 @@ export function object<F extends Record<string, Type>>(
   fields: F,
 ): Type<Expand<NativeObject<F>>, {}, F[keyof F]["P"]> {
   const keys = Object.keys(fields)
-  return declare<NativeObject<F>>()({
+  return declare({
     name: "object",
     source: {
       factory: object,
@@ -18,8 +18,11 @@ export function object<F extends Record<string, Type>>(
       additionalProperties: false,
       required: keys,
     }),
-    process: (value, visit) =>
-      Object.fromEntries(keys.map((k) => [k, visit(value[k]!, fields[k]!, k)])) as never,
+    output: (f) =>
+      f<NativeObject<F>>({
+        visitor: (value, visit) =>
+          Object.fromEntries(keys.map((k) => [k, visit(value[k], fields[k]!, k)])) as never,
+      }),
   })
 }
 

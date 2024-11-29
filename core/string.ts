@@ -5,19 +5,22 @@ import { assert } from "../util/assert.ts"
 export const string: Type.Initial<string, {
   minLength: number
   maxLength: number
-}> = declare<string>()({
+}> = declare({
   name: "string",
   source: {
     getType: () => string,
   },
-  subschema: () => ({ type: "string" }),
   assertRefinementsValid: ({ minLength, maxLength }) => {
     assert(
       !(typeof minLength === "number" && typeof maxLength === "number") || minLength <= maxLength,
     )
   },
-  assertRefinements: {
-    minLength: (value, minLength) => assert(value.length >= minLength),
-    maxLength: (value, maxLength) => assert(value.length <= maxLength),
-  },
+  subschema: () => ({ type: "string" }),
+  output: (f) =>
+    f({
+      asserts: {
+        minLength: (value, minLength) => assert(value.length >= minLength),
+        maxLength: (value, maxLength) => assert(value.length <= maxLength),
+      },
+    }),
 })

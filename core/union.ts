@@ -4,10 +4,7 @@ import { declare } from "../TypeDeclaration.ts"
 export function union<M extends Array<Type>>(
   ...members: M
 ): Type<M[number]["T"], {}, M[number]["P"]> {
-  return declare<{
-    type: number
-    value: M[number]["T"]
-  }>()({
+  return declare({
     name: "union",
     source: {
       factory: union,
@@ -28,6 +25,12 @@ export function union<M extends Array<Type>>(
         additionalProperties: false,
       })),
     }),
-    process: (value, visit) => visit(value.value, members[value.type]!, value.type),
+    output: (f) =>
+      f<{
+        type: number
+        value: unknown
+      }>({
+        visitor: (value, visit) => visit(value.value, members[value.type]!, value.type),
+      }),
   })
 }

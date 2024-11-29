@@ -3,7 +3,7 @@ import { declare } from "../TypeDeclaration.ts"
 
 export { enum_ as enum }
 export function enum_<K extends string>(...members: Array<K>): Type.Initial<K> {
-  return declare<K>()({
+  return declare({
     name: "enum",
     source: {
       factory: enum_,
@@ -15,3 +15,4 @@ export function enum_<K extends string>(...members: Array<K>): Type.Initial<K> {
     }),
   })
 }
+Object.defineProperty(enum_, "name", { value: "enum" })

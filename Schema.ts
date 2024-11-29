@@ -27,20 +27,3 @@ export function RefSchema(ctxArgs: Args = {}): RefSchema {
     }
   }
 }
-
-// export type Format =
-//   | DateFormat
-//   | EmailFormat
-//   | HostnameFormat
-//   | IpAddressFormat
-//   | ResourceIdentifiersFormat
-//   | UriTemplateFormat
-//   | JsonPointerFormat
-
-// export type DateFormat = "date-time" | "time" | "date" | "duration"
-// export type EmailFormat = "email" | "idn-email"
-// export type HostnameFormat = "hostname" | "idn-hostname"
-// export type IpAddressFormat = "ipv4" | "ipv6"
-// export type ResourceIdentifiersFormat = "uuid" | "uri" | "uri-reference" | "iri" | "iri-reference"
-// export type UriTemplateFormat = "uri-template"
-// export type JsonPointerFormat = "json-pointer"

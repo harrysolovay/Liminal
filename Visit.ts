@@ -1,32 +1,30 @@
 import type { Type } from "./Type.ts"
 
-export type ProcessValue<T> = (value: T, type: Type<T>, junction: Junction) => T
+export type VisitOutput = <X extends Type>(value: unknown, type: X, junction: Junction) => X["T"]
 
-export function ProcessValue<T>(
+export function VisitOutput<T>(
   diagnostics: Array<Diagnostic>,
   junctions: Array<number | string> = [],
-): ProcessValue<T> {
+): VisitOutput {
   return (value, type, junction) => {
-    const { assertRefinements } = type.declaration
-    if (assertRefinements) {
-      for (const [refinementKey, assertRefinement] of Object.entries(assertRefinements)) {
-        if (assertRefinement) {
-          const refinement = type.ctx.refinements[refinementKey]
-          if (refinement !== undefined) {
-            fallible(() => assertRefinement(value, type.ctx.refinements[refinementKey]))
+    const { output } = type.declaration
+    if (output) {
+      const { asserts, visitor } = output((v) => v)
+      if (asserts) {
+        for (const [key, assert] of Object.entries(asserts)) {
+          if (assert) {
+            const refinement = type.ctx.refinements[key]
+            if (refinement !== undefined) {
+              fallible(() => assert(value, type.ctx.refinements[key]))
+            }
           }
         }
       }
+      if (visitor) {
+        return fallible(() => visitor(value, VisitOutput(diagnostics, [...junctions, junction])))
+      }
+      return value
     }
-    return fallible(() =>
-      type.declaration.process
-        ? type.declaration.process.call(
-          type,
-          value,
-          ProcessValue(diagnostics, [...junctions, junction]),
-        )
-        : value
-    )
 
     function fallible<T>(f: () => T) {
       try {

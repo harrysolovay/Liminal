@@ -21,7 +21,7 @@ export interface Type<
   P: P
 
   /** The type declaration. */
-  declaration: TypeDeclaration<T, R, P, any>
+  declaration: TypeDeclaration<T, R, P>
 
   /** Container to be filled with context parts as chaining occurs. */
   ctx: Context<T, R, P>
