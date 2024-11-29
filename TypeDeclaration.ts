@@ -4,31 +4,19 @@ import type { ExcludeRefiners, Refinements, Type, Unapplied, UnappliedRefiners }
 import { Inspectable } from "./util/Inspectable.ts"
 import type { PathBuilder, VisitOutput } from "./VisitOutput.ts"
 
-// TODO: get rid of `O`
 export type TypeDeclaration<T, R extends Refinements, P extends keyof any> = {
   /** The name of the type. */
   name: string
   /** The origin of the type (a `declare`d type or `declare`d-type-returning function). */
   source: TypeSource
-  /** Validate the set of specified refinements. */
-  assertRefinementsValid?: (refinements: R) => void
+  /** Validate the set of specified refinements and return description factories. */
+  refinements?: (refinements: { [K in keyof R]+?: R[K] }) => void | { [K in keyof R]+?: string }
   /** How to create the JSON schema for the current type. */
   subschema: (visit: (type: Type) => Schema, ctx: Context<T, R, P>) => Schema
   /** Specify post-processing on the structured output. */
   output?: (
-    f: <O>(
-      value: ProcessOutput<O, T, R>,
-    ) => ProcessOutput<O, T, R>,
+    f: <O>(value: ProcessOutput<O, T, R>) => ProcessOutput<O, T, R>,
   ) => ProcessOutput<any, T, R>
-}
-
-export interface ProcessOutput<O, T, R extends Refinements> {
-  /** Validations corresponding to available refinements. */
-  asserts?: {
-    [K in keyof R]+?: (value: O, constraint: R[K] extends Unapplied<infer U> ? U : never) => void
-  }
-  /** Transform the structured output `O` into the target `T` value. */
-  visitor?: (value: O, visit: VisitOutput, path: PathBuilder) => T
 }
 
 export type TypeSource = {
@@ -41,43 +29,46 @@ export type TypeSource = {
   args: Record<string, unknown>
 }
 
-export function declare<T, R extends Refinements, P extends keyof any>(
-  declaration: TypeDeclaration<T, R, P>,
-): Type<T, R, P> {
-  return declare_<T, R, P>(declaration, new Context([], {}))
+export interface ProcessOutput<O, T, R extends Refinements> {
+  /** Predicates corresponding to available refinements. */
+  refinementPredicates?: {
+    [K in keyof R]+?: (value: O, constraint: R[K] extends Unapplied<infer U> ? U : never) => boolean
+  }
+  /** Transform the structured output `O` into the target `T` value. */
+  visitor?: (value: O, visit: VisitOutput, path: PathBuilder) => T
 }
 
-function declare_<T, R extends Refinements, P extends keyof any>(
-  declaration: TypeDeclaration<T, R, P>,
-  ctx: Context<T, R, P>,
+export function declare<T, R extends Refinements, P extends keyof any>(
+  decl: TypeDeclaration<T, R, P>,
+  ctx = new Context(decl, [], {}),
 ): Type<T, R, P> {
   return Object.assign(
     <P2 extends Params>(
       template: TemplateStringsArray,
       ...params: P2
-    ) => declare_<T, R, P | P2[number]>(declaration as never, ctx.add(template, params) as never),
+    ) => declare<T, R, P | P2[number]>(decl as never, ctx.add(template, params) as never),
     {
       ...Inspectable((inspect) => {
-        const { source } = declaration
+        const { source } = decl
         if (source.getType) {
-          return declaration.name
+          return decl.name
         }
-        return `${declaration.name}(${inspect(source.args)})`
+        return `${decl.name}(${inspect(source.args)})`
       }) as Inspectable & { T: T; P: P },
-      declaration,
+      decl,
       ctx,
       refine: <const V extends UnappliedRefiners<R>>(refinements: V) => {
         const nextCtx = ctx.refine(refinements)
-        if (declaration?.assertRefinementsValid) {
-          declaration.assertRefinementsValid(nextCtx.refinements as never)
+        if (decl?.refinements) {
+          decl.refinements(nextCtx.refinements as never)
         }
-        return declare_<T, ExcludeRefiners<R, V>, P>(declaration as never, nextCtx)
+        return declare<T, ExcludeRefiners<R, V>, P>(decl as never, nextCtx)
       },
-      schema(this: Type<T, R, never>): Schema {
-        return RefSchema()(this)
+      schema(this: Type<T, R, never>, refine?: boolean): Schema {
+        return RefSchema({}, refine)(this)
       },
       fill<A extends Partial<Args<P>>>(args: A) {
-        return declare_<T, R, ExcludeArgs<P, A>>(declaration, ctx.apply(args))
+        return declare<T, R, ExcludeArgs<P, A>>(decl, ctx.apply(args))
       },
     },
   )

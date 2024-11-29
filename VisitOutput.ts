@@ -5,43 +5,54 @@ export type VisitOutput = <X extends Type>(value: unknown, type: X, path: PathBu
 
 export function VisitOutput<T>(diagnostics: Array<Diagnostic>): VisitOutput {
   return (value, type, path) => {
-    const { output } = type.declaration
-    if (output) {
-      const { asserts, visitor } = output((v) => v)
-      if (asserts) {
-        for (const [key, assert] of Object.entries(asserts)) {
-          if (assert) {
+    if (type.decl.output) {
+      const { refinementPredicates, visitor } = type.decl.output((v) => v)
+      if (refinementPredicates) {
+        for (const [key, is] of Object.entries(refinementPredicates)) {
+          if (is) {
             const refinement = type.ctx.refinements[key]
             if (refinement !== undefined) {
-              fallible(() => assert(value, type.ctx.refinements[key]))
+              if (!is(value, type.ctx.refinements[key])) {
+                diagnostics.push({
+                  name: `${type.name} refinement "${key}" unsatisfied.`,
+                  message: type.ctx.refinementMessages()![key]!,
+                  type,
+                  value,
+                  path,
+                })
+              }
             }
           }
         }
       }
       if (visitor) {
-        return fallible(() => visitor(value, VisitOutput(diagnostics), path))
+        try {
+          return visitor(value, VisitOutput(diagnostics), path)
+        } catch (exception: unknown) {
+          if (exception instanceof Error) {
+            diagnostics.push({
+              name: exception.name,
+              message: exception.message,
+              type,
+              value,
+              path,
+            })
+          } else {
+            throw exception
+          }
+          return undefined!
+        }
       }
       return value
-    }
-
-    function fallible<T>(f: () => T) {
-      try {
-        return f()
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          diagnostics.push({ error, type, path })
-        } else {
-          throw error
-        }
-        return undefined!
-      }
     }
   }
 }
 
 export type Diagnostic = {
-  error: Error
+  name: string
+  message: string
   type: Type
+  value: unknown
   path: PathBuilder
 }
 
@@ -67,13 +78,14 @@ export type PathJunction = number | string
 export type PathJunctions = Array<PathJunction>
 
 export function serializeDiagnostics(diagnostics: Array<Diagnostic>): string {
-  return diagnostics.map(({ path, error }, i) =>
+  return diagnostics.map(({ name, message, value, path }, i) =>
     dedent`
-      ${i}: ${error.name}
-        - Origin:
-          - Type Path: \`${PathBuilder.format(path.valueJunctions)}\`
-          - Value Path: \`${PathBuilder.format(path.typeJunctions)}\`
-        - Message: ${error.message}
+      ${i}: ${name}; ${message}
+
+      Invalid value: ${value}
+
+      Value path: ${PathBuilder.format(path.typeJunctions)}
+       Type path: ${PathBuilder.format(path.typeJunctions)}
     `
   ).join("\n\n")
 }

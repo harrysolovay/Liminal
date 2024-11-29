@@ -45,13 +45,7 @@ export function taggedUnion<
             [tagKey]: value[tagKey],
             // TODO: fix typing of `tag`.
             ..."value" in value
-              ? {
-                value: visit(
-                  value.value,
-                  type,
-                  path.value("value").type(tag as string),
-                ),
-              }
+              ? { value: visit(value.value, type, path.value("value").type(tag as string)) }
               : {},
           }) as never
         },

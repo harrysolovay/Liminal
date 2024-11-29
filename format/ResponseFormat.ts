@@ -9,11 +9,15 @@ export interface ResponseFormat<T> extends FinalResponseFormat<T> {
   (template: TemplateStringsArray, ...values: Array<unknown>): FinalResponseFormat<T>
 }
 
-export function ResponseFormat<T>(name: string, type: Type<T, any, never>): ResponseFormat<T> {
+export function ResponseFormat<T>(
+  name: string,
+  type: Type<T, any, never>,
+  refine?: boolean,
+): ResponseFormat<T> {
   return Object.assign(
     (template: TemplateStringsArray, ...values: unknown[]) =>
-      FinalResponseFormat(name, type, recombine(template, values)),
-    FinalResponseFormat(name, type),
+      FinalResponseFormat(name, type, recombine(template, values), refine),
+    FinalResponseFormat(name, type, undefined, refine),
   )
 }
 
@@ -47,14 +51,15 @@ function FinalResponseFormat<T>(
   name: string,
   type: Type<T, any, never>,
   description?: string,
+  refine?: boolean,
 ): FinalResponseFormat<T> {
   return {
     "": type,
     type: "json_schema",
     json_schema: {
       name,
-      description,
-      schema: type.schema(),
+      ...description ? { description } : {},
+      schema: type.schema(refine),
       strict: true,
     },
     into: (completion) => {

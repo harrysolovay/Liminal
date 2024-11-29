@@ -10,17 +10,22 @@ export const string: Type.Initial<string, {
   source: {
     getType: () => string,
   },
-  assertRefinementsValid: ({ minLength, maxLength }) => {
+  refinements: ({ minLength, maxLength }) => {
     assert(
       !(typeof minLength === "number" && typeof maxLength === "number") || minLength <= maxLength,
+      "`minLength` cannot be greater than `maxLength`.",
     )
+    return {
+      minLength: `Length must be gte ${minLength} chars.`,
+      maxLength: `Length must be lte ${maxLength} chars.`,
+    }
   },
   subschema: () => ({ type: "string" }),
   output: (f) =>
     f({
-      asserts: {
-        minLength: (value, minLength) => assert(value.length >= minLength),
-        maxLength: (value, maxLength) => assert(value.length <= maxLength),
+      refinementPredicates: {
+        minLength: (value, minLength) => value.length >= minLength,
+        maxLength: (value, maxLength) => value.length <= maxLength,
       },
     }),
 })

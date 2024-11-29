@@ -23,7 +23,7 @@ export interface Type<
   P: P
 
   /** The type declaration. */
-  declaration: TypeDeclaration<T, R, P>
+  decl: TypeDeclaration<T, R, P>
 
   /** Container to be filled with context parts as chaining occurs. */
   ctx: Context<T, R, P>
@@ -32,7 +32,7 @@ export interface Type<
   refine<const V extends UnappliedRefiners<R>>(refinements: V): Type<T, ExcludeRefiners<R, V>, P>
 
   /** Get the corresponding JSON Schema. */
-  schema(this: Type<T, R, never>): Schema
+  schema(this: Type<T, R, never>, refine?: boolean): Schema
 
   /** Apply context to parameters. */
   fill: <A extends Partial<Args<P>>>(args: A) => Type<T, R, ExcludeArgs<P, A>>

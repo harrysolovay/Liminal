@@ -1,1 +1,2 @@
-export const LIB_DESCRIPTION = "A library for working with OpenAI's structured outputs."
+export const LIB_DESCRIPTION =
+  "Type-safe Schema Modeling and Validation of OpenAI Structured Outputs"

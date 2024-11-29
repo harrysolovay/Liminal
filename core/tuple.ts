@@ -14,19 +14,15 @@ export function tuple<E extends Array<Type>>(
     },
     subschema: (visit) => ({
       type: "object",
-      properties: Object.fromEntries(
-        Array.from({ length }, (_0, i) => [i, visit(elements[i]!)]),
-      ),
+      properties: Object.fromEntries(Array.from({ length }, (_0, i) => [i, visit(elements[i]!)])),
       required,
       additionalProperties: false,
     }),
     output: (f) =>
       f<{ [K in keyof E]: unknown }>({
         visitor: (value, visit, path) =>
-          Array.from(
-            { length },
-            (_0, i) => visit(value[i], elements[i]!, path.type("number").value(i)),
-          ) as never,
+          Array.from({ length }, (_0, i) =>
+            visit(value[i], elements[i]!, path.type("number").value(i))) as never,
       }),
   })
 }

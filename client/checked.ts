@@ -43,24 +43,26 @@ export async function checked<T>(
     params.response_format[""],
     new PathBuilder(),
   )
-  while (!options?.signal.aborted && diagnostics.length) {
-    const { corrections } = await client.chat.completions
-      .create({
-        ...params,
-        messages: [{
-          role: "user",
-          content: [{
-            type: "text",
-            text: prompt(params, diagnostics),
-          }],
-        }],
-        response_format,
-      })
-      .then(response_format.into)
-    // TODO:
-    corrections.forEach(({ id, value }) => {})
-  }
-  return processed0
+  console.log(processed0, diagnostics)
+  return null!
+  // while (!options?.signal.aborted && diagnostics.length) {
+  //   const { corrections } = await client.chat.completions
+  //     .create({
+  //       ...params,
+  //       messages: [{
+  //         role: "user",
+  //         content: [{
+  //           type: "text",
+  //           text: prompt(params, diagnostics),
+  //         }],
+  //       }],
+  //       response_format,
+  //     })
+  //     .then(response_format.into)
+  //   // TODO:
+  //   corrections.forEach(({ id, value }) => {})
+  // }
+  // return processed0
 }
 
 const response_format = ResponseFormat(
@@ -89,7 +91,7 @@ function prompt(
     ## Initially-requested Structured Output JSON Schema
 
     \`\`\`json
-    ${JSON.stringify(params.response_format[""].schema(), null, 2)}
+    ${JSON.stringify(params.response_format.json_schema, null, 2)}
     \`\`\
 
     ## Diagnostics

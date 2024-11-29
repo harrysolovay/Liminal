@@ -11,19 +11,24 @@ export const number: Type.Initial<number, {
   source: {
     getType: () => number,
   },
-  assertRefinementsValid: ({ min, max }) =>
+  refinements: ({ min, max }) => {
     assert(
       !(typeof min === "number" && typeof max === "number") || min <= max,
-      "Refinement min is greater than its max.",
-    ),
+      "`min` cannot be greater than `max`.",
+    )
+    return {
+      min: `Must be gte ${min}.`,
+      max: `Must be lte ${max}.`,
+    }
+  },
   subschema: (_0, ctx) => ({
     type: ctx.refinements.int ? "integer" : "number",
   }),
   output: (f) =>
     f<number>({
-      asserts: {
-        min: (value, min) => assert(value >= min, `value >= ${min}`),
-        max: (value, max) => assert(value <= max, `value <= ${max}`),
+      refinementPredicates: {
+        min: (value, min) => value >= min,
+        max: (value, max) => value <= max,
       },
     }),
 })
