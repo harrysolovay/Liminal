@@ -17,8 +17,9 @@ export function VisitOutput<T>(diagnostics: Array<Diagnostic>): VisitOutput {
                   name: `${type.name} refinement "${key}" unsatisfied.`,
                   message: type.ctx.refinementMessages()![key]!,
                   type,
-                  value,
                   path,
+                  value,
+                  setValue: () => {},
                 })
               }
             }
@@ -36,6 +37,7 @@ export function VisitOutput<T>(diagnostics: Array<Diagnostic>): VisitOutput {
               type,
               value,
               path,
+              setValue: () => {},
             })
           } else {
             throw exception
@@ -52,8 +54,9 @@ export type Diagnostic = {
   name: string
   message: string
   type: Type
-  value: unknown
   path: PathBuilder
+  value: unknown
+  setValue: (value: unknown) => void
 }
 
 export class PathBuilder {
