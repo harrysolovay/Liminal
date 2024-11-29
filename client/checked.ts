@@ -14,17 +14,19 @@ import {
 } from "../mod.ts"
 import { assert } from "../util/assert.ts"
 
-export interface CheckedParams<T = any> extends
-  Omit<
-    ChatCompletionCreateParamsNonStreaming_,
-    "audio" | "modalities" | "response_format" | "stream" | "stream_options"
-  >
+export interface CheckedParams<T = any>
+  extends
+    Omit<
+      ChatCompletionCreateParamsNonStreaming_,
+      "audio" | "modalities" | "response_format" | "stream" | "stream_options"
+    >
 {
   response_format: ResponseFormat<T>
 }
 
 export interface CheckedOptions {
-  signal: AbortSignal
+  signal?: AbortSignal
+  maxCorrections?: number
 }
 
 /** Get the completion and then loop refinement assertions and resubmission until all assertions pass. */
@@ -33,6 +35,11 @@ export async function checked<T>(
   params: CheckedParams<T>,
   options?: CheckedOptions,
 ): Promise<T> {
+  const { maxCorrections } = options ?? {}
+  assert(
+    maxCorrections === undefined || (maxCorrections >= 1 && Number.isInteger(maxCorrections)),
+    "`CheckedOptions.maxCorrections` must be an integer greater than 1.",
+  )
   const initial = await client.chat.completions
     .create(params)
     .then(ResponseFormat.unwrap)
@@ -44,25 +51,25 @@ export async function checked<T>(
     new PathBuilder(),
   )
   console.log(processed0, diagnostics)
-  return null!
-  // while (!options?.signal.aborted && diagnostics.length) {
-  //   const { corrections } = await client.chat.completions
-  //     .create({
-  //       ...params,
-  //       messages: [{
-  //         role: "user",
-  //         content: [{
-  //           type: "text",
-  //           text: prompt(params, diagnostics),
-  //         }],
-  //       }],
-  //       response_format,
-  //     })
-  //     .then(response_format.into)
-  //   // TODO:
-  //   corrections.forEach(({ id, value }) => {})
-  // }
-  // return processed0
+  let correctionsRemaining = options?.maxCorrections ?? Infinity
+  while (correctionsRemaining-- && !options?.signal?.aborted && diagnostics.length) {
+    const { corrections } = await client.chat.completions
+      .create({
+        ...params,
+        messages: [{
+          role: "user",
+          content: [{
+            type: "text",
+            text: prompt(params, diagnostics),
+          }],
+        }],
+        response_format,
+      })
+      .then(response_format.into)
+    // TODO:
+    corrections.forEach(({ id, value }) => {})
+  }
+  return processed0
 }
 
 const response_format = ResponseFormat(

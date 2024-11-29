@@ -25,10 +25,8 @@ const Refined = T.object({
 
 const response_format = ResponseFormat("initially_invalid", Refined)
 
-console.log(response_format.json_schema)
-
-// await checked(openai, {
-//   model: "gpt-4o-mini",
-//   response_format,
-//   messages: [{ role: "system", content: [] }],
-// }).then(dbg)
+await checked(openai, {
+  model: "gpt-4o-mini",
+  response_format,
+  messages: [{ role: "system", content: [] }],
+}).then(dbg)
