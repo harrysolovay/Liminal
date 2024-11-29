@@ -2,7 +2,7 @@ import { type Args, Context, type ExcludeArgs, type Params } from "./Context.ts"
 import { RefSchema, type Schema } from "./Schema.ts"
 import type { ExcludeRefiners, Refinements, Type, Unapplied, UnappliedRefiners } from "./Type.ts"
 import { Inspectable } from "./util/Inspectable.ts"
-import type { VisitOutput } from "./VisitOutput.ts"
+import type { PathBuilder, VisitOutput } from "./VisitOutput.ts"
 
 // TODO: get rid of `O`
 export type TypeDeclaration<T, R extends Refinements, P extends keyof any> = {
@@ -28,7 +28,7 @@ export interface ProcessOutput<O, T, R extends Refinements> {
     [K in keyof R]+?: (value: O, constraint: R[K] extends Unapplied<infer U> ? U : never) => void
   }
   /** Transform the structured output `O` into the target `T` value. */
-  visitor?: (value: O, visit: VisitOutput) => T
+  visitor?: (value: O, visit: VisitOutput, path: PathBuilder) => T
 }
 
 export type TypeSource = {

@@ -30,7 +30,8 @@ export function union<M extends Array<Type>>(
         type: number
         value: unknown
       }>({
-        visitor: (value, visit) => visit(value.value, members[value.type]!, value.type),
+        visitor: (value, visit, path) =>
+          visit(value.value, members[value.type]!, path.type(value.type)),
       }),
   })
 }

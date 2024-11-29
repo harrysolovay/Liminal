@@ -22,10 +22,10 @@ export function tuple<E extends Array<Type>>(
     }),
     output: (f) =>
       f<{ [K in keyof E]: unknown }>({
-        visitor: (value, visit) =>
+        visitor: (value, visit, path) =>
           Array.from(
             { length },
-            (_0, i) => visit(value[i], elements[i]!, i),
+            (_0, i) => visit(value[i], elements[i]!, path.type("number").value(i)),
           ) as never,
       }),
   })

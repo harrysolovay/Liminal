@@ -20,8 +20,10 @@ export function object<F extends Record<string, Type>>(
     }),
     output: (f) =>
       f<NativeObject<F>>({
-        visitor: (value, visit) =>
-          Object.fromEntries(keys.map((k) => [k, visit(value[k], fields[k]!, k)])) as never,
+        visitor: (value, visit, path) =>
+          Object.fromEntries(
+            keys.map((k) => [k, visit(value[k], fields[k]!, path.type(k).value(k))]),
+          ) as never,
       }),
   })
 }

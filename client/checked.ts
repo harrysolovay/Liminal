@@ -4,7 +4,14 @@ import type {
   ChatCompletionCreateParamsNonStreaming as ChatCompletionCreateParamsNonStreaming_,
   ChatCompletionMessageParam,
 } from "openai/resources/chat/completions"
-import { type Diagnostic, ResponseFormat, T, VisitOutput } from "../mod.ts"
+import {
+  type Diagnostic,
+  PathBuilder,
+  ResponseFormat,
+  serializeDiagnostics,
+  T,
+  VisitOutput,
+} from "../mod.ts"
 import { assert } from "../util/assert.ts"
 
 export interface CheckedParams<T = any> extends
@@ -34,20 +41,22 @@ export async function checked<T>(
   const processed0 = VisitOutput<T>(diagnostics)(
     initial,
     params.response_format[""],
-    "ResponseFormat",
+    new PathBuilder(),
   )
   while (!options?.signal.aborted && diagnostics.length) {
-    const { corrections } = await client.chat.completions.create({
-      ...params,
-      messages: [{
-        role: "user",
-        content: [{
-          type: "text",
-          text: prompt(params, diagnostics),
+    const { corrections } = await client.chat.completions
+      .create({
+        ...params,
+        messages: [{
+          role: "user",
+          content: [{
+            type: "text",
+            text: prompt(params, diagnostics),
+          }],
         }],
-      }],
-      response_format,
-    }).then(response_format.into)
+        response_format,
+      })
+      .then(response_format.into)
     // TODO:
     corrections.forEach(({ id, value }) => {})
   }
@@ -60,7 +69,7 @@ const response_format = ResponseFormat(
     corrections: T.array(T.object({
       id: T.number`The ID of the diagnostic to which the new value corresponds.`,
       value: T.string`The new, correct value.`,
-    })),
+    }))`The corrections to be applied to a previously-generated structured output.`,
   }),
 )
 
@@ -115,16 +124,4 @@ function serializeMessages(messages: Array<ChatCompletionMessageParam>) {
       `
     }
   })
-}
-
-function serializeDiagnostics(diagnostics: Array<Diagnostic>): string {
-  return diagnostics.map(({ junctions, error }, i) =>
-    dedent`
-      ### ${i}: ${error.name} found at \`${junctions.join(" ")}\`
-
-      \`\`\`
-      ${error.message}
-      \`\`\`
-    `
-  ).join("\n\n")
 }

@@ -1,9 +1,9 @@
 import type { ChatCompletion } from "openai/resources/chat/completions"
 import type { ResponseFormatJSONSchema } from "openai/resources/shared"
 import type { Type } from "../Type.ts"
-import { assert } from "../util/assert.ts"
+import { assert, AssertionError } from "../util/assert.ts"
 import { recombine } from "../util/recombine.ts"
-import { type Diagnostic, VisitOutput } from "../VisitOutput.ts"
+import { type Diagnostic, PathBuilder, serializeDiagnostics, VisitOutput } from "../VisitOutput.ts"
 
 export interface ResponseFormat<T> extends FinalResponseFormat<T> {
   (template: TemplateStringsArray, ...values: Array<unknown>): FinalResponseFormat<T>
@@ -62,15 +62,15 @@ function FinalResponseFormat<T>(
       const result = VisitOutput<T>(diagnostics)(
         JSON.parse(ResponseFormat.unwrap(completion)),
         type,
-        "ResponseFormat",
+        new PathBuilder(),
       )
-      diagnostics.forEach((diagnostic) => {
-        console.log(diagnostic.junctions, diagnostic.error.message)
-      })
+      if (diagnostics.length) {
+        throw new AssertionError(serializeDiagnostics(diagnostics))
+      }
       return result
     },
     ...{
-      /** Prevents `JSON.stringify` from attempting to serialize `into`. */
+      /** Prevents `JSON.stringify` from including `""` and `into` in serialization. */
       toJSON() {
         const { type, json_schema } = this
         return { type, json_schema }

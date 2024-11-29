@@ -38,13 +38,21 @@ export function taggedUnion<
     }),
     output: (f) =>
       f<{ [V in keyof M]: ({ [_ in K]: V } & { value?: unknown }) }[keyof M]>({
-        visitor: (value, visit) => {
+        visitor: (value, visit, path) => {
           const tag = value[tagKey]
           const type = members[tag]!
           return ({
             [tagKey]: value[tagKey],
             // TODO: fix typing of `tag`.
-            ..."value" in value ? { value: visit(value.value, type, tag as string) } : {},
+            ..."value" in value
+              ? {
+                value: visit(
+                  value.value,
+                  type,
+                  path.value("value").type(tag as string),
+                ),
+              }
+              : {},
           }) as never
         },
       }),
