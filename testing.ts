@@ -1,12 +1,11 @@
 import { ensureDir } from "@std/fs"
 import * as path from "@std/path"
 import { assertSnapshot } from "@std/testing/snapshot"
-import { TMP_DIR } from "./constants.ts"
-import type { T } from "./mod.ts"
+import type { Type } from "./core/mod.ts"
 
-export async function assertTySnapshot(
+export async function assertTypeSnapshot(
   t: Deno.TestContext,
-  value: T.Ty<unknown, never>,
+  value: Type<any, any, never>,
 ): Promise<void> {
   await assertSnapshot(t, value.schema())
   const withContext = value`One.`
@@ -22,8 +21,11 @@ export function tap(useValue: <T>(value: T) => void) {
 }
 
 export const dbg = tap(async (value) => {
+  console.debug(value)
   await ensureDir(TMP_DIR)
   const dest = path.join(TMP_DIR, `${Date.now()}.json`)
   await Deno.writeTextFile(dest, JSON.stringify(value, null, 2))
   console.log(`Written to ${dest}.`)
 })
+
+const TMP_DIR = ".tmp"

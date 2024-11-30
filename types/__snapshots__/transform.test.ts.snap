@@ -4,12 +4,16 @@ snapshot[`transform 1`] = `
 {
   additionalProperties: false,
   properties: {
-    value: {
-      type: "string",
+    latitude: {
+      type: "number",
+    },
+    longitude: {
+      type: "number",
     },
   },
   required: [
-    "value",
+    "latitude",
+    "longitude",
   ],
   type: "object",
 }
@@ -20,12 +24,16 @@ snapshot[`transform 2`] = `
   additionalProperties: false,
   description: "One.",
   properties: {
-    value: {
-      type: "string",
+    latitude: {
+      type: "number",
+    },
+    longitude: {
+      type: "number",
     },
   },
   required: [
-    "value",
+    "latitude",
+    "longitude",
   ],
   type: "object",
 }
@@ -34,14 +42,18 @@ snapshot[`transform 2`] = `
 snapshot[`transform 3`] = `
 {
   additionalProperties: false,
-  description: "Two. One.",
+  description: "One. Two.",
   properties: {
-    value: {
-      type: "string",
+    latitude: {
+      type: "number",
+    },
+    longitude: {
+      type: "number",
     },
   },
   required: [
-    "value",
+    "latitude",
+    "longitude",
   ],
   type: "object",
 }

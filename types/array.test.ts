@@ -1,7 +1,7 @@
-import { assertTySnapshot } from "test_util"
+import { assertTypeSnapshot } from "testing"
 import { array } from "./array.ts"
-import { string } from "./primitives.ts"
+import { string } from "./string.ts"
 
 Deno.test("array", async (t) => {
-  await assertTySnapshot(t, array(string))
+  await assertTypeSnapshot(t, array(string))
 })

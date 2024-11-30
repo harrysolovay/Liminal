@@ -50,10 +50,10 @@ export function Range(from: number, to: number) {
 You may want to accept types as arguments, which inform the type of the return.
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { Type } from "structured-outputs"
 // ---cut---
 
-function MostUnlikely<X extends T.Ty>(ty: X) {
-  return ty`Ensure that this generated type is the most unlikely instance of itself.`
+function MostUnlikely<X extends Type>(ty: X) {
+  return ty`Ensure that this generated type is the most unlikely version of itself.`
 }
 ```

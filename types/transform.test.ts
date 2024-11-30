@@ -1,11 +1,18 @@
-import { assertEquals } from "@std/assert"
-import { assertTySnapshot } from "test_util"
+import { assertTypeSnapshot } from "testing"
+import { number } from "./number.ts"
 import { object } from "./object.ts"
-import { string } from "./primitives.ts"
 import { transform } from "./transform.ts"
 
 Deno.test("transform", async (t) => {
-  const unwrap = transform(object({ value: string }), ({ value }) => value)
-  await assertTySnapshot(t, unwrap)
-  assertEquals(unwrap[""].transform({ value: "Hello!" }), "Hello!")
+  await assertTypeSnapshot(
+    t,
+    transform(
+      "Coordinates",
+      object({
+        latitude: number,
+        longitude: number,
+      }),
+      ({ latitude, longitude }) => [latitude, longitude],
+    ),
+  )
 })

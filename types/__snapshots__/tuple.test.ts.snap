@@ -50,7 +50,7 @@ snapshot[`tuple 2`] = `
 snapshot[`tuple 3`] = `
 {
   additionalProperties: false,
-  description: "Two. One.",
+  description: "One. Two.",
   properties: {
     "0": {
       type: "boolean",

@@ -1,6 +1,8 @@
 import Openai from "openai"
 import "@std/dotenv/load"
-import { ResponseFormat, T } from "structured-outputs"
+import { T } from "structured-outputs"
+import { ResponseFormat } from "structured-outputs/client"
+import { dbg } from "testing"
 
 const Contact = T.object({
   name: T.string,
@@ -12,24 +14,21 @@ const response_format = ResponseFormat("extract_contact_information", Contact)`
   The contact information extracted from the supplied text.
 `
 
-const contact = await new Openai().chat.completions
+await new Openai().chat.completions
   .create({
     model: "gpt-4o-mini",
     response_format,
-    messages: [
-      {
-        role: "user",
-        content: [{
-          type: "text",
-          text: `
+    messages: [{
+      role: "user",
+      content: [{
+        type: "text",
+        text: `
             Extract data from the following message:
 
             Please call John Doe at 555-123-4567 or email him at john.doe@example.com.
           `,
-        }],
-      },
-    ],
+      }],
+    }],
   })
   .then(response_format.into)
-
-console.log(contact)
+  .then(dbg)

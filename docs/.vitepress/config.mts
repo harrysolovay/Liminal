@@ -1,6 +1,6 @@
 import { transformerTwoslash } from "@shikijs/vitepress-twoslash"
 import { DefaultTheme, defineConfig } from "vitepress"
-import { LIB_DESCRIPTION } from "../../constants.ts"
+import { LIB_DESCRIPTION } from "../../constants"
 
 export default defineConfig({
   title: "Structured Outputs TS",

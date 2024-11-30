@@ -50,7 +50,7 @@ snapshot[`object 2`] = `
 snapshot[`object 3`] = `
 {
   additionalProperties: false,
-  description: "Two. One.",
+  description: "One. Two.",
   properties: {
     a: {
       type: "boolean",

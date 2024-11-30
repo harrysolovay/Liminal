@@ -1,30 +1,62 @@
-import { Ty } from "./Ty.ts"
+import { declare, type Type } from "../core/mod.ts"
+import type { Expand } from "../util/type_util.ts"
 
-export function taggedUnion<M extends Record<string, Ty | null>>(members: M): Ty<
-  { [K in keyof M]: M[K] extends Ty ? { type: K; value: M[K]["T"] } : { type: K } }[keyof M],
-  Exclude<M[keyof M], null>["P"],
-  false
+export function taggedUnion<
+  K extends number | string,
+  M extends Record<number | string, Type | null>,
+>(
+  tagKey: K,
+  members: M,
+): Type<
+  {
+    [V in keyof M]: Expand<({ [_ in K]: V } & (M[V] extends Type ? { value: M[V]["T"] } : {}))>
+  }[keyof M],
+  {},
+  Extract<M[keyof M], Type>["P"]
 > {
   const entries = Object.entries(members)
-  return Ty(
-    (subschema) => ({
-      discriminator: "type",
+  return declare({
+    name: "taggedUnion",
+    source: {
+      factory: taggedUnion,
+      args: { tagKey, members },
+    },
+    subschema: (visit) => ({
+      discriminator: tagKey,
       anyOf: entries.map(([k, v]) => ({
         type: "object",
         properties: {
-          type: {
+          [tagKey]: {
             type: "string",
             const: k,
           },
-          ...(v === null ? {} : {
-            value: subschema(v),
-          }),
+          ...(v === null ? {} : { value: visit(v) }),
         },
-        required: ["type", ...v === null ? [] : ["value"]],
+        required: [tagKey, ...v === null ? [] : ["value"]],
         additionalProperties: false,
       })),
     }),
-    false,
-    (v) => members[v.type]![""].transform(v),
-  )
+    output: (f) =>
+      f<{ [V in keyof M]: ({ [_ in K]: V } & { value?: unknown }) }[keyof M]>({
+        visitor: (value, ctx) => {
+          const tag = value[tagKey] as number | string
+          const type = members[tag]!
+          return ({
+            [tagKey]: value[tagKey],
+            ..."value" in value
+              ? {
+                value: ctx.visit({
+                  value: value.value,
+                  type,
+                  junctions: {
+                    value: "value",
+                    type: tag,
+                  },
+                }),
+              }
+              : {},
+          }) as never
+        },
+      }),
+  })
 }

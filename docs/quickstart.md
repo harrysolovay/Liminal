@@ -50,7 +50,7 @@ import { ResponseFormat, T } from "structured-outputs"
 
 const Supe = T.object({
   name: T.string`The super-abled character's name.`,
-  role: T.constantUnion("Hero", "Villain", "Indifferent"),
+  role: T.enum("Hero", "Villain", "Indifferent"),
   age: T.number`Between 18 and 200 years of age.`,
   power: T.string`The name of a supernatural ability.`,
 })
@@ -63,7 +63,7 @@ import { ResponseFormat, T } from "structured-outputs"
 
 const Supe = T.object({
   name: T.string,
-  role: T.constantUnion("Hero", "Villain", "Indifferent"),
+  role: T.enum("Hero", "Villain", "Indifferent"),
   age: T.number,
 })
 // ---cut---
@@ -85,7 +85,7 @@ import { ResponseFormat, T } from "structured-outputs"
 
 const Supe = T.object({
   name: T.string,
-  role: T.constantUnion("Hero", "Villain", "Indifferent"),
+  role: T.enum("Hero", "Villain", "Indifferent"),
   age: T.number,
 })
 // ---cut---

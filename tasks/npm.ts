@@ -15,7 +15,13 @@ const { version } = parseArgs(Deno.args, {
 })
 
 await build({
-  entryPoints: ["./mod.ts"],
+  entryPoints: [
+    "./mod.ts",
+    {
+      name: "./std",
+      path: "./std/mod.ts",
+    },
+  ],
   outDir,
   shims: {},
   scriptModule: false,
@@ -27,7 +33,7 @@ await build({
   typeCheck: false,
   importMap: "./deno.json",
   test: false,
-  // TODO:
+  // TODO: use upon resolution of https://github.com/denoland/dnt/issues/433.
   // mappings: {
   //   "npm:openai@^4.68.1": {
   //     name: "openai",
@@ -41,13 +47,14 @@ await build({
     description: LIB_DESCRIPTION,
     license: "Apache-2.0",
     repository: "github:harrysolovay/structured-outputs.git",
+    type: "module",
     main: "./esm/mod.js",
   },
 })
 
 const packageJsonPath = path.join(outDir, "package.json")
 await Promise.all([
-  // TODO: use mappings upon resolution of https://github.com/denoland/dnt/issues/433.
+  // TODO: delete upon resolution of https://github.com/denoland/dnt/issues/433.
   Deno.readTextFile(packageJsonPath).then(async (v) => {
     const initial = JSON.parse(v)
     const { openai } = initial.dependencies

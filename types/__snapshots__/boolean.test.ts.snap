@@ -1,0 +1,21 @@
+export const snapshot = {};
+
+snapshot[`boolean 1`] = `
+{
+  type: "boolean",
+}
+`;
+
+snapshot[`boolean 2`] = `
+{
+  description: "One.",
+  type: "boolean",
+}
+`;
+
+snapshot[`boolean 3`] = `
+{
+  description: "One. Two.",
+  type: "boolean",
+}
+`;

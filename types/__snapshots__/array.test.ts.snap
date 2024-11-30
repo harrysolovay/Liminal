@@ -21,7 +21,7 @@ snapshot[`array 2`] = `
 
 snapshot[`array 3`] = `
 {
-  description: "Two. One.",
+  description: "One. Two.",
   items: {
     type: "string",
   },

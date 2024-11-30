@@ -1,3 +1,10 @@
-export function recombine(strings: TemplateStringsArray, values: Array<number | string>): string {
-  return strings.reduce((acc, cur, i) => `${acc}${cur}${values[i] ?? ""}`, "")
+export function recombine(template: TemplateStringsArray, values: Array<unknown>): string {
+  const segments = []
+  for (let i = 0; i < template.length; i++) {
+    segments.push(template[i])
+    if (i < values.length) {
+      segments.push(String(values[i]))
+    }
+  }
+  return segments.join("")
 }

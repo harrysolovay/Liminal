@@ -7,31 +7,16 @@ next:
   link: patterns/authoring
 ---
 
+<!-- TODO: get twoslash working with `std` export subpath. -->
+
 # Standard Patterns
 
-## `Option`
-
-```ts twoslash
-import { T } from "structured-outputs"
-// ---cut---
-const Critique = T.Option(T.string)
-
-Critique
-// ^?
+```ts
+import * as std from "structured-outputs/std"
 ```
-
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
 
 ## `Date`
 
-```ts twoslash
-import { T } from "structured-outputs"
-// ---cut---
-T.Date
+```ts
+std.Date
 ```

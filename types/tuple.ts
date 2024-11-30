@@ -1,19 +1,33 @@
-import { Ty } from "./Ty.ts"
+import { declare, type Type } from "../core/mod.ts"
 
-export function tuple<F extends Ty[]>(
-  ...elements: F
-): Ty<{ [K in keyof F]: F[K]["T"] }, F[number]["P"], true> {
+export function tuple<E extends Array<Type>>(
+  ...elements: E
+): Type<{ [K in keyof E]: E[K]["T"] }, {}, E[number]["P"]> {
   const { length } = elements
-  return Ty(
-    (subschema) => ({
+  return declare({
+    name: "tuple",
+    source: {
+      factory: tuple,
+      args: { elements },
+    },
+    subschema: (visit) => ({
       type: "object",
-      properties: Object.fromEntries(
-        Array.from({ length }, (_0, i) => [i, subschema(elements[i]!)]),
-      ),
+      properties: Object.fromEntries(Array.from({ length }, (_0, i) => [i, visit(elements[i]!)])),
+      required: Array.from({ length }, (_0, i) => i.toString()),
       additionalProperties: false,
-      required: Object.keys(Array.from({ length }, (_0, i) => i)),
     }),
-    true,
-    (v) => Array.from({ length }, (_0, i) => elements[i]![""].transform(v[i])) as never,
-  )
+    output: (f) =>
+      f<{ [K in keyof E]: unknown }>({
+        visitor: (value, ctx) =>
+          Array.from({ length }, (_0, i) =>
+            ctx.visit({
+              value: value[i],
+              type: elements[i]!,
+              junctions: {
+                value: i,
+                type: "number",
+              },
+            })) as never,
+      }),
+  })
 }

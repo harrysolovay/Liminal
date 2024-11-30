@@ -174,7 +174,7 @@ snapshot[`tagged union 3`] = `
       type: "object",
     },
   ],
-  description: "Two. One.",
+  description: "One. Two.",
   discriminator: "type",
 }
 `;

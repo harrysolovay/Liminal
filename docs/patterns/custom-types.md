@@ -7,7 +7,9 @@ next: false
 
 # Custom Types
 
-In the case that you need to implement a custom type, this may indicate a current shortcoming of
+TODO
+
+<!-- In the case that you need to implement a custom type, this may indicate a current shortcoming of
 `structured-outputs` and you're encouraged to
 [file an issue](https://github.com/harrysolovay/structured-outputs/issues/new). That being said,
 here's how you can create a custom type.
@@ -33,4 +35,4 @@ The arguments passed to `T.Ty` are as follows:
 - Whether the type can be used as a root type.
 
 You could similarly create a functional pattern, which accepts arguments and uses them to form the
-returned `Ty`.
+returned `Ty`. -->

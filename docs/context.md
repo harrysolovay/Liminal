@@ -35,6 +35,8 @@ This enables us to attach additional context to any type.
 
 ## Parameterized Context
 
+TODO: add note about intended use (not dynamic / OpenAI needs to generate a CFG).
+
 Often times, we may want to reuse the structure of a type, but not the context. In these cases, we
 can interpolate parameter keys into the template literal of the `Ty` tagged template expression.
 
