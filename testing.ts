@@ -1,9 +1,9 @@
 import { ensureDir } from "@std/fs"
 import * as path from "@std/path"
 import { assertSnapshot } from "@std/testing/snapshot"
-import type { Type } from "../core/mod.ts"
+import type { Type } from "./core/mod.ts"
 
-export async function assertTySnapshot(
+export async function assertTypeSnapshot(
   t: Deno.TestContext,
   value: Type<any, any, never>,
 ): Promise<void> {

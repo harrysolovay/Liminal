@@ -2,7 +2,7 @@ import Openai from "openai"
 import { ResponseFormat, T } from "structured-outputs"
 import "@std/dotenv/load"
 import { checked } from "structured-outputs/client"
-import { dbg } from "../util/testing.ts"
+import { dbg } from "../testing.ts"
 
 const openai = new Openai()
 

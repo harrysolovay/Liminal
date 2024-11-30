@@ -2,9 +2,9 @@
   "name": "@crosshatch/structured-outputs",
   "version": "0.0.0-local.0",
   "exports": "./mod.ts",
-  "exclude": ["docs", "prev_tests", "target"],
+  "exclude": ["docs", "target"],
   "tasks": {
-    "mod": "deno run -A https://deno.land/x/moderate@0.0.5/mod.ts && dprint fmt",
+    "mod": "deno run -A https://deno.land/x/moderate@0.0.5/mod.ts --exclude '*.test.ts' && dprint fmt",
     "test": "deno test -A",
     "test:update": "deno task test -- --update"
   },
@@ -20,7 +20,7 @@
     "@std/path": "jsr:@std/path@^1.0.6",
     "@std/testing": "jsr:@std/testing@^1.0.3",
     "openai": "npm:openai@^4.68.1",
-    "test_util": "./test_util.ts"
+    "testing": "./testing.ts"
   },
   "scopes": {
     "./examples/": {
