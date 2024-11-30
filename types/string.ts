@@ -1,5 +1,4 @@
-import type { Type } from "../Type.ts"
-import { declare } from "../TypeDeclaration.ts"
+import { declare, type Type } from "../core/mod.ts"
 import { assert } from "../util/assert.ts"
 
 export const string: Type.Initial<string, {

@@ -1,5 +1,5 @@
-import * as T from "../core/mod.ts"
-import type { Type } from "../Type.ts"
+import type { Type } from "../core/mod.ts"
+import * as T from "../types/mod.ts"
 
 const _0To255 = T.number.refine({ min: 0, max: 255 })
 

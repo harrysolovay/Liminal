@@ -2,7 +2,7 @@ import Openai from "openai"
 import { ResponseFormat, T } from "structured-outputs"
 import "@std/dotenv/load"
 import { checked } from "structured-outputs/client"
-import { dbg } from "test_util"
+import { dbg } from "../util/testing.ts"
 
 const openai = new Openai()
 
@@ -23,7 +23,7 @@ const Refined = T.object({
   }),
 })
 
-const response_format = ResponseFormat("initially_invalid", Refined)
+const response_format = ResponseFormat("initially_invalid", Refined, false)
 
 await checked(openai, {
   model: "gpt-4o-mini",

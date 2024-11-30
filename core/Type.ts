@@ -1,8 +1,7 @@
+import type { EnsureLiteralKeys, Expand, Inspectable } from "../util/mod.ts"
 import type { Args, Context, ExcludeArgs, Params } from "./Context.ts"
 import type { Schema } from "./Schema.ts"
 import type { TypeDeclaration } from "./TypeDeclaration.ts"
-import type { Inspectable } from "./util/Inspectable.ts"
-import type { EnsureLiteralKeys, Expand } from "./util/type_util.ts"
 
 // TODO: generic refinement
 

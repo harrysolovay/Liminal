@@ -1,5 +1,4 @@
-import type { Type } from "../Type.ts"
-import { declare } from "../TypeDeclaration.ts"
+import { declare, type Type } from "../core/mod.ts"
 
 export function object<F extends Record<string, Type>>(
   fields: F,
@@ -19,9 +18,19 @@ export function object<F extends Record<string, Type>>(
     }),
     output: (f) =>
       f<{ [K in keyof F]: unknown }>({
-        visitor: (value, visit, ctx) =>
+        visitor: (value, ctx) =>
           Object.fromEntries(
-            keys.map((k) => [k, visit(value[k], fields[k]!, ctx.descend(k, k))]),
+            keys.map((k) => [
+              k,
+              ctx.visit({
+                value: value[k],
+                type: fields[k]!,
+                junctions: {
+                  type: k,
+                  value: k,
+                },
+              }),
+            ]),
           ) as never,
       }),
   })

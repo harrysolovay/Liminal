@@ -1,6 +1,5 @@
-import type { Schema } from "../Schema.ts"
-import type { Type } from "../Type.ts"
-import { recombine } from "../util/recombine.ts"
+import type { Schema, Type } from "../core/mod.ts"
+import { recombine } from "../util/mod.ts"
 
 export interface Tool<T> extends FinalTool<T> {
   (template: TemplateStringsArray, ...values: Array<unknown>): FinalTool<T>

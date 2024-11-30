@@ -1,6 +1,6 @@
+import { recombine } from "../util/mod.ts"
 import type { Args } from "./Context.ts"
 import type { Type } from "./Type.ts"
-import { recombine } from "./util/recombine.ts"
 
 export type Schema = Record<string, unknown>
 

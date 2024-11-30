@@ -1,5 +1,4 @@
-import type { Type } from "../Type.ts"
-import { declare } from "../TypeDeclaration.ts"
+import { declare, type Type } from "../core/mod.ts"
 import { assert } from "../util/assert.ts"
 
 export function array<E extends Type>(element: E): Type<Array<E["T"]>, {
@@ -39,8 +38,17 @@ export function array<E extends Type>(element: E): Type<Array<E["T"]>, {
     },
     output: (f) =>
       f<Array<E["T"]>>({
-        visitor: (value, visit, ctx) =>
-          value.map((v, i) => visit(v, element, ctx.descend(i, "number"))),
+        visitor: (value, ctx) =>
+          value.map((v, i) =>
+            ctx.visit({
+              value: v,
+              type: element,
+              junctions: {
+                value: i,
+                type: "number",
+              },
+            })
+          ),
         refinementPredicates: {
           minLength: (value, minLength) => value.length >= minLength,
           maxLength: (value, maxLength) => value.length <= maxLength,

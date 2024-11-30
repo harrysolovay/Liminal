@@ -1,2 +1,1 @@
-export const LIB_DESCRIPTION =
-  "Type-safe Schema Modeling and Validation of OpenAI Structured Outputs"
+export const LIB_DESCRIPTION = "Type-safe Iterative Refinement of Structured Output"

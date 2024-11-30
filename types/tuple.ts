@@ -1,5 +1,4 @@
-import type { Type } from "../Type.ts"
-import { declare } from "../TypeDeclaration.ts"
+import { declare, type Type } from "../core/mod.ts"
 
 export function tuple<E extends Array<Type>>(
   ...elements: E
@@ -19,9 +18,16 @@ export function tuple<E extends Array<Type>>(
     }),
     output: (f) =>
       f<{ [K in keyof E]: unknown }>({
-        visitor: (value, visit, ctx) =>
+        visitor: (value, ctx) =>
           Array.from({ length }, (_0, i) =>
-            visit(value[i], elements[i]!, ctx.descend(i, "number"))) as never,
+            ctx.visit({
+              value: value[i],
+              type: elements[i]!,
+              junctions: {
+                value: i,
+                type: "number",
+              },
+            })) as never,
       }),
   })
 }

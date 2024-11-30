@@ -1,8 +1,8 @@
+import { Inspectable } from "../util/mod.ts"
 import { type Args, Context, type ExcludeArgs, type Params } from "./Context.ts"
+import type { OutputVisitorContext } from "./OutputVisitorContext.ts"
 import { RefSchema, type Schema } from "./Schema.ts"
 import type { ExcludeRefiners, Refinements, Type, Unapplied, UnappliedRefiners } from "./Type.ts"
-import { Inspectable } from "./util/Inspectable.ts"
-import type { OutputVisitorContext, VisitOutput } from "./VisitOutput.ts"
 
 export type TypeDeclaration<T, R extends Refinements, P extends keyof any> = {
   /** The name of the type. */
@@ -35,7 +35,7 @@ export interface ProcessOutput<O, T, R extends Refinements> {
     [K in keyof R]+?: (value: O, constraint: R[K] extends Unapplied<infer U> ? U : never) => boolean
   }
   /** Transform the structured output `O` into the target `T` value. */
-  visitor?: (value: O, visit: VisitOutput, path: OutputVisitorContext) => T
+  visitor?: (value: O, ctx: OutputVisitorContext) => T
 }
 
 export function declare<T, R extends Refinements, P extends keyof any>(

@@ -1,14 +1,12 @@
 import type { ChatCompletion } from "openai/resources/chat/completions"
 import type { ResponseFormatJSONSchema } from "openai/resources/shared"
-import type { Type } from "../Type.ts"
-import { assert, AssertionError } from "../util/assert.ts"
-import { recombine } from "../util/recombine.ts"
 import {
   type Diagnostic,
   OutputVisitorContext,
   serializeDiagnostics,
-  VisitOutput,
-} from "../VisitOutput.ts"
+  type Type,
+} from "../core/mod.ts"
+import { assert, AssertionError, recombine } from "../util/mod.ts"
 
 export interface ResponseFormat<T> extends FinalResponseFormat<T> {
   (template: TemplateStringsArray, ...values: Array<unknown>): FinalResponseFormat<T>
@@ -69,11 +67,11 @@ function FinalResponseFormat<T>(
     },
     into: (completion) => {
       const diagnostics: Array<Diagnostic> = []
-      const result = VisitOutput<T>(diagnostics)(
-        JSON.parse(ResponseFormat.unwrap(completion)),
+      const visitorCtx = new OutputVisitorContext(diagnostics)
+      const result = visitorCtx.visit({
         type,
-        new OutputVisitorContext(),
-      )
+        value: JSON.parse(ResponseFormat.unwrap(completion)),
+      })
       if (diagnostics.length) {
         throw new AssertionError(serializeDiagnostics(diagnostics))
       }

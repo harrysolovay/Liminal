@@ -1,5 +1,4 @@
-import type { Type } from "../Type.ts"
-import { declare } from "../TypeDeclaration.ts"
+import { declare, type Type } from "../core/mod.ts"
 
 export function transform<From extends Type, IntoT>(
   name: string,
@@ -15,7 +14,7 @@ export function transform<From extends Type, IntoT>(
     subschema: (visit) => visit(from),
     output: (_) =>
       _<From["T"]>({
-        visitor: (value, visit, ctx) => f(visit(value, from, ctx)),
+        visitor: (value, ctx) => f(ctx.visit({ value, type: from })),
       }),
   })
 }

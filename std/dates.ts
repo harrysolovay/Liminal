@@ -1,6 +1,6 @@
-import * as T from "../core/mod.ts"
-import type { Type } from "../Type.ts"
-import { assert } from "../util/assert.ts"
+import type { Type } from "../core/mod.ts"
+import * as T from "../types/mod.ts"
+import { assert } from "../util/mod.ts"
 
 export const Year = T.number`Year.`
 

@@ -1,7 +1,7 @@
 import { ensureDir } from "@std/fs"
 import * as path from "@std/path"
 import { assertSnapshot } from "@std/testing/snapshot"
-import type { Type } from "./mod.ts"
+import type { Type } from "../core/mod.ts"
 
 export async function assertTySnapshot(
   t: Deno.TestContext,

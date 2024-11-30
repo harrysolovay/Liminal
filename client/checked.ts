@@ -1,22 +1,13 @@
-import dedent from "dedent"
 import type Openai from "openai"
-import type {
-  ChatCompletionCreateParamsNonStreaming as ChatCompletionCreateParamsNonStreaming_,
-  ChatCompletionMessageParam,
-} from "openai/resources/chat/completions"
-import {
-  type Diagnostic,
-  OutputVisitorContext,
-  ResponseFormat,
-  serializeDiagnostics,
-  T,
-  VisitOutput,
-} from "../mod.ts"
+import type { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions"
+import { type Diagnostic, OutputVisitorContext, serializeDiagnostics } from "../core/mod.ts"
+import * as T from "../types/mod.ts"
 import { assert } from "../util/assert.ts"
+import { ResponseFormat } from "./ResponseFormat.ts"
 
 export interface CheckedParams<T = any> extends
   Omit<
-    ChatCompletionCreateParamsNonStreaming_,
+    ChatCompletionCreateParamsNonStreaming,
     "audio" | "modalities" | "response_format" | "stream" | "stream_options"
   >
 {
@@ -26,6 +17,7 @@ export interface CheckedParams<T = any> extends
 export interface CheckedOptions {
   signal?: AbortSignal
   maxCorrections?: number
+  // maxTokens?: number
 }
 
 /** Get the completion and then loop refinement assertions and resubmission until all assertions pass. */
@@ -44,14 +36,15 @@ export async function checked<T>(
     .then(ResponseFormat.unwrap)
     .then(JSON.parse)
   const diagnostics: Array<Diagnostic> = []
-  const processed0 = VisitOutput<T>(diagnostics)(
-    initial,
-    params.response_format[""],
-    new OutputVisitorContext(),
-  )
-  console.log(processed0, diagnostics)
+  const visitorCtx = new OutputVisitorContext(diagnostics)
+  const processed0 = visitorCtx.visit({
+    type: params.response_format[""],
+    value: initial,
+  })
   let correctionsRemaining = options?.maxCorrections ?? Infinity
   while (correctionsRemaining-- && !options?.signal?.aborted && diagnostics.length) {
+    console.log(prompt(params, diagnostics))
+    await new Promise(() => {})
     const { corrections } = await client.chat.completions
       .create({
         ...params,
@@ -66,7 +59,7 @@ export async function checked<T>(
       })
       .then(response_format.into)
     // TODO:
-    corrections.forEach(({ id, value }) => {})
+    // corrections.forEach(({ id, value }) => {})
   }
   return processed0
 }
@@ -85,36 +78,45 @@ function prompt(
   params: CheckedParams,
   diagnostics: Array<Diagnostic>,
 ): string {
-  return dedent`
-    ## Overview
+  const messageSection = maybeSerializeMessages(params)
+  return `## Overview
 
-    ${CORRECTION_PROMPT_PREFACE}
+${prefaceSection(!!messageSection)}
+${messageSection}
+## Initially-requested Structured Output JSON Schema
 
-    ## Initial Messages
+\`\`\`json
+${JSON.stringify(params.response_format.json_schema, null, 2)}
+\`\`\`
 
-    ${serializeMessages(params.messages)}
+## Diagnostics
 
-    ## Initially-requested Structured Output JSON Schema
-
-    \`\`\`json
-    ${JSON.stringify(params.response_format.json_schema, null, 2)}
-    \`\`\
-
-    ## Diagnostics
-
-    ${serializeDiagnostics(diagnostics)}
-  `
+${serializeDiagnostics(diagnostics)}`
 }
 
-const CORRECTION_PROMPT_PREFACE = dedent`
-  A completion request was submitted with a JSON schema describing the structured output requirements.
-  In the following sections, we'll cover (A) the initial messages passed along to the completions
-  endpoint, (B) the JSON schema of the initially-requested structured output, and (C) the unmet constraints.
-  Offer new and correct values for each of the specified diagnostics.
-`
+function prefaceSection(includeMessages: boolean) {
+  const sections = [...SECTIONS]
+  if (!includeMessages) {
+    sections.shift()
+  }
+  return `A chat completion request was submitted with a JSON schema describing structured output requirements. In the following sections, we'll cover the following:
 
-function serializeMessages(messages: Array<ChatCompletionMessageParam>) {
-  return messages.map((message, i) => {
+${sections.map((description, i) => `${i + 1}. ${description}`).join("\n")}
+
+Offer new and correct values for each of the specified diagnostics.`
+}
+
+const SECTIONS = [
+  "the initial messages passed along to the completions endpoint",
+  "the JSON schema of the initially-requested structured output",
+  "the unmet constraints",
+]
+
+function maybeSerializeMessages(params: CheckedParams) {
+  if (!params.messages.length) {
+    return ""
+  }
+  const messages = params.messages.map((message, i) => {
     if (message.role === "system" || message.role === "user") {
       const contents = typeof message.content === "string"
         ? message.content
@@ -124,12 +126,17 @@ function serializeMessages(messages: Array<ChatCompletionMessageParam>) {
             `${part.type} message content parts cannot be used in conjunction with structured outputs.`,
           )
           return part.text
-        }).join("\n\n")
-      return dedent`
-        ### Message ${i} (${message.role})
+        }).join("\n")
+      return contents.length
+        ? `### Message ${i} (${message.role})
 
-        ${contents}
-      `
+${contents}`
+        : undefined
     }
-  })
+  }).filter(Boolean)
+  return messages.length
+    ? `## Initial Messages
+
+${messages}`
+    : ""
 }

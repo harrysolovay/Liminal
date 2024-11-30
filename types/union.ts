@@ -1,5 +1,4 @@
-import type { Type } from "../Type.ts"
-import { declare } from "../TypeDeclaration.ts"
+import { declare, type Type } from "../core/mod.ts"
 
 export function union<M extends Array<Type>>(
   ...members: M
@@ -30,8 +29,14 @@ export function union<M extends Array<Type>>(
         type: number
         value: unknown
       }>({
-        visitor: (value, visit, ctx) =>
-          visit(value.value, members[value.type]!, ctx.descend(undefined, value.type)),
+        visitor: (value, ctx) =>
+          ctx.visit({
+            value: value.value,
+            type: members[value.type]!,
+            junctions: {
+              type: value.type,
+            },
+          }),
       }),
   })
 }

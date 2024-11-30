@@ -1,5 +1,4 @@
-import type { Type } from "../Type.ts"
-import { declare } from "../TypeDeclaration.ts"
+import { declare, type Type } from "../core/mod.ts"
 import type { Expand } from "../util/type_util.ts"
 
 export function taggedUnion<
@@ -39,13 +38,22 @@ export function taggedUnion<
     }),
     output: (f) =>
       f<{ [V in keyof M]: ({ [_ in K]: V } & { value?: unknown }) }[keyof M]>({
-        visitor: (value, visit, ctx) => {
+        visitor: (value, ctx) => {
           const tag = value[tagKey] as number | string
           const type = members[tag]!
           return ({
             [tagKey]: value[tagKey],
             ..."value" in value
-              ? { value: visit(value.value, type, ctx.descend("value", tag)) }
+              ? {
+                value: ctx.visit({
+                  value: value.value,
+                  type,
+                  junctions: {
+                    value: "value",
+                    type: tag,
+                  },
+                }),
+              }
               : {},
           }) as never
         },
