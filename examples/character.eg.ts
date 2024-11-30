@@ -1,8 +1,9 @@
 import Openai from "openai"
 import "@std/dotenv/load"
-import { ResponseFormat, T } from "structured-outputs"
+import { T } from "structured-outputs"
+import { ResponseFormat } from "structured-outputs/client"
 import * as std from "structured-outputs/std"
-import { dbg } from "../testing.ts"
+import { dbg } from "testing"
 
 const greeting = T.taggedUnion("greeting", {
   Hi: T.string,

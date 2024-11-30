@@ -6,6 +6,7 @@ dprint
 esbenp
 harrysolovay
 inspectable
+nodenext
 openai
 quasis
 shiki

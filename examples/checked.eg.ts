@@ -1,8 +1,9 @@
 import Openai from "openai"
-import { ResponseFormat, T } from "structured-outputs"
+import { T } from "structured-outputs"
+import { ResponseFormat } from "structured-outputs/client"
 import "@std/dotenv/load"
 import { checked } from "structured-outputs/client"
-import { dbg } from "../testing.ts"
+import { dbg } from "testing"
 
 const openai = new Openai()
 

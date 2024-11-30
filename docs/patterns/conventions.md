@@ -36,14 +36,17 @@ In the previous code block––for example––we would need to add an explici
 analysis degradation.
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T, Type } from "structured-outputs"
 
 export namespace P {
   export const grade = Symbol()
 }
 // ---cut---
-const SchoolCurriculumSubject: T.Ty<string, typeof P.grade, false> = T
-  .string`The school curriculum for grade ${P.grade}.`
+const SchoolCurriculumSubject: Type<
+  string,
+  {},
+  typeof P.grade
+> = T.string`The school curriculum for grade ${P.grade}.`
 ```
 
 If we are creating a functional pattern, we explicitly return or unwrap type arguments.
@@ -51,11 +54,11 @@ If we are creating a functional pattern, we explicitly return or unwrap type arg
 In the following example, the return type is simply the sole parameter type.
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { Refinements, T, Type } from "structured-outputs"
 // ---cut---
-export function MostUnlikely<T, P extends keyof any, R extends boolean>(
-  ty: T.Ty<T, P, R>,
-): T.Ty<T, P, R> {
+export function MostUnlikely<T, R extends Refinements, P extends keyof any>(
+  ty: Type<T, R, P>,
+): Type<T, R, P> {
   return ty`Ensure that this generated type is the most unlikely instance of itself.`
 }
 ```
@@ -64,15 +67,15 @@ However, we may encounter cases which require us to unwrap the `Ty` type paramet
 form a return `Ty` type.
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { Refinements, T, Type } from "structured-outputs"
 // ---cut---
 export namespace P {
   export const Tone = Symbol()
 }
 
-export function WithTone<T, P extends keyof any, R extends boolean>(
-  ty: T.Ty<T, P, R>,
-): T.Ty<T, P | typeof P.Tone> {
+export function WithTone<T, R extends Refinements, P extends keyof any>(
+  ty: Type<T, R, P>,
+): Type<T, R, P | typeof P.Tone> {
   return ty`Generate with a tone of ${P.Tone}.`
 }
 ```

@@ -29,8 +29,8 @@ const Contact = T.object({
 
 ## Context
 
-Schema definitions effectively serve as additional context for the LLM. We may want to attach
-context per-type to be used by OpenAI's services.
+Descriptions in schema definitions serve as additional context for the LLM. We may want to attach
+context per-type.
 
 ```ts twoslash
 import { T } from "structured-outputs"
@@ -52,19 +52,21 @@ const Contact = T.object({
 
 ## Parameterized Context
 
-Parameterized context to be filled in later (even when contained within any number of wrapper
-types). This simplifies reuse of types for different generation use cases.
+We can specify placeholders for context to be filled in later. This simplifies reuse of types for
+different use cases.
 
 ```ts twoslash
 import { T } from "structured-outputs"
 // ---cut---
+const nationality = Symbol()
+
 const Person = T.object({
-  hometown: T.string`An ${"nationality"} city.`,
-  favoriteFood: T.string`A delicious ${"nationality"} food.`,
-})
+  hometown: T.string`An ${nationality} city.`,
+  favoriteFood: T.string`A delicious ${nationality} food.`,
+})`An ${nationality} person.`
 
 const AmericanPerson = Person.fill({
-  nationality: "American",
+  [nationality]: "American",
 })
 ```
 
