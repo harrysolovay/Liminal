@@ -1,10 +1,9 @@
 import type { Type } from "../Type.ts"
 import { declare } from "../TypeDeclaration.ts"
-import type { Expand } from "../util/type_util.ts"
 
 export function object<F extends Record<string, Type>>(
   fields: F,
-): Type<Expand<NativeObject<F>>, {}, F[keyof F]["P"]> {
+): Type<{ [K in keyof F]: F[K]["T"] }, {}, F[keyof F]["P"]> {
   const keys = Object.keys(fields)
   return declare({
     name: "object",
@@ -19,13 +18,11 @@ export function object<F extends Record<string, Type>>(
       required: keys,
     }),
     output: (f) =>
-      f<NativeObject<F>>({
-        visitor: (value, visit, path) =>
+      f<{ [K in keyof F]: unknown }>({
+        visitor: (value, visit, ctx) =>
           Object.fromEntries(
-            keys.map((k) => [k, visit(value[k], fields[k]!, path.type(k).value(k))]),
+            keys.map((k) => [k, visit(value[k], fields[k]!, ctx.descend(k, k))]),
           ) as never,
       }),
   })
 }
-
-export type NativeObject<F extends Record<string, Type>> = { [K in keyof F]: F[K]["T"] }

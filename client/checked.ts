@@ -6,7 +6,7 @@ import type {
 } from "openai/resources/chat/completions"
 import {
   type Diagnostic,
-  PathBuilder,
+  OutputVisitorContext,
   ResponseFormat,
   serializeDiagnostics,
   T,
@@ -14,12 +14,11 @@ import {
 } from "../mod.ts"
 import { assert } from "../util/assert.ts"
 
-export interface CheckedParams<T = any>
-  extends
-    Omit<
-      ChatCompletionCreateParamsNonStreaming_,
-      "audio" | "modalities" | "response_format" | "stream" | "stream_options"
-    >
+export interface CheckedParams<T = any> extends
+  Omit<
+    ChatCompletionCreateParamsNonStreaming_,
+    "audio" | "modalities" | "response_format" | "stream" | "stream_options"
+  >
 {
   response_format: ResponseFormat<T>
 }
@@ -48,7 +47,7 @@ export async function checked<T>(
   const processed0 = VisitOutput<T>(diagnostics)(
     initial,
     params.response_format[""],
-    new PathBuilder(),
+    new OutputVisitorContext(),
   )
   console.log(processed0, diagnostics)
   let correctionsRemaining = options?.maxCorrections ?? Infinity

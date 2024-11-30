@@ -3,7 +3,12 @@ import type { ResponseFormatJSONSchema } from "openai/resources/shared"
 import type { Type } from "../Type.ts"
 import { assert, AssertionError } from "../util/assert.ts"
 import { recombine } from "../util/recombine.ts"
-import { type Diagnostic, PathBuilder, serializeDiagnostics, VisitOutput } from "../VisitOutput.ts"
+import {
+  type Diagnostic,
+  OutputVisitorContext,
+  serializeDiagnostics,
+  VisitOutput,
+} from "../VisitOutput.ts"
 
 export interface ResponseFormat<T> extends FinalResponseFormat<T> {
   (template: TemplateStringsArray, ...values: Array<unknown>): FinalResponseFormat<T>
@@ -67,7 +72,7 @@ function FinalResponseFormat<T>(
       const result = VisitOutput<T>(diagnostics)(
         JSON.parse(ResponseFormat.unwrap(completion)),
         type,
-        new PathBuilder(),
+        new OutputVisitorContext(),
       )
       if (diagnostics.length) {
         throw new AssertionError(serializeDiagnostics(diagnostics))

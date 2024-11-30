@@ -14,8 +14,8 @@ export function option<X extends Type>(Some: X): Type<X["T"] | undefined, {}, X[
     }),
     output: (f) =>
       f<X["T"] | null>({
-        visitor: (value, visit, path) =>
-          value === null ? undefined : visit(value, Some, path.type("Some")),
+        visitor: (value, visit, ctx) =>
+          value === null ? undefined : visit(value, Some, ctx.descend(undefined, "Some")),
       }),
   })
 }

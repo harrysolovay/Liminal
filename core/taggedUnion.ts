@@ -2,15 +2,16 @@ import type { Type } from "../Type.ts"
 import { declare } from "../TypeDeclaration.ts"
 import type { Expand } from "../util/type_util.ts"
 
-// TODO: allow numbers as tags + tag keys?
 export function taggedUnion<
-  K extends string,
-  M extends Expand<Record<string, Type | null>>,
+  K extends number | string,
+  M extends Record<number | string, Type | null>,
 >(
   tagKey: K,
   members: M,
 ): Type<
-  { [V in keyof M]: ({ [_ in K]: V } & (M[V] extends Type ? { value: M[V]["T"] } : {})) }[keyof M],
+  {
+    [V in keyof M]: Expand<({ [_ in K]: V } & (M[V] extends Type ? { value: M[V]["T"] } : {}))>
+  }[keyof M],
   {},
   Extract<M[keyof M], Type>["P"]
 > {
@@ -38,14 +39,13 @@ export function taggedUnion<
     }),
     output: (f) =>
       f<{ [V in keyof M]: ({ [_ in K]: V } & { value?: unknown }) }[keyof M]>({
-        visitor: (value, visit, path) => {
-          const tag = value[tagKey]
+        visitor: (value, visit, ctx) => {
+          const tag = value[tagKey] as number | string
           const type = members[tag]!
           return ({
             [tagKey]: value[tagKey],
-            // TODO: fix typing of `tag`.
             ..."value" in value
-              ? { value: visit(value.value, type, path.value("value").type(tag as string)) }
+              ? { value: visit(value.value, type, ctx.descend("value", tag)) }
               : {},
           }) as never
         },

@@ -15,7 +15,7 @@ export function transform<From extends Type, IntoT>(
     subschema: (visit) => visit(from),
     output: (_) =>
       _<From["T"]>({
-        visitor: (value, visit, path) => f(visit(value, from, path)),
+        visitor: (value, visit, ctx) => f(visit(value, from, ctx)),
       }),
   })
 }

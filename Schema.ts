@@ -4,8 +4,6 @@ import { recombine } from "./util/recombine.ts"
 
 export type Schema = Record<string, unknown>
 
-export type Subschema = (ref: RefSchema) => Schema
-
 export type RefSchema = (type: Type) => Schema
 
 export function RefSchema(ctxArgs: Args = {}, refine?: boolean): RefSchema {

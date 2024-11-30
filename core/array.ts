@@ -39,8 +39,8 @@ export function array<E extends Type>(element: E): Type<Array<E["T"]>, {
     },
     output: (f) =>
       f<Array<E["T"]>>({
-        visitor: (value, visit, path) =>
-          value.map((v, i) => visit(v, element, path.type("number").value(i))),
+        visitor: (value, visit, ctx) =>
+          value.map((v, i) => visit(v, element, ctx.descend(i, "number"))),
         refinementPredicates: {
           minLength: (value, minLength) => value.length >= minLength,
           maxLength: (value, maxLength) => value.length <= maxLength,
