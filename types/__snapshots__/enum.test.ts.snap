@@ -1,0 +1,36 @@
+export const snapshot = {};
+
+snapshot[`enum 1`] = `
+{
+  enum: [
+    "A",
+    "B",
+    "C",
+  ],
+  type: "string",
+}
+`;
+
+snapshot[`enum 2`] = `
+{
+  description: "One.",
+  enum: [
+    "A",
+    "B",
+    "C",
+  ],
+  type: "string",
+}
+`;
+
+snapshot[`enum 3`] = `
+{
+  description: "One. Two.",
+  enum: [
+    "A",
+    "B",
+    "C",
+  ],
+  type: "string",
+}
+`;

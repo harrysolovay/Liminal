@@ -1,0 +1,60 @@
+export const snapshot = {};
+
+snapshot[`transform 1`] = `
+{
+  additionalProperties: false,
+  properties: {
+    latitude: {
+      type: "number",
+    },
+    longitude: {
+      type: "number",
+    },
+  },
+  required: [
+    "latitude",
+    "longitude",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`transform 2`] = `
+{
+  additionalProperties: false,
+  description: "One.",
+  properties: {
+    latitude: {
+      type: "number",
+    },
+    longitude: {
+      type: "number",
+    },
+  },
+  required: [
+    "latitude",
+    "longitude",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`transform 3`] = `
+{
+  additionalProperties: false,
+  description: "One. Two.",
+  properties: {
+    latitude: {
+      type: "number",
+    },
+    longitude: {
+      type: "number",
+    },
+  },
+  required: [
+    "latitude",
+    "longitude",
+  ],
+  type: "object",
+}
+`;
