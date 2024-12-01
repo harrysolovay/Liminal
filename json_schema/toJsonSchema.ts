@@ -120,6 +120,7 @@ const visitor = new TypeVisitorContext<Args, Schema>()
       })),
     }
   })
+  .add(T.transform, (parentArgs, _0, _1, from): Schema => visitor.visit(parentArgs, from))
 
 function processArgs(parentArgs: Args, type: AnyType): {
   args: Args

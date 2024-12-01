@@ -7,10 +7,6 @@ export function option<X extends AnyType>(Some: X): Type<X["T"] | null, X["P"]> 
       factory: option,
       args: [Some],
     },
-    visitValue: (value, ctx) => {
-      if (value !== null) {
-        ctx.visit(value, Some, { type: "Some" })
-      }
-    },
+    visitValue: (value, visit) => value === null ? value : visit(value, Some),
   })
 }

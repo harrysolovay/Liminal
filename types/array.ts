@@ -7,12 +7,6 @@ export function array<E extends AnyType>(element: E): Type<Array<E["T"]>, E["P"]
       factory: array,
       args: [element],
     },
-    visitValue: (value, ctx) =>
-      value.forEach((e, i) =>
-        ctx.visit(e, element, {
-          value: i,
-          type: "number",
-        })
-      ),
+    visitValue: (value, visit) => value.map((e, i) => visit(e, element, i)),
   })
 }

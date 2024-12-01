@@ -1,6 +1,6 @@
-import { type EnsureLiteralKeys, Inspectable } from "../util/mod.ts"
-import { type Args, type Assertion, Context, type Params } from "./Context.ts"
-import type { ValueVisitorContext } from "./ValueVisitorContext.ts"
+import type { EnsureLiteralKeys, Inspectable } from "../util/mod.ts"
+import type { Args, Assertion, Context, Params } from "./Context.ts"
+import type { VisitValue } from "./ValueVisitorContext.ts"
 
 /** The core unit of schema composition. */
 export interface Type<T, P extends keyof any = never> extends Inspectable {
@@ -45,7 +45,9 @@ export type TypeDeclaration<T> = {
   /** The origin of the type (a `declare`d type or `declare`d-type-returning function). */
   source: TypeSource
   /** Describes how to visit child values if any. */
-  visitValue?: (value: T, ctx: ValueVisitorContext) => void
+  visitValue?: (value: T, visit: VisitValue) => T
+  /** A transform to be applied to the value. */
+  transform?: (value: any) => T
 }
 
 export type TypeSource = {
@@ -59,47 +61,6 @@ export type TypeSource = {
 }
 
 export type AnyType = Type<any, any>
-
-export function declareType<T>(declaration: TypeDeclaration<T>): Type<T, never> {
-  return declare_<T, never>(declaration, new Context([], []))
-}
-
-function declare_<T, P extends keyof any>(
-  declaration: TypeDeclaration<T>,
-  context: Context,
-): Type<T, P> {
-  return Object.assign(
-    (template: TemplateStringsArray, ...params: Params) =>
-      declare_(
-        declaration,
-        new Context([{ template, params }, ...context.parts], context.assertions),
-      ),
-    {
-      [declarationKey]: declaration,
-      "": context,
-      fill: (args: Args) =>
-        declare_(
-          declaration,
-          new Context([{ args }, ...context.parts], context.assertions),
-        ),
-      assert: (assertion: Assertion, ...args: unknown[]) =>
-        declare_(
-          declaration,
-          new Context(context.parts, [...context.assertions, [assertion, args]]),
-        ),
-      transform: () => {
-        throw 0
-      },
-      ...Inspectable((inspect) => {
-        const { source } = declaration
-        if (source.getType) {
-          return declaration.name
-        }
-        return `${declaration.name}(${inspect(source.args)})`
-      }),
-    },
-  ) as never
-}
 
 export function isType(value: unknown): value is AnyType {
   return typeof value === "object" && value !== null && declarationKey in value

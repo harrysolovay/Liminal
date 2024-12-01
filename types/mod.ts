@@ -1,3 +1,5 @@
+export { transform } from "../core/transform.ts"
+
 // moderate
 
 export * from "./array.ts"

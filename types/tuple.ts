@@ -10,13 +10,6 @@ export function tuple<E extends Array<AnyType>>(...elements: E): Type<
       factory: tuple,
       args: elements,
     },
-    visitValue: (value, ctx) => {
-      value.forEach((value, i) =>
-        ctx.visit(value, elements[i]!, {
-          type: "number",
-          value: i,
-        })
-      )
-    },
+    visitValue: (value, visit) => value.map((value, i) => visit(value, elements[i]!, i)) as never,
   })
 }

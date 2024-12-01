@@ -1,6 +1,6 @@
 import Openai from "openai"
 import "@std/dotenv/load"
-import { declarationKey, T } from "structured-outputs"
+import { T } from "structured-outputs"
 import { ResponseFormat } from "structured-outputs/client"
 import * as std from "structured-outputs/std"
 import { dbg } from "testing"
@@ -26,23 +26,23 @@ const Character = T.object({
   randomValue: T.union(T.string, T.number),
   friends: T.array(T.string)`Names of the character's friends.`,
   greeting,
-  // favoriteColor: std.colors.Hex,
+  favoriteColor: std.colors.Hex,
 })
 
 toJsonSchema(Character)
 
-// const response_format = ResponseFormat("create_character", Character)`
-//   Create a new character to be the protagonist of a children's story.
-// `
+const response_format = ResponseFormat("create_character", Character)`
+  Create a new character to be the protagonist of a children's story.
+`
 
-// await new Openai().chat.completions
-//   .create({
-//     model: "gpt-4o-mini",
-//     response_format,
-//     messages: [{
-//       role: "system",
-//       content: [],
-//     }],
-//   })
-//   .then(response_format.into)
-//   .then(dbg)
+await new Openai().chat.completions
+  .create({
+    model: "gpt-4o-mini",
+    response_format,
+    messages: [{
+      role: "system",
+      content: [],
+    }],
+  })
+  .then(response_format.into)
+  .then(dbg)

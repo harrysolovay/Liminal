@@ -10,13 +10,7 @@ export function object<F extends Record<string, AnyType>>(
       factory: object,
       args: [fields],
     },
-    visitValue: (value, ctx) => {
-      entries.forEach(([key, type]) =>
-        ctx.visit(value, type, {
-          type: key,
-          value: key,
-        })
-      )
-    },
+    visitValue: (value, visit) =>
+      Object.fromEntries(entries.map(([key, type]) => [key, visit(value, type, key)])) as never,
   })
 }

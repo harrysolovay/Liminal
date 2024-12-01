@@ -1,6 +1,7 @@
-// moderate
+// moderate --exclude transform.ts
 
 export * from "./Context.ts"
+export * from "./declareType.ts"
 export * from "./hydrate.ts"
 export * from "./Path.ts"
 export * from "./Type.ts"

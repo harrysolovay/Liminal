@@ -19,14 +19,14 @@ export function taggedUnion<
       factory: taggedUnion,
       args: [tagKey, members],
     },
-    visitValue: (value, ctx) => {
-      if ("value" in value) {
-        const type = value[tagKey] as number | string
-        ctx.visit(value.value, members[type]!, {
-          type,
-          value: "value",
-        })
-      }
+    visitValue: (variant, visit) => {
+      const type = variant[tagKey]
+      return {
+        [tagKey]: type,
+        ..."value" in variant
+          ? { value: visit(variant.value, members[type]!, "value") }
+          : {},
+      } as never
     },
   })
 }

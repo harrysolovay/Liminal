@@ -15,10 +15,6 @@ export function union<M extends Array<AnyType>>(...members: M): Type<
       factory: union,
       args: members,
     },
-    visitValue: (value, ctx) =>
-      ctx.visit(value.value, members[value.type]!, {
-        value: "value",
-        type: value.type,
-      }),
+    visitValue: (value, visit) => visit(value.value, members[value.type]!),
   })
 }
