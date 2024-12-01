@@ -10,28 +10,28 @@ export function toJsonSchema<T>(type: Type<T>): Schema {
 
 const visitor = new TypeVisitorContext<Args, Schema>()
   .add(T.boolean, (args, type) => {
-    const { description } = make(args, type)
+    const { description } = processArgs(args, type)
     return {
       description,
       type: "boolean",
     }
   })
   .add(T.number, (args, type) => {
-    const { description } = make(args, type)
+    const { description } = processArgs(args, type)
     return {
       description,
       type: "number",
     }
   }) // TODO: integer
   .add(T.string, (args, type) => {
-    const { description } = make(args, type)
+    const { description } = processArgs(args, type)
     return {
       description,
       type: "string",
     }
   })
   .add(T.array, (parentArgs, type, element): Schema => {
-    const { description, args } = make(parentArgs, type)
+    const { description, args } = processArgs(parentArgs, type)
     return {
       description,
       type: "array",
@@ -39,7 +39,7 @@ const visitor = new TypeVisitorContext<Args, Schema>()
     }
   })
   .add(T.tuple, (parentArgs, type, ...elements): Schema => {
-    const { description, args } = make(parentArgs, type)
+    const { description, args } = processArgs(parentArgs, type)
     const { length } = elements
     return ({
       description,
@@ -52,7 +52,7 @@ const visitor = new TypeVisitorContext<Args, Schema>()
     })
   })
   .add(T.object, (parentArgs, type, fields): Schema => {
-    const { description, args } = make(parentArgs, type)
+    const { description, args } = processArgs(parentArgs, type)
     const keys = Object.keys(fields)
     return {
       description,
@@ -63,7 +63,7 @@ const visitor = new TypeVisitorContext<Args, Schema>()
     }
   })
   .add(T.option, (parentArgs, type, Some): Schema => {
-    const { description, args } = make(parentArgs, type)
+    const { description, args } = processArgs(parentArgs, type)
     return {
       anyOf: [
         {
@@ -75,7 +75,7 @@ const visitor = new TypeVisitorContext<Args, Schema>()
     }
   })
   .add(T.enum, (parentArgs, type, ...members) => {
-    const { description } = make(parentArgs, type)
+    const { description } = processArgs(parentArgs, type)
     return {
       description,
       type: "string",
@@ -83,7 +83,7 @@ const visitor = new TypeVisitorContext<Args, Schema>()
     }
   })
   .add(T.union, (parentArgs, type, ...members): Schema => {
-    const { description, args } = make(parentArgs, type)
+    const { description, args } = processArgs(parentArgs, type)
     return {
       description,
       anyOf: members.map((member, i) => ({
@@ -102,7 +102,7 @@ const visitor = new TypeVisitorContext<Args, Schema>()
     }
   })
   .add(T.taggedUnion, (parentArgs, type, tagKey, members): Schema => {
-    const { description, args } = make(parentArgs, type)
+    const { description, args } = processArgs(parentArgs, type)
     return {
       description,
       discriminator: tagKey,
@@ -121,7 +121,7 @@ const visitor = new TypeVisitorContext<Args, Schema>()
     }
   })
 
-function make(parentArgs: Args, type: AnyType): {
+function processArgs(parentArgs: Args, type: AnyType): {
   args: Args
   description: string | undefined
 } {

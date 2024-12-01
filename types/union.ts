@@ -1,8 +1,6 @@
 import { type AnyType, declareType, type Type } from "../core/mod.ts"
 
-export function union<M extends Array<AnyType>>(
-  ...members: M
-): Type<
+export function union<M extends Array<AnyType>>(...members: M): Type<
   {
     [K in keyof M]: {
       type: K
@@ -15,7 +13,7 @@ export function union<M extends Array<AnyType>>(
     name: "union",
     source: {
       factory: union,
-      args: [members],
+      args: members,
     },
     visitValue: (value, ctx) =>
       ctx.visit(value.value, members[value.type]!, {

@@ -48,18 +48,34 @@ function FinalResponseFormat<T>(
   type: Type<T>,
   description?: string,
 ): FinalResponseFormat<T> {
+  let schema = toJsonSchema(type)
+  const nonRoot = !("type" in schema) || schema.type !== "object"
+  if (nonRoot) {
+    schema = {
+      type: "object",
+      properties: {
+        value: schema,
+      },
+      additionalProperties: false,
+      required: ["value"],
+    }
+  }
   return {
     "": type,
     type: "json_schema",
     json_schema: {
       name,
       ...description ? { description } : {},
-      schema: toJsonSchema(type),
+      schema,
       strict: true,
     },
     into: (completion) => {
       // const diagnostics: Array<Diagnostic> = []
-      return JSON.parse(ResponseFormat.unwrap(completion))
+      const parsed = JSON.parse(ResponseFormat.unwrap(completion))
+      if (nonRoot) {
+        return parsed.value
+      }
+      return parsed
       // const visitorCtx = new ValueVisitorContext(diagnostics)
       // const result = visitorCtx.visit({
       //   type,
