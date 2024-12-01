@@ -1,26 +1,19 @@
 import type { ChatCompletion } from "openai/resources/chat/completions"
 import type { ResponseFormatJSONSchema } from "openai/resources/shared"
-import {
-  type Diagnostic,
-  OutputVisitorContext,
-  serializeDiagnostics,
-  type Type,
-} from "../core/mod.ts"
-import { assert, AssertionError, recombine } from "../util/mod.ts"
+import { assert } from "../asserts/mod.ts"
+import type { Type } from "../core/mod.ts"
+import { toJsonSchema } from "../json_schema/mod.ts"
+import { recombine } from "../util/mod.ts"
 
 export interface ResponseFormat<T> extends FinalResponseFormat<T> {
   (template: TemplateStringsArray, ...values: Array<unknown>): FinalResponseFormat<T>
 }
 
-export function ResponseFormat<T>(
-  name: string,
-  type: Type<T, any, never>,
-  refine?: boolean,
-): ResponseFormat<T> {
+export function ResponseFormat<T>(name: string, type: Type<T>): ResponseFormat<T> {
   return Object.assign(
     (template: TemplateStringsArray, ...values: unknown[]) =>
-      FinalResponseFormat(name, type, recombine(template, values), refine),
-    FinalResponseFormat(name, type, undefined, refine),
+      FinalResponseFormat(name, type, recombine(template, values)),
+    FinalResponseFormat(name, type, undefined),
   )
 }
 
@@ -41,7 +34,7 @@ export namespace ResponseFormat {
 }
 
 interface FinalResponseFormat<T> {
-  "": Type<T, any, never>
+  "": Type<T>
   /** Tag required by the service. */
   type: "json_schema"
   /** The desired return type in JSON Schema. */
@@ -52,9 +45,8 @@ interface FinalResponseFormat<T> {
 
 function FinalResponseFormat<T>(
   name: string,
-  type: Type<T, any, never>,
+  type: Type<T>,
   description?: string,
-  refine?: boolean,
 ): FinalResponseFormat<T> {
   return {
     "": type,
@@ -62,20 +54,21 @@ function FinalResponseFormat<T>(
     json_schema: {
       name,
       ...description ? { description } : {},
-      schema: type.schema(refine),
+      schema: toJsonSchema(type),
       strict: true,
     },
     into: (completion) => {
-      const diagnostics: Array<Diagnostic> = []
-      const visitorCtx = new OutputVisitorContext(diagnostics)
-      const result = visitorCtx.visit({
-        type,
-        value: JSON.parse(ResponseFormat.unwrap(completion)),
-      })
-      if (diagnostics.length) {
-        throw new AssertionError(serializeDiagnostics(diagnostics))
-      }
-      return result
+      // const diagnostics: Array<Diagnostic> = []
+      return JSON.parse(ResponseFormat.unwrap(completion))
+      // const visitorCtx = new ValueVisitorContext(diagnostics)
+      // const result = visitorCtx.visit({
+      //   type,
+      //   value: JSON.parse(ResponseFormat.unwrap(completion)),
+      // })
+      // if (diagnostics.length) {
+      //   throw new AssertionError(serializeDiagnostics(diagnostics))
+      // }
+      // return result
     },
     ...{
       /** Prevents `JSON.stringify` from including `""` and `into` in serialization. */

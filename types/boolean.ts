@@ -1,9 +1,8 @@
-import { declare, type Type } from "../core/mod.ts"
+import { declareType, type Type } from "../core/mod.ts"
 
-export const boolean: Type.Initial<boolean> = declare({
+export const boolean: Type<boolean> = declareType({
   name: "boolean",
   source: {
     getType: () => boolean,
   },
-  subschema: () => ({ type: "boolean" }),
 })

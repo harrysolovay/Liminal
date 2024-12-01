@@ -35,18 +35,15 @@ your pattern library to JSR, be weary of [slow types](https://jsr.io/docs/about-
 In the previous code block––for example––we would need to add an explicit type to avoid static
 analysis degradation.
 
-```ts twoslash
+```ts{2} twoslash
 import { T, Type } from "structured-outputs"
 
 export namespace P {
   export const grade = Symbol()
 }
 // ---cut---
-const SchoolCurriculumSubject: Type<
-  string,
-  {},
-  typeof P.grade
-> = T.string`The school curriculum for grade ${P.grade}.`
+const SchoolCurriculumSubject_ = T.string`The school curriculum for grade ${P.grade}.`
+export const SchoolCurriculumSubject: typeof SchoolCurriculumSubject_ = SchoolCurriculumSubject_
 ```
 
 If we are creating a functional pattern, we explicitly return or unwrap type arguments.

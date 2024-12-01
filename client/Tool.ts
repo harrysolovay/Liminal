@@ -1,11 +1,13 @@
-import type { Schema, Type } from "../core/mod.ts"
+import type { Type } from "../core/mod.ts"
+import type { Schema } from "../json_schema/mod.ts"
+import { toJsonSchema } from "../json_schema/toJsonSchema.ts"
 import { recombine } from "../util/mod.ts"
 
 export interface Tool<T> extends FinalTool<T> {
   (template: TemplateStringsArray, ...values: Array<unknown>): FinalTool<T>
 }
 
-export function Tool<T>(name: string, type: Type<T, any, never>): Tool<T> {
+export function Tool<T>(name: string, type: Type<T>): Tool<T> {
   return Object.assign(
     (template: TemplateStringsArray, ...values: unknown[]) =>
       FinalTool(name, type, recombine(template, values)),
@@ -25,16 +27,12 @@ interface FinalTool<T> {
   T: T
 }
 
-function FinalTool<T>(
-  name: string,
-  type: Type<T, any, never>,
-  description?: string,
-): FinalTool<T> {
+function FinalTool<T>(name: string, type: Type<T>, description?: string): FinalTool<T> {
   return {
     type: "function",
     name,
     description,
-    parameters: type.schema(),
+    parameters: toJsonSchema(type),
     ...{} as { T: T },
   }
 }

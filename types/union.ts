@@ -1,42 +1,26 @@
-import { declare, type Type } from "../core/mod.ts"
+import { type AnyType, declareType, type Type } from "../core/mod.ts"
 
-export function union<M extends Array<Type>>(
+export function union<M extends Array<AnyType>>(
   ...members: M
-): Type<M[number]["T"], {}, M[number]["P"]> {
-  return declare({
+): Type<
+  {
+    [K in keyof M]: {
+      type: K
+      value: M[K]
+    }
+  }[number],
+  M[number]["P"]
+> {
+  return declareType({
     name: "union",
     source: {
       factory: union,
-      args: { members },
+      args: [members],
     },
-    subschema: (visit) => ({
-      discriminator: "type",
-      anyOf: members.map((member, i) => ({
-        type: "object",
-        properties: {
-          type: {
-            type: "number",
-            const: i,
-          },
-          value: visit(member),
-        },
-        required: ["type", "value"],
-        additionalProperties: false,
-      })),
-    }),
-    output: (f) =>
-      f<{
-        type: number
-        value: unknown
-      }>({
-        visitor: (value, ctx) =>
-          ctx.visit({
-            value: value.value,
-            type: members[value.type]!,
-            junctions: {
-              type: value.type,
-            },
-          }),
+    visitValue: (value, ctx) =>
+      ctx.visit(value.value, members[value.type]!, {
+        value: "value",
+        type: value.type,
       }),
   })
 }

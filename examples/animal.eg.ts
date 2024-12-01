@@ -1,4 +1,7 @@
-import { T } from "structured-outputs"
+import Openai from "openai"
+import { ResponseFormat, T } from "structured-outputs"
+import "@std/dotenv/load"
+import { dbg } from "testing"
 
 const Dog = T.object({
   bark: T.string,
@@ -20,3 +23,18 @@ export const Animal = T.taggedUnion("type", {
   Elephant,
   SlowLoris,
 })
+
+const Root = T.object({ animal: Animal })
+
+const openai = new Openai()
+
+const response_format = ResponseFormat("generate_animal", Root)
+
+await openai.chat.completions
+  .create({
+    model: "gpt-4o-mini",
+    messages: [{ role: "system", content: [] }],
+    response_format,
+  })
+  .then(response_format.into)
+  .then(dbg)

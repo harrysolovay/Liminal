@@ -1,58 +1,18 @@
-import { declare, type Type } from "../core/mod.ts"
-import { assert } from "../util/assert.ts"
+import { type AnyType, declareType, type Type } from "../core/mod.ts"
 
-export function array<E extends Type>(element: E): Type<Array<E["T"]>, {
-  minLength: number
-  maxLength: number
-  contains: unknown[]
-}, E["P"]> {
-  return declare({
+export function array<E extends AnyType>(element: E): Type<Array<E["T"]>, E["P"]> {
+  return declareType({
     name: "array",
     source: {
       factory: array,
-      args: { element },
+      args: [element],
     },
-    subschema: (visit) => ({
-      type: "array",
-      items: visit(element),
-    }),
-    refinements: ({ minLength, maxLength, contains }) => {
-      assert(
-        !(typeof minLength === "number" && typeof maxLength === "number") || minLength <= maxLength,
-        "`minLength` cannot be greater than `maxLength`.",
-      )
-      if (contains) {
-        assert(
-          typeof minLength !== "number" || contains.length >= minLength,
-          "`contains` length cannot be less than `minLength`",
-        )
-        assert(
-          typeof maxLength !== "number" || contains.length >= maxLength,
-          "`contains` length cannot be greater than `maxLength`",
-        )
-      }
-      return {
-        minLength: `Length must be gte ${minLength} elements.`,
-        maxLength: `Length must be lte ${maxLength} elements.`,
-      }
-    },
-    output: (f) =>
-      f<Array<E["T"]>>({
-        visitor: (value, ctx) =>
-          value.map((v, i) =>
-            ctx.visit({
-              value: v,
-              type: element,
-              junctions: {
-                value: i,
-                type: "number",
-              },
-            })
-          ),
-        refinementPredicates: {
-          minLength: (value, minLength) => value.length >= minLength,
-          maxLength: (value, maxLength) => value.length <= maxLength,
-        },
-      }),
+    visitValue: (value, ctx) =>
+      value.forEach((e, i) =>
+        ctx.visit(e, element, {
+          value: i,
+          type: "number",
+        })
+      ),
   })
 }

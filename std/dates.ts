@@ -1,68 +1,32 @@
-import type { Type } from "../core/mod.ts"
+import { assert, number } from "../asserts/mod.ts"
 import * as T from "../types/mod.ts"
-import { assert } from "../util/mod.ts"
 
-export const Year = T.number`Year.`
+const ZeroBasedInteger = T.number.assert(number.min, 0)`Zero based.`
 
-export const Month = T.number.refine({
-  min: 0,
-  max: 11,
-})`Month.`
-
-export const DayOfMonth = T.number.refine({
-  min: 1,
-  max: 31,
-})`Day of month. Ensure valid for corresponding month if any.`
-
-export const Hour = T.number.refine({
-  min: 0,
-  max: 23,
-})`Hour.`
-
-export const Minute = T.number.refine({
-  min: 0,
-  max: 59,
-})`Minute.`
-
-export const Second = T.number.refine({
-  min: 0,
-  max: 59,
-})`Second.`
-
-export const Millisecond = T.number.refine({
-  min: 0,
-  max: 999,
-})`Millisecond.`
+const YearMonthDay = T
+  .object({
+    year: T.number,
+    month: ZeroBasedInteger.assert(number.max, 11),
+    day: T.number.assert(number.min, 1).assert(number.max, 2),
+  })`Ensure the day is valid for corresponding year and month.`
+  .assert(({ year, month, day }) => {
+    const date = new Date(year, month, day)
+    assert(
+      date.getFullYear() === year && date.getMonth() === month && date.getDate() === day,
+      `Day ${day} is invalid for month ${month} (${MONTHS[month]}).`,
+    )
+  })
 
 export { Date_ as Date }
-const Date_: Type.Initial<Date> = T.transform(
-  "Date",
-  T.object({
-    year: Year,
-    month: Month,
-    dayOfMonth: DayOfMonth,
-    hour: Hour,
-    minute: Minute,
-    second: Second,
-    millisecond: Millisecond,
-  }),
-  ({
-    year,
-    month,
-    dayOfMonth,
-    hour,
-    minute,
-    second,
-    millisecond,
-  }) => {
-    const date = new Date(year, month, dayOfMonth, hour, minute, second, millisecond)
-    assert(
-      date.getFullYear() === year && date.getMonth() === month && date.getDate() === dayOfMonth,
-      `Day ${dayOfMonth} is invalid for month ${MONTHS[month]}.`,
-    )
-    return date
-  },
-)`Date.`
+const Date_ = T.object({
+  yearMonthDay: YearMonthDay,
+  hour: ZeroBasedInteger.assert(number.max, 23),
+  minute: ZeroBasedInteger.assert(number.max, 59),
+  second: ZeroBasedInteger.assert(number.max, 59),
+  millisecond: ZeroBasedInteger.assert(number.max, 0).assert(number.max, 999),
+}).transform(({ yearMonthDay: { year, month, day }, hour, minute, second, millisecond }) =>
+  new Date(year, month, day, hour, minute, second, millisecond)
+)
 
 const MONTHS = [
   "January",

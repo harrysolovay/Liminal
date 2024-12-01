@@ -1,7 +1,7 @@
 export class Path {
   constructor(readonly junctions: PathJunctions = []) {}
 
-  advance = (junction?: PathJunction): Path =>
+  step = (junction?: PathJunction): Path =>
     junction ? new Path([...this.junctions, junction]) : this
 
   format = (): string =>

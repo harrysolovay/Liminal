@@ -1,9 +1,11 @@
 import Openai from "openai"
 import "@std/dotenv/load"
-import { T } from "structured-outputs"
+import { declarationKey, T } from "structured-outputs"
 import { ResponseFormat } from "structured-outputs/client"
 import * as std from "structured-outputs/std"
 import { dbg } from "testing"
+import * as asserts from "../asserts/mod.ts"
+import { toJsonSchema } from "../json_schema/toJsonSchema.ts"
 
 const greeting = T.taggedUnion("greeting", {
   Hi: T.string,
@@ -12,13 +14,10 @@ const greeting = T.taggedUnion("greeting", {
 })
 
 const Character = T.object({
-  name: T.string.refine({
-    minLength: 4,
-    maxLength: 30,
-  }),
+  name: T.string.assert(asserts.string.minLength, 4).assert(asserts.string.maxLength, 30),
   home: T.string`The name of a fictional realm of magic and wonder.`,
   disposition: T.enum("Optimistic", "Reserved", "Inquisitive"),
-  born: std.Date`Date the character was born. Make sure it aligns with the age.`,
+  // born: std.Date`Date the character was born. Make sure it aligns with the age.`,
   stateOfAffairs: T.tuple(
     T.string`Home life.`,
     T.string`Professional life.`,
@@ -27,21 +26,23 @@ const Character = T.object({
   randomValue: T.union(T.string, T.number),
   friends: T.array(T.string)`Names of the character's friends.`,
   greeting,
-  favoriteColor: std.colors.Hex,
+  // favoriteColor: std.colors.Hex,
 })
 
-const response_format = ResponseFormat("create_character", Character)`
-  Create a new character to be the protagonist of a children's story.
-`
+toJsonSchema(Character)
 
-await new Openai().chat.completions
-  .create({
-    model: "gpt-4o-mini",
-    response_format,
-    messages: [{
-      role: "system",
-      content: [],
-    }],
-  })
-  .then(response_format.into)
-  .then(dbg)
+// const response_format = ResponseFormat("create_character", Character)`
+//   Create a new character to be the protagonist of a children's story.
+// `
+
+// await new Openai().chat.completions
+//   .create({
+//     model: "gpt-4o-mini",
+//     response_format,
+//     messages: [{
+//       role: "system",
+//       content: [],
+//     }],
+//   })
+//   .then(response_format.into)
+//   .then(dbg)

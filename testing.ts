@@ -2,15 +2,13 @@ import { ensureDir } from "@std/fs"
 import * as path from "@std/path"
 import { assertSnapshot } from "@std/testing/snapshot"
 import type { Type } from "./core/mod.ts"
+import { toJsonSchema } from "./json_schema/mod.ts"
 
-export async function assertTypeSnapshot(
-  t: Deno.TestContext,
-  value: Type<any, any, never>,
-): Promise<void> {
-  await assertSnapshot(t, value.schema())
+export async function assertTypeSnapshot(t: Deno.TestContext, value: Type<any>): Promise<void> {
+  await assertSnapshot(t, toJsonSchema(value))
   const withContext = value`One.`
-  await assertSnapshot(t, withContext.schema())
-  await assertSnapshot(t, withContext`Two.`.schema())
+  await assertSnapshot(t, toJsonSchema(withContext))
+  await assertSnapshot(t, toJsonSchema(withContext`Two.`))
 }
 
 export function tap(useValue: <T>(value: T) => void) {

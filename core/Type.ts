@@ -1,61 +1,106 @@
-import type { EnsureLiteralKeys, Expand, Inspectable } from "../util/mod.ts"
-import type { Args, Context, ExcludeArgs, Params } from "./Context.ts"
-import type { Schema } from "./Schema.ts"
-import type { TypeDeclaration } from "./TypeDeclaration.ts"
+import { type EnsureLiteralKeys, Inspectable } from "../util/mod.ts"
+import { type Args, type Assertion, Context, type Params } from "./Context.ts"
+import type { ValueVisitorContext } from "./ValueVisitorContext.ts"
 
-// TODO: generic refinement
-
-/** The core unit of structure output schema composition. */
-export interface Type<
-  T = any,
-  R extends Refinements = any,
-  P extends keyof any = keyof any,
-> extends Inspectable {
+/** The core unit of schema composition. */
+export interface Type<T, P extends keyof any = never> extends Inspectable {
   <P2 extends Params>(
     template: TemplateStringsArray,
     ...params: EnsureLiteralKeys<P2>
-  ): Type<T, R, P | P2[number]>
+  ): Type<T, P | P2[number]>
 
-  /** The type into which the structured output is transformed. */
+  /** The native type. */
   T: T
-  /** The literal types of the parameter keys. */
+
+  /** The union of literal types of parameter keys. */
   P: P
 
-  /** The type declaration. */
-  decl: TypeDeclaration<T, R, P>
+  /** Readonly values that describe the type. */
+  [declarationKey]: TypeDeclaration<T>
 
   /** Container to be filled with context parts as chaining occurs. */
-  ctx: Context<T, R, P>
+  "": Context
 
-  /** Apply a refinement to the type. */
-  refine<const V extends UnappliedRefiners<R>>(refinements: V): Type<T, ExcludeRefiners<R, V>, P>
-
-  /** Get the corresponding JSON Schema. */
-  schema(this: Type<T, R, never>, refine?: boolean): Schema
-
-  /** Apply context to parameters. */
-  fill: <A extends Partial<Args<P>>>(args: A) => Type<T, R, ExcludeArgs<P, A>>
-}
-
-export namespace Type {
-  export type Initial<T, R extends Refinements = {}> = Type<
+  /** Fill in parameterized context. */
+  fill: <A extends Partial<Args<P>>>(args: A) => Type<
     T,
-    { [K in keyof R]: Unapplied<R[K]> },
-    never
+    Exclude<
+      P,
+      keyof { [K in keyof A as A[K] extends undefined ? never : K]: never }
+    >
   >
+
+  /** Specify assertions to be run on the type's output. */
+  assert: <A extends unknown[]>(f: Assertion<T, A>, ...args: A) => Type<T, P>
+
+  /** Create a new type representing the result of applying the specified transformation to `T`. */
+  transform: <O>(f: (from: T) => O) => Type<O, P>
 }
 
-export type Refinements = Record<string, unknown>
+export const declarationKey = Symbol()
 
-export declare const Unapplied: unique symbol
-export type Unapplied<T = any> = Record<typeof Unapplied, T>
-
-export type UnappliedRefiners<R extends Refinements> = {
-  [K in keyof R as R[K] extends Unapplied<infer _> ? K : never]+?: R[K] extends Unapplied<infer S>
-    ? S
-    : never
+export type TypeDeclaration<T> = {
+  /** The name of the type. */
+  name: string
+  /** The origin of the type (a `declare`d type or `declare`d-type-returning function). */
+  source: TypeSource
+  /** Describes how to visit child values if any. */
+  visitValue?: (value: T, ctx: ValueVisitorContext) => void
 }
-export type ExcludeRefiners<R extends Refinements, V extends UnappliedRefiners<R>> = Expand<
-  & { [K in keyof R as K extends keyof V ? never : K]: R[K] }
-  & { -readonly [K in keyof V as V[K] extends undefined ? never : K]: V[K] }
->
+
+export type TypeSource = {
+  getType: () => AnyType
+  factory?: never
+  args?: never
+} | {
+  getType?: never
+  factory: (...args: any) => AnyType
+  args: unknown[]
+}
+
+export type AnyType = Type<any, any>
+
+export function declareType<T>(declaration: TypeDeclaration<T>): Type<T, never> {
+  return declare_<T, never>(declaration, new Context([], []))
+}
+
+function declare_<T, P extends keyof any>(
+  declaration: TypeDeclaration<T>,
+  context: Context,
+): Type<T, P> {
+  return Object.assign(
+    (template: TemplateStringsArray, ...params: Params) =>
+      declare_(
+        declaration,
+        new Context([{ template, params }, ...context.parts], context.assertions),
+      ),
+    {
+      [declarationKey]: declaration,
+      "": context,
+      fill: (args: Args) =>
+        declare_(
+          declaration,
+          new Context([{ args }, ...context.parts], context.assertions),
+        ),
+      assert: (assertion: Assertion, ...args: unknown[]) =>
+        declare_(
+          declaration,
+          new Context(context.parts, [...context.assertions, [assertion, args]]),
+        ),
+      transform: () => {
+        throw 0
+      },
+      ...Inspectable((inspect) => {
+        const { source } = declaration
+        if (source.getType) {
+          return declaration.name
+        }
+        return `${declaration.name}(${inspect(source.args)})`
+      }),
+    },
+  ) as never
+}
+
+export function isType(value: unknown): value is AnyType {
+  return typeof value === "object" && value !== null && declarationKey in value
+}
