@@ -1,12 +1,7 @@
 import type { ChatCompletion } from "openai/resources/chat/completions"
 import type { ResponseFormatJSONSchema } from "openai/resources/shared"
 import { assert } from "../asserts/mod.ts"
-import {
-  type Diagnostic,
-  serializeDiagnostics,
-  type Type,
-  ValueVisitorContext,
-} from "../core/mod.ts"
+import { type Diagnostic, serializeDiagnostics, type Type, VisitValue } from "../core/mod.ts"
 import { toJsonSchema } from "../json_schema/mod.ts"
 import { AssertionError, recombine } from "../util/mod.ts"
 
@@ -80,8 +75,7 @@ function FinalResponseFormat<T>(
       if (nonRoot) {
         return value = value.value
       }
-      const visitorCtx = new ValueVisitorContext(diagnostics)
-      const result = visitorCtx.visit(value, type)
+      const result = VisitValue(diagnostics)(value, type)
       if (diagnostics.length) {
         throw new AssertionError(serializeDiagnostics(diagnostics))
       }

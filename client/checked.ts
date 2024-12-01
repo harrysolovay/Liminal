@@ -1,6 +1,6 @@
 import type Openai from "openai"
 import type { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions"
-import { type Diagnostic, serializeDiagnostics, ValueVisitorContext } from "../core/mod.ts"
+import { type Diagnostic, serializeDiagnostics, VisitValue } from "../core/mod.ts"
 import * as T from "../types/mod.ts"
 import { assert } from "../util/assert.ts"
 import { ResponseFormat } from "./ResponseFormat.ts"
@@ -36,8 +36,7 @@ export async function checked<T>(
     .then(ResponseFormat.unwrap)
     .then(JSON.parse)
   const diagnostics: Array<Diagnostic> = []
-  const visitorCtx = new ValueVisitorContext(diagnostics)
-  const processed0 = visitorCtx.visit(initial, params.response_format[""])
+  const processed0 = VisitValue(diagnostics)(initial, params.response_format[""])
   console.log({ diagnostics })
   // let correctionsRemaining = options?.maxCorrections ?? Infinity
   // while (correctionsRemaining-- && !options?.signal?.aborted && diagnostics.length) {

@@ -1,32 +1,35 @@
 import { Path, type PathJunction } from "./Path.ts"
 import { type AnyType, declarationKey } from "./Type.ts"
 
-export class ValueVisitorContext {
-  constructor(
-    readonly diagnostics: Array<Diagnostic>,
-    readonly valuePath: Path = new Path(),
-    readonly typePath: Path = new Path(),
-  ) {}
+export type VisitValue = (
+  value: unknown,
+  type: AnyType,
+  valueJunction?: PathJunction,
+) => unknown
 
-  visit: VisitValue = (value: unknown, type: AnyType, valueJunction?: PathJunction) => {
-    const valuePath = this.valuePath.step(valueJunction)
-    const typePath = this.typePath.step(type.name)
+export function VisitValue(
+  diagnostics: Array<Diagnostic>,
+  parentValuePath: Path = new Path(),
+  parentTypePath: Path = new Path(),
+): VisitValue {
+  return (value: unknown, type: AnyType, valueJunction?: PathJunction) => {
+    const valuePath = parentValuePath.step(valueJunction)
+    const typePath = parentTypePath.step(type.name)
     const declaration = type[declarationKey]
     if (declaration.visitValue) {
-      const context = new ValueVisitorContext(this.diagnostics, valuePath, typePath)
-      value = declaration.visitValue(value, context.visit)
+      value = declaration.visitValue(value, VisitValue(diagnostics, valuePath, typePath))
     }
     if (declaration.transform) {
       value = declaration.transform(value)
     }
     const { assertions } = type[""]
     if (assertions.length) {
-      assertions.forEach(async ({ assertion, trace, args }) => {
+      assertions.forEach(({ assertion, trace, args }) => {
         try {
-          await assertion(value, ...args)
+          assertion(value, ...args)
         } catch (e: unknown) {
           if (e instanceof Error) {
-            return this.diagnostic({
+            diagnostics.push({
               error: e,
               trace,
               type,
@@ -34,6 +37,7 @@ export class ValueVisitorContext {
               value,
               valuePath,
             })
+            return { [stubKey]: undefined }
           }
           throw e
         }
@@ -41,28 +45,17 @@ export class ValueVisitorContext {
     }
     return value as never
   }
-
-  diagnostic = <X extends AnyType>(diagnostic: Diagnostic<X>): Stub<X["T"]> => {
-    this.diagnostics.push(diagnostic)
-    return { [Stub.key]: undefined! as X["T"] }
-  }
 }
 
-export type Stub<T> = Record<typeof Stub.key, T>
-export namespace Stub {
-  export const key: unique symbol = Symbol()
+export function isStub(value: unknown) {
+  return typeof value === "object" && value !== null && stubKey in value
 }
+const stubKey: unique symbol = Symbol()
 
-export type VisitValue = (
-  value: unknown,
-  type: AnyType,
-  valueJunction?: PathJunction,
-) => unknown
-
-export type Diagnostic<X extends AnyType = AnyType> = {
+export type Diagnostic = {
   error: Error
   trace: string
-  type: X
+  type: AnyType
   typePath: Path
   value: unknown
   valuePath: Path
