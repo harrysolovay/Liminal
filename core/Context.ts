@@ -1,7 +1,11 @@
 export class Context {
   constructor(
     readonly parts: DescriptionParts[] = [],
-    readonly assertions: Array<[Assertion, args: Array<unknown>]>,
+    readonly assertions: Array<{
+      assertion: Assertion
+      args: Array<unknown>
+      trace: string
+    }>,
   ) {}
 }
 

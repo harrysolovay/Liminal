@@ -70,7 +70,7 @@ function FinalResponseFormat<T>(
     type: "json_schema",
     json_schema: {
       name,
-      ...description ? { description } : {},
+      description,
       schema,
       strict: true,
     },

@@ -5,7 +5,6 @@ import { ResponseFormat } from "structured-outputs/client"
 import * as std from "structured-outputs/std"
 import { dbg } from "testing"
 import * as asserts from "../asserts/mod.ts"
-import { toJsonSchema } from "../json_schema/toJsonSchema.ts"
 
 const greeting = T.taggedUnion("greeting", {
   Hi: T.string,
@@ -28,8 +27,6 @@ const Character = T.object({
   greeting,
   favoriteColor: std.colors.Hex,
 })
-
-toJsonSchema(Character)
 
 const response_format = ResponseFormat("create_character", Character)`
   Create a new character to be the protagonist of a children's story.

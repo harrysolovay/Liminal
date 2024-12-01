@@ -11,7 +11,7 @@ export function transform<F, P extends keyof any, T>(
       factory: transform,
       args: [name, From, f],
     },
-    visitValue: (value, visit) => visit(value, From),
+    visitValue: (value, visit) => visit(value, From) as never,
     transform: f,
   })
 }

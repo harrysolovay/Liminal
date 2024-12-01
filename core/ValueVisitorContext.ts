@@ -18,12 +18,31 @@ export class ValueVisitorContext {
     }
     if (declaration.transform) {
       value = declaration.transform(value)
-      console.log("C", type, value)
+    }
+    const { assertions } = type[""]
+    if (assertions.length) {
+      assertions.forEach(async ({ assertion, trace, args }) => {
+        try {
+          await assertion(value, ...args)
+        } catch (e: unknown) {
+          if (e instanceof Error) {
+            return this.diagnostic({
+              error: e,
+              trace,
+              type,
+              typePath,
+              value,
+              valuePath,
+            })
+          }
+          throw e
+        }
+      })
     }
     return value as never
   }
 
-  diagnose = <X extends AnyType>(diagnostic: Diagnostic<X>): Stub<X["T"]> => {
+  diagnostic = <X extends AnyType>(diagnostic: Diagnostic<X>): Stub<X["T"]> => {
     this.diagnostics.push(diagnostic)
     return { [Stub.key]: undefined! as X["T"] }
   }
@@ -34,15 +53,15 @@ export namespace Stub {
   export const key: unique symbol = Symbol()
 }
 
-export type VisitValue = <T>(
+export type VisitValue = (
   value: unknown,
   type: AnyType,
   valueJunction?: PathJunction,
-) => T
+) => unknown
 
 export type Diagnostic<X extends AnyType = AnyType> = {
-  name: string
-  message: string
+  error: Error
+  trace: string
   type: X
   typePath: Path
   value: unknown
@@ -50,8 +69,8 @@ export type Diagnostic<X extends AnyType = AnyType> = {
 }
 
 export function serializeDiagnostics(diagnostics: Array<Diagnostic>): string {
-  return diagnostics.map(({ name, message, value, valuePath, typePath }, i) => {
-    return `Diagnostic ${i}: ${name}; ${message}
+  return diagnostics.map(({ error, value, valuePath, typePath }, i) => {
+    return `Diagnostic ${i}: ${error.name}; ${error.message}
   Invalid value: ${value}
   Value path: ${typePath.format()}
   Type path: ${valuePath.format()}`

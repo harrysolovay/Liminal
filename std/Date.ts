@@ -7,7 +7,7 @@ const YearMonthDay = T
   .object({
     year: T.number,
     month: ZeroBasedInteger.assert(number.max, 11),
-    day: T.number.assert(number.min, 1).assert(number.max, 2),
+    day: T.number.assert(number.min, 1).assert(number.max, 31),
   })`Ensure the day is valid for corresponding year and month.`
   .assert(({ year, month, day }) => {
     const date = new Date(year, month, day)

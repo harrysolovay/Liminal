@@ -24,11 +24,13 @@ function declare_<T, P extends keyof any>(
           declaration,
           new Context([{ args }, ...context.parts], context.assertions),
         ),
-      assert: (assertion: Assertion, ...args: unknown[]) =>
-        declare_(
+      assert: (assertion: Assertion, ...args: unknown[]) => {
+        const trace = new Error().stack ?? ""
+        return declare_(
           declaration,
-          new Context(context.parts, [...context.assertions, [assertion, args]]),
-        ),
+          new Context(context.parts, [...context.assertions, { assertion, args, trace }]),
+        )
+      },
       ...Inspectable((inspect) => {
         const { source } = declaration
         if (source.getType) {
