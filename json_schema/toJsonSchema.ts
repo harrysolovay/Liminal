@@ -38,19 +38,6 @@ const visitor = new TypeVisitorContext<Args, Schema>()
       items: visitor.visit(args, element),
     }
   })
-  .add(T.tuple, (parentArgs, type, ...elements): Schema => {
-    const { description, args } = processArgs(parentArgs, type)
-    const { length } = elements
-    return ({
-      description,
-      type: "object",
-      properties: Object.fromEntries(
-        Array.from({ length }, (_0, i) => [i, visitor.visit(args, elements[i]!)]),
-      ),
-      required: Array.from({ length }, (_0, i) => i.toString()),
-      additionalProperties: false,
-    })
-  })
   .add(T.object, (parentArgs, type, fields): Schema => {
     const { description, args } = processArgs(parentArgs, type)
     const keys = Object.keys(fields)
@@ -80,25 +67,6 @@ const visitor = new TypeVisitorContext<Args, Schema>()
       description,
       type: "string",
       enum: members,
-    }
-  })
-  .add(T.union, (parentArgs, type, ...members): Schema => {
-    const { description, args } = processArgs(parentArgs, type)
-    return {
-      description,
-      anyOf: members.map((member, i) => ({
-        type: "object",
-        properties: {
-          type: {
-            type: "number",
-            const: i,
-          },
-          value: visitor.visit(args, member),
-        },
-        required: ["type", "value"],
-        additionalProperties: false,
-      })),
-      discriminator: "type",
     }
   })
   .add(T.taggedUnion, (parentArgs, type, tagKey, members): Schema => {

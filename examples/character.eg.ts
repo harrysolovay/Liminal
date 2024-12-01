@@ -17,13 +17,13 @@ const Character = T.object({
   name: T.string.assert(asserts.string.minLength, 4).assert(asserts.string.maxLength, 30),
   home: T.string`The name of a fictional realm of magic and wonder.`,
   disposition: T.enum("Optimistic", "Reserved", "Inquisitive"),
-  // born: std.Date`Date the character was born. Make sure it aligns with the age.`,
-  stateOfAffairs: T.tuple(
+  born: std.Date`Date the character was born. Make sure it aligns with the age.`,
+  stateOfAffairs: std.Tuple(
     T.string`Home life.`,
     T.string`Professional life.`,
     T.string`Health.`,
   )`How are things going for the character in these various domains?`,
-  randomValue: T.union(T.string, T.number),
+  randomValue: std.Union(T.string, T.number),
   friends: T.array(T.string)`Names of the character's friends.`,
   greeting,
   favoriteColor: std.colors.Hex,

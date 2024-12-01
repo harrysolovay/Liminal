@@ -1,9 +1,14 @@
 import type { ChatCompletion } from "openai/resources/chat/completions"
 import type { ResponseFormatJSONSchema } from "openai/resources/shared"
 import { assert } from "../asserts/mod.ts"
-import type { Type } from "../core/mod.ts"
+import {
+  type Diagnostic,
+  serializeDiagnostics,
+  type Type,
+  ValueVisitorContext,
+} from "../core/mod.ts"
 import { toJsonSchema } from "../json_schema/mod.ts"
-import { recombine } from "../util/mod.ts"
+import { AssertionError, recombine } from "../util/mod.ts"
 
 export interface ResponseFormat<T> extends FinalResponseFormat<T> {
   (template: TemplateStringsArray, ...values: Array<unknown>): FinalResponseFormat<T>
@@ -70,21 +75,17 @@ function FinalResponseFormat<T>(
       strict: true,
     },
     into: (completion) => {
-      // const diagnostics: Array<Diagnostic> = []
-      const parsed = JSON.parse(ResponseFormat.unwrap(completion))
+      const diagnostics: Array<Diagnostic> = []
+      let value = JSON.parse(ResponseFormat.unwrap(completion))
       if (nonRoot) {
-        return parsed.value
+        return value = value.value
       }
-      return parsed
-      // const visitorCtx = new ValueVisitorContext(diagnostics)
-      // const result = visitorCtx.visit({
-      //   type,
-      //   value: JSON.parse(ResponseFormat.unwrap(completion)),
-      // })
-      // if (diagnostics.length) {
-      //   throw new AssertionError(serializeDiagnostics(diagnostics))
-      // }
-      // return result
+      const visitorCtx = new ValueVisitorContext(diagnostics)
+      const result = visitorCtx.visit(value, type)
+      if (diagnostics.length) {
+        throw new AssertionError(serializeDiagnostics(diagnostics))
+      }
+      return result
     },
     ...{
       /** Prevents `JSON.stringify` from including `""` and `into` in serialization. */

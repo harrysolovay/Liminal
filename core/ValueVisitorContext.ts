@@ -18,6 +18,7 @@ export class ValueVisitorContext {
     }
     if (declaration.transform) {
       value = declaration.transform(value)
+      console.log("C", type, value)
     }
     return value as never
   }

@@ -11,6 +11,8 @@ export function object<F extends Record<string, AnyType>>(
       args: [fields],
     },
     visitValue: (value, visit) =>
-      Object.fromEntries(entries.map(([key, type]) => [key, visit(value, type, key)])) as never,
+      Object.fromEntries(
+        entries.map(([key, type]) => [key, visit(value[key], type, key)]),
+      ) as never,
   })
 }

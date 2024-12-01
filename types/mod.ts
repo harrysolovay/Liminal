@@ -1,7 +1,3 @@
-export { transform } from "../core/transform.ts"
-
-// moderate
-
 export * from "./array.ts"
 export * from "./boolean.ts"
 export * from "./enum.ts"
@@ -10,5 +6,4 @@ export * from "./object.ts"
 export * from "./option.ts"
 export * from "./string.ts"
 export * from "./taggedUnion.ts"
-export * from "./tuple.ts"
-export * from "./union.ts"
+export * from "./transform.ts"

@@ -17,10 +17,6 @@ Deno.test("array", async (t) => {
   await assertTypeSnapshot(t, T.array(T.string))
 })
 
-Deno.test("tuple", async (t) => {
-  await assertTypeSnapshot(t, T.tuple(T.boolean, T.number, T.string))
-})
-
 Deno.test("object", async (t) => {
   await assertTypeSnapshot(
     t,
@@ -38,10 +34,6 @@ Deno.test("option", async (t) => {
 
 Deno.test("enum", async (t) => {
   await assertTypeSnapshot(t, T.enum("A", "B", "C"))
-})
-
-Deno.test("union", async (t) => {
-  await assertTypeSnapshot(t, T.union(T.boolean, T.number, T.string))
 })
 
 Deno.test("tagged union", async (t) => {

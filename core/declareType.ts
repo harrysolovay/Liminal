@@ -1,7 +1,6 @@
 import { Inspectable } from "../util/mod.ts"
 import { type Args, type Assertion, Context, type Params } from "./Context.ts"
-import { transform } from "./transform.ts"
-import { type AnyType, declarationKey, type Type, type TypeDeclaration } from "./Type.ts"
+import { declarationKey, type Type, type TypeDeclaration } from "./Type.ts"
 
 export function declareType<T>(declaration: TypeDeclaration<T>): Type<T, never> {
   return declare_<T, never>(declaration, new Context([], []))
@@ -30,14 +29,12 @@ function declare_<T, P extends keyof any>(
           declaration,
           new Context(context.parts, [...context.assertions, [assertion, args]]),
         ),
-      transform: <O>(name: string, f: (from: T) => O) =>
-        transform(name, type as never as AnyType, f),
       ...Inspectable((inspect) => {
         const { source } = declaration
         if (source.getType) {
           return declaration.name
         }
-        return `${declaration.name}(${inspect(source.args)})`
+        return `${declaration.name}(${source.args.map(inspect)})`
       }),
     },
   )

@@ -18,14 +18,17 @@ const YearMonthDay = T
   })
 
 export { Date_ as Date }
-const Date_ = T.object({
-  yearMonthDay: YearMonthDay,
-  hour: ZeroBasedInteger.assert(number.max, 23),
-  minute: ZeroBasedInteger.assert(number.max, 59),
-  second: ZeroBasedInteger.assert(number.max, 59),
-  millisecond: ZeroBasedInteger.assert(number.max, 0).assert(number.max, 999),
-}).transform(({ yearMonthDay: { year, month, day }, hour, minute, second, millisecond }) =>
-  new Date(year, month, day, hour, minute, second, millisecond)
+const Date_ = T.transform(
+  "ConstructDate",
+  T.object({
+    yearMonthDay: YearMonthDay,
+    hour: ZeroBasedInteger.assert(number.max, 23),
+    minute: ZeroBasedInteger.assert(number.max, 59),
+    second: ZeroBasedInteger.assert(number.max, 59),
+    millisecond: ZeroBasedInteger.assert(number.max, 0).assert(number.max, 999),
+  }),
+  ({ yearMonthDay: { year, month, day }, hour, minute, second, millisecond }) =>
+    new Date(year, month, day, hour, minute, second, millisecond),
 )
 
 const MONTHS = [
