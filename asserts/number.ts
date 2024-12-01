@@ -1,9 +1,9 @@
 import { assert } from "../util/mod.ts"
 
-export function min(min: number, value: number) {
-  assert(min >= value, `Must be gte ${value}.`)
+export function min(value: number, min: number) {
+  assert(value >= min, `Must be gte ${min}; received ${value}.`)
 }
 
-export function max(max: number, value: number) {
-  assert(max <= value, `Must be lte ${value}.`)
+export function max(value: number, max: number) {
+  assert(value <= max, `Must be lte ${max}; received ${value}.`)
 }

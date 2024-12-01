@@ -10,9 +10,9 @@ const openai = new Openai()
 
 const _1To100Desc = T.number`A number between 1 and 100.`
 const Name = T.string.assert(
-  asserts.string.minLength,
-  3,
-)`A name between 1 and 50 characters in length.`
+  asserts.string.maxLength,
+  6,
+)`A name between 1 and 20 characters in length.`
 
 const Refined = T.object({
   a: _1To100Desc.assert(asserts.number.min, 90),

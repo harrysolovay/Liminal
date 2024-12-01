@@ -1,20 +1,22 @@
-import { Path, type PathJunction } from "./Path.ts"
 import { type AnyType, declarationKey } from "./Type.ts"
+
+export type PathJunction = number | string
 
 export type VisitValue = (
   value: unknown,
   type: AnyType,
-  valueJunction?: PathJunction,
+  formatValuePath?: (leading: PathJunction) => undefined | PathJunction,
+  formatTypePath?: (leading: PathJunction) => undefined | PathJunction,
 ) => unknown
 
 export function VisitValue(
   diagnostics: Array<Diagnostic>,
-  parentValuePath: Path = new Path(),
-  parentTypePath: Path = new Path(),
+  parentValuePath: PathJunction = "root",
+  parentTypePath: PathJunction = "root",
 ): VisitValue {
-  return (value: unknown, type: AnyType, valueJunction?: PathJunction) => {
-    const valuePath = parentValuePath.step(valueJunction)
-    const typePath = parentTypePath.step(type.name)
+  return (value, type, formatValuePath, formatTypePath) => {
+    const valuePath = formatValuePath?.(parentValuePath) ?? parentValuePath
+    const typePath = formatTypePath?.(parentTypePath) ?? parentTypePath
     const declaration = type[declarationKey]
     if (declaration.visitValue) {
       value = declaration.visitValue(value, VisitValue(diagnostics, valuePath, typePath))
@@ -43,7 +45,7 @@ export function VisitValue(
         }
       })
     }
-    return value as never
+    return value
   }
 }
 
@@ -56,16 +58,16 @@ export type Diagnostic = {
   error: Error
   trace: string
   type: AnyType
-  typePath: Path
+  typePath: PathJunction
   value: unknown
-  valuePath: Path
+  valuePath: PathJunction
 }
 
 export function serializeDiagnostics(diagnostics: Array<Diagnostic>): string {
-  return diagnostics.map(({ error, value, valuePath, typePath }, i) => {
-    return `Diagnostic ${i}: ${error.name}; ${error.message}
+  return diagnostics.map(({ error, value, valuePath, typePath }, i) =>
+    `Diagnostic ${i}: ${error.name}; ${error.message}
   Invalid value: ${value}
-  Value path: ${typePath.format()}
-  Type path: ${valuePath.format()}`
-  }).join("\n\n")
+  Value path: ${valuePath}
+  Type path: ${typePath}`
+  ).join("\n\n")
 }

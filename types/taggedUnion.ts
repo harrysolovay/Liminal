@@ -20,11 +20,18 @@ export function taggedUnion<
       args: [tagKey, members],
     },
     visitValue: (variant, visit) => {
-      const type = variant[tagKey]
+      const type = variant[tagKey] as number | string
       return {
         [tagKey]: type,
         ..."value" in variant
-          ? { value: visit(variant.value, members[type]!, "value") }
+          ? {
+            value: visit(
+              variant.value,
+              members[type]!,
+              (leading) => `${leading}.value`,
+              (leading) => `${leading}.value`,
+            ),
+          }
           : {},
       } as never
     },

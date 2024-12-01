@@ -31,33 +31,33 @@ export async function checked<T>(
     maxCorrections === undefined || (maxCorrections >= 1 && Number.isInteger(maxCorrections)),
     "`CheckedOptions.maxCorrections` must be an integer greater than 1.",
   )
+  // TODO: handle non-root in consistent way.
   const initial = await client.chat.completions
     .create(params)
     .then(ResponseFormat.unwrap)
     .then(JSON.parse)
   const diagnostics: Array<Diagnostic> = []
   const processed0 = VisitValue(diagnostics)(initial, params.response_format[""])
-  console.log({ diagnostics })
-  // let correctionsRemaining = options?.maxCorrections ?? Infinity
-  // while (correctionsRemaining-- && !options?.signal?.aborted && diagnostics.length) {
-  //   console.log(prompt(params, diagnostics))
-  //   await new Promise(() => {})
-  //   const { corrections: _ } = await client.chat.completions
-  //     .create({
-  //       ...params,
-  //       messages: [{
-  //         role: "user",
-  //         content: [{
-  //           type: "text",
-  //           text: prompt(params, diagnostics),
-  //         }],
-  //       }],
-  //       response_format,
-  //     })
-  //     .then(response_format.into)
-  //   // TODO:
-  //   // corrections.forEach(({ id, value }) => {})
-  // }
+  let correctionsRemaining = options?.maxCorrections ?? Infinity
+  while (correctionsRemaining-- && !options?.signal?.aborted && diagnostics.length) {
+    console.log(prompt(params, diagnostics))
+    await new Promise(() => {})
+    const { corrections: _ } = await client.chat.completions
+      .create({
+        ...params,
+        messages: [{
+          role: "user",
+          content: [{
+            type: "text",
+            text: prompt(params, diagnostics),
+          }],
+        }],
+        response_format,
+      })
+      .then(response_format.into)
+    // TODO:
+    // corrections.forEach(({ id, value }) => {})
+  }
   return processed0 as any
 }
 

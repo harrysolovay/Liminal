@@ -7,6 +7,12 @@ export function option<X extends AnyType>(Some: X): Type<X["T"] | null, X["P"]> 
       factory: option,
       args: [Some],
     },
-    visitValue: (value, visit) => value === null ? value : visit(value, Some),
+    visitValue: (value, visit) =>
+      value === null ? value : visit(
+        value,
+        Some,
+        (leading) => `${leading}.value`,
+        (leading) => `${leading}.value`,
+      ),
   })
 }

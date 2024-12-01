@@ -7,6 +7,14 @@ export function array<E extends AnyType>(Element: E): Type<Array<E["T"]>, E["P"]
       factory: array,
       args: [Element],
     },
-    visitValue: (value, visit) => value.map((e, i) => visit(e, Element, i)),
+    visitValue: (value, visit) =>
+      value.map((e, i) =>
+        visit(
+          e,
+          Element,
+          (leading) => `${leading}[${i}]`,
+          (leading) => `${leading}[number]`,
+        )
+      ),
   })
 }
