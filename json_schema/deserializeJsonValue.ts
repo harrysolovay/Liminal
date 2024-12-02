@@ -12,7 +12,7 @@ const visitor = new TypeVisitor<{}, (value: any) => unknown>()
   .add(
     T.array,
     (ctx, _1, Element) => (value: Array<unknown>): unknown => {
-      const visited = value.map((e, i) => visitor.visit(ctx, Element)(e))
+      const visited = value.map((e) => visitor.visit(ctx, Element)(e))
       return visited
     },
   )
@@ -47,4 +47,8 @@ const visitor = new TypeVisitor<{}, (value: any) => unknown>()
         : {},
     }
   })
-  .fallback(() => (value: unknown) => value)
+  .add(
+    T.transform,
+    (ctx, _0, _1, From, f) => (value): unknown => f(visitor.visit(ctx, From)(value)),
+  )
+  .fallback(() => (value) => value)
