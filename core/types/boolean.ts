@@ -1,7 +1,6 @@
-import { declareType } from "../declareType.ts"
-import type { Type } from "../Type.ts"
+import { Type } from "../Type.ts"
 
-export const boolean: Type<boolean> = declareType({
+export const boolean: Type<boolean> = Type({
   name: "boolean",
   source: {
     getType: () => boolean,

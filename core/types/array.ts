@@ -1,8 +1,7 @@
-import { declareType } from "../declareType.ts"
-import type { AnyType, Type } from "../Type.ts"
+import { type AnyType, Type } from "../Type.ts"
 
 export function array<E extends AnyType>(Element: E): Type<Array<E["T"]>, E["P"]> {
-  return declareType({
+  return Type({
     name: "array",
     source: {
       factory: array,
@@ -10,6 +9,3 @@ export function array<E extends AnyType>(Element: E): Type<Array<E["T"]>, E["P"]
     },
   })
 }
-
-// formatValuePath: (leading) => `${leading}[${i}]`,
-// formatTypePath: (leading) => `${leading}[number]`,

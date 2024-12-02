@@ -1,10 +1,9 @@
-import { declareType } from "../declareType.ts"
-import type { AnyType, Type } from "../Type.ts"
+import { type AnyType, Type } from "../Type.ts"
 
 export function object<F extends Record<string, AnyType>>(
   fields: F,
 ): Type<{ [K in keyof F]: F[K]["T"] }, F[keyof F]["P"]> {
-  return declareType({
+  return Type({
     name: "object",
     source: {
       factory: object,
@@ -12,6 +11,3 @@ export function object<F extends Record<string, AnyType>>(
     },
   })
 }
-
-// formatValuePath: (leading) => `${leading}.${key}`,
-// formatTypePath: (leading) => `${leading}.${key}`,

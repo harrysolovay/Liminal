@@ -1,5 +1,6 @@
 import type { EnsureLiteralKeys } from "../util/mod.ts"
-import type { Args, Assertion, Context, Params } from "./Context.ts"
+import { type Args, type Assertion, Context, type Params } from "./Context.ts"
+import { inspectBearer } from "./inspectBearer.ts"
 
 /** The core unit of schema composition. */
 export interface Type<T, P extends keyof any = never> {
@@ -33,6 +34,57 @@ export interface Type<T, P extends keyof any = never> {
 
   /** Widen the type for dynamic use cases. */
   unchecked: () => Type<any, never>
+}
+
+export function Type<T, P extends keyof any = never>(
+  declaration: TypeDeclaration,
+  context: Context = new Context([], [], {}),
+): Type<T, P> {
+  const self = Object.assign(
+    (template: TemplateStringsArray, ...params: Params) =>
+      Type(
+        declaration,
+        new Context(
+          [{ template, params }, ...context.parts],
+          context.assertions,
+          context.metadata,
+        ),
+      ),
+    {
+      [typeKey]: { declaration, context },
+      fill: (args: Args) =>
+        Type(
+          declaration,
+          new Context(
+            [{ args }, ...context.parts],
+            context.assertions,
+            context.metadata,
+          ),
+        ),
+      assert: (assertion: Assertion, ...args: unknown[]) => {
+        const trace = new Error().stack ?? ""
+        return Type(
+          declaration,
+          new Context(
+            context.parts,
+            [...context.assertions, { assertion, args, trace }],
+            context.metadata,
+          ),
+        )
+      },
+      annotate: (key: symbol, value: unknown) =>
+        Type(
+          declaration,
+          new Context(context.parts, context.assertions, {
+            ...context.metadata,
+            [key]: value,
+          }),
+        ),
+      unchecked: () => self,
+      ...inspectBearer,
+    },
+  )
+  return self as never
 }
 
 export const typeKey: unique symbol = Symbol()

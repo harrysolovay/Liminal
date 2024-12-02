@@ -1,6 +1,5 @@
 import type { Expand } from "../../util/type_util.ts"
-import { declareType } from "../declareType.ts"
-import type { AnyType, Type } from "../Type.ts"
+import { type AnyType, Type } from "../Type.ts"
 
 export function taggedUnion<
   K extends number | string,
@@ -14,7 +13,7 @@ export function taggedUnion<
   }[keyof M],
   Extract<M[keyof M], AnyType>["P"]
 > {
-  return declareType({
+  return Type({
     name: "taggedUnion",
     source: {
       factory: taggedUnion,
@@ -22,6 +21,3 @@ export function taggedUnion<
     },
   })
 }
-
-// formatValuePath: (leading) => `${leading}.value`,
-// formatTypePath: (leading) => `${leading}.value`,

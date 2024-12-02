@@ -1,7 +1,6 @@
-import { declareType } from "../declareType.ts"
-import type { Type } from "../Type.ts"
+import { Type } from "../Type.ts"
 
-export const number: Type<number> = declareType({
+export const number: Type<number> = Type({
   name: "number",
   source: {
     getType: () => number,
