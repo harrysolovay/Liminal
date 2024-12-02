@@ -34,7 +34,7 @@ export namespace ResponseFormat {
     if ("__unsafe_structured_output" in parsed) {
       return parsed.__unsafe_structured_output
     }
-    return content
+    return parsed
   }
 }
 
@@ -79,7 +79,6 @@ function FinalResponseFormat<T>(
       const diagnostics: Array<ValueDiagnostic> = []
       const value = deserializeValue(type, raw, diagnostics)
       if (diagnostics.length) {
-        console.log(diagnostics)
         // TODO
       }
       return value

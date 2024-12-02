@@ -3,21 +3,21 @@ import { type AnyType, typeKey } from "./Type.ts"
 
 export class TypeVisitor<C, R> {
   #fallback?: Visitor<C, R>
-  #middleware?: Middleware<C>
+  #middleware?: Array<Middleware<C, R>>
   constructor(
     readonly visitors: Map<VisitTarget, Visitor<C, R>> = new Map(),
     fallback?: Visitor<C, R>,
-    middleware?: Middleware<C>,
+    middleware?: Array<Middleware<C, R>>,
   ) {
     this.#fallback = fallback
     this.#middleware = middleware
   }
 
-  middleware = (f: (ctx: C, type: AnyType, ...args: unknown[]) => void): TypeVisitor<C, R> =>
+  middleware = (f: Middleware<C, R>): TypeVisitor<C, R> =>
     new TypeVisitor(
       this.visitors,
       this.#fallback,
-      this.#middleware ? [...this.#middleware, f] : [f],
+      this.#middleware ? [f, ...this.#middleware] : [f],
     )
 
   add<X extends AnyType>(type: X, visitor: (ctx: C, type: X) => R): TypeVisitor<C, R>
@@ -45,23 +45,34 @@ export class TypeVisitor<C, R> {
     if (declaration.source.factory) {
       const visitor = this.visitors.get(declaration.source.factory)
       if (visitor) {
-        const { args } = declaration.source
-        this.#middleware?.forEach((f) => f(ctx, type, ...args))
-        return visitor(ctx, type, ...args)
+        return sequence.call(this, visitor, ...declaration.source.args)
       }
     } else {
       const visitor = this.visitors.get(declaration.source.getType())
       if (visitor) {
-        this.#middleware?.forEach((f) => f(ctx, type))
-        return visitor(ctx, type)
+        return sequence.call(this, visitor)
       }
     }
     assert(this.#fallback, `Could not match type ${type} with visitor. No fallback specified.`)
-    this.#middleware?.forEach((f) => f(ctx, type))
-    return this.#fallback(ctx, type)
+    return sequence.call(this, this.#fallback)
+
+    function sequence(this: TypeVisitor<C, R>, visitor: Visitor<C, R>, ...args: unknown[]): R {
+      if (this.#middleware) {
+        return this.#middleware.reduce(
+          (next, cur) => (ctx, type, ...args) => cur(next, ctx, type, ...args),
+          visitor,
+        )(ctx, type, ...args)
+      }
+      return visitor(ctx, type, ...args)
+    }
   }
 }
 
-export type VisitTarget = AnyType | ((...args: unknown[]) => AnyType)
 export type Visitor<C, R> = (ctx: C, type: AnyType, ...args: unknown[]) => R
-export type Middleware<C> = Array<(ctx: C, type: AnyType, ...args: unknown[]) => void>
+export type Middleware<C, R> = (
+  next: (ctx: C, type: AnyType, ...args: unknown[]) => R,
+  ctx: C,
+  type: AnyType,
+  ...args: unknown[]
+) => R
+export type VisitTarget = AnyType | ((...args: unknown[]) => AnyType)

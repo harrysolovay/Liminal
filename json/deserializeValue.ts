@@ -25,9 +25,13 @@ const visitor = new TypeVisitor<
     value: any,
   ) => unknown
 >()
-  .middleware((_0, type) => {
+  .middleware((next, e0, type, ...args) => {
     const { assertions } = type[typeKey].context
     console.log(assertions)
+    const visitValue = next(e0, type, ...args)
+    return (ctx, value) => {
+      return visitValue(ctx, value)
+    }
   })
   .add(
     T.array,
@@ -85,4 +89,4 @@ const visitor = new TypeVisitor<
     T.transform,
     (e0, _0, _1, From, f) => (ctx, value): unknown => f(visitor.visit(e0, From)(ctx, value)),
   )
-  .fallback(() => (value) => value)
+  .fallback(() => (_ctx, value) => value)
