@@ -1,9 +1,10 @@
 import type Openai from "openai"
 import type { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions"
 import type { CompletionUsage } from "openai/resources/completions"
-// import { T } from "../core/mod.ts"
+import { T } from "../core/mod.ts"
+import { deserializeValue, serializeValueDiagnostics, type ValueDiagnostic } from "../json/mod.ts"
 import { assert } from "../util/assert.ts"
-import { deserializeChoice, ResponseFormat } from "./ResponseFormat.ts"
+import { ResponseFormat } from "./ResponseFormat.ts"
 
 export interface CheckedParams<T = any> extends
   Omit<
@@ -31,14 +32,13 @@ export async function refined<T>(
     maxRefinements === undefined || (maxRefinements >= 1 && Number.isInteger(maxRefinements)),
     "`CheckedOptions.maxRefinements` must be an integer greater than 1.",
   )
-  // TODO: handle non-root in consistent way.
   const completion = await client.chat.completions.create(params)
-  const { type, wrap } = params.response_format[""]
-  const choice = ResponseFormat.unwrapChoice(completion)
-  const {
-    // diagnostics,
-    value,
-  } = deserializeChoice(choice, type, wrap)
+  const diagnostics: Array<ValueDiagnostic> = []
+  const value = deserializeValue(
+    params.response_format[""],
+    ResponseFormat.parseChoice(completion),
+    diagnostics,
+  )
   // let correctionsRemaining = maxRefinements ?? Infinity
   // while (correctionsRemaining-- && !signal?.aborted && diagnostics.length) {
   //   const Corrections = T
@@ -79,7 +79,7 @@ export async function refined<T>(
 
 function prompt(
   params: CheckedParams,
-  // diagnostics: Array<Diagnostic>,
+  diagnostics: Array<ValueDiagnostic>,
 ): string {
   const messageSection = maybeSerializeMessages(params)
   return `## Overview
@@ -94,7 +94,7 @@ ${JSON.stringify(params.response_format.json_schema, null, 2)}
 
 ## Diagnostics
 
-${"" /* serializeDiagnostics(diagnostics) */}`
+${serializeValueDiagnostics(diagnostics)}`
 }
 
 function prefaceSection(includeMessages: boolean) {

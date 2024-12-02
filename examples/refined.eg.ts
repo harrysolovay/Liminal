@@ -27,8 +27,17 @@ const Refined = T.object({
 
 const response_format = ResponseFormat("initially_invalid", Refined)
 
-await refined(openai, {
-  model: "gpt-4o-mini",
-  response_format,
-  messages: [{ role: "system", content: [] }],
-}).then(dbg)
+openai.chat.completions
+  .create({
+    model: "gpt-4o-mini",
+    response_format,
+    messages: [{ role: "system", content: [] }],
+  })
+  .then(response_format.into)
+  .then(dbg)
+
+// await refined(openai, {
+//   model: "gpt-4o-mini",
+//   response_format,
+//   messages: [{ role: "system", content: [] }],
+// }).then(dbg)

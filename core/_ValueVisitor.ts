@@ -94,12 +94,3 @@ export {}
 //   valuePath: PathJunction
 //   setValue: (value: unknown) => void
 // }
-
-// export function serializeDiagnostics(diagnostics: Array<Diagnostic>): string {
-//   return diagnostics.map(({ error, value, valuePath, typePath }) =>
-//     `${error.name}; ${error.message}
-//   Invalid value: ${value}
-//   Value path: ${valuePath}
-//   Type path: ${typePath}`
-//   ).join("\n\n")
-// }

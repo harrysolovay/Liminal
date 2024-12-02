@@ -1,11 +1,9 @@
-import { type Args, type Type, typeKey, TypeVisitor } from "../core/mod.ts"
-import * as T from "../core/types/mod.ts"
-import type { AnyType } from "../mod.ts"
+import { type AnyType, type Args, T, type Type, typeKey, TypeVisitor } from "../mod.ts"
 import { integerTag } from "../std/Integer.ts"
 import { recombine } from "../util/mod.ts"
 import type { Schema } from "./Schema.ts"
 
-export function toJsonSchema<T>(type: Type<T>): Schema {
+export function toSchema<T>(type: Type<T>): Schema {
   return visitor.visit({}, type)
 }
 
