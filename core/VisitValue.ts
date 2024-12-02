@@ -1,4 +1,3 @@
-import type { Context } from "./Context.ts"
 import { type AnyType, typeKey } from "./Type.ts"
 
 export type PathJunction = number | string
@@ -36,25 +35,18 @@ export function VisitValue(
     if (declaration.transform) {
       value = declaration.transform(value)
     }
-    return maybeStub(
-      diagnostics,
-      value,
-      type,
-      valuePath,
-      typePath,
-      setValue,
-    ) ?? value
+    return valueOrStub({ diagnostics, value, type, valuePath, typePath, setValue })
   }
 }
 
-export function maybeStub(
-  diagnostics: Array<Diagnostic>,
-  value: unknown,
-  type: AnyType,
-  valuePath: PathJunction,
-  typePath: PathJunction,
-  setValue: SetValue,
-) {
+export function valueOrStub({ diagnostics, value, type, valuePath, typePath, setValue }: {
+  diagnostics: Array<Diagnostic>
+  value: unknown
+  type: AnyType
+  valuePath: PathJunction
+  typePath: PathJunction
+  setValue: SetValue
+}): unknown {
   const { assertions } = type[typeKey].context
   let stub = false
   if (assertions.length) {
@@ -81,11 +73,9 @@ export function maybeStub(
   if (stub) {
     return { [stubKey]: undefined }
   }
+  return value
 }
 
-export function isStub(value: unknown) {
-  return typeof value === "object" && value !== null && stubKey in value
-}
 const stubKey: unique symbol = Symbol()
 
 export type Diagnostic = {

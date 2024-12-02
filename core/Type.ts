@@ -33,7 +33,7 @@ export interface Type<T, P extends keyof any = never> {
   unchecked: () => Type<any, never>
 }
 
-export const typeKey = Symbol()
+export const typeKey: unique symbol = Symbol()
 
 export type TypeDeclaration<T> = {
   /** The name of the type. */

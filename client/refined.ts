@@ -1,7 +1,7 @@
 import type Openai from "openai"
 import type { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions"
 import type { CompletionUsage } from "openai/resources/completions"
-import { type Diagnostic, maybeStub, serializeDiagnostics } from "../core/mod.ts"
+import { type Diagnostic, serializeDiagnostics, valueOrStub } from "../core/mod.ts"
 import * as T from "../types/mod.ts"
 import { assert } from "../util/assert.ts"
 import { deserializeChoice, ResponseFormat } from "./ResponseFormat.ts"
@@ -62,7 +62,14 @@ export async function refined<T>(
       const { setValue, valuePath, typePath, type } = diagnostics.shift()!
       const correction = corrections[valuePath]
       setValue(
-        maybeStub(diagnostics, correction, type, valuePath, typePath, setValue) ?? correction,
+        valueOrStub({
+          diagnostics,
+          value: correction,
+          valuePath,
+          type,
+          typePath,
+          setValue,
+        }),
       )
     }
   }

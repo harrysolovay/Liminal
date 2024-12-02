@@ -98,20 +98,13 @@ export function deserializeChoice<T>(
   type: Type<T>,
   wrap: boolean,
 ): DeserializeChoiceResult<T> {
-  let value = JSON.parse(choice)
+  let parsed = JSON.parse(choice)
   if (wrap) {
-    value = value.value
+    parsed = parsed.value
   }
   const diagnostics: Array<Diagnostic> = []
-  const result = {
-    root: VisitValue(diagnostics)(value, type, () => (value) => {
-      result.root = value
-    }),
-  }
-  return {
-    diagnostics,
-    value: result.root as T,
-  }
+  const value = VisitValue(diagnostics)(parsed, type, () => () => {}) as T
+  return { diagnostics, value }
 }
 
 export type DeserializeChoiceResult<T> = {

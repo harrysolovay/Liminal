@@ -19,7 +19,7 @@ export class TypeVisitorContext<C, R> {
     )
   }
 
-  visit = (ctx: C, type: AnyType) => {
+  visit = (ctx: C, type: AnyType): R => {
     const { declaration } = type[typeKey]
     if (declaration.source.factory) {
       const visitor = this.visitors.get(declaration.source.factory)
