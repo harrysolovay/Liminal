@@ -3,6 +3,7 @@ import type { ResponseFormatJSONSchema } from "openai/resources/shared"
 import { assert } from "../asserts/mod.ts"
 import { type Diagnostic, serializeDiagnostics, type Type, VisitValue } from "../core/mod.ts"
 import { toJsonSchema } from "../json_schema/mod.ts"
+import { Schema } from "../json_schema/Schema.ts"
 import { AssertionError, recombine } from "../util/mod.ts"
 
 export interface ResponseFormat<T> extends FinalResponseFormat<T> {
@@ -18,7 +19,7 @@ export function ResponseFormat<T>(name: string, type: Type<T>): ResponseFormat<T
 }
 
 export namespace ResponseFormat {
-  export function unwrap(completion: ChatCompletion): string {
+  export function unwrapChoice(completion: ChatCompletion): string {
     const { choices: [firstChoice] } = completion
     assert(firstChoice, "No choices contained within the completion response.")
     const { finish_reason, message } = firstChoice
@@ -34,7 +35,12 @@ export namespace ResponseFormat {
 }
 
 interface FinalResponseFormat<T> {
-  "": Type<T>
+  "": {
+    /** The type from which the schema is derived. */
+    type: Type<T>
+    /** `true` if the root type is not an object type. */
+    wrap: boolean
+  }
   /** Tag required by the service. */
   type: "json_schema"
   /** The desired return type in JSON Schema. */
@@ -49,8 +55,8 @@ function FinalResponseFormat<T>(
   description?: string,
 ): FinalResponseFormat<T> {
   let schema = toJsonSchema(type)
-  const nonRoot = !("type" in schema) || schema.type !== "object"
-  if (nonRoot) {
+  const wrap = !Schema.isRootCompatible(schema)
+  if (wrap) {
     schema = {
       type: "object",
       properties: {
@@ -61,7 +67,7 @@ function FinalResponseFormat<T>(
     }
   }
   return {
-    "": type,
+    "": { type, wrap },
     type: "json_schema",
     json_schema: {
       name,
@@ -70,16 +76,12 @@ function FinalResponseFormat<T>(
       strict: true,
     },
     into: (completion) => {
-      const diagnostics: Array<Diagnostic> = []
-      let value = JSON.parse(ResponseFormat.unwrap(completion))
-      if (nonRoot) {
-        return value = value.value
-      }
-      const result = VisitValue(diagnostics)(value, type)
+      const choice = ResponseFormat.unwrapChoice(completion)
+      const { value, diagnostics } = deserializeChoice(choice, type, wrap)
       if (diagnostics.length) {
         throw new AssertionError(serializeDiagnostics(diagnostics))
       }
-      return result
+      return value
     },
     ...{
       /** Prevents `JSON.stringify` from including `""` and `into` in serialization. */
@@ -89,4 +91,30 @@ function FinalResponseFormat<T>(
       },
     },
   }
+}
+
+export function deserializeChoice<T>(
+  choice: string,
+  type: Type<T>,
+  wrap: boolean,
+): DeserializeChoiceResult<T> {
+  let value = JSON.parse(choice)
+  if (wrap) {
+    value = value.value
+  }
+  const diagnostics: Array<Diagnostic> = []
+  const result = {
+    root: VisitValue(diagnostics)(value, type, () => (value) => {
+      result.root = value
+    }),
+  }
+  return {
+    diagnostics,
+    value: result.root as T,
+  }
+}
+
+export type DeserializeChoiceResult<T> = {
+  diagnostics: Array<Diagnostic>
+  value: T
 }

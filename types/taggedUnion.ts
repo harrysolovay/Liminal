@@ -24,14 +24,22 @@ export function taggedUnion<
       return {
         [tagKey]: type,
         ..."value" in variant
-          ? {
-            value: visit(
-              variant.value,
-              members[type]!,
-              (leading) => `${leading}.value`,
-              (leading) => `${leading}.value`,
-            ),
-          }
+          ? (() => {
+            const container = {
+              value: visit(
+                variant.value,
+                members[type]!,
+                () => (value) => {
+                  container.value = value
+                },
+                {
+                  formatValuePath: (leading) => `${leading}.value`,
+                  formatTypePath: (leading) => `${leading}.value`,
+                },
+              ),
+            }
+            return container
+          })()
           : {},
       } as never
     },

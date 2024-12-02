@@ -10,17 +10,24 @@ export function object<F extends Record<string, AnyType>>(
       factory: object,
       args: [fields],
     },
-    visitValue: (value, visit) =>
-      Object.fromEntries(
+    visitValue: (value, visit) => {
+      const visited = Object.fromEntries(
         entries.map(([key, type]) => [
           key,
           visit(
             value[key],
             type,
-            (leading) => `${leading}.${key}`,
-            (leading) => `${leading}.${key}`,
+            () => (value) => {
+              visited[key] = value
+            },
+            {
+              formatValuePath: (leading) => `${leading}.${key}`,
+              formatTypePath: (leading) => `${leading}.${key}`,
+            },
           ),
         ]),
-      ) as never,
+      )
+      return visited as never
+    },
   })
 }

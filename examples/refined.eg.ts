@@ -2,7 +2,7 @@ import Openai from "openai"
 import { T } from "structured-outputs"
 import { ResponseFormat } from "structured-outputs/client"
 import "@std/dotenv/load"
-import { checked } from "structured-outputs/client"
+import { refined } from "structured-outputs/client"
 import { dbg } from "testing"
 import * as asserts from "../asserts/mod.ts"
 
@@ -27,7 +27,7 @@ const Refined = T.object({
 
 const response_format = ResponseFormat("initially_invalid", Refined)
 
-await checked(openai, {
+await refined(openai, {
   model: "gpt-4o-mini",
   response_format,
   messages: [{ role: "system", content: [] }],

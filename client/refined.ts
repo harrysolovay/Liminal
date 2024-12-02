@@ -1,10 +1,10 @@
 import type Openai from "openai"
 import type { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions"
 import type { CompletionUsage } from "openai/resources/completions"
-import { type Diagnostic, serializeDiagnostics, VisitValue } from "../core/mod.ts"
+import { type Diagnostic, maybeStub, serializeDiagnostics } from "../core/mod.ts"
 import * as T from "../types/mod.ts"
 import { assert } from "../util/assert.ts"
-import { ResponseFormat } from "./ResponseFormat.ts"
+import { deserializeChoice, ResponseFormat } from "./ResponseFormat.ts"
 
 export interface CheckedParams<T = any> extends
   Omit<
@@ -22,7 +22,7 @@ export interface CheckedOptions {
 }
 
 /** Get the completion and then loop refinement assertions and resubmission until all assertions pass. */
-export async function checked<T>(
+export async function refined<T>(
   client: Openai,
   params: CheckedParams<T>,
   options?: CheckedOptions,
@@ -33,12 +33,10 @@ export async function checked<T>(
     "`CheckedOptions.maxRefinements` must be an integer greater than 1.",
   )
   // TODO: handle non-root in consistent way.
-  const initial = await client.chat.completions
-    .create(params)
-    .then(ResponseFormat.unwrap)
-    .then(JSON.parse)
-  const diagnostics: Array<Diagnostic> = []
-  const processed0 = VisitValue(diagnostics)(initial, params.response_format[""])
+  const completion = await client.chat.completions.create(params)
+  const { type, wrap } = params.response_format[""]
+  const choice = ResponseFormat.unwrapChoice(completion)
+  const { diagnostics, value } = deserializeChoice(choice, type, wrap)
   let correctionsRemaining = maxRefinements ?? Infinity
   while (correctionsRemaining-- && !signal?.aborted && diagnostics.length) {
     const Corrections = T
@@ -61,13 +59,14 @@ export async function checked<T>(
     const { usage: _usage } = completions
     const corrections = response_format.into(completions)
     while (diagnostics.length) {
-      const { setValue, valuePath } = diagnostics.shift()!
+      const { setValue, valuePath, typePath, type } = diagnostics.shift()!
       const correction = corrections[valuePath]
-      console.log({ diagnostics, correction })
-      // setValue(corrections[valuePath])
+      setValue(
+        maybeStub(diagnostics, correction, type, valuePath, typePath, setValue) ?? correction,
+      )
     }
   }
-  return processed0 as any
+  return value
 }
 
 function prompt(

@@ -7,14 +7,21 @@ export function array<E extends AnyType>(Element: E): Type<Array<E["T"]>, E["P"]
       factory: array,
       args: [Element],
     },
-    visitValue: (value, visit) =>
-      value.map((e, i) =>
+    visitValue: (value, visit) => {
+      const visited = value.map((e, i) =>
         visit(
           e,
           Element,
-          (leading) => `${leading}[${i}]`,
-          (leading) => `${leading}[number]`,
+          () => (value) => {
+            visited[i] = value
+          },
+          {
+            formatValuePath: (leading) => `${leading}[${i}]`,
+            formatTypePath: (leading) => `${leading}[number]`,
+          },
         )
-      ),
+      )
+      return visited
+    },
   })
 }

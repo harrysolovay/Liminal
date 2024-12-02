@@ -1,6 +1,6 @@
 import type { EnsureLiteralKeys } from "../util/mod.ts"
 import type { Args, Assertion, Context, Params } from "./Context.ts"
-import type { VisitValue } from "./ValueVisitorContext.ts"
+import type { VisitValue } from "./VisitValue.ts"
 
 /** The core unit of schema composition. */
 export interface Type<T, P extends keyof any = never> {
