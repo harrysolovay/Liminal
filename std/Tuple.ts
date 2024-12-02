@@ -1,5 +1,4 @@
-import type { AnyType, Type } from "../core/mod.ts"
-import * as T from "../types/mod.ts"
+import { type AnyType, T, type Type } from "../mod.ts"
 
 export function Tuple<E extends Array<AnyType>>(...elements: E): Type<
   { [K in keyof E]: E[K]["T"] },

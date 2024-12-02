@@ -1,6 +1,7 @@
-import { type Args, type Type, typeKey, TypeVisitorContext } from "../core/mod.ts"
+import { type Args, type Type, typeKey, TypeVisitor } from "../core/mod.ts"
+import * as T from "../core/types/mod.ts"
 import type { AnyType } from "../mod.ts"
-import * as T from "../types/mod.ts"
+import { integerTag } from "../std/Integer.ts"
 import { recombine } from "../util/mod.ts"
 import type { Schema } from "./Schema.ts"
 
@@ -8,7 +9,7 @@ export function toJsonSchema<T>(type: Type<T>): Schema {
   return visitor.visit({}, type)
 }
 
-const visitor = new TypeVisitorContext<Args, Schema>()
+const visitor = new TypeVisitor<Args, Schema>()
   .add(T.boolean, (args, type) => {
     const { description } = processArgs(args, type)
     return {
@@ -20,9 +21,9 @@ const visitor = new TypeVisitorContext<Args, Schema>()
     const { description } = processArgs(args, type)
     return {
       description,
-      type: "number",
+      type: integerTag in type[typeKey].context.metadata ? "integer" : "number",
     }
-  }) // TODO: integer
+  }) // TODO: integer – requires metadata
   .add(T.string, (args, type) => {
     const { description } = processArgs(args, type)
     return {

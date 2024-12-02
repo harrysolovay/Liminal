@@ -2,6 +2,7 @@ export class Context {
   constructor(
     readonly parts: DescriptionParts[] = [],
     readonly assertions: Array<AssertionConfig>,
+    readonly metadata: Record<symbol, unknown>,
   ) {}
 }
 

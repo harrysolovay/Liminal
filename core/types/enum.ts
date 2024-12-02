@@ -1,4 +1,5 @@
-import { declareType, type Type } from "../core/mod.ts"
+import { declareType } from "../declareType.ts"
+import type { Type } from "../Type.ts"
 
 export { enum_ as enum }
 function enum_<K extends string>(...members: Array<K>): Type<K> {

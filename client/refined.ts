@@ -1,8 +1,7 @@
 import type Openai from "openai"
 import type { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions"
 import type { CompletionUsage } from "openai/resources/completions"
-import { type Diagnostic, serializeDiagnostics, valueOrStub } from "../core/mod.ts"
-import * as T from "../types/mod.ts"
+// import { T } from "../core/mod.ts"
 import { assert } from "../util/assert.ts"
 import { deserializeChoice, ResponseFormat } from "./ResponseFormat.ts"
 
@@ -36,49 +35,51 @@ export async function refined<T>(
   const completion = await client.chat.completions.create(params)
   const { type, wrap } = params.response_format[""]
   const choice = ResponseFormat.unwrapChoice(completion)
-  const { diagnostics, value } = deserializeChoice(choice, type, wrap)
-  let correctionsRemaining = maxRefinements ?? Infinity
-  while (correctionsRemaining-- && !signal?.aborted && diagnostics.length) {
-    const Corrections = T
-      .object(
-        Object.fromEntries(diagnostics.map(({ valuePath, type }) => [valuePath, type])),
-      )`The corrections to be applied to a previously-generated structured output.`
-      .unchecked()
-    const response_format = ResponseFormat("corrections", Corrections)
-    const completions = await client.chat.completions.create({
-      ...params,
-      messages: [{
-        role: "user",
-        content: [{
-          type: "text",
-          text: prompt(params, diagnostics),
-        }],
-      }],
-      response_format,
-    })
-    const { usage: _usage } = completions
-    const corrections = response_format.into(completions)
-    while (diagnostics.length) {
-      const { setValue, valuePath, typePath, type } = diagnostics.shift()!
-      const correction = corrections[valuePath]
-      setValue(
-        valueOrStub({
-          diagnostics,
-          value: correction,
-          valuePath,
-          type,
-          typePath,
-          setValue,
-        }),
-      )
-    }
-  }
+  const {
+    // diagnostics,
+    value,
+  } = deserializeChoice(choice, type, wrap)
+  // let correctionsRemaining = maxRefinements ?? Infinity
+  // while (correctionsRemaining-- && !signal?.aborted && diagnostics.length) {
+  //   const Corrections = T
+  //     .object(
+  //       Object.fromEntries(diagnostics.map(({ valuePath, type }) => [valuePath, type])),
+  //     )`The corrections to be applied to a previously-generated structured output.`
+  //     .unchecked()
+  //   const response_format = ResponseFormat("corrections", Corrections)
+  //   const completions = await client.chat.completions.create({
+  //     ...params,
+  //     messages: [{
+  //       role: "user",
+  //       content: [{
+  //         type: "text",
+  //         text: prompt(params, diagnostics),
+  //       }],
+  //     }],
+  //     response_format,
+  //   })
+  //   const { usage: _usage } = completions
+  //   const corrections = response_format.into(completions)
+  //   while (diagnostics.length) {
+  //     const { setValue, valuePath, typePath, type } = diagnostics.shift()!
+  //     const correction = corrections[valuePath]
+  //     setValue(
+  //       valueOrStub(diagnostics, {
+  //         value: correction,
+  //         valuePath,
+  //         type,
+  //         typePath,
+  //         setValue,
+  //       }),
+  //     )
+  //   }
+  // }
   return value
 }
 
 function prompt(
   params: CheckedParams,
-  diagnostics: Array<Diagnostic>,
+  // diagnostics: Array<Diagnostic>,
 ): string {
   const messageSection = maybeSerializeMessages(params)
   return `## Overview
@@ -93,7 +94,7 @@ ${JSON.stringify(params.response_format.json_schema, null, 2)}
 
 ## Diagnostics
 
-${serializeDiagnostics(diagnostics)}`
+${"" /* serializeDiagnostics(diagnostics) */}`
 }
 
 function prefaceSection(includeMessages: boolean) {

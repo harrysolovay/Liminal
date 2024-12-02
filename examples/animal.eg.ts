@@ -2,6 +2,7 @@ import Openai from "openai"
 import { ResponseFormat, T } from "structured-outputs"
 import "@std/dotenv/load"
 import { dbg } from "testing"
+import { deserializeJsonValue } from "../json_schema/mod.ts"
 
 const Dog = T.object({
   bark: T.string,
@@ -30,11 +31,13 @@ const openai = new Openai()
 
 const response_format = ResponseFormat("generate_animal", Root)
 
-await openai.chat.completions
+const choice = await openai.chat.completions
   .create({
     model: "gpt-4o-mini",
     messages: [{ role: "system", content: [] }],
     response_format,
   })
-  .then(response_format.into)
+  .then(ResponseFormat.unwrapChoice)
   .then(dbg)
+const parsed = JSON.parse(choice)
+console.log(deserializeJsonValue(Root, parsed))

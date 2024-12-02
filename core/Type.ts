@@ -1,6 +1,5 @@
 import type { EnsureLiteralKeys } from "../util/mod.ts"
 import type { Args, Assertion, Context, Params } from "./Context.ts"
-import type { VisitValue } from "./VisitValue.ts"
 
 /** The core unit of schema composition. */
 export interface Type<T, P extends keyof any = never> {
@@ -16,7 +15,7 @@ export interface Type<T, P extends keyof any = never> {
 
   [typeKey]: {
     /** Readonly values that describe the type. */
-    declaration: TypeDeclaration<T>
+    declaration: TypeDeclaration
     /** Container to be filled with context parts as chaining occurs. */
     context: Context
   }
@@ -29,21 +28,20 @@ export interface Type<T, P extends keyof any = never> {
   /** Specify assertions to be run on the type's output. */
   assert: <A extends unknown[]>(f: Assertion<T, A>, ...args: A) => Type<T, P>
 
+  /** Annotate the type with arbitrary metadata. */
+  annotate: <K extends symbol>(key: symbol extends K ? never : K, value: unknown) => Type<T, P>
+
   /** Widen the type for dynamic use cases. */
   unchecked: () => Type<any, never>
 }
 
 export const typeKey: unique symbol = Symbol()
 
-export type TypeDeclaration<T> = {
+export type TypeDeclaration = {
   /** The name of the type. */
   name: string
   /** The origin of the type (a `declare`d type or `declare`d-type-returning function). */
   source: TypeSource
-  /** Describes how to visit child values if any. */
-  visitValue?: (value: T, visit: VisitValue) => T
-  /** A transform to be applied to the value. */
-  transform?: (value: any) => T
 }
 
 export type TypeSource = {

@@ -1,5 +1,5 @@
 import { assert, number } from "../asserts/mod.ts"
-import * as T from "../types/mod.ts"
+import * as T from "../core/types/mod.ts"
 
 const ZeroBasedInteger = T.number.assert(number.min, 0)`Zero based.`
 

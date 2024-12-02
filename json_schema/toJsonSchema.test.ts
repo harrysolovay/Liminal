@@ -1,5 +1,6 @@
-import { assertTypeSnapshot } from "testing"
-import { T } from "../mod.ts"
+import { assertSnapshot } from "@std/testing/snapshot"
+import { T, type Type } from "../mod.ts"
+import { toJsonSchema } from "./toJsonSchema.ts"
 
 Deno.test("boolean", async (t) => {
   await assertTypeSnapshot(t, T.boolean)
@@ -46,3 +47,10 @@ Deno.test("tagged union", async (t) => {
     }),
   )
 })
+
+async function assertTypeSnapshot(t: Deno.TestContext, value: Type<any>): Promise<void> {
+  await assertSnapshot(t, toJsonSchema(value))
+  const withContext = value`One.`
+  await assertSnapshot(t, toJsonSchema(withContext))
+  await assertSnapshot(t, toJsonSchema(withContext`Two.`))
+}

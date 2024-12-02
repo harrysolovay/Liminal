@@ -1,10 +1,9 @@
 import type { ChatCompletion } from "openai/resources/chat/completions"
 import type { ResponseFormatJSONSchema } from "openai/resources/shared"
 import { assert } from "../asserts/mod.ts"
-import { type Diagnostic, serializeDiagnostics, type Type, VisitValue } from "../core/mod.ts"
-import { toJsonSchema } from "../json_schema/mod.ts"
-import { Schema } from "../json_schema/Schema.ts"
-import { AssertionError, recombine } from "../util/mod.ts"
+import type { Type } from "../core/mod.ts"
+import { deserializeJsonValue, Schema, toJsonSchema } from "../json_schema/mod.ts"
+import { recombine } from "../util/mod.ts"
 
 export interface ResponseFormat<T> extends FinalResponseFormat<T> {
   (template: TemplateStringsArray, ...values: Array<unknown>): FinalResponseFormat<T>
@@ -77,10 +76,13 @@ function FinalResponseFormat<T>(
     },
     into: (completion) => {
       const choice = ResponseFormat.unwrapChoice(completion)
-      const { value, diagnostics } = deserializeChoice(choice, type, wrap)
-      if (diagnostics.length) {
-        throw new AssertionError(serializeDiagnostics(diagnostics))
-      }
+      const {
+        value,
+        //  diagnostics,
+      } = deserializeChoice(choice, type, wrap)
+      // if (diagnostics.length) {
+      //   throw new AssertionError(serializeDiagnostics(diagnostics))
+      // }
       return value
     },
     ...{
@@ -102,12 +104,15 @@ export function deserializeChoice<T>(
   if (wrap) {
     parsed = parsed.value
   }
-  const diagnostics: Array<Diagnostic> = []
-  const value = VisitValue(diagnostics)(parsed, type, () => () => {}) as T
-  return { diagnostics, value }
+  return {
+    value: deserializeJsonValue(type, parsed),
+  }
+  // const diagnostics: Array<Diagnostic> = []
+  // const value = VisitValue(diagnostics)(parsed, type, () => () => {}) as T
+  // return { diagnostics, value }
 }
 
 export type DeserializeChoiceResult<T> = {
-  diagnostics: Array<Diagnostic>
+  // diagnostics: Array<Diagnostic>
   value: T
 }

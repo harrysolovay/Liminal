@@ -1,4 +1,5 @@
-import { declareType, type Type } from "../core/mod.ts"
+import { declareType } from "../declareType.ts"
+import type { Type } from "../Type.ts"
 
 export function transform<F, P extends keyof any, T>(
   name: string,
@@ -11,7 +12,5 @@ export function transform<F, P extends keyof any, T>(
       factory: transform,
       args: [name, From, f],
     },
-    visitValue: (value, visit) => visit(value, From, (setParent) => setParent) as never,
-    transform: f,
   })
 }
