@@ -1,5 +1,5 @@
 import { assert } from "../asserts/mod.ts"
-import { type AnyType, declarationKey } from "./Type.ts"
+import { type AnyType, typeKey } from "./Type.ts"
 
 export class TypeVisitorContext<C, R> {
   constructor(
@@ -20,7 +20,7 @@ export class TypeVisitorContext<C, R> {
   }
 
   visit = (ctx: C, type: AnyType) => {
-    const declaration = type[declarationKey]
+    const { declaration } = type[typeKey]
     if (declaration.source.factory) {
       const visitor = this.visitors.get(declaration.source.factory)
       if (visitor) {

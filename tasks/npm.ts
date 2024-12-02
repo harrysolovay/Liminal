@@ -33,14 +33,16 @@ await build({
   typeCheck: false,
   importMap: "./deno.json",
   test: false,
-  // TODO: use upon resolution of https://github.com/denoland/dnt/issues/433.
-  // mappings: {
-  //   "npm:openai@^4.68.1": {
-  //     name: "openai",
-  //     version: "^4.68.1",
-  //     peerDependency: true,
-  //   },
-  // },
+  mappings: {
+    // TODO: dynamically populate based on fs crawl + .node.ts postfix.
+    "./core/inspectBearer.ts": "./core/inspectBearer.node.ts",
+    // // TODO: use upon resolution of https://github.com/denoland/dnt/issues/433.
+    //   "npm:openai@^4.68.1": {
+    //     name: "openai",
+    //     version: "^4.68.1",
+    //     peerDependency: true,
+    //   },
+  },
   package: {
     name: "structured-outputs",
     version,

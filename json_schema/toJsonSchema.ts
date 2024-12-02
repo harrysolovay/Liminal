@@ -1,4 +1,4 @@
-import { type Args, type Type, TypeVisitorContext } from "../core/mod.ts"
+import { type Args, type Type, typeKey, TypeVisitorContext } from "../core/mod.ts"
 import type { AnyType } from "../mod.ts"
 import * as T from "../types/mod.ts"
 import { recombine } from "../util/mod.ts"
@@ -96,7 +96,7 @@ function processArgs(parentArgs: Args, type: AnyType): {
 } {
   const args = { ...parentArgs }
   const ctxSegments: Array<string> = []
-  for (const part of type[""].parts) {
+  for (const part of type[typeKey].context.parts) {
     if (part.template) {
       ctxSegments.unshift(
         recombine(part.template, part.params.map((paramKey) => args[paramKey])),

@@ -1,13 +1,15 @@
-import { type AnyType, declarationKey } from "./Type.ts"
+import { type AnyType, typeKey } from "./Type.ts"
 
 export type PathJunction = number | string
 
 export type VisitValue = (
   value: unknown,
   type: AnyType,
-  formatValuePath?: (leading: PathJunction) => undefined | PathJunction,
-  formatTypePath?: (leading: PathJunction) => undefined | PathJunction,
+  formatValuePath?: FormatPath,
+  formatTypePath?: FormatPath,
 ) => unknown
+
+export type FormatPath = (leading: PathJunction) => undefined | PathJunction
 
 export function VisitValue(
   diagnostics: Array<Diagnostic>,
@@ -17,14 +19,14 @@ export function VisitValue(
   return (value, type, formatValuePath, formatTypePath) => {
     const valuePath = formatValuePath?.(parentValuePath) ?? parentValuePath
     const typePath = formatTypePath?.(parentTypePath) ?? parentTypePath
-    const declaration = type[declarationKey]
+    const { declaration, context } = type[typeKey]
     if (declaration.visitValue) {
       value = declaration.visitValue(value, VisitValue(diagnostics, valuePath, typePath))
     }
     if (declaration.transform) {
       value = declaration.transform(value)
     }
-    const { assertions } = type[""]
+    const { assertions } = context
     if (assertions.length) {
       assertions.forEach(({ assertion, trace, args }) => {
         try {
@@ -38,6 +40,7 @@ export function VisitValue(
               typePath,
               value,
               valuePath,
+              setValue: () => {}, // TODO
             })
             return { [stubKey]: undefined }
           }
@@ -61,11 +64,12 @@ export type Diagnostic = {
   typePath: PathJunction
   value: unknown
   valuePath: PathJunction
+  setValue: (value: unknown) => void
 }
 
 export function serializeDiagnostics(diagnostics: Array<Diagnostic>): string {
-  return diagnostics.map(({ error, value, valuePath, typePath }, i) =>
-    `Diagnostic ${i}: ${error.name}; ${error.message}
+  return diagnostics.map(({ error, value, valuePath, typePath }) =>
+    `${error.name}; ${error.message}
   Invalid value: ${value}
   Value path: ${valuePath}
   Type path: ${typePath}`

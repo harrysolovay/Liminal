@@ -1,44 +1,34 @@
-import { Inspectable } from "../util/mod.ts"
 import { type Args, type Assertion, Context, type Params } from "./Context.ts"
-import { declarationKey, type Type, type TypeDeclaration } from "./Type.ts"
+import { inspectBearer } from "./inspectBearer.ts"
+import { type Type, type TypeDeclaration, typeKey } from "./Type.ts"
 
-export function declareType<T>(declaration: TypeDeclaration<T>): Type<T, never> {
-  return declare_<T, never>(declaration, new Context([], []))
-}
-
-function declare_<T, P extends keyof any>(
+export function declareType<T, P extends keyof any = never>(
   declaration: TypeDeclaration<T>,
-  context: Context,
+  context: Context = new Context([], []),
 ): Type<T, P> {
-  const type = Object.assign(
+  const self = Object.assign(
     (template: TemplateStringsArray, ...params: Params) =>
-      declare_(
+      declareType(
         declaration,
         new Context([{ template, params }, ...context.parts], context.assertions),
       ),
     {
-      [declarationKey]: declaration,
-      "": context,
+      [typeKey]: { declaration, context },
       fill: (args: Args) =>
-        declare_(
+        declareType(
           declaration,
           new Context([{ args }, ...context.parts], context.assertions),
         ),
       assert: (assertion: Assertion, ...args: unknown[]) => {
         const trace = new Error().stack ?? ""
-        return declare_(
+        return declareType(
           declaration,
           new Context(context.parts, [...context.assertions, { assertion, args, trace }]),
         )
       },
-      ...Inspectable((inspect) => {
-        const { source } = declaration
-        if (source.getType) {
-          return declaration.name
-        }
-        return `${declaration.name}(${source.args.map(inspect)})`
-      }),
+      unchecked: () => self,
+      ...inspectBearer,
     },
   )
-  return type as never
+  return self as never
 }

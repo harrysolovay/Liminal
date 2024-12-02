@@ -1,9 +1,9 @@
-import type { EnsureLiteralKeys, Inspectable } from "../util/mod.ts"
+import type { EnsureLiteralKeys } from "../util/mod.ts"
 import type { Args, Assertion, Context, Params } from "./Context.ts"
 import type { VisitValue } from "./ValueVisitorContext.ts"
 
 /** The core unit of schema composition. */
-export interface Type<T, P extends keyof any = never> extends Inspectable {
+export interface Type<T, P extends keyof any = never> {
   <P2 extends Params>(
     template: TemplateStringsArray,
     ...params: EnsureLiteralKeys<P2>
@@ -11,33 +11,29 @@ export interface Type<T, P extends keyof any = never> extends Inspectable {
 
   /** The native type. */
   T: T
-
   /** The union of literal types of parameter keys. */
   P: P
 
-  /** Readonly values that describe the type. */
-  [declarationKey]: TypeDeclaration<T>
-
-  /** Container to be filled with context parts as chaining occurs. */
-  "": Context
+  [typeKey]: {
+    /** Readonly values that describe the type. */
+    declaration: TypeDeclaration<T>
+    /** Container to be filled with context parts as chaining occurs. */
+    context: Context
+  }
 
   /** Fill in parameterized context. */
-  fill: <A extends Partial<Args<P>>>(args: A) => Type<
-    T,
-    Exclude<
-      P,
-      keyof { [K in keyof A as A[K] extends undefined ? never : K]: never }
-    >
-  >
+  fill: <A extends Partial<Args<P>>>(
+    args: A,
+  ) => Type<T, Exclude<P, keyof { [K in keyof A as A[K] extends undefined ? never : K]: never }>>
 
   /** Specify assertions to be run on the type's output. */
   assert: <A extends unknown[]>(f: Assertion<T, A>, ...args: A) => Type<T, P>
 
-  /** Create a new type representing the result of applying the specified transformation to `T`. */
-  transform: <O>(f: (from: T) => O) => Type<O, P>
+  /** Widen the type for dynamic use cases. */
+  unchecked: () => Type<any, never>
 }
 
-export const declarationKey = Symbol()
+export const typeKey = Symbol()
 
 export type TypeDeclaration<T> = {
   /** The name of the type. */
@@ -63,5 +59,5 @@ export type TypeSource = {
 export type AnyType = Type<any, any>
 
 export function isType(value: unknown): value is AnyType {
-  return typeof value === "object" && value !== null && declarationKey in value
+  return typeof value === "object" && value !== null && typeKey in value
 }

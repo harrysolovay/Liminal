@@ -1,5 +1,6 @@
 import type Openai from "openai"
 import type { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions"
+import type { CompletionUsage } from "openai/resources/completions"
 import { type Diagnostic, serializeDiagnostics, VisitValue } from "../core/mod.ts"
 import * as T from "../types/mod.ts"
 import { assert } from "../util/assert.ts"
@@ -16,8 +17,8 @@ export interface CheckedParams<T = any> extends
 
 export interface CheckedOptions {
   signal?: AbortSignal
-  maxCorrections?: number
-  // maxTokens?: number
+  maxRefinements?: number
+  maxTokens?: Partial<CompletionUsage>
 }
 
 /** Get the completion and then loop refinement assertions and resubmission until all assertions pass. */
@@ -26,10 +27,10 @@ export async function checked<T>(
   params: CheckedParams<T>,
   options?: CheckedOptions,
 ): Promise<T> {
-  const { maxCorrections } = options ?? {}
+  const { signal, maxRefinements, maxTokens: _maxTokens } = options ?? {}
   assert(
-    maxCorrections === undefined || (maxCorrections >= 1 && Number.isInteger(maxCorrections)),
-    "`CheckedOptions.maxCorrections` must be an integer greater than 1.",
+    maxRefinements === undefined || (maxRefinements >= 1 && Number.isInteger(maxRefinements)),
+    "`CheckedOptions.maxRefinements` must be an integer greater than 1.",
   )
   // TODO: handle non-root in consistent way.
   const initial = await client.chat.completions
@@ -38,38 +39,36 @@ export async function checked<T>(
     .then(JSON.parse)
   const diagnostics: Array<Diagnostic> = []
   const processed0 = VisitValue(diagnostics)(initial, params.response_format[""])
-  let correctionsRemaining = options?.maxCorrections ?? Infinity
-  while (correctionsRemaining-- && !options?.signal?.aborted && diagnostics.length) {
-    console.log(prompt(params, diagnostics))
-    await new Promise(() => {})
-    const { corrections: _ } = await client.chat.completions
-      .create({
-        ...params,
-        messages: [{
-          role: "user",
-          content: [{
-            type: "text",
-            text: prompt(params, diagnostics),
-          }],
+  let correctionsRemaining = maxRefinements ?? Infinity
+  while (correctionsRemaining-- && !signal?.aborted && diagnostics.length) {
+    const Corrections = T
+      .object(
+        Object.fromEntries(diagnostics.map(({ valuePath, type }) => [valuePath, type])),
+      )`The corrections to be applied to a previously-generated structured output.`
+      .unchecked()
+    const response_format = ResponseFormat("corrections", Corrections)
+    const completions = await client.chat.completions.create({
+      ...params,
+      messages: [{
+        role: "user",
+        content: [{
+          type: "text",
+          text: prompt(params, diagnostics),
         }],
-        response_format,
-      })
-      .then(response_format.into)
-    // TODO:
-    // corrections.forEach(({ id, value }) => {})
+      }],
+      response_format,
+    })
+    const { usage: _usage } = completions
+    const corrections = response_format.into(completions)
+    while (diagnostics.length) {
+      const { setValue, valuePath } = diagnostics.shift()!
+      const correction = corrections[valuePath]
+      console.log({ diagnostics, correction })
+      // setValue(corrections[valuePath])
+    }
   }
   return processed0 as any
 }
-
-const response_format = ResponseFormat(
-  "corrections",
-  T.object({
-    corrections: T.array(T.object({
-      id: T.number`The ID of the diagnostic to which the new value corresponds.`,
-      value: T.string`The new, correct value.`,
-    }))`The corrections to be applied to a previously-generated structured output.`,
-  }),
-)
 
 function prompt(
   params: CheckedParams,
