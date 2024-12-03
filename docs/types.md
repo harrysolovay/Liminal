@@ -154,27 +154,6 @@ Organism
 <br />
 <br />
 
-### Any Union
-
-```ts twoslash
-import { T } from "structured-outputs"
-// ---cut---
-const Mood = T.union(
-  T.string,
-  T.number,
-  T.object({
-    x: T.boolean,
-  }),
-)
-
-Mood
-// ^?
-```
-
-<br />
-<br />
-<br />
-
 ## Transform Types
 
 We may often want to transform the data returned by the OpenAI service into a different type. In
@@ -185,12 +164,12 @@ For example, we may query OpenAI for an RGB color object, which we then transfor
 ```ts twoslash
 import { T } from "structured-outputs"
 // ---cut---
-const Channel = T.number.refine({
-  min: 0,
-  max: 255,
-})
+declare function assertMin(value: number, min: number): void
+declare function assertMax(value: number, max: number): void
 
-const Rgb = T.tuple(Channel)
+const Channel = T.number.assert(assertMin, 1).assert(assertMax, 255)
+
+const Rgb = T.Tuple(Channel, Channel, Channel)
 
 const ColorHex = T.transform(
   "ColorHex",

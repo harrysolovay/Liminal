@@ -1,8 +1,8 @@
 ---
 prev: false
 next:
-  text: Standard Patterns
-  link: patterns/std
+  text: Authoring Patterns
+  link: patterns/authoring
 ---
 
 # Patterns Overview
