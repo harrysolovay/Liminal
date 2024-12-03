@@ -1,4 +1,4 @@
-import type { AnyType, Type } from "../../core/mod.ts"
+import type { AnyType, Type } from "../Type.ts"
 import { taggedUnion, transform } from "../types.ts"
 
 export function Union<M extends Array<AnyType>>(

@@ -1,4 +1,4 @@
-import type { Type } from "../../core/mod.ts"
+import type { Type } from "../Type.ts"
 import { array, number, string, transform } from "../types.ts"
 import { Tuple } from "./Tuple.ts"
 import { Union } from "./Union.ts"

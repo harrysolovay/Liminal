@@ -1,7 +1,7 @@
 import { type Type, TypeVisitor } from "../core/mod.ts"
 import { typeKey } from "../core/mod.ts"
 import type { Diagnostic } from "./Diagnostic.ts"
-import * as T from "./types.ts"
+import * as T from "./T.ts"
 
 // TODO: how to manage refinement of root?
 export function deserialize<T>(

@@ -1,5 +1,5 @@
-import type { Type } from "../../core/mod.ts"
 import { asserts } from "../../util/mod.ts"
+import type { Type } from "../Type.ts"
 import { number, transform } from "../types.ts"
 import { Tuple } from "./Tuple.ts"
 

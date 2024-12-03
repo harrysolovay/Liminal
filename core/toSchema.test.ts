@@ -1,7 +1,7 @@
 import { assertSnapshot } from "@std/testing/snapshot"
+import * as T from "./T.ts"
 import { toSchema } from "./toSchema.ts"
 import type { Type } from "./Type.ts"
-import * as T from "./types.ts"
 
 Deno.test("toSchema", async (t) => {
   await t.step("boolean", async (t) => {
@@ -10,6 +10,10 @@ Deno.test("toSchema", async (t) => {
 
   await t.step("number", async (t) => {
     await assertTypeSnapshot(t, T.number)
+  })
+
+  await t.step("integer", async (t) => {
+    await assertTypeSnapshot(t, T.Integer)
   })
 
   await t.step("string", async (t) => {

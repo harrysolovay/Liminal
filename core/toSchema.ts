@@ -1,9 +1,8 @@
 import { recombine } from "../util/mod.ts"
 import type { Args } from "./Context.ts"
-import { integerTag } from "./metadata/integer.ts"
 import type { Schema } from "./Schema.ts"
+import * as T from "./T.ts"
 import { type AnyType, type Type, typeKey } from "./Type.ts"
-import * as T from "./types.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
 export function toSchema<T>(type: Type<T>): Schema {
@@ -13,12 +12,10 @@ export function toSchema<T>(type: Type<T>): Schema {
   }, type)
 }
 
-export type TypeVisitorContext<R> = {
+const visitor = new TypeVisitor<{
   args: Args
-  visited: WeakMap<AnyType, R>
-}
-
-const visitor = new TypeVisitor<TypeVisitorContext<Schema>, Schema>()
+  visited: WeakMap<AnyType, Schema>
+}, Schema>()
   .middleware((next, ctx, type, ...factoryArgs) => {
     if (ctx.visited.has(type)) {
       return ctx.visited.get(type)!
@@ -52,10 +49,8 @@ const visitor = new TypeVisitor<TypeVisitorContext<Schema>, Schema>()
   .add(T.boolean, () => {
     return { type: "boolean" }
   })
-  .add(
-    T.number,
-    (_0, type) => ({ type: integerTag in type[typeKey].context.metadata ? "integer" : "number" }),
-  )
+  .add(T.Integer, () => ({ type: "integer" }))
+  .add(T.number, () => ({ type: "number" }))
   .add(T.string, () => ({ type: "string" }))
   .add(T.array, (ctx, _1, element): Schema => ({
     type: "array",
