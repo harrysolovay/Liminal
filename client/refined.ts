@@ -1,8 +1,12 @@
 import type Openai from "openai"
-import type { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions"
+import type {
+  ChatCompletionCreateParamsNonStreaming,
+  ChatCompletionMessageParam,
+} from "openai/resources/chat/completions"
 import type { CompletionUsage } from "openai/resources/completions"
 import { deserializeValue, Diagnostic, T } from "../json/mod.ts"
 import { assert } from "../util/assert.ts"
+import { parseChoice, unwrapChoice } from "./oai_util.ts"
 import { ResponseFormat } from "./ResponseFormat.ts"
 
 export interface CheckedParams<T = any> extends
@@ -33,12 +37,12 @@ export async function refined<T>(
   )
   const completion = await client.chat.completions.create(params)
   const diagnostics: Array<Diagnostic> = []
-  const value = deserializeValue(
-    params.response_format[""],
-    ResponseFormat.parseChoice(completion),
-    diagnostics,
-  )
-  console.log({ initial: value })
+  const content = unwrapChoice(completion)
+  const value = deserializeValue(params.response_format[""], parseChoice(content), diagnostics)
+  const messages: ChatCompletionMessageParam[] = [...params.messages, {
+    role: "assistant",
+    content,
+  }]
   let correctionsRemaining = maxRefinements ?? Infinity
   while (correctionsRemaining-- && !signal?.aborted && diagnostics.length) {
     const Corrections = T
@@ -47,15 +51,13 @@ export async function refined<T>(
       )`The corrections to be applied to a previously-generated structured output.`
       .widen()
     const response_format = ResponseFormat("corrections", Corrections)
+    messages.push({
+      role: "user",
+      content: prompt(params, diagnostics),
+    })
     const completions = await client.chat.completions.create({
       ...params,
-      messages: [{
-        role: "user",
-        content: [{
-          type: "text",
-          text: prompt(params, diagnostics),
-        }],
-      }],
+      messages,
       response_format,
     })
     const { usage: _usage } = completions
