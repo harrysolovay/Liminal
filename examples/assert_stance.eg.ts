@@ -9,7 +9,7 @@ const assertStance = AssertStance(openai)
 
 const ReasonToBeHappy = T
   .string`A reason to be sad. Do not put a positive spin on it. One sentence.`
-  .assert(assertStance, "Turn this into a reason to be happy!")
+  .assert(assertStance, "This is a reason to be happy.")
 
 const response_format = ResponseFormat("ReasonToBeHappy", ReasonToBeHappy)
 
