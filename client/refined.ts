@@ -3,11 +3,11 @@ import type {
   ChatCompletionCreateParamsNonStreaming,
   ChatCompletionMessageParam,
 } from "openai/resources/chat/completions"
-import type { CompletionUsage } from "openai/resources/completions"
 import { deserialize, Diagnostic, T } from "../json/mod.ts"
-import { assert } from "../util/assert.ts"
+import { assert, tap } from "../util/mod.ts"
 import { parseChoice, unwrapChoice } from "./oai_util.ts"
 import { ResponseFormat } from "./ResponseFormat.ts"
+import type { TokenAllowanceManager } from "./TokenAllowanceManager.ts"
 
 export interface RefinedParams<T = any> extends
   Omit<
@@ -21,7 +21,7 @@ export interface RefinedParams<T = any> extends
 export interface RefinedOptions {
   signal?: AbortSignal
   maxRefinements?: number
-  maxTokens?: Partial<CompletionUsage>
+  tokenUsageManager?: TokenAllowanceManager
 }
 
 /** Get the completion and then loop refinement assertions and resubmission until all assertions pass. */
@@ -30,12 +30,14 @@ export async function refined<T>(
   params: RefinedParams<T>,
   options?: RefinedOptions,
 ): Promise<T> {
-  const { signal, maxRefinements, maxTokens: _maxTokens } = options ?? {}
+  const { signal, maxRefinements, tokenUsageManager } = options ?? {}
   assert(
     maxRefinements === undefined || (maxRefinements >= 1 && Number.isInteger(maxRefinements)),
     "`CheckedOptions.maxRefinements` must be an integer greater than 1.",
   )
-  const completion = await client.chat.completions.create(params)
+  const completion = await client.chat.completions
+    .create(params)
+    .then(tap(tokenUsageManager?.ingest))
   let diagnosticsPending: Array<Promise<Diagnostic | undefined>> = []
   const content = unwrapChoice(completion)
   const messages: ChatCompletionMessageParam[] = [...params.messages, {
@@ -45,8 +47,10 @@ export async function refined<T>(
   const root = deserialize(params.response_format[""], parseChoice(content), diagnosticsPending)
   let correctionsRemaining = maxRefinements ?? Infinity
   let initialCorrection = true
-  while (correctionsRemaining-- && !signal?.aborted && diagnosticsPending.length) {
-    const lastTurn = !correctionsRemaining // TODO
+  while (
+    correctionsRemaining-- && !signal?.aborted && !tokenUsageManager?.stop
+    && diagnosticsPending.length
+  ) {
     const diagnostics = await Promise
       .all(diagnosticsPending)
       .then((v) => v.filter((v) => v !== undefined))
@@ -67,8 +71,7 @@ export async function refined<T>(
       ...params,
       messages,
       response_format,
-    })
-    const { usage: _usage } = correctionsCompletion
+    }).then(tap(tokenUsageManager?.ingest))
     const choice = unwrapChoice(correctionsCompletion)
     messages.push({
       role: "assistant",
@@ -81,7 +84,7 @@ export async function refined<T>(
         deserialize(
           type as never,
           corrections[valuePath],
-          lastTurn ? undefined : diagnosticsPending,
+          (!correctionsRemaining || (signal && signal.aborted)) ? undefined : diagnosticsPending,
         ),
       )
     }

@@ -6,3 +6,4 @@
 - type visitor
 - how it works?
 - hash type
+- token allowance manager

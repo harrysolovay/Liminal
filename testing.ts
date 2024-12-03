@@ -1,12 +1,6 @@
 import { ensureDir } from "@std/fs"
 import * as path from "@std/path"
-
-export function tap(useValue: <T>(value: T) => void) {
-  return <T>(value: T): T => {
-    useValue(value)
-    return value
-  }
-}
+import { tap } from "./util/tap.ts"
 
 export const dbg = tap(async (value) => {
   console.debug(value)
