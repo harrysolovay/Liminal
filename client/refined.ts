@@ -9,7 +9,7 @@ import { assert } from "../util/assert.ts"
 import { parseChoice, unwrapChoice } from "./oai_util.ts"
 import { ResponseFormat } from "./ResponseFormat.ts"
 
-export interface CheckedParams<T = any> extends
+export interface RefinedParams<T = any> extends
   Omit<
     ChatCompletionCreateParamsNonStreaming,
     "audio" | "modalities" | "response_format" | "stream" | "stream_options"
@@ -18,7 +18,7 @@ export interface CheckedParams<T = any> extends
   response_format: ResponseFormat<T>
 }
 
-export interface CheckedOptions {
+export interface RefinedOptions {
   signal?: AbortSignal
   maxRefinements?: number
   maxTokens?: Partial<CompletionUsage>
@@ -27,8 +27,8 @@ export interface CheckedOptions {
 /** Get the completion and then loop refinement assertions and resubmission until all assertions pass. */
 export async function refined<T>(
   client: Openai,
-  params: CheckedParams<T>,
-  options?: CheckedOptions,
+  params: RefinedParams<T>,
+  options?: RefinedOptions,
 ): Promise<T> {
   const { signal, maxRefinements, maxTokens: _maxTokens } = options ?? {}
   assert(
@@ -46,6 +46,7 @@ export async function refined<T>(
   let correctionsRemaining = maxRefinements ?? Infinity
   let initialCorrection = true
   while (correctionsRemaining-- && !signal?.aborted && diagnosticsPending.length) {
+    const lastTurn = !correctionsRemaining // TODO
     const diagnostics = await Promise
       .all(diagnosticsPending)
       .then((v) => v.filter((v) => v !== undefined))
@@ -76,7 +77,13 @@ export async function refined<T>(
     const corrections = deserialize(CurrentCorrections, parseChoice(choice))
     while (diagnostics.length) {
       const { setValue, valuePath, type } = diagnostics.shift()!
-      setValue(deserialize(type as never, corrections[valuePath], diagnosticsPending))
+      setValue(
+        deserialize(
+          type as never,
+          corrections[valuePath],
+          lastTurn ? undefined : diagnosticsPending,
+        ),
+      )
     }
   }
   return root
@@ -91,7 +98,7 @@ function Corrections(diagnostics: Array<Diagnostic>) {
 }
 
 function prompt(
-  params: CheckedParams,
+  params: RefinedParams,
   diagnostics: Array<Diagnostic>,
 ): string {
   const messageSection = maybeSerializeMessages(params)
@@ -128,7 +135,7 @@ const SECTIONS = [
   "the unmet constraints",
 ]
 
-function maybeSerializeMessages(params: CheckedParams) {
+function maybeSerializeMessages(params: RefinedParams) {
   if (!params.messages.length) {
     return ""
   }

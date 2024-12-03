@@ -41,7 +41,7 @@ function FinalResponseFormat<T>(
         __unsafe_structured_output: schema,
       },
       additionalProperties: false,
-      required: ["value"],
+      required: ["__unsafe_structured_output"],
     }
   }
   return {
