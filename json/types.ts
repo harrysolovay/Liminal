@@ -20,7 +20,7 @@ export function array<E extends AnyType>(Element: E): Type<Array<E["T"]>, E["P"]
   })
 }
 
-export function object<F extends Record<string, AnyType>>(
+export function object<F extends Record<number | string, AnyType>>(
   fields: F,
 ): Type<{ [K in keyof F]: F[K]["T"] }, F[keyof F]["P"]> {
   return Type({
@@ -47,7 +47,7 @@ Object.defineProperty(enum_, "name", { value: "enum" })
 
 export function taggedUnion<
   K extends number | string,
-  M extends Record<number | string, AnyType | null>,
+  M extends Record<number | string, AnyType | undefined>,
 >(
   tagKey: K,
   members: M,
@@ -71,5 +71,12 @@ export function transform<F, P extends keyof any, T>(
   return Type({
     factory: transform,
     args: [name, From, f],
+  })
+}
+
+export function deferred<T, P extends keyof any>(getType: () => Type<T, P>): Type<T, P> {
+  return Type({
+    factory: deferred,
+    args: [getType],
   })
 }

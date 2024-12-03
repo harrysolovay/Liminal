@@ -24,11 +24,9 @@ export const Animal = T.taggedUnion("type", {
   SlowLoris,
 })
 
-const Root = T.object({ animal: Animal })
-
 const openai = new Openai()
 
-const response_format = ResponseFormat("generate_animal", Root)
+const response_format = ResponseFormat("generate_animal", Animal)
 
 await openai.chat.completions
   .create({

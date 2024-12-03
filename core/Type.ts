@@ -81,7 +81,7 @@ export function Type<T, P extends keyof any = never>(
           }),
         ),
       widen: () => self,
-      ...inspectBearer,
+      // ...inspectBearer,
     },
   )
   return self as never

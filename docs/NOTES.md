@@ -7,3 +7,6 @@
 - how it works?
 - hash type
 - token allowance manager
+- dynamic types
+- asking for types
+- hydrating types

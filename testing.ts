@@ -2,7 +2,7 @@ import { ensureDir } from "@std/fs"
 import * as path from "@std/path"
 import { tap } from "./util/tap.ts"
 
-export const dbg = tap(async (value) => {
+export const dbg = tap(async <T>(value: T) => {
   console.debug(value)
   await ensureDir(TMP_DIR)
   const dest = path.join(TMP_DIR, `${Date.now()}.json`)

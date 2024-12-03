@@ -1,5 +1,5 @@
-export function tap<T>(useValue?: (value: T) => void) {
-  return (value: T): T => {
+export function tap<T>(useValue?: (value: T) => void): (value: T) => T {
+  return (value) => {
     useValue?.(value)
     return value
   }

@@ -24,7 +24,7 @@ Value: ${value}`,
 }
 
 const Stance = T.taggedUnion("type", {
-  Valid: null,
+  Valid: undefined,
   Invalid: T.string`The reason.`,
 })`Whether an assertion is valid.`
 

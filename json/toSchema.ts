@@ -80,14 +80,18 @@ const visitor = new TypeVisitor<Args, Schema>()
             type: "string",
             const: k,
           },
-          ...(v === null ? {} : { value: visitor.visit(args, v) }),
+          ...(v === undefined ? {} : { value: visitor.visit(args, v) }),
         },
-        required: [tagKey, ...v === null ? [] : ["value"]],
+        required: [tagKey, ...v === undefined ? [] : ["value"]],
         additionalProperties: false,
       })),
     }
   })
   .add(T.transform, (parentArgs, _0, _1, from): Schema => visitor.visit(parentArgs, from))
+  .add(T.deferred, (parentArgs, _0, getType): Schema => {
+    console.log(_0, getType)
+    return visitor.visit(parentArgs, getType())
+  })
 
 function processArgs(parentArgs: Args, type: AnyType): {
   args: Args

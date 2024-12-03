@@ -21,7 +21,7 @@ export interface RefinedParams<T = any> extends
 export interface RefinedOptions {
   signal?: AbortSignal
   maxRefinements?: number
-  tokenUsageManager?: TokenAllowanceManager
+  allowance?: TokenAllowanceManager
 }
 
 /** Get the completion and then loop refinement assertions and resubmission until all assertions pass. */
@@ -30,14 +30,14 @@ export async function refined<T>(
   params: RefinedParams<T>,
   options?: RefinedOptions,
 ): Promise<T> {
-  const { signal, maxRefinements, tokenUsageManager } = options ?? {}
+  const { signal, maxRefinements, allowance } = options ?? {}
   assert(
     maxRefinements === undefined || (maxRefinements >= 1 && Number.isInteger(maxRefinements)),
     "`CheckedOptions.maxRefinements` must be an integer greater than 1.",
   )
   const completion = await client.chat.completions
     .create(params)
-    .then(tap(tokenUsageManager?.ingest))
+    .then(tap(allowance?.ingest))
   let diagnosticsPending: Array<Promise<Diagnostic | undefined>> = []
   const content = unwrapChoice(completion)
   const messages: ChatCompletionMessageParam[] = [...params.messages, {
@@ -48,7 +48,7 @@ export async function refined<T>(
   let correctionsRemaining = maxRefinements ?? Infinity
   let initialCorrection = true
   while (
-    correctionsRemaining-- && !signal?.aborted && !tokenUsageManager?.stop
+    correctionsRemaining-- && !signal?.aborted && !allowance?.stop
     && diagnosticsPending.length
   ) {
     const diagnostics = await Promise
@@ -71,7 +71,7 @@ export async function refined<T>(
       ...params,
       messages,
       response_format,
-    }).then(tap(tokenUsageManager?.ingest))
+    }).then(tap(allowance?.ingest))
     const choice = unwrapChoice(correctionsCompletion)
     messages.push({
       role: "assistant",

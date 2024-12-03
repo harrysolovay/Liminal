@@ -8,7 +8,7 @@ import { asserts } from "../util/mod.ts"
 const greeting = T.taggedUnion("greeting", {
   Hi: T.string,
   Yo: T.number,
-  Hey: null,
+  Hey: undefined,
 })
 
 const Character = T.object({

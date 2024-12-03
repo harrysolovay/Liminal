@@ -1,7 +1,7 @@
 import { type Type, TypeVisitor } from "../core/mod.ts"
 import { typeKey } from "../core/mod.ts"
-import * as T from "./combinators.ts"
 import type { Diagnostic } from "./Diagnostic.ts"
+import * as T from "./types.ts"
 
 // TODO: how to manage refinement of root?
 export function deserialize<T>(
@@ -146,5 +146,17 @@ const visitor = new TypeVisitor<
           set: ctx.set,
         }, value),
       ),
+  )
+  .add(
+    T.deferred,
+    (e0, _0, getType) => {
+      const type = getType()
+      return (ctx, value): unknown =>
+        visitor.visit(e0, type)({
+          ...ctx,
+          parent: ctx,
+          set: ctx.set,
+        }, value)
+    },
   )
   .fallback(() => (_ctx, value) => value)
