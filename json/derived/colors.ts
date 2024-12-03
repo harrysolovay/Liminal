@@ -1,7 +1,6 @@
-import type { Type } from "../../../core/mod.ts"
-import { asserts } from "../../../util/mod.ts"
-import { number } from "../number.ts"
-import { transform } from "../transform.ts"
+import type { Type } from "../../core/mod.ts"
+import { asserts } from "../../util/mod.ts"
+import { number, transform } from "../combinators.ts"
 import { Tuple } from "./Tuple.ts"
 
 const _0To255 = number`Ranging from 0 to 255.`

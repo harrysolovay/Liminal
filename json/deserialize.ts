@@ -1,6 +1,6 @@
 import { type Type, TypeVisitor } from "../core/mod.ts"
 import { typeKey } from "../core/mod.ts"
-import * as T from "./combinators/mod.ts"
+import * as T from "./combinators.ts"
 import type { Diagnostic } from "./Diagnostic.ts"
 
 // TODO: how to manage refinement of root?
