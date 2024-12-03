@@ -1,4 +1,4 @@
-import { assert } from "../util/mod.ts"
+import { assert } from "../assert.ts"
 
 export function minLength<T>(value: Array<T>, minLength: number) {
   assert(

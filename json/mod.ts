@@ -1,6 +1,10 @@
-// moderate
+export * as T from "./combinators/mod.ts"
 
-export * from "./deserializeValue.ts"
+// moderate --exclude combinators
+
+export * from "./deserialize.ts"
+export * from "./Diagnostic.ts"
+export * from "./JsonTypeVisitor.ts"
+export * from "./metadata/mod.ts"
 export * from "./Schema.ts"
 export * from "./toSchema.ts"
-export * from "./ValueDiagnostic.ts"

@@ -1,4 +1,4 @@
-import { Type } from "../Type.ts"
+import { Type } from "../../core/mod.ts"
 
 export function transform<F, P extends keyof any, T>(
   name: string,
@@ -6,10 +6,7 @@ export function transform<F, P extends keyof any, T>(
   f: (value: F) => T,
 ): Type<T, P> {
   return Type({
-    name: "transform",
-    source: {
-      factory: transform,
-      args: [name, From, f],
-    },
+    factory: transform,
+    args: [name, From, f],
   })
 }

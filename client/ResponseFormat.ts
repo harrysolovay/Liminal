@@ -1,10 +1,8 @@
 import type { ChatCompletion } from "openai/resources/chat/completions"
 import type { ResponseFormatJSONSchema } from "openai/resources/shared"
-import { assert } from "../asserts/mod.ts"
 import type { Type } from "../core/mod.ts"
-import type { ValueDiagnostic } from "../json/mod.ts"
-import { deserializeValue, Schema, toSchema } from "../json/mod.ts"
-import { recombine } from "../util/mod.ts"
+import { deserializeValue, type Diagnostic, Schema, toSchema } from "../json/mod.ts"
+import { assert, recombine } from "../util/mod.ts"
 
 export interface ResponseFormat<T> extends FinalResponseFormat<T> {
   (template: TemplateStringsArray, ...values: Array<unknown>): FinalResponseFormat<T>
@@ -76,7 +74,7 @@ function FinalResponseFormat<T>(
     },
     into: (completion) => {
       const raw = ResponseFormat.parseChoice(completion)
-      const diagnostics: Array<ValueDiagnostic> = []
+      const diagnostics: Array<Diagnostic> = []
       const value = deserializeValue(type, raw, diagnostics)
       if (diagnostics.length) {
         // TODO

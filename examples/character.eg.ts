@@ -2,9 +2,9 @@ import Openai from "openai"
 import "@std/dotenv/load"
 import { T } from "structured-outputs"
 import { ResponseFormat } from "structured-outputs/client"
-import * as std from "structured-outputs/std"
 import { dbg } from "testing"
-import * as asserts from "../asserts/mod.ts"
+import * as std from "../json/combinators/derived/mod.ts"
+import { asserts } from "../util/mod.ts"
 
 const greeting = T.taggedUnion("greeting", {
   Hi: T.string,

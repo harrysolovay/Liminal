@@ -8,8 +8,8 @@ export function inspect(
   inspect: (value: unknown) => string,
 ): string {
   const { declaration } = type[typeKey]
-  if (declaration.source.getType) {
-    return declaration.name
+  if (declaration.getType) {
+    return "TODO"
   }
-  return `${declaration.name}(${declaration.source.args.map((arg) => inspect(arg)).join(", ")})`
+  return `${"TODO"}(${declaration.args.map((arg) => inspect(arg)).join(", ")})`
 }

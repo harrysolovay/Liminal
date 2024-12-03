@@ -30,10 +30,10 @@ export interface Type<T, P extends keyof any = never> {
   assert: <A extends unknown[]>(f: Assertion<T, A>, ...args: A) => Type<T, P>
 
   /** Annotate the type with arbitrary metadata. */
-  annotate: <K extends symbol>(key: symbol extends K ? never : K, value: unknown) => Type<T, P>
+  annotate: (metadata: Record<keyof any, unknown>) => Type<T, P>
 
   /** Widen the type for dynamic use cases. */
-  unchecked: () => Type<any, never>
+  widen: () => Type<any, never>
 }
 
 export function Type<T, P extends keyof any = never>(
@@ -72,15 +72,15 @@ export function Type<T, P extends keyof any = never>(
           ),
         )
       },
-      annotate: (key: symbol, value: unknown) =>
+      annotate: (metadata: Record<keyof any, unknown>) =>
         Type(
           declaration,
           new Context(context.parts, context.assertions, {
             ...context.metadata,
-            [key]: value,
+            ...metadata,
           }),
         ),
-      unchecked: () => self,
+      widen: () => self,
       ...inspectBearer,
     },
   )
@@ -90,13 +90,6 @@ export function Type<T, P extends keyof any = never>(
 export const typeKey: unique symbol = Symbol()
 
 export type TypeDeclaration = {
-  /** The name of the type. */
-  name: string
-  /** The origin of the type (a `declare`d type or `declare`d-type-returning function). */
-  source: TypeSource
-}
-
-export type TypeSource = {
   getType: () => AnyType
   factory?: never
   args?: never

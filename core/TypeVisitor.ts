@@ -1,4 +1,4 @@
-import { assert } from "../asserts/mod.ts"
+import { assert } from "../util/mod.ts"
 import { type AnyType, typeKey } from "./Type.ts"
 
 export class TypeVisitor<C, R> {
@@ -42,13 +42,13 @@ export class TypeVisitor<C, R> {
 
   visit = (ctx: C, type: AnyType): R => {
     const { declaration } = type[typeKey]
-    if (declaration.source.factory) {
-      const visitor = this.visitors.get(declaration.source.factory)
+    if (declaration.factory) {
+      const visitor = this.visitors.get(declaration.factory)
       if (visitor) {
-        return sequence.call(this, visitor, ...declaration.source.args)
+        return sequence.call(this, visitor, ...declaration.args)
       }
     } else {
-      const visitor = this.visitors.get(declaration.source.getType())
+      const visitor = this.visitors.get(declaration.getType())
       if (visitor) {
         return sequence.call(this, visitor)
       }

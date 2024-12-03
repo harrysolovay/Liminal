@@ -1,6 +1,6 @@
 import { type AnyType, type Args, T, type Type, typeKey, TypeVisitor } from "../mod.ts"
-import { integerTag } from "../std/Integer.ts"
 import { recombine } from "../util/mod.ts"
+import { integerTag } from "./metadata/integer.ts"
 import type { Schema } from "./Schema.ts"
 
 export function toSchema<T>(type: Type<T>): Schema {

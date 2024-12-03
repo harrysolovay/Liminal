@@ -4,7 +4,7 @@ import { ResponseFormat } from "structured-outputs/client"
 import "@std/dotenv/load"
 import { refined } from "structured-outputs/client"
 import { dbg } from "testing"
-import * as asserts from "../asserts/mod.ts"
+import { asserts } from "../util/mod.ts"
 
 const openai = new Openai()
 
@@ -27,17 +27,8 @@ const Refined = T.object({
 
 const response_format = ResponseFormat("initially_invalid", Refined)
 
-openai.chat.completions
-  .create({
-    model: "gpt-4o-mini",
-    response_format,
-    messages: [{ role: "system", content: [] }],
-  })
-  .then(response_format.into)
-  .then(dbg)
-
-// await refined(openai, {
-//   model: "gpt-4o-mini",
-//   response_format,
-//   messages: [{ role: "system", content: [] }],
-// }).then(dbg)
+await refined(openai, {
+  model: "gpt-4o-mini",
+  response_format,
+  messages: [{ role: "system", content: [] }],
+}).then(dbg)

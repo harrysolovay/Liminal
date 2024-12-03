@@ -1,11 +1,12 @@
 import { type Type, TypeVisitor } from "../core/mod.ts"
-import { T, typeKey } from "../core/mod.ts"
-import type { ValueDiagnostic } from "./ValueDiagnostic.ts"
+import { typeKey } from "../core/mod.ts"
+import * as T from "./combinators/mod.ts"
+import type { Diagnostic } from "./Diagnostic.ts"
 
 export function deserializeValue<T>(
   type: Type<T, never>,
   value: unknown,
-  diagnostics?: Array<ValueDiagnostic>,
+  diagnostics?: Array<Diagnostic>,
 ): T {
   return visitor.visit({}, type)({
     valuePath: "",
@@ -15,7 +16,7 @@ export function deserializeValue<T>(
 
 type ValueVisitorContext = {
   valuePath: string
-  diagnostics?: Array<ValueDiagnostic>
+  diagnostics?: Array<Diagnostic>
 }
 
 const visitor = new TypeVisitor<
@@ -27,9 +28,31 @@ const visitor = new TypeVisitor<
 >()
   .middleware((next, e0, type, ...args) => {
     const { assertions } = type[typeKey].context
-    console.log(assertions)
     const visitValue = next(e0, type, ...args)
     return (ctx, value) => {
+      const { diagnostics } = ctx
+      if (diagnostics) {
+        assertions.forEach(({ assertion, args, trace }) => {
+          try {
+            assertion(value, ...args)
+            return value
+          } catch (e: unknown) {
+            if (e instanceof Error) {
+              diagnostics.push({
+                error: e,
+                trace,
+                type,
+                typePath: "",
+                value,
+                valuePath: ctx.valuePath,
+                setValue: () => {},
+              })
+              return
+            }
+            throw e
+          }
+        })
+      }
       return visitValue(ctx, value)
     }
   })

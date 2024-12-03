@@ -1,5 +1,5 @@
+import { type AnyType, Type } from "../../core/mod.ts"
 import type { Expand } from "../../util/type_util.ts"
-import { type AnyType, Type } from "../Type.ts"
 
 export function taggedUnion<
   K extends number | string,
@@ -14,10 +14,7 @@ export function taggedUnion<
   Extract<M[keyof M], AnyType>["P"]
 > {
   return Type({
-    name: "taggedUnion",
-    source: {
-      factory: taggedUnion,
-      args: [tagKey, members],
-    },
+    factory: taggedUnion,
+    args: [tagKey, members],
   })
 }

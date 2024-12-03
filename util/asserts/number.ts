@@ -1,4 +1,4 @@
-import { assert } from "../util/mod.ts"
+import { assert } from "../assert.ts"
 
 export function min(value: number, min: number) {
   assert(value >= min, `Must be gte ${min}; received ${value}.`)
