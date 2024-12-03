@@ -5,24 +5,6 @@ prev:
 next: false
 ---
 
-# Common Errors
-
-<!-- ## Root Types Must Be Object Types
-
-OpenAI only supports objects as root types
-([see the official documentation](https://platform.openai.com/docs/guides/structured-outputs#root-objects-must-not-be-anyof)).
-Because of this constraint, each `Ty` is encoded with whether it can be used as a root type.
-
-Therefore, an error is produced if you try to specify a non-root type as the `ResponseFormat` or
-`Tool` root type.
-
-```ts twoslash
-// @errors: 2345
-import { ResponseFormat, T } from "structured-outputs"
-// ---cut---
-const response_format = ResponseFormat("my_format", T.string)
-``` -->
-
 ## Unfilled Parameters
 
 At the time of `ResponseFormat` creation, arguments must be applied to all parameters of the root

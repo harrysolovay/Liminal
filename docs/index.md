@@ -163,37 +163,3 @@ contact
 <br />
 <br />
 <br />
-
-## Use Standalone JSON Schema
-
-```ts twoslash
-import { T } from "structured-outputs"
-const Contact = T.object({
-  name: T.string,
-  phone: T.number,
-  email: T.string,
-})
-declare function assertEquals<T>(expected: T, actual: T): void
-// ---cut---
-const schema = Contact.schema()
-
-assertEquals(schema, {
-  type: "object",
-  properties: {
-    name: {
-      type: "string",
-      description: "Ensure normal length for a person's full name.",
-    },
-    phone: {
-      type: "number",
-      description: "Ensure the format is that of a phone number.",
-    },
-    email: {
-      type: "string",
-      description: "Ensure the format is that of an email address.",
-    },
-  },
-  additionalProperties: false,
-  required: ["name", "phone", "email"],
-})
-```

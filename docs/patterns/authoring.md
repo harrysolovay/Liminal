@@ -1,7 +1,7 @@
 ---
 prev:
-  text: Standard Patterns
-  link: patterns/std
+  text: Patterns Overview
+  link: patterns
 next:
   text: Pattern Conventions
   link: patterns/conventions

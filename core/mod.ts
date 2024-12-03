@@ -1,9 +1,5 @@
-// moderate
+// moderate --exclude inspect.ts inspectBearer.ts inspectBearer.node.ts
 
 export * from "./Context.ts"
-export * from "./hydrate.ts"
-export * from "./OutputVisitorContext.ts"
-export * from "./Path.ts"
-export * from "./Schema.ts"
 export * from "./Type.ts"
-export * from "./TypeDeclaration.ts"
+export * from "./TypeVisitor.ts"

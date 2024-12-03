@@ -1,40 +1,12 @@
-import type { ExcludeRefiners, Refinements, Unapplied, UnappliedRefiners } from "./Type.ts"
-import type { TypeDeclaration } from "./TypeDeclaration.ts"
-
-export class Context<T, R extends Refinements, P extends keyof any> {
+export class Context {
   constructor(
-    readonly decl: TypeDeclaration<T, R, P>,
-    readonly parts: ContextPart[] = [],
-    readonly refinements: { [K in keyof R]+?: R[K] extends Unapplied<infer U> ? U : never },
+    readonly parts: DescriptionParts[] = [],
+    readonly assertions: Array<AssertionConfig>,
+    readonly metadata: Record<symbol, unknown>,
   ) {}
-
-  add = (
-    template: TemplateStringsArray,
-    params: Params,
-  ): Context<unknown, Refinements, keyof any> =>
-    new Context(this.decl, [{ template, params }, ...this.parts], this.refinements) as never
-
-  apply = <A extends Partial<Args<P>>>(args: A): Context<T, R, ExcludeArgs<P, A>> =>
-    new Context(this.decl, [{ args }, ...this.parts], this.refinements)
-
-  refine = <const V extends UnappliedRefiners<R>>(
-    refinements: V,
-  ): Context<T, ExcludeRefiners<R, V>, P> =>
-    new Context(this.decl, this.parts, { ...this.refinements, ...refinements }) as never
-
-  // TODO: clean up typing
-  #refinementsMessages?: Record<any, string>
-  refinementMessages(): Record<any, string> | void {
-    if (this.decl.refinements) {
-      if (!this.#refinementsMessages) {
-        this.#refinementsMessages = this.decl.refinements(this.refinements as never) as never
-      }
-      return this.#refinementsMessages
-    }
-  }
 }
 
-export type ContextPart = {
+export type DescriptionParts = {
   template: TemplateStringsArray
   params: Params
   args?: never
@@ -48,7 +20,16 @@ export type Params = Array<keyof any>
 
 export type Args<P extends keyof any = keyof any> = Record<P, number | string | undefined>
 
-export type ExcludeArgs<P extends keyof any, A extends Partial<Args<P>>> = Exclude<
-  P,
-  keyof { [K in keyof A as A[K] extends undefined ? never : K]: never }
->
+export type AssertionConfig = {
+  assertion: Assertion
+  args: Array<unknown>
+  trace: string
+}
+
+export type Assertion<
+  T = unknown,
+  A extends unknown[] = any[],
+> = (
+  target: T,
+  ...args: A
+) => void | Promise<void>

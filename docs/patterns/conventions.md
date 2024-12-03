@@ -35,18 +35,15 @@ your pattern library to JSR, be weary of [slow types](https://jsr.io/docs/about-
 In the previous code block––for example––we would need to add an explicit type to avoid static
 analysis degradation.
 
-```ts twoslash
+```ts{2} twoslash
 import { T, Type } from "structured-outputs"
 
 export namespace P {
   export const grade = Symbol()
 }
 // ---cut---
-const SchoolCurriculumSubject: Type<
-  string,
-  {},
-  typeof P.grade
-> = T.string`The school curriculum for grade ${P.grade}.`
+const SchoolCurriculumSubject_ = T.string`The school curriculum for grade ${P.grade}.`
+export const SchoolCurriculumSubject: typeof SchoolCurriculumSubject_ = SchoolCurriculumSubject_
 ```
 
 If we are creating a functional pattern, we explicitly return or unwrap type arguments.
@@ -54,11 +51,11 @@ If we are creating a functional pattern, we explicitly return or unwrap type arg
 In the following example, the return type is simply the sole parameter type.
 
 ```ts twoslash
-import { Refinements, T, Type } from "structured-outputs"
+import { T, Type } from "structured-outputs"
 // ---cut---
-export function MostUnlikely<T, R extends Refinements, P extends keyof any>(
-  ty: Type<T, R, P>,
-): Type<T, R, P> {
+export function MostUnlikely<T, P extends keyof any>(
+  ty: Type<T, P>,
+): Type<T, P> {
   return ty`Ensure that this generated type is the most unlikely instance of itself.`
 }
 ```
@@ -67,15 +64,15 @@ However, we may encounter cases which require us to unwrap the `Ty` type paramet
 form a return `Ty` type.
 
 ```ts twoslash
-import { Refinements, T, Type } from "structured-outputs"
+import { T, Type } from "structured-outputs"
 // ---cut---
 export namespace P {
   export const Tone = Symbol()
 }
 
-export function WithTone<T, R extends Refinements, P extends keyof any>(
-  ty: Type<T, R, P>,
-): Type<T, R, P | typeof P.Tone> {
+export function WithTone<T, P extends keyof any>(
+  ty: Type<T, P>,
+): Type<T, P | typeof P.Tone> {
   return ty`Generate with a tone of ${P.Tone}.`
 }
 ```
