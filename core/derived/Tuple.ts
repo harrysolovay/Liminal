@@ -7,7 +7,6 @@ export function Tuple<E extends Array<AnyType>>(...elements: E): Type<
 > {
   const { length } = elements
   return transform(
-    "Tuple",
     object(Object.fromEntries(Array.from({ length }, (_0, i) => [i, elements[i]!]))),
     (o) => Array.from({ length }, (_0, i) => o[i]),
   ) as never

@@ -10,7 +10,6 @@ const _0To255 = number`Ranging from 0 to 255.`
 export const Rgb: Type<[number, number, number], never> = Tuple(_0To255, _0To255, _0To255)
 
 export const Hex: Type<string> = transform(
-  "RgbToHex",
   Rgb,
   (rgb) => rgb.map((channel) => channel.toString(16).padStart(2, "0")).join(""),
 )

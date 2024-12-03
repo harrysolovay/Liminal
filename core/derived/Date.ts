@@ -23,7 +23,6 @@ const YearMonthDay: Type<{
 
 export { Date_ as Date }
 const Date_: Type<Date, never> = transform(
-  "ConstructDate",
   object({
     yearMonthDay: YearMonthDay,
     hour: ZeroBasedInteger.assert(asserts.number.max, 23),

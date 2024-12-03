@@ -96,5 +96,5 @@ const visitor = new TypeVisitor<TypeVisitorContext<Schema>, Schema>()
       })),
     }
   })
-  .add(T.transform, (ctx, _0, _1, from): Schema => visitor.visit(ctx, from))
+  .add(T.transform, (ctx, _0, from): Schema => visitor.visit(ctx, from))
   .add(T.deferred, (ctx, _0, getType): Schema => visitor.visit(ctx, getType()))

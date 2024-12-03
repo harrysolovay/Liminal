@@ -6,9 +6,5 @@ import { Union } from "./Union.ts"
 export function Record<T, P extends keyof any>(
   value: Type<T, P>,
 ): Type<Record<number | string, T>, P> {
-  return transform(
-    "RecordFromEntries",
-    array(Tuple(Union(number, string), value)),
-    Object.fromEntries,
-  )
+  return transform(array(Tuple(Union(number, string), value)), Object.fromEntries)
 }
