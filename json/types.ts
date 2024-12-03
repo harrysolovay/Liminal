@@ -2,15 +2,15 @@ import { type AnyType, Type } from "../core/mod.ts"
 import type { Expand } from "../util/mod.ts"
 
 export const boolean: Type<boolean> = Type({
-  getType: () => boolean,
+  getAtom: () => boolean,
 })
 
 export const number: Type<number> = Type({
-  getType: () => number,
+  getAtom: () => number,
 })
 
 export const string: Type<string> = Type<string>({
-  getType: () => string,
+  getAtom: () => string,
 })
 
 export function array<E extends AnyType>(Element: E): Type<Array<E["T"]>, E["P"]> {

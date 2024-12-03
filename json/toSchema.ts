@@ -4,72 +4,88 @@ import { integerTag } from "./metadata/integer.ts"
 import type { Schema } from "./Schema.ts"
 
 export function toSchema<T>(type: Type<T>): Schema {
-  return visitor.visit({}, type)
+  return visitor.visit({
+    args: {},
+    visited: new WeakMap(),
+  }, type)
 }
 
-const visitor = new TypeVisitor<Args, Schema>()
-  .add(T.boolean, (args, type) => {
+export type TypeVisitorContext<R> = {
+  args: Args
+  visited: WeakMap<AnyType, R>
+}
+
+const visitor = new TypeVisitor<TypeVisitorContext<Schema>, Schema>()
+  .middleware((next, ctx, type, ...args) => {
+    if (ctx.visited.has(type)) {
+      return ctx.visited.get(type)!
+    }
+    return next(ctx, type, ...args)
+  })
+  .add(T.boolean, ({ args }, type) => {
     const { description } = processArgs(args, type)
     return {
       description,
       type: "boolean",
     }
   })
-  .add(T.number, (args, type) => {
+  .add(T.number, ({ args }, type) => {
     const { description } = processArgs(args, type)
     return {
       description,
       type: integerTag in type[typeKey].context.metadata ? "integer" : "number",
     }
   }) // TODO: integer – requires metadata
-  .add(T.string, (args, type) => {
+  .add(T.string, ({ args }, type) => {
     const { description } = processArgs(args, type)
     return {
       description,
       type: "string",
     }
   })
-  .add(T.array, (parentArgs, type, element): Schema => {
-    const { description, args } = processArgs(parentArgs, type)
+  .add(T.array, (ctx, type, element): Schema => {
+    const { description, args } = processArgs(ctx.args, type)
     return {
       description,
       type: "array",
-      items: visitor.visit(args, element),
+      items: visitor.visit({ args, visited: ctx.visited }, element),
     }
   })
-  .add(T.object, (parentArgs, type, fields): Schema => {
-    const { description, args } = processArgs(parentArgs, type)
+  .add(T.object, (ctx, type, fields): Schema => {
+    const { description, args } = processArgs(ctx.args, type)
     const keys = Object.keys(fields)
     return {
       description,
       type: "object",
-      properties: Object.fromEntries(keys.map((k) => [k, visitor.visit(args, fields[k]!)])),
+      properties: Object.fromEntries(
+        keys.map((k) => [k, visitor.visit({ args, visited: ctx.visited }, fields[k]!)]),
+      ),
       additionalProperties: false,
       required: keys,
     }
   })
-  .add(T.option, (parentArgs, type, Some): Schema => {
-    const { description, args } = processArgs(parentArgs, type)
+  .add(T.option, (ctx, type, Some): Schema => {
+    const { description, args } = processArgs(ctx.args, type)
     return {
       anyOf: [
         {
           description,
           type: "null",
         },
-        visitor.visit(args, Some),
+        visitor.visit({ args, visited: ctx.visited }, Some),
       ],
     }
   })
-  .add(T.enum, (parentArgs, type, ...members) => {
-    const { description } = processArgs(parentArgs, type)
+  .add(T.enum, (ctx, type, ...members) => {
+    const { description } = processArgs(ctx.args, type)
     return {
       description,
       type: "string",
       enum: members,
     }
   })
-  .add(T.taggedUnion, (parentArgs, type, tagKey, members): Schema => {
-    const { description, args } = processArgs(parentArgs, type)
+  .add(T.taggedUnion, (ctx, type, tagKey, members): Schema => {
+    const { description, args } = processArgs(ctx.args, type)
     return {
       description,
       discriminator: tagKey,
@@ -80,7 +96,7 @@ const visitor = new TypeVisitor<Args, Schema>()
             type: "string",
             const: k,
           },
-          ...(v === undefined ? {} : { value: visitor.visit(args, v) }),
+          ...(v === undefined ? {} : { value: visitor.visit({ args, visited: ctx.visited }, v) }),
         },
         required: [tagKey, ...v === undefined ? [] : ["value"]],
         additionalProperties: false,

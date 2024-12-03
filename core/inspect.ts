@@ -8,7 +8,7 @@ export function inspect(
   inspect: (value: unknown) => string,
 ): string {
   const { declaration } = type[typeKey]
-  if (declaration.getType) {
+  if (declaration.getAtom) {
     return "TODO"
   }
   return `${"TODO"}(${declaration.args.map((arg) => inspect(arg)).join(", ")})`

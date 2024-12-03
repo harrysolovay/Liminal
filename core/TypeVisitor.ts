@@ -48,7 +48,7 @@ export class TypeVisitor<C, R> {
         return sequence.call(this, visitor, ...declaration.args)
       }
     } else {
-      const visitor = this.visitors.get(declaration.getType())
+      const visitor = this.visitors.get(declaration.getAtom())
       if (visitor) {
         return sequence.call(this, visitor)
       }

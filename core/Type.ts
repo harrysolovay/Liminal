@@ -90,11 +90,11 @@ export function Type<T, P extends keyof any = never>(
 export const typeKey: unique symbol = Symbol()
 
 export type TypeDeclaration = {
-  getType: () => AnyType
+  getAtom: () => AnyType
   factory?: never
   args?: never
 } | {
-  getType?: never
+  getAtom?: never
   factory: (...args: any) => AnyType
   args: unknown[]
 }
