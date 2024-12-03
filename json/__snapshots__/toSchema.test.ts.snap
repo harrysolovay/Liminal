@@ -1,0 +1,448 @@
+export const snapshot = {};
+
+snapshot[`toSchema > boolean 1`] = `
+{
+  description: undefined,
+  type: "boolean",
+}
+`;
+
+snapshot[`toSchema > boolean 2`] = `
+{
+  description: "One.",
+  type: "boolean",
+}
+`;
+
+snapshot[`toSchema > boolean 3`] = `
+{
+  description: "One. Two.",
+  type: "boolean",
+}
+`;
+
+snapshot[`toSchema > number 1`] = `
+{
+  description: undefined,
+  type: "number",
+}
+`;
+
+snapshot[`toSchema > number 2`] = `
+{
+  description: "One.",
+  type: "number",
+}
+`;
+
+snapshot[`toSchema > number 3`] = `
+{
+  description: "One. Two.",
+  type: "number",
+}
+`;
+
+snapshot[`toSchema > string 1`] = `
+{
+  description: undefined,
+  type: "string",
+}
+`;
+
+snapshot[`toSchema > string 2`] = `
+{
+  description: "One.",
+  type: "string",
+}
+`;
+
+snapshot[`toSchema > string 3`] = `
+{
+  description: "One. Two.",
+  type: "string",
+}
+`;
+
+snapshot[`toSchema > array 1`] = `
+{
+  description: undefined,
+  items: {
+    description: undefined,
+    type: "string",
+  },
+  type: "array",
+}
+`;
+
+snapshot[`toSchema > array 2`] = `
+{
+  description: "One.",
+  items: {
+    description: undefined,
+    type: "string",
+  },
+  type: "array",
+}
+`;
+
+snapshot[`toSchema > array 3`] = `
+{
+  description: "One. Two.",
+  items: {
+    description: undefined,
+    type: "string",
+  },
+  type: "array",
+}
+`;
+
+snapshot[`toSchema > object 1`] = `
+{
+  additionalProperties: false,
+  description: undefined,
+  properties: {
+    a: {
+      description: undefined,
+      type: "boolean",
+    },
+    b: {
+      description: undefined,
+      type: "number",
+    },
+    c: {
+      description: undefined,
+      type: "string",
+    },
+  },
+  required: [
+    "a",
+    "b",
+    "c",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > object 2`] = `
+{
+  additionalProperties: false,
+  description: "One.",
+  properties: {
+    a: {
+      description: undefined,
+      type: "boolean",
+    },
+    b: {
+      description: undefined,
+      type: "number",
+    },
+    c: {
+      description: undefined,
+      type: "string",
+    },
+  },
+  required: [
+    "a",
+    "b",
+    "c",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > object 3`] = `
+{
+  additionalProperties: false,
+  description: "One. Two.",
+  properties: {
+    a: {
+      description: undefined,
+      type: "boolean",
+    },
+    b: {
+      description: undefined,
+      type: "number",
+    },
+    c: {
+      description: undefined,
+      type: "string",
+    },
+  },
+  required: [
+    "a",
+    "b",
+    "c",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > option 1`] = `
+{
+  anyOf: [
+    {
+      type: "null",
+    },
+    {
+      description: undefined,
+      type: "string",
+    },
+  ],
+  description: undefined,
+}
+`;
+
+snapshot[`toSchema > option 2`] = `
+{
+  anyOf: [
+    {
+      type: "null",
+    },
+    {
+      description: undefined,
+      type: "string",
+    },
+  ],
+  description: "One.",
+}
+`;
+
+snapshot[`toSchema > option 3`] = `
+{
+  anyOf: [
+    {
+      type: "null",
+    },
+    {
+      description: undefined,
+      type: "string",
+    },
+  ],
+  description: "One. Two.",
+}
+`;
+
+snapshot[`toSchema > enum 1`] = `
+{
+  description: undefined,
+  enum: [
+    "A",
+    "B",
+    "C",
+  ],
+  type: "string",
+}
+`;
+
+snapshot[`toSchema > enum 2`] = `
+{
+  description: "One.",
+  enum: [
+    "A",
+    "B",
+    "C",
+  ],
+  type: "string",
+}
+`;
+
+snapshot[`toSchema > enum 3`] = `
+{
+  description: "One. Two.",
+  enum: [
+    "A",
+    "B",
+    "C",
+  ],
+  type: "string",
+}
+`;
+
+snapshot[`toSchema > tagged union 1`] = `
+{
+  anyOf: [
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "A",
+          type: "string",
+        },
+        value: {
+          description: undefined,
+          type: "boolean",
+        },
+      },
+      required: [
+        "type",
+        "value",
+      ],
+      type: "object",
+    },
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "B",
+          type: "string",
+        },
+        value: {
+          description: undefined,
+          type: "number",
+        },
+      },
+      required: [
+        "type",
+        "value",
+      ],
+      type: "object",
+    },
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "C",
+          type: "string",
+        },
+        value: {
+          description: undefined,
+          type: "string",
+        },
+      },
+      required: [
+        "type",
+        "value",
+      ],
+      type: "object",
+    },
+  ],
+  description: undefined,
+  discriminator: "type",
+}
+`;
+
+snapshot[`toSchema > tagged union 2`] = `
+{
+  anyOf: [
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "A",
+          type: "string",
+        },
+        value: {
+          description: undefined,
+          type: "boolean",
+        },
+      },
+      required: [
+        "type",
+        "value",
+      ],
+      type: "object",
+    },
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "B",
+          type: "string",
+        },
+        value: {
+          description: undefined,
+          type: "number",
+        },
+      },
+      required: [
+        "type",
+        "value",
+      ],
+      type: "object",
+    },
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "C",
+          type: "string",
+        },
+        value: {
+          description: undefined,
+          type: "string",
+        },
+      },
+      required: [
+        "type",
+        "value",
+      ],
+      type: "object",
+    },
+  ],
+  description: "One.",
+  discriminator: "type",
+}
+`;
+
+snapshot[`toSchema > tagged union 3`] = `
+{
+  anyOf: [
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "A",
+          type: "string",
+        },
+        value: {
+          description: undefined,
+          type: "boolean",
+        },
+      },
+      required: [
+        "type",
+        "value",
+      ],
+      type: "object",
+    },
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "B",
+          type: "string",
+        },
+        value: {
+          description: undefined,
+          type: "number",
+        },
+      },
+      required: [
+        "type",
+        "value",
+      ],
+      type: "object",
+    },
+    {
+      additionalProperties: false,
+      properties: {
+        type: {
+          const: "C",
+          type: "string",
+        },
+        value: {
+          description: undefined,
+          type: "string",
+        },
+      },
+      required: [
+        "type",
+        "value",
+      ],
+      type: "object",
+    },
+  ],
+  description: "One. Two.",
+  discriminator: "type",
+}
+`;
