@@ -16,7 +16,7 @@ export class TokenAllowanceManager {
     readonly halt?: (self: TokenAllowanceManager) => boolean,
   ) {}
 
-  ingest = (completion: ChatCompletion) => {
+  ingest = (completion: ChatCompletion): void => {
     const { usage } = completion
     if (usage) {
       Object.keys(this.allowances).forEach((key) => {

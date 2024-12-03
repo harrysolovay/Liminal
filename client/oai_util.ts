@@ -1,4 +1,5 @@
 import type { ChatCompletion } from "openai/resources/chat/completions"
+import type { Schema } from "../json/mod.ts"
 import { assert } from "../util/mod.ts"
 
 export function unwrapChoice(completion: ChatCompletion): string {
@@ -15,7 +16,7 @@ export function unwrapChoice(completion: ChatCompletion): string {
   return content
 }
 
-export function parseChoice(choice: string) {
+export function parseChoice(choice: string): Schema {
   const parsed = JSON.parse(choice)
   if ("__unsafe_structured_output" in parsed) {
     return parsed.__unsafe_structured_output

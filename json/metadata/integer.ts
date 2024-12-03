@@ -1,3 +1,3 @@
-export const integerTag = Symbol()
+export const integerTag: unique symbol = Symbol()
 
 export const integer = { [integerTag]: true }

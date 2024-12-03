@@ -1,9 +1,14 @@
+import type { Type } from "../../core/mod.ts"
 import { assert, asserts } from "../../util/mod.ts"
 import { number, object, transform } from "../types.ts"
 
 const ZeroBasedInteger = number.assert(asserts.number.min, 0)`Zero based.`
 
-const YearMonthDay = object({
+const YearMonthDay: Type<{
+  year: number
+  month: number
+  day: number
+}, never> = object({
   year: number,
   month: ZeroBasedInteger.assert(asserts.number.max, 11),
   day: number.assert(asserts.number.min, 1).assert(asserts.number.max, 31),
@@ -17,7 +22,7 @@ const YearMonthDay = object({
   })
 
 export { Date_ as Date }
-const Date_ = transform(
+const Date_: Type<Date, never> = transform(
   "ConstructDate",
   object({
     yearMonthDay: YearMonthDay,

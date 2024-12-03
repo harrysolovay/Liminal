@@ -37,7 +37,7 @@ export class TypeVisitor<C, R> {
     )
   }
 
-  fallback = (f: (ctx: C, type: AnyType, ...args: unknown[]) => R) =>
+  fallback = (f: (ctx: C, type: AnyType, ...args: unknown[]) => R): TypeVisitor<C, R> =>
     new TypeVisitor(this.visitors, f, this.#middleware)
 
   visit = (ctx: C, type: AnyType): R => {
