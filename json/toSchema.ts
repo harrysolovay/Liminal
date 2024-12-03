@@ -16,78 +16,68 @@ export type TypeVisitorContext<R> = {
 }
 
 const visitor = new TypeVisitor<TypeVisitorContext<Schema>, Schema>()
-  .middleware((next, ctx, type, ...args) => {
+  .middleware((next, ctx, type, ...factoryArgs) => {
     if (ctx.visited.has(type)) {
       return ctx.visited.get(type)!
     }
-    return next(ctx, type, ...args)
-  })
-  .add(T.boolean, ({ args }, type) => {
-    const { description } = processArgs(args, type)
-    return {
-      description,
-      type: "boolean",
+    const args = { ...ctx.args }
+    const segments: Array<string> = []
+    for (const part of type[typeKey].context.parts) {
+      if (part.template) {
+        segments.unshift(
+          recombine(part.template, part.params.map((paramKey) => ctx.args[paramKey])),
+        )
+      } else {
+        Object.assign(args, part.args)
+      }
     }
-  })
-  .add(T.number, ({ args }, type) => {
-    const { description } = processArgs(args, type)
-    return {
+    const description = segments.length ? segments.join(" ") : undefined
+    const schema = {
       description,
-      type: integerTag in type[typeKey].context.metadata ? "integer" : "number",
+      ...next(
+        {
+          args,
+          visited: ctx.visited,
+        },
+        type,
+        ...factoryArgs,
+      ),
     }
-  }) // TODO: integer – requires metadata
-  .add(T.string, ({ args }, type) => {
-    const { description } = processArgs(args, type)
-    return {
-      description,
-      type: "string",
-    }
+    ctx.visited.set(type, schema)
+    return schema
   })
-  .add(T.array, (ctx, type, element): Schema => {
-    const { description, args } = processArgs(ctx.args, type)
-    return {
-      description,
-      type: "array",
-      items: visitor.visit({ args, visited: ctx.visited }, element),
-    }
+  .add(T.boolean, () => {
+    return { type: "boolean" }
   })
-  .add(T.object, (ctx, type, fields): Schema => {
-    const { description, args } = processArgs(ctx.args, type)
+  .add(
+    T.number,
+    (_0, type) => ({ type: integerTag in type[typeKey].context.metadata ? "integer" : "number" }),
+  )
+  .add(T.string, () => ({ type: "string" }))
+  .add(T.array, (ctx, _1, element): Schema => ({
+    type: "array",
+    items: visitor.visit(ctx, element),
+  }))
+  .add(T.object, (ctx, _0, fields): Schema => {
     const keys = Object.keys(fields)
     return {
-      description,
       type: "object",
       properties: Object.fromEntries(
-        keys.map((k) => [k, visitor.visit({ args, visited: ctx.visited }, fields[k]!)]),
+        keys.map((k) => [k, visitor.visit(ctx, fields[k]!)]),
       ),
       additionalProperties: false,
       required: keys,
     }
   })
-  .add(T.option, (ctx, type, Some): Schema => {
-    const { description, args } = processArgs(ctx.args, type)
+  .add(T.option, (ctx, _1, Some): Schema => ({
+    anyOf: [{ type: "null" }, visitor.visit(ctx, Some)],
+  }))
+  .add(T.enum, (_0, _1, ...members) => ({
+    type: "string",
+    enum: members,
+  }))
+  .add(T.taggedUnion, (ctx, _1, tagKey, members): Schema => {
     return {
-      anyOf: [
-        {
-          description,
-          type: "null",
-        },
-        visitor.visit({ args, visited: ctx.visited }, Some),
-      ],
-    }
-  })
-  .add(T.enum, (ctx, type, ...members) => {
-    const { description } = processArgs(ctx.args, type)
-    return {
-      description,
-      type: "string",
-      enum: members,
-    }
-  })
-  .add(T.taggedUnion, (ctx, type, tagKey, members): Schema => {
-    const { description, args } = processArgs(ctx.args, type)
-    return {
-      description,
       discriminator: tagKey,
       anyOf: Object.entries(members).map(([k, v]) => ({
         type: "object",
@@ -96,36 +86,12 @@ const visitor = new TypeVisitor<TypeVisitorContext<Schema>, Schema>()
             type: "string",
             const: k,
           },
-          ...(v === undefined ? {} : { value: visitor.visit({ args, visited: ctx.visited }, v) }),
+          ...(v === undefined ? {} : { value: visitor.visit(ctx, v) }),
         },
         required: [tagKey, ...v === undefined ? [] : ["value"]],
         additionalProperties: false,
       })),
     }
   })
-  .add(T.transform, (parentArgs, _0, _1, from): Schema => visitor.visit(parentArgs, from))
-  .add(T.deferred, (parentArgs, _0, getType): Schema => {
-    console.log(_0, getType)
-    return visitor.visit(parentArgs, getType())
-  })
-
-function processArgs(parentArgs: Args, type: AnyType): {
-  args: Args
-  description: string | undefined
-} {
-  const args = { ...parentArgs }
-  const ctxSegments: Array<string> = []
-  for (const part of type[typeKey].context.parts) {
-    if (part.template) {
-      ctxSegments.unshift(
-        recombine(part.template, part.params.map((paramKey) => args[paramKey])),
-      )
-    } else {
-      Object.assign(args, part.args)
-    }
-  }
-  return {
-    args,
-    description: ctxSegments.length ? ctxSegments.join(" ") : undefined,
-  }
-}
+  .add(T.transform, (ctx, _0, _1, from): Schema => visitor.visit(ctx, from))
+  .add(T.deferred, (ctx, _0, getType): Schema => visitor.visit(ctx, getType()))

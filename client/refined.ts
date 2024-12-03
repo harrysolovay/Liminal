@@ -20,7 +20,7 @@ export interface RefinedParams<T = any> extends
 
 export interface RefinedOptions {
   signal?: AbortSignal
-  maxRefinements?: number
+  max?: number
   allowance?: TokenAllowanceManager
 }
 
@@ -30,9 +30,9 @@ export async function refined<T>(
   params: RefinedParams<T>,
   options?: RefinedOptions,
 ): Promise<T> {
-  const { signal, maxRefinements, allowance } = options ?? {}
+  const { signal, max, allowance } = options ?? {}
   assert(
-    maxRefinements === undefined || (maxRefinements >= 1 && Number.isInteger(maxRefinements)),
+    max === undefined || (max >= 1 && Number.isInteger(max)),
     "`CheckedOptions.maxRefinements` must be an integer greater than 1.",
   )
   const completion = await client.chat.completions
@@ -45,7 +45,7 @@ export async function refined<T>(
     content,
   }]
   const root = deserialize(params.response_format[""], parseChoice(content), diagnosticsPending)
-  let correctionsRemaining = maxRefinements ?? Infinity
+  let correctionsRemaining = max ?? Infinity
   let initialCorrection = true
   while (
     correctionsRemaining-- && !signal?.aborted && !allowance?.stop
