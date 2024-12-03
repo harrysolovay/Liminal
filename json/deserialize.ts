@@ -4,22 +4,22 @@ import * as T from "./combinators/mod.ts"
 import type { Diagnostic } from "./Diagnostic.ts"
 
 // TODO: how to manage refinement of root?
-export function deserializeValue<T>(
+export function deserialize<T>(
   type: Type<T, never>,
   value: unknown,
-  diagnostics?: Array<Diagnostic>,
+  diagnosticsPending?: Array<Promise<Diagnostic | undefined>>,
 ): T {
   return visitor.visit({}, type)({
     path: "",
     parent: undefined!,
     set: () => {},
-    diagnostics,
+    diagnosticsPending,
   }, value) as never
 }
 
 type ValueVisitorContext = {
   path: string
-  diagnostics?: Array<Diagnostic>
+  diagnosticsPending?: Array<Promise<Diagnostic | undefined>>
   parent: ValueVisitorContext
   set: (value: unknown) => void
 }
@@ -37,28 +37,27 @@ const visitor = new TypeVisitor<
     const { assertions } = type[typeKey].context
     const visit = next(e0, type, ...args)
     return (ctx, value) => {
-      const { diagnostics } = ctx
-      if (diagnostics) {
-        assertions.forEach(({ assertion, args, trace }) => {
-          try {
-            assertion(value, ...args)
-            return value
-          } catch (e: unknown) {
-            if (e instanceof Error) {
-              diagnostics.push({
-                error: e,
-                trace,
-                type,
-                typePath: "",
-                value,
-                valuePath: ctx.path,
-                setValue: ctx.set,
-              })
-              return
+      const { diagnosticsPending } = ctx
+      if (diagnosticsPending && assertions) {
+        for (const { assertion, args, trace } of assertions) {
+          diagnosticsPending.push((async () => {
+            try {
+              await assertion(value, args)
+            } catch (e: unknown) {
+              if (e instanceof Error) {
+                return {
+                  error: e,
+                  trace,
+                  type,
+                  typePath: "",
+                  value,
+                  valuePath: ctx.path,
+                  setValue: ctx.set,
+                }
+              }
             }
-            throw e
-          }
-        })
+          })())
+        }
       }
       return visit(ctx, value)
     }

@@ -4,7 +4,7 @@ import type {
   ChatCompletionMessageParam,
 } from "openai/resources/chat/completions"
 import type { CompletionUsage } from "openai/resources/completions"
-import { deserializeValue, Diagnostic, T } from "../json/mod.ts"
+import { deserialize, Diagnostic, T } from "../json/mod.ts"
 import { assert } from "../util/assert.ts"
 import { parseChoice, unwrapChoice } from "./oai_util.ts"
 import { ResponseFormat } from "./ResponseFormat.ts"
@@ -36,17 +36,25 @@ export async function refined<T>(
     "`CheckedOptions.maxRefinements` must be an integer greater than 1.",
   )
   const completion = await client.chat.completions.create(params)
-  const diagnostics: Array<Diagnostic> = []
+  let diagnosticsPending: Array<Promise<Diagnostic | undefined>> = []
   const content = unwrapChoice(completion)
-  const value = deserializeValue(params.response_format[""], parseChoice(content), diagnostics)
   const messages: ChatCompletionMessageParam[] = [...params.messages, {
     role: "assistant",
     content,
   }]
+  const root = deserialize(params.response_format[""], parseChoice(content), diagnosticsPending)
   let correctionsRemaining = maxRefinements ?? Infinity
   let initialCorrection = true
-  while (correctionsRemaining-- && !signal?.aborted && diagnostics.length) {
-    const response_format = ResponseFormat("corrections", Corrections(diagnostics))
+  while (correctionsRemaining-- && !signal?.aborted && diagnosticsPending.length) {
+    const diagnostics = await Promise
+      .all(diagnosticsPending)
+      .then((v) => v.filter((v) => v !== undefined))
+    diagnosticsPending = []
+    if (!diagnostics.length) {
+      break
+    }
+    const CurrentCorrections = Corrections(diagnostics)
+    const response_format = ResponseFormat("corrections", CurrentCorrections)
     initialCorrection = false
     messages.push({
       role: "user",
@@ -60,13 +68,18 @@ export async function refined<T>(
       response_format,
     })
     const { usage: _usage } = correctionsCompletion
-    const corrections = response_format.into(correctionsCompletion)
+    const choice = unwrapChoice(correctionsCompletion)
+    messages.push({
+      role: "assistant",
+      content: choice,
+    })
+    const corrections = deserialize(CurrentCorrections, parseChoice(choice))
     while (diagnostics.length) {
       const { setValue, valuePath, type } = diagnostics.shift()!
-      setValue(deserializeValue(type as never, corrections[valuePath], diagnostics))
+      setValue(deserialize(type as never, corrections[valuePath], diagnosticsPending))
     }
   }
-  return value
+  return root
 }
 
 function Corrections(diagnostics: Array<Diagnostic>) {
