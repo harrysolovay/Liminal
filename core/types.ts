@@ -1,5 +1,5 @@
-import { type AnyType, Type } from "../core/mod.ts"
 import type { Expand } from "../util/mod.ts"
+import { type AnyType, Type } from "./Type.ts"
 
 export const boolean: Type<boolean> = Type({
   getAtom: () => boolean,

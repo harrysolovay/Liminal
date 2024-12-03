@@ -1,5 +1,5 @@
 import type Openai from "openai"
-import { T } from "../json/mod.ts"
+import { T } from "../core/mod.ts"
 import { AssertionError } from "../util/mod.ts"
 import { ResponseFormat } from "./ResponseFormat.ts"
 

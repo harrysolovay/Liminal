@@ -1,6 +1,7 @@
 import { assertSnapshot } from "@std/testing/snapshot"
-import { T, type Type } from "../mod.ts"
 import { toSchema } from "./toSchema.ts"
+import type { Type } from "./Type.ts"
+import * as T from "./types.ts"
 
 Deno.test("toSchema", async (t) => {
   await t.step("boolean", async (t) => {

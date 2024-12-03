@@ -1,7 +1,10 @@
-import { type AnyType, type Args, T, type Type, typeKey, TypeVisitor } from "../mod.ts"
 import { recombine } from "../util/mod.ts"
+import type { Args } from "./Context.ts"
 import { integerTag } from "./metadata/integer.ts"
 import type { Schema } from "./Schema.ts"
+import { type AnyType, type Type, typeKey } from "./Type.ts"
+import * as T from "./types.ts"
+import { TypeVisitor } from "./TypeVisitor.ts"
 
 export function toSchema<T>(type: Type<T>): Schema {
   return visitor.visit({

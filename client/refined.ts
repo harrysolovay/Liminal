@@ -3,7 +3,7 @@ import type {
   ChatCompletionCreateParamsNonStreaming,
   ChatCompletionMessageParam,
 } from "openai/resources/chat/completions"
-import { deserialize, Diagnostic, T } from "../json/mod.ts"
+import { deserialize, Diagnostic, T } from "../core/mod.ts"
 import { assert, tap } from "../util/mod.ts"
 import { parseChoice, unwrapChoice } from "./oai_util.ts"
 import { ResponseFormat } from "./ResponseFormat.ts"

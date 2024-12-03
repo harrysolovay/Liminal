@@ -1,5 +1,5 @@
-import type { Type } from "../core/mod.ts"
 import { Record, Union } from "./derived/mod.ts"
+import type { Type } from "./Type.ts"
 import {
   array,
   boolean,

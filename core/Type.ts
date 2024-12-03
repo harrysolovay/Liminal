@@ -38,8 +38,9 @@ export interface Type<T, P extends keyof any = never> {
 
 export function Type<T, P extends keyof any = never>(
   declaration: TypeDeclaration,
-  context: Context = new Context([], [], {}),
+  context?: Context,
 ): Type<T, P> {
+  context = context ?? new Context([], [], {})
   const self = Object.assign(
     (template: TemplateStringsArray, ...params: Params) =>
       Type(

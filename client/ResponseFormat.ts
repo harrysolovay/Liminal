@@ -1,7 +1,6 @@
 import type { ChatCompletion } from "openai/resources/chat/completions"
 import type { ResponseFormatJSONSchema } from "openai/resources/shared"
-import type { Type } from "../core/mod.ts"
-import { deserialize, Schema, toSchema } from "../json/mod.ts"
+import { deserialize, Schema, toSchema, type Type } from "../core/mod.ts"
 import { recombine } from "../util/mod.ts"
 import { parseChoice, unwrapChoice } from "./oai_util.ts"
 

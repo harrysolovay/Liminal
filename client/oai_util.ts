@@ -1,5 +1,5 @@
 import type { ChatCompletion } from "openai/resources/chat/completions"
-import type { Schema } from "../json/mod.ts"
+import type { Schema } from "../core/mod.ts"
 import { assert } from "../util/mod.ts"
 
 export function unwrapChoice(completion: ChatCompletion): string {
