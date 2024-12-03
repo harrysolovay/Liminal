@@ -2,6 +2,8 @@ import * as T from "./T.ts"
 import type { AnyType, Type } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
+// TODO: re-add context
+
 export function display(type: Type<any>): string {
   const ctx = new DisplayVisitorContext()
   visitor.visit(ctx, type)

@@ -1,7 +1,7 @@
 export * as T from "./T.ts"
 export * from "./TypeVisitor.ts"
 
-// moderate --exclude derived inspect.ts inspectBearer.ts inspectBearer.node.ts T.ts TypeVisitor.ts
+// moderate --exclude derived described inspect.ts inspectBearer.ts inspectBearer.node.ts T.ts TypeVisitor.ts
 
 export * from "./Context.ts"
 export * from "./deserialize.ts"

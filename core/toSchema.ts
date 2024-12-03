@@ -22,8 +22,10 @@ const visitor = new TypeVisitor<{
     }
     const args = { ...ctx.args }
     const segments: Array<string> = []
-    for (const part of type[typeKey].context.parts) {
-      if (part.template) {
+    for (const part of type[typeKey].ctx.parts) {
+      if (typeof part === "string") {
+        segments.push(part)
+      } else if (part.template) {
         segments.unshift(
           recombine(part.template, part.params.map((paramKey) => ctx.args[paramKey])),
         )

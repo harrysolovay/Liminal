@@ -13,6 +13,15 @@ export const string: Type<string> = Type({
   getAtom: () => string,
 })
 
+export { const_ as const }
+export function const_<V extends number | string>(value: V): Type<V> {
+  return Type({
+    factory: const_,
+    args: [value],
+  })
+}
+Object.defineProperty(const_, "name", { value: "const" })
+
 export function array<E extends AnyType>(Element: E): Type<Array<E["T"]>, E["P"]> {
   return Type({
     factory: array,

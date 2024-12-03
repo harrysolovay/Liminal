@@ -18,7 +18,7 @@ export interface Type<T, P extends keyof any = never> {
     /** Readonly values that describe the type. */
     declaration: TypeDeclaration
     /** Container to be filled with context parts as chaining occurs. */
-    context: Context
+    ctx: Context
   }
 
   /** Fill in parameterized context. */
@@ -37,47 +37,47 @@ export interface Type<T, P extends keyof any = never> {
 }
 
 export function Type<T, P extends keyof any = never>(
-  declaration: TypeDeclaration,
-  context?: Context,
+  decl: TypeDeclaration,
+  ctx?: Context,
 ): Type<T, P> {
-  context = context ?? new Context([], [], {})
+  ctx = ctx ?? new Context([], [], {})
   const self = Object.assign(
     (template: TemplateStringsArray, ...params: Params) =>
       Type(
-        declaration,
+        decl,
         new Context(
-          [{ template, params }, ...context.parts],
-          context.assertions,
-          context.metadata,
+          [{ template, params }, ...ctx.parts],
+          ctx.assertions,
+          ctx.metadata,
         ),
       ),
     {
-      [typeKey]: { declaration, context },
+      [typeKey]: { decl, ctx },
       fill: (args: Args) =>
         Type(
-          declaration,
+          decl,
           new Context(
-            [{ args }, ...context.parts],
-            context.assertions,
-            context.metadata,
+            [{ args }, ...ctx.parts],
+            ctx.assertions,
+            ctx.metadata,
           ),
         ),
       assert: (assertion: Assertion, ...args: unknown[]) => {
         const trace = new Error().stack ?? ""
         return Type(
-          declaration,
+          decl,
           new Context(
-            context.parts,
-            [...context.assertions, { assertion, args, trace }],
-            context.metadata,
+            ctx.parts,
+            [...ctx.assertions, { assertion, args, trace }],
+            ctx.metadata,
           ),
         )
       },
       annotate: (metadata: Record<keyof any, unknown>) =>
         Type(
-          declaration,
-          new Context(context.parts, context.assertions, {
-            ...context.metadata,
+          decl,
+          new Context(ctx.parts, ctx.assertions, {
+            ...ctx.metadata,
             ...metadata,
           }),
         ),

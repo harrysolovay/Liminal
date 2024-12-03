@@ -34,7 +34,7 @@ const visitor = new TypeVisitor<
   ) => unknown
 >()
   .middleware((next, e0, type, ...args) => {
-    const { assertions } = type[typeKey].context
+    const { assertions } = type[typeKey].ctx
     const visit = next(e0, type, ...args)
     return (ctx, value) => {
       const { diagnosticsPending } = ctx

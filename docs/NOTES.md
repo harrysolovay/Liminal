@@ -10,3 +10,4 @@
 - dynamic types
 - asking for types
 - hydrating types
+- display
