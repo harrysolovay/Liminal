@@ -9,7 +9,7 @@ export const number: Type<number> = Type({
   getAtom: () => number,
 })
 
-export const string: Type<string> = Type<string>({
+export const string: Type<string> = Type({
   getAtom: () => string,
 })
 

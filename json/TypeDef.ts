@@ -13,15 +13,9 @@ import {
 } from "./types.ts"
 
 export type TypeDef =
-  | {
-    type: "boolean"
-  }
-  | {
-    type: "number"
-  }
-  | {
-    type: "string"
-  }
+  | { type: "boolean" }
+  | { type: "number" }
+  | { type: "string" }
   | {
     type: "array"
     value: TypeDef
