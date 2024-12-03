@@ -7,7 +7,7 @@ export type Diagnostic = {
   typePath: string
   value: unknown
   valuePath: string
-  setValue: (value: unknown) => void
+  setValue: (parentValue: unknown) => void
 }
 
 export namespace Diagnostic {

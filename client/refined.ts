@@ -44,32 +44,37 @@ export async function refined<T>(
     content,
   }]
   let correctionsRemaining = maxRefinements ?? Infinity
+  let initialCorrection = true
   while (correctionsRemaining-- && !signal?.aborted && diagnostics.length) {
-    const Corrections = T
-      .object(
-        Object.fromEntries(diagnostics.map(({ valuePath, type }) => [valuePath, type])),
-      )`The corrections to be applied to a previously-generated structured output.`
-      .widen()
-    const response_format = ResponseFormat("corrections", Corrections)
+    const response_format = ResponseFormat("corrections", Corrections(diagnostics))
+    initialCorrection = false
     messages.push({
       role: "user",
-      content: prompt(params, diagnostics),
+      content: initialCorrection
+        ? prompt(params, diagnostics)
+        : diagnostics.map(Diagnostic.toString).join("\n\n"),
     })
-    const completions = await client.chat.completions.create({
+    const correctionsCompletion = await client.chat.completions.create({
       ...params,
       messages,
       response_format,
     })
-    const { usage: _usage } = completions
-    const corrections = response_format.into(completions)
-    console.log({ corrections })
-    break
-    // while (diagnostics.length) {
-    //   const { setValue, valuePath, typePath, type } = diagnostics.shift()!
-    //   const correction = corrections[valuePath]
-    // }
+    const { usage: _usage } = correctionsCompletion
+    const corrections = response_format.into(correctionsCompletion)
+    while (diagnostics.length) {
+      const { setValue, valuePath, type } = diagnostics.shift()!
+      setValue(deserializeValue(type as never, corrections[valuePath], diagnostics))
+    }
   }
   return value
+}
+
+function Corrections(diagnostics: Array<Diagnostic>) {
+  return T
+    .object(
+      Object.fromEntries(diagnostics.map(({ valuePath, type }) => [valuePath, type])),
+    )`The corrections to be applied to a previously-generated structured output.`
+    .widen()
 }
 
 function prompt(
