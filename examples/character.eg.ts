@@ -25,7 +25,7 @@ const Character = T.object({
   randomValue: T.Union(T.string, T.number),
   friends: T.array(T.string)`Names of the character's friends.`,
   greeting,
-  favoriteColor: T.colors.Hex,
+  favoriteColor: T.colors.ColorHex,
 })
 
 const response_format = ResponseFormat("create_character", Character)`

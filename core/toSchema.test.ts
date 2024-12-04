@@ -13,7 +13,7 @@ Deno.test("toSchema", async (t) => {
   })
 
   await t.step("integer", async (t) => {
-    await assertTypeSnapshot(t, T.Integer)
+    await assertTypeSnapshot(t, T.integer)
   })
 
   await t.step("string", async (t) => {

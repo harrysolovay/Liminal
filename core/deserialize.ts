@@ -119,7 +119,7 @@ const visitor = new TypeVisitor<never, ValueVisitor>()
         : {},
     }
   })
-  .add(T.transform, (_0, _1, From, f) => (ctx, value): unknown =>
+  .add(T.transform, (_0, _1, _2, From, f) => (ctx, value): unknown =>
     f(
       visitor.visit(undefined!, From)({
         ...ctx,

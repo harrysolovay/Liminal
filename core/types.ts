@@ -11,6 +11,11 @@ export const number: Type<number> = Type({
   getAtom: () => number,
 })
 
+export const integer: Type<number> = Type({
+  name: "integer",
+  getAtom: () => integer,
+})
+
 export const string: Type<string> = Type({
   name: "string",
   getAtom: () => string,
@@ -88,13 +93,14 @@ export function taggedUnion<
 }
 
 export function transform<F, P extends keyof any, T>(
+  name: string,
   From: Type<F, P>,
   f: (value: F) => T,
 ): Type<T, P> {
   return Type({
     name: "transform",
     factory: transform,
-    args: [From, f],
+    args: [name, From, f],
   })
 }
 

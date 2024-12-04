@@ -51,7 +51,7 @@ const visitor = new TypeVisitor<ToSchemaVisitorContext, Schema>()
     return ref(defId)
   })
   .add(T.boolean, () => ({ type: "boolean" }))
-  .add(T.Integer, () => ({ type: "integer" }))
+  .add(T.integer, () => ({ type: "integer" }))
   .add(T.number, () => ({ type: "number" }))
   .add(T.string, () => ({ type: "string" }))
   .add(T.array, (ctx, _1, element): Schema => ({
@@ -91,7 +91,7 @@ const visitor = new TypeVisitor<ToSchemaVisitorContext, Schema>()
       additionalProperties: false,
     })),
   }))
-  .add(T.transform, (ctx, _0, from): Schema => visitor.visit(ctx, from))
+  .add(T.transform, (ctx, _0, _1, from): Schema => visitor.visit(ctx, from))
   .add(T.deferred, (ctx, _0, getType): Schema => visitor.visit(ctx, getType()))
 
 function ref(defId: number): Schema {

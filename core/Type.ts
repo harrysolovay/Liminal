@@ -99,7 +99,9 @@ export function Type<T, P extends keyof any = never>(
 export const typeKey: unique symbol = Symbol()
 
 export type TypeDeclaration =
-  & { name: string }
+  & {
+    name: string
+  }
   & ({
     getAtom: () => AnyType
     factory?: never
