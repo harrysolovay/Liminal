@@ -1,4 +1,4 @@
-import { type AnyType, typeKey } from "./Type.ts"
+import { type AnyType, typeKey } from "../Type.ts"
 
 export function inspect(
   type: AnyType,

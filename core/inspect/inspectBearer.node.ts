@@ -1,5 +1,5 @@
+import type { AnyType } from "../Type.ts"
 import { inspect } from "./inspect.ts"
-import type { AnyType } from "./Type.ts"
 
 export const inspectBearer = {
   [Symbol.for("nodejs.util.inspect.custom")](

@@ -1,6 +1,6 @@
 import type { EnsureLiteralKeys } from "../util/mod.ts"
 import { type Args, type Assertion, Context, type Params } from "./Context.ts"
-import { inspectBearer } from "./inspectBearer.ts"
+import { inspectBearer } from "./inspect/inspectBearer.ts"
 
 /** The core unit of schema composition. */
 export interface Type<T, P extends keyof any = never> {
