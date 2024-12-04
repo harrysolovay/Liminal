@@ -26,7 +26,9 @@ export function const_<V extends number | string>(value: V): Type<V> {
 }
 Object.defineProperty(const_, "name", { value: "const" })
 
-export function array<E extends AnyType>(Element: E): Type<Array<E["T"]>, E["P"]> {
+export function array<E extends AnyType>(
+  Element: E,
+): Type<Array<E["T"]>, E["P"]> {
   return Type({
     name: "array",
     factory: array,
@@ -44,7 +46,9 @@ export function object<F extends Record<number | string, AnyType>>(
   })
 }
 
-export function option<X extends AnyType>(Some: X): Type<X["T"] | undefined, X["P"]> {
+export function option<X extends AnyType>(
+  Some: X,
+): Type<X["T"] | undefined, X["P"]> {
   return Type({
     name: "option",
     factory: option,
@@ -70,7 +74,9 @@ export function taggedUnion<
   members: M,
 ): Type<
   {
-    [V in keyof M]: Expand<({ [_ in K]: V } & (M[V] extends AnyType ? { value: M[V]["T"] } : {}))>
+    [V in keyof M]: Expand<
+      ({ [_ in K]: V } & (M[V] extends AnyType ? { value: M[V]["T"] } : {}))
+    >
   }[keyof M],
   Extract<M[keyof M], AnyType>["P"]
 > {
@@ -92,7 +98,9 @@ export function transform<F, P extends keyof any, T>(
   })
 }
 
-export function deferred<T, P extends keyof any>(getType: () => Type<T, P>): Type<T, P> {
+export function deferred<T, P extends keyof any>(
+  getType: () => Type<T, P>,
+): Type<T, P> {
   return Type({
     name: "deferred",
     factory: deferred,

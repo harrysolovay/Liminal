@@ -5,10 +5,16 @@ import { recombine } from "../util/mod.ts"
 import { parseChoice, unwrapChoice } from "./oai_util.ts"
 
 export interface ResponseFormat<T> extends FinalResponseFormat<T> {
-  (template: TemplateStringsArray, ...values: Array<unknown>): FinalResponseFormat<T>
+  (
+    template: TemplateStringsArray,
+    ...values: Array<unknown>
+  ): FinalResponseFormat<T>
 }
 
-export function ResponseFormat<T>(name: string, type: Type<T>): ResponseFormat<T> {
+export function ResponseFormat<T>(
+  name: string,
+  type: Type<T>,
+): ResponseFormat<T> {
   return Object.assign(
     (template: TemplateStringsArray, ...values: unknown[]) =>
       FinalResponseFormat(name, type, recombine(template, values)),

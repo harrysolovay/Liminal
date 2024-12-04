@@ -40,22 +40,22 @@ const visitor = new TypeVisitor<DisplayVisitorContext, string>()
     (ctx, type, element): string =>
       ctx.ingest(type, () => `T.array(${visitor.visit(ctx, element)})`),
   )
-  .add(
-    T.object,
-    (ctx, type, fields): string =>
-      ctx.ingest(
-        type,
-        () =>
-          `T.object({${
-            Object.entries(fields).map(([k, v]) => `${k}: ${visitor.visit(ctx, v)}`).join(", ")
-          }})`,
-      ),
-  )
+  .add(T.object, (ctx, type, fields): string =>
+    ctx.ingest(
+      type,
+      () =>
+        `T.object({${
+          Object.entries(fields).map(([k, v]) => `${k}: ${visitor.visit(ctx, v)}`).join(", ")
+        }})`,
+    ))
   .add(
     T.option,
     (ctx, type, Some): string => ctx.ingest(type, () => `T.option(${visitor.visit(ctx, Some)})`),
   )
-  .add(T.enum, (ctx, type, ...members) => ctx.ingest(type, () => `T.enum(${members.join(", ")})`))
+  .add(
+    T.enum,
+    (ctx, type, ...members) => ctx.ingest(type, () => `T.enum(${members.join(", ")})`),
+  )
   .add(T.taggedUnion, (ctx, type, tagKey, members): string => {
     return ctx.ingest(type, () =>
       `T.taggedUnion("${tagKey}", {${

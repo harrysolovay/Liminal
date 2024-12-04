@@ -1,7 +1,6 @@
 import Openai from "openai"
 import "@std/dotenv/load"
-import { T } from "structured-outputs"
-import { ResponseFormat } from "structured-outputs/client"
+import { ResponseFormat, T } from "structured-outputs"
 import { dbg } from "../util/mod.ts"
 
 const Contact = T.object({

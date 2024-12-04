@@ -4,9 +4,29 @@
   "exports": "./mod.ts",
   "exclude": ["docs", "target"],
   "tasks": {
-    "mod": "deno run -A https://deno.land/x/moderate@0.0.5/mod.ts --exclude '*.test.ts' && dprint fmt",
-    "test": "deno test -A",
-    "test:update": "deno task test -- --update"
+    "mod": {
+      "description": "Regenerate re-exports section within files containing the `// moderate` directive.",
+      "command": "deno run -A https://deno.land/x/moderate@0.0.5/mod.ts --exclude '*.test.ts'"
+    },
+    "fmt": {
+      "description": "Format files using dprint.",
+      "command": "dprint fmt",
+      "dependencies": ["mod"]
+    },
+    "check": {
+      "description": "Ensure all project files type-check and then lint.",
+      "command": "deno check . && deno lint",
+      "dependencies": ["fmt"]
+    },
+    "test": {
+      "command": "deno test -A",
+      "dependencies": ["check"]
+    },
+    "test:update": {
+      "description": "Update test snapshots.",
+      "command": "deno task test -- --update",
+      "dependencies": ["check"]
+    }
   },
   "lock": false,
   "imports": {
@@ -19,14 +39,11 @@
     "@std/fs": "jsr:@std/fs@^1.0.4",
     "@std/path": "jsr:@std/path@^1.0.6",
     "@std/testing": "jsr:@std/testing@^1.0.3",
-    "openai": "npm:openai@^4.68.1",
-    "testing": "./testing.ts"
+    "openai": "npm:openai@^4.68.1"
   },
   "scopes": {
     "./examples/": {
-      "structured-outputs": "./mod.ts",
-      "structured-outputs/client": "./client/mod.ts",
-      "structured-outputs/std": "./std/mod.ts"
+      "structured-outputs": "./mod.ts"
     }
   },
   "lint": {

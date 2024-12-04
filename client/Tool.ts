@@ -25,7 +25,11 @@ interface FinalTool<T> {
   T: T
 }
 
-function FinalTool<T>(name: string, type: Type<T>, description?: string): FinalTool<T> {
+function FinalTool<T>(
+  name: string,
+  type: Type<T>,
+  description?: string,
+): FinalTool<T> {
   return {
     type: "function",
     name,

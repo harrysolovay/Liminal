@@ -48,37 +48,35 @@ namespace TypeDef {
 }
 
 export const TypeDef: Type<TypeDef, never> = taggedUnion("type", {
-  boolean: object({
-    description: string,
-  }),
-  number: object({
-    description: string,
-  }),
-  string: object({
-    description: string,
-  }),
-  array: object({
-    description: string,
+  boolean: typeDefValue({}),
+  number: typeDefValue({}),
+  string: typeDefValue({}),
+  array: typeDefValue({
     element: deferred(() => TypeDef),
   }),
-  object: object({
-    description: string,
+  object: typeDefValue({
     fields: Record(deferred(() => TypeDef)),
   }),
-  option: object({
-    description: string,
+  option: typeDefValue({
     Some: deferred(() => TypeDef),
   }),
-  enum: object({
-    description: string,
+  enum: typeDefValue({
     values: array(string),
   }),
-  taggedUnion: object({
-    description: string,
+  taggedUnion: typeDefValue({
     tag: Union(number, string),
     members: Record(option(deferred(() => TypeDef))),
   }),
 })`Type def.`
+
+function typeDefValue<F extends Record<string, Type<unknown>>>(
+  fields: F,
+): Type<{ description: string } & { [K in keyof F]: F[K]["T"] }, F[keyof F]["P"]> {
+  return object({
+    description: string,
+    ...fields,
+  })
+}
 
 export function hydrateType(def: TypeDef): Type<unknown> {
   return described(
@@ -99,7 +97,9 @@ export function hydrateType(def: TypeDef): Type<unknown> {
         case "object": {
           return object(
             Object.fromEntries(
-              Object.entries(def.value.fields).map(([k, v]) => [k, hydrateType(v)]),
+              Object.entries(def.value.fields).map((
+                [k, v],
+              ) => [k, hydrateType(v)]),
             ),
           )
         }

@@ -44,7 +44,11 @@ export async function refined<T>(
     role: "assistant",
     content,
   }]
-  const root = deserialize(params.response_format[""], parseChoice(content), diagnosticsPending)
+  const root = deserialize(
+    params.response_format[""],
+    parseChoice(content),
+    diagnosticsPending,
+  )
   let correctionsRemaining = max ?? Infinity
   let initialCorrection = true
   while (
@@ -95,7 +99,9 @@ export async function refined<T>(
 function Corrections(diagnostics: Array<Diagnostic>) {
   return T
     .object(
-      Object.fromEntries(diagnostics.map(({ valuePath, type }) => [valuePath, type])),
+      Object.fromEntries(
+        diagnostics.map(({ valuePath, type }) => [valuePath, type]),
+      ),
     )`The corrections to be applied to a previously-generated structured output.`
     .widen()
 }

@@ -1,7 +1,6 @@
 import Openai from "openai"
 import "@std/dotenv/load"
-import { T } from "structured-outputs"
-import { ResponseFormat } from "structured-outputs/client"
+import { ResponseFormat, T } from "structured-outputs"
 import { asserts, dbg } from "../util/mod.ts"
 
 const greeting = T.taggedUnion("greeting", {
@@ -11,7 +10,10 @@ const greeting = T.taggedUnion("greeting", {
 })
 
 const Character = T.object({
-  name: T.string.assert(asserts.string.minLength, 4).assert(asserts.string.maxLength, 30),
+  name: T.string.assert(asserts.string.minLength, 4).assert(
+    asserts.string.maxLength,
+    30,
+  ),
   home: T.string`The name of a fictional realm of magic and wonder.`,
   disposition: T.enum("Optimistic", "Reserved", "Inquisitive"),
   born: T.Date`Date the character was born. Make sure it aligns with the age.`,

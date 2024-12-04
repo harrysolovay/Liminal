@@ -45,32 +45,20 @@ export function Type<T, P extends keyof any = never>(
     (template: TemplateStringsArray, ...params: Params) =>
       Type(
         declaration,
-        new Context(
-          [{ template, params }, ...ctx.parts],
-          ctx.assertions,
-          ctx.metadata,
-        ),
+        new Context([{ template, params }, ...ctx.parts], ctx.assertions, ctx.metadata),
       ),
     {
       [typeKey]: { declaration, ctx },
       fill: (args: Args) =>
         Type(
           declaration,
-          new Context(
-            [{ args }, ...ctx.parts],
-            ctx.assertions,
-            ctx.metadata,
-          ),
+          new Context([{ args }, ...ctx.parts], ctx.assertions, ctx.metadata),
         ),
       assert: (assertion: Assertion, ...args: unknown[]) => {
         const trace = new Error().stack ?? ""
         return Type(
           declaration,
-          new Context(
-            ctx.parts,
-            [...ctx.assertions, { assertion, args, trace }],
-            ctx.metadata,
-          ),
+          new Context(ctx.parts, [...ctx.assertions, { assertion, args, trace }], ctx.metadata),
         )
       },
       annotate: (metadata: Record<keyof any, unknown>) =>

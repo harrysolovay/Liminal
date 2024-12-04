@@ -27,7 +27,10 @@ const visitor = new TypeVisitor<{
         segments.push(part)
       } else if (part.template) {
         segments.unshift(
-          recombine(part.template, part.params.map((paramKey) => ctx.args[paramKey])),
+          recombine(
+            part.template,
+            part.params.map((paramKey) => ctx.args[paramKey]),
+          ),
         )
       } else {
         Object.assign(args, part.args)
