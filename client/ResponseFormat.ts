@@ -23,7 +23,7 @@ export function ResponseFormat<T>(
 }
 
 interface FinalResponseFormat<T> {
-  /** The type from which the schema is derived. */
+  /** The type from which the response format schema is derived. */
   "": Type<T>
   /** Tag required by the service. */
   type: "json_schema"

@@ -1,40 +1,49 @@
-import { type Schema, toSchema, type Type } from "../core/mod.ts"
+import type { FunctionDefinition } from "openai/resources/shared"
+import { toSchema, type Type } from "../core/mod.ts"
 import { recombine } from "../util/mod.ts"
 
-export interface Tool<T> extends FinalTool<T> {
-  (template: TemplateStringsArray, ...values: Array<unknown>): FinalTool<T>
-}
-
-export function Tool<T>(name: string, type: Type<T>): Tool<T> {
-  return Object.assign(
-    (template: TemplateStringsArray, ...values: unknown[]) =>
-      FinalTool(name, type, recombine(template, values)),
-    FinalTool(name, type),
-  )
-}
-
-interface FinalTool<T> {
+interface Tool<T> {
+  /** The type from which the parameter schema is derived. */
+  ""?: Type<T>
+  /** The function responsible for processing the tool parameters and returning data back to the model. */
+  f: (args: T) => unknown
+  /** Tag required by the service. */
   type: "function"
-  /** The name with which OpenAI recognizes the tool. */
-  name: string
-  /** A description to inform the LLM of when/how to use the tool. */
-  description?: string
-  /** The tool implementation's argument type in JSON Schema. */
-  parameters: Schema
-  /** A phantom to represent the native parameter type. */
-  T: T
+  /** The underlying function definition. */
+  function: FunctionDefinition
 }
 
-function FinalTool<T>(
-  name: string,
-  type: Type<T>,
-  description?: string,
-): FinalTool<T> {
-  return {
-    type: "function",
-    name,
-    description,
-    parameters: toSchema(type),
-    ...{} as { T: T },
+export interface ToolBuilder<T> {
+  (
+    template: TemplateStringsArray,
+    ...values: Array<unknown>
+  ): (f: (arg: T) => unknown) => Tool<T>
+  (f: (arg: T) => unknown): Tool<T>
+}
+
+export function Tool<T>(name: string, parameter?: Type<T>): ToolBuilder<T> {
+  return Object.assign(
+    (
+      templateOrF: TemplateStringsArray | ((arg: T) => unknown),
+      ...maybeValues: unknown[]
+    ) => {
+      return typeof templateOrF === "function"
+        ? make(templateOrF, parameter)
+        : (f: (arg: T) => unknown) => make(f, parameter, recombine(templateOrF, maybeValues))
+    },
+  )
+
+  function make<T>(f: (args: T) => unknown, parameter?: Type<T>, description?: string): Tool<T> {
+    return {
+      "": parameter,
+      f,
+      type: "function",
+      function: {
+        name,
+        description,
+        parameters: parameter ? toSchema(parameter) : undefined,
+        strict: true,
+      },
+    }
   }
 }
