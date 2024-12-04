@@ -1,6 +1,6 @@
 import type { EnsureLiteralKeys } from "../util/mod.ts"
 import { type Args, type Assertion, Context, type Params } from "./Context.ts"
-import { inspectBearer } from "./inspectBearer.ts"
+import { inspectBearer } from "./inspect/inspectBearer.ts"
 
 /** The core unit of schema composition. */
 export interface Type<T, P extends keyof any = never> {
@@ -18,7 +18,7 @@ export interface Type<T, P extends keyof any = never> {
     /** Readonly values that describe the type. */
     declaration: TypeDeclaration
     /** Container to be filled with context parts as chaining occurs. */
-    context: Context
+    ctx: Context
   }
 
   /** Fill in parameterized context. */
@@ -38,45 +38,34 @@ export interface Type<T, P extends keyof any = never> {
 
 export function Type<T, P extends keyof any = never>(
   declaration: TypeDeclaration,
-  context: Context = new Context([], [], {}),
+  ctx?: Context,
 ): Type<T, P> {
+  ctx = ctx ?? new Context([], [], {})
   const self = Object.assign(
     (template: TemplateStringsArray, ...params: Params) =>
       Type(
         declaration,
-        new Context(
-          [{ template, params }, ...context.parts],
-          context.assertions,
-          context.metadata,
-        ),
+        new Context([{ template, params }, ...ctx.parts], ctx.assertions, ctx.metadata),
       ),
     {
-      [typeKey]: { declaration, context },
+      [typeKey]: { declaration, ctx },
       fill: (args: Args) =>
         Type(
           declaration,
-          new Context(
-            [{ args }, ...context.parts],
-            context.assertions,
-            context.metadata,
-          ),
+          new Context([{ args }, ...ctx.parts], ctx.assertions, ctx.metadata),
         ),
       assert: (assertion: Assertion, ...args: unknown[]) => {
         const trace = new Error().stack ?? ""
         return Type(
           declaration,
-          new Context(
-            context.parts,
-            [...context.assertions, { assertion, args, trace }],
-            context.metadata,
-          ),
+          new Context(ctx.parts, [...ctx.assertions, { assertion, args, trace }], ctx.metadata),
         )
       },
       annotate: (metadata: Record<keyof any, unknown>) =>
         Type(
           declaration,
-          new Context(context.parts, context.assertions, {
-            ...context.metadata,
+          new Context(ctx.parts, ctx.assertions, {
+            ...ctx.metadata,
             ...metadata,
           }),
         ),
@@ -89,15 +78,17 @@ export function Type<T, P extends keyof any = never>(
 
 export const typeKey: unique symbol = Symbol()
 
-export type TypeDeclaration = {
-  getType: () => AnyType
-  factory?: never
-  args?: never
-} | {
-  getType?: never
-  factory: (...args: any) => AnyType
-  args: unknown[]
-}
+export type TypeDeclaration =
+  & { name: string }
+  & ({
+    getAtom: () => AnyType
+    factory?: never
+    args?: never
+  } | {
+    getAtom?: never
+    factory: (...args: any) => AnyType
+    args: unknown[]
+  })
 
 export type AnyType = Type<any, any>
 

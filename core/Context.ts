@@ -6,7 +6,7 @@ export class Context {
   ) {}
 }
 
-export type DescriptionParts = {
+export type DescriptionParts = string | {
   template: TemplateStringsArray
   params: Params
   args?: never

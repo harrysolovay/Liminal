@@ -20,7 +20,10 @@ export class TypeVisitor<C, R> {
       this.#middleware ? [f, ...this.#middleware] : [f],
     )
 
-  add<X extends AnyType>(type: X, visitor: (ctx: C, type: X) => R): TypeVisitor<C, R>
+  add<X extends AnyType>(
+    type: X,
+    visitor: (ctx: C, type: X) => R,
+  ): TypeVisitor<C, R>
   add<A extends unknown[], X extends AnyType>(
     typeFactory: (...args: A) => X,
     visitor: (ctx: C, type: X, ...args: A) => R,
@@ -37,8 +40,9 @@ export class TypeVisitor<C, R> {
     )
   }
 
-  fallback = (f: (ctx: C, type: AnyType, ...args: unknown[]) => R) =>
-    new TypeVisitor(this.visitors, f, this.#middleware)
+  fallback = (
+    f: (ctx: C, type: AnyType, ...args: unknown[]) => R,
+  ): TypeVisitor<C, R> => new TypeVisitor(this.visitors, f, this.#middleware)
 
   visit = (ctx: C, type: AnyType): R => {
     const { declaration } = type[typeKey]
@@ -48,15 +52,22 @@ export class TypeVisitor<C, R> {
         return sequence.call(this, visitor, ...declaration.args)
       }
     } else {
-      const visitor = this.visitors.get(declaration.getType())
+      const visitor = this.visitors.get(declaration.getAtom())
       if (visitor) {
         return sequence.call(this, visitor)
       }
     }
-    assert(this.#fallback, `Could not match type ${type} with visitor. No fallback specified.`)
+    assert(
+      this.#fallback,
+      `Could not match type ${type} with visitor. No fallback specified.`,
+    )
     return sequence.call(this, this.#fallback)
 
-    function sequence(this: TypeVisitor<C, R>, visitor: Visitor<C, R>, ...args: unknown[]): R {
+    function sequence(
+      this: TypeVisitor<C, R>,
+      visitor: Visitor<C, R>,
+      ...args: unknown[]
+    ): R {
       if (this.#middleware) {
         return this.#middleware.reduce(
           (next, cur) => (ctx, type, ...args) => cur(next, ctx, type, ...args),

@@ -7,5 +7,5 @@
   }],
   "enableGlobDot": true,
   "dictionaries": ["project-words"],
-  "ignorePaths": [".git", ".tmp", "LICENSE", "target"]
+  "ignorePaths": [".git", ".structured_outputs", "LICENSE", "target"]
 }

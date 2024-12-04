@@ -1,8 +1,10 @@
 import { build } from "@deno/dnt"
+import type { SpecifierMappings } from "@deno/dnt/transform"
 import { parseArgs } from "@std/cli"
 import * as fs from "@std/fs"
 import * as path from "@std/path"
-import { LIB_DESCRIPTION } from "../constants.ts"
+import { description } from "../deno.json" with { type: "json" }
+import { collect, splitLast } from "../util/mod.ts"
 
 const outDir = "target/npm"
 await fs.emptyDir(outDir)
@@ -13,6 +15,22 @@ const { version } = parseArgs(Deno.args, {
     version: "0.0.0-local.0",
   },
 })
+
+const mappingTargets = await collect(fs.walk(".", {
+  exts: [".node.ts"],
+  includeDirs: false,
+}))
+const mappings: SpecifierMappings = Object.fromEntries(
+  mappingTargets.map(({ path }) => [`${splitLast(path, ".node.ts")[0]}.ts`, path]),
+)
+// TODO: enable upon resolution of https://github.com/denoland/dnt/issues/433.
+if (false as boolean) {
+  mappings["npm:openai@^4.68.1"] = {
+    name: "openai",
+    version: "^4.68.1",
+    peerDependency: true,
+  }
+}
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -27,20 +45,11 @@ await build({
   typeCheck: false,
   importMap: "./deno.json",
   test: false,
-  mappings: {
-    // // TODO: dynamically populate based on fs crawl + .node.ts postfix.
-    // "./core/inspectBearer.ts": "./core/inspectBearer.node.ts",
-    // // TODO: use upon resolution of https://github.com/denoland/dnt/issues/433.
-    //   "npm:openai@^4.68.1": {
-    //     name: "openai",
-    //     version: "^4.68.1",
-    //     peerDependency: true,
-    //   },
-  },
+  mappings,
   package: {
     name: "structured-outputs",
     version,
-    description: LIB_DESCRIPTION,
+    description,
     license: "Apache-2.0",
     repository: "github:harrysolovay/structured-outputs.git",
     type: "module",
@@ -48,17 +57,20 @@ await build({
   },
 })
 
-const packageJsonPath = path.join(outDir, "package.json")
-await Promise.all([
-  // TODO: delete upon resolution of https://github.com/denoland/dnt/issues/433.
-  Deno.readTextFile(packageJsonPath).then(async (v) => {
+// TODO: delete upon resolution of https://github.com/denoland/dnt/issues/433.
+{
+  const packageJsonPath = path.join(outDir, "package.json")
+  await Deno.readTextFile(packageJsonPath).then(async (v) => {
     const initial = JSON.parse(v)
     const { openai } = initial.dependencies
     delete initial.dependencies
     initial.peerDependencies = { openai }
     await Deno.writeTextFile(packageJsonPath, JSON.stringify(initial, null, 2))
-  }),
-  ...["README.md", "LICENSE"].map((assetPath) =>
+  })
+}
+
+await Promise.all(
+  ["README.md", "LICENSE"].map((assetPath) =>
     Deno.copyFile(assetPath, path.join(outDir, assetPath))
   ),
-])
+)

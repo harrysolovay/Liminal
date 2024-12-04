@@ -1,0 +1,919 @@
+export const snapshot = {};
+
+snapshot[`toSchema > boolean 1`] = `
+{
+  "\$defs": {
+    "0": {
+      description: undefined,
+      type: "boolean",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > boolean 2`] = `
+{
+  "\$defs": {
+    "0": {
+      description: "One.",
+      type: "boolean",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > boolean 3`] = `
+{
+  "\$defs": {
+    "0": {
+      description: "One. Two.",
+      type: "boolean",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > number 1`] = `
+{
+  "\$defs": {
+    "0": {
+      description: undefined,
+      type: "number",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > number 2`] = `
+{
+  "\$defs": {
+    "0": {
+      description: "One.",
+      type: "number",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > number 3`] = `
+{
+  "\$defs": {
+    "0": {
+      description: "One. Two.",
+      type: "number",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > integer 1`] = `
+{
+  "\$defs": {
+    "0": {
+      description: undefined,
+      type: "number",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > integer 2`] = `
+{
+  "\$defs": {
+    "0": {
+      description: "One.",
+      type: "number",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > integer 3`] = `
+{
+  "\$defs": {
+    "0": {
+      description: "One. Two.",
+      type: "number",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > string 1`] = `
+{
+  "\$defs": {
+    "0": {
+      description: undefined,
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > string 2`] = `
+{
+  "\$defs": {
+    "0": {
+      description: "One.",
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > string 3`] = `
+{
+  "\$defs": {
+    "0": {
+      description: "One. Two.",
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > array 1`] = `
+{
+  "\$defs": {
+    "0": {
+      description: undefined,
+      items: {
+        "\$ref": "#/\$defs/1",
+      },
+      type: "array",
+    },
+    "1": {
+      description: undefined,
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > array 2`] = `
+{
+  "\$defs": {
+    "0": {
+      description: "One.",
+      items: {
+        "\$ref": "#/\$defs/1",
+      },
+      type: "array",
+    },
+    "1": {
+      description: undefined,
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > array 3`] = `
+{
+  "\$defs": {
+    "0": {
+      description: "One. Two.",
+      items: {
+        "\$ref": "#/\$defs/1",
+      },
+      type: "array",
+    },
+    "1": {
+      description: undefined,
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > object 1`] = `
+{
+  "\$defs": {
+    "0": {
+      additionalProperties: false,
+      description: undefined,
+      properties: {
+        a: {
+          "\$ref": "#/\$defs/1",
+        },
+        b: {
+          "\$ref": "#/\$defs/2",
+        },
+        c: {
+          "\$ref": "#/\$defs/3",
+        },
+      },
+      required: [
+        "a",
+        "b",
+        "c",
+      ],
+      type: "object",
+    },
+    "1": {
+      description: undefined,
+      type: "boolean",
+    },
+    "2": {
+      description: undefined,
+      type: "number",
+    },
+    "3": {
+      description: undefined,
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > object 2`] = `
+{
+  "\$defs": {
+    "0": {
+      additionalProperties: false,
+      description: "One.",
+      properties: {
+        a: {
+          "\$ref": "#/\$defs/1",
+        },
+        b: {
+          "\$ref": "#/\$defs/2",
+        },
+        c: {
+          "\$ref": "#/\$defs/3",
+        },
+      },
+      required: [
+        "a",
+        "b",
+        "c",
+      ],
+      type: "object",
+    },
+    "1": {
+      description: undefined,
+      type: "boolean",
+    },
+    "2": {
+      description: undefined,
+      type: "number",
+    },
+    "3": {
+      description: undefined,
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > object 3`] = `
+{
+  "\$defs": {
+    "0": {
+      additionalProperties: false,
+      description: "One. Two.",
+      properties: {
+        a: {
+          "\$ref": "#/\$defs/1",
+        },
+        b: {
+          "\$ref": "#/\$defs/2",
+        },
+        c: {
+          "\$ref": "#/\$defs/3",
+        },
+      },
+      required: [
+        "a",
+        "b",
+        "c",
+      ],
+      type: "object",
+    },
+    "1": {
+      description: undefined,
+      type: "boolean",
+    },
+    "2": {
+      description: undefined,
+      type: "number",
+    },
+    "3": {
+      description: undefined,
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > option 1`] = `
+{
+  "\$defs": {
+    "0": {
+      anyOf: [
+        {
+          type: "null",
+        },
+        {
+          "\$ref": "#/\$defs/1",
+        },
+      ],
+      description: undefined,
+    },
+    "1": {
+      description: undefined,
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > option 2`] = `
+{
+  "\$defs": {
+    "0": {
+      anyOf: [
+        {
+          type: "null",
+        },
+        {
+          "\$ref": "#/\$defs/1",
+        },
+      ],
+      description: "One.",
+    },
+    "1": {
+      description: undefined,
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > option 3`] = `
+{
+  "\$defs": {
+    "0": {
+      anyOf: [
+        {
+          type: "null",
+        },
+        {
+          "\$ref": "#/\$defs/1",
+        },
+      ],
+      description: "One. Two.",
+    },
+    "1": {
+      description: undefined,
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > enum 1`] = `
+{
+  "\$defs": {
+    "0": {
+      description: undefined,
+      enum: [
+        "A",
+        "B",
+        "C",
+      ],
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > enum 2`] = `
+{
+  "\$defs": {
+    "0": {
+      description: "One.",
+      enum: [
+        "A",
+        "B",
+        "C",
+      ],
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > enum 3`] = `
+{
+  "\$defs": {
+    "0": {
+      description: "One. Two.",
+      enum: [
+        "A",
+        "B",
+        "C",
+      ],
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > tagged union 1`] = `
+{
+  "\$defs": {
+    "0": {
+      anyOf: [
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "A",
+              type: "string",
+            },
+            value: {
+              "\$ref": "#/\$defs/1",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "B",
+              type: "string",
+            },
+            value: {
+              "\$ref": "#/\$defs/2",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "C",
+              type: "string",
+            },
+            value: {
+              "\$ref": "#/\$defs/3",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+      ],
+      description: undefined,
+      discriminator: "type",
+    },
+    "1": {
+      description: undefined,
+      type: "boolean",
+    },
+    "2": {
+      description: undefined,
+      type: "number",
+    },
+    "3": {
+      description: undefined,
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > tagged union 2`] = `
+{
+  "\$defs": {
+    "0": {
+      anyOf: [
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "A",
+              type: "string",
+            },
+            value: {
+              "\$ref": "#/\$defs/1",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "B",
+              type: "string",
+            },
+            value: {
+              "\$ref": "#/\$defs/2",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "C",
+              type: "string",
+            },
+            value: {
+              "\$ref": "#/\$defs/3",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+      ],
+      description: "One.",
+      discriminator: "type",
+    },
+    "1": {
+      description: undefined,
+      type: "boolean",
+    },
+    "2": {
+      description: undefined,
+      type: "number",
+    },
+    "3": {
+      description: undefined,
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toSchema > tagged union 3`] = `
+{
+  "\$defs": {
+    "0": {
+      anyOf: [
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "A",
+              type: "string",
+            },
+            value: {
+              "\$ref": "#/\$defs/1",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "B",
+              type: "string",
+            },
+            value: {
+              "\$ref": "#/\$defs/2",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+        {
+          additionalProperties: false,
+          properties: {
+            type: {
+              const: "C",
+              type: "string",
+            },
+            value: {
+              "\$ref": "#/\$defs/3",
+            },
+          },
+          required: [
+            "type",
+            "value",
+          ],
+          type: "object",
+        },
+      ],
+      description: "One. Two.",
+      discriminator: "type",
+    },
+    "1": {
+      description: undefined,
+      type: "boolean",
+    },
+    "2": {
+      description: undefined,
+      type: "number",
+    },
+    "3": {
+      description: undefined,
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  properties: {
+    value: {
+      "\$ref": "#/\$defs/0",
+    },
+  },
+  required: [
+    "value",
+  ],
+  type: "object",
+}
+`;

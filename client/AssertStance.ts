@@ -1,10 +1,12 @@
 import type Openai from "openai"
-import { T } from "../json/mod.ts"
+import { T } from "../core/mod.ts"
 import { AssertionError } from "../util/mod.ts"
 import { ResponseFormat } from "./ResponseFormat.ts"
 
-export function AssertStance(openai: Openai) {
-  return async (value: number | string, assertion: string): Promise<void> => {
+export function AssertStance(
+  openai: Openai,
+): (value: number | string, assertion: string) => Promise<void> {
+  return async (value, assertion) => {
     const stance = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [{
@@ -24,7 +26,7 @@ Value: ${value}`,
 }
 
 const Stance = T.taggedUnion("type", {
-  Valid: null,
+  Valid: undefined,
   Invalid: T.string`The reason.`,
 })`Whether an assertion is valid.`
 

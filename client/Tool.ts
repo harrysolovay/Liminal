@@ -1,6 +1,4 @@
-import type { Type } from "../core/mod.ts"
-import type { Schema } from "../json/mod.ts"
-import { toSchema } from "../json/toSchema.ts"
+import { type Schema, toSchema, type Type } from "../core/mod.ts"
 import { recombine } from "../util/mod.ts"
 
 export interface Tool<T> extends FinalTool<T> {
@@ -27,7 +25,11 @@ interface FinalTool<T> {
   T: T
 }
 
-function FinalTool<T>(name: string, type: Type<T>, description?: string): FinalTool<T> {
+function FinalTool<T>(
+  name: string,
+  type: Type<T>,
+  description?: string,
+): FinalTool<T> {
   return {
     type: "function",
     name,
