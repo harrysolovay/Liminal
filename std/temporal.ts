@@ -30,7 +30,9 @@ const Date_: Type<Date> = T.transform(
     hour: ZeroBasedInteger.assert(max, 23),
     minute: ZeroBasedInteger.assert(max, 59),
     second: ZeroBasedInteger.assert(max, 59),
-    millisecond: ZeroBasedInteger.assert(max, 0).assert(max, 999),
+    millisecond: ZeroBasedInteger
+      .assert(max, 0)
+      .assert(max, 999),
   }),
   ({ yearMonthDay: { year, month, day }, hour, minute, second, millisecond }) =>
     new Date(year, month, day, hour, minute, second, millisecond),
