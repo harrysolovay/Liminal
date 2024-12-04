@@ -1,6 +1,6 @@
 import type { EnsureLiteralKeys } from "../util/mod.ts"
 import { type Args, type Assertion, Context, type Params } from "./Context.ts"
-// import { inspectBearer } from "./inspectBearer.ts"
+import { inspectBearer } from "./inspectBearer.ts"
 
 /** The core unit of schema composition. */
 export interface Type<T, P extends keyof any = never> {
@@ -37,14 +37,14 @@ export interface Type<T, P extends keyof any = never> {
 }
 
 export function Type<T, P extends keyof any = never>(
-  decl: TypeDeclaration,
+  declaration: TypeDeclaration,
   ctx?: Context,
 ): Type<T, P> {
   ctx = ctx ?? new Context([], [], {})
   const self = Object.assign(
     (template: TemplateStringsArray, ...params: Params) =>
       Type(
-        decl,
+        declaration,
         new Context(
           [{ template, params }, ...ctx.parts],
           ctx.assertions,
@@ -52,10 +52,10 @@ export function Type<T, P extends keyof any = never>(
         ),
       ),
     {
-      [typeKey]: { decl, ctx },
+      [typeKey]: { declaration, ctx },
       fill: (args: Args) =>
         Type(
-          decl,
+          declaration,
           new Context(
             [{ args }, ...ctx.parts],
             ctx.assertions,
@@ -65,7 +65,7 @@ export function Type<T, P extends keyof any = never>(
       assert: (assertion: Assertion, ...args: unknown[]) => {
         const trace = new Error().stack ?? ""
         return Type(
-          decl,
+          declaration,
           new Context(
             ctx.parts,
             [...ctx.assertions, { assertion, args, trace }],
@@ -75,14 +75,14 @@ export function Type<T, P extends keyof any = never>(
       },
       annotate: (metadata: Record<keyof any, unknown>) =>
         Type(
-          decl,
+          declaration,
           new Context(ctx.parts, ctx.assertions, {
             ...ctx.metadata,
             ...metadata,
           }),
         ),
       widen: () => self,
-      // ...inspectBearer,
+      ...inspectBearer,
     },
   )
   return self as never
@@ -90,15 +90,17 @@ export function Type<T, P extends keyof any = never>(
 
 export const typeKey: unique symbol = Symbol()
 
-export type TypeDeclaration = {
-  getAtom: () => AnyType
-  factory?: never
-  args?: never
-} | {
-  getAtom?: never
-  factory: (...args: any) => AnyType
-  args: unknown[]
-}
+export type TypeDeclaration =
+  & { name: string }
+  & ({
+    getAtom: () => AnyType
+    factory?: never
+    args?: never
+  } | {
+    getAtom?: never
+    factory: (...args: any) => AnyType
+    args: unknown[]
+  })
 
 export type AnyType = Type<any, any>
 

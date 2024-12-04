@@ -3,6 +3,7 @@ import { parseArgs } from "@std/cli"
 import * as fs from "@std/fs"
 import * as path from "@std/path"
 import { LIB_DESCRIPTION } from "../constants.ts"
+import { collect, splitLast } from "../util/mod.ts"
 
 const outDir = "target/npm"
 await fs.emptyDir(outDir)
@@ -13,6 +14,14 @@ const { version } = parseArgs(Deno.args, {
     version: "0.0.0-local.0",
   },
 })
+
+const mappingTargets = await collect(fs.walk(".", {
+  exts: [".node.ts"],
+  includeDirs: false,
+}))
+const mappings = Object.fromEntries(
+  mappingTargets.map(({ path }) => [`${splitLast(path, ".node.ts")[0]}.ts`, path]),
+)
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -28,8 +37,7 @@ await build({
   importMap: "./deno.json",
   test: false,
   mappings: {
-    // // TODO: dynamically populate based on fs crawl + .node.ts postfix.
-    // "./core/inspectBearer.ts": "./core/inspectBearer.node.ts",
+    ...mappings,
     // // TODO: use upon resolution of https://github.com/denoland/dnt/issues/433.
     //   "npm:openai@^4.68.1": {
     //     name: "openai",

@@ -1,8 +1,7 @@
 import type { Expand } from "../util/mod.ts"
-import { Context } from "./Context.ts"
 import { Record, Union } from "./derived/mod.ts"
 import { described } from "./described.ts"
-import { Type, typeKey } from "./Type.ts"
+import type { Type } from "./Type.ts"
 import {
   array,
   boolean,
@@ -114,9 +113,9 @@ export function hydrateType(def: TypeDef): Type<unknown> {
           return taggedUnion(
             def.value.tag,
             Object.fromEntries(
-              Object.entries(def.value.members).map((
-                [k, v],
-              ) => [k, v ? hydrateType(v) : undefined]),
+              Object
+                .entries(def.value.members)
+                .map(([k, v]) => [k, v ? hydrateType(v) : undefined]),
             ),
           )
         }

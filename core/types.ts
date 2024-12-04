@@ -2,20 +2,24 @@ import type { Expand } from "../util/mod.ts"
 import { type AnyType, Type } from "./Type.ts"
 
 export const boolean: Type<boolean> = Type({
+  name: "boolean",
   getAtom: () => boolean,
 })
 
 export const number: Type<number> = Type({
+  name: "number",
   getAtom: () => number,
 })
 
 export const string: Type<string> = Type({
+  name: "string",
   getAtom: () => string,
 })
 
 export { const_ as const }
 export function const_<V extends number | string>(value: V): Type<V> {
   return Type({
+    name: "const",
     factory: const_,
     args: [value],
   })
@@ -24,6 +28,7 @@ Object.defineProperty(const_, "name", { value: "const" })
 
 export function array<E extends AnyType>(Element: E): Type<Array<E["T"]>, E["P"]> {
   return Type({
+    name: "array",
     factory: array,
     args: [Element],
   })
@@ -33,6 +38,7 @@ export function object<F extends Record<number | string, AnyType>>(
   fields: F,
 ): Type<{ [K in keyof F]: F[K]["T"] }, F[keyof F]["P"]> {
   return Type({
+    name: "object",
     factory: object,
     args: [fields],
   })
@@ -40,6 +46,7 @@ export function object<F extends Record<number | string, AnyType>>(
 
 export function option<X extends AnyType>(Some: X): Type<X["T"] | undefined, X["P"]> {
   return Type({
+    name: "option",
     factory: option,
     args: [Some],
   })
@@ -48,6 +55,7 @@ export function option<X extends AnyType>(Some: X): Type<X["T"] | undefined, X["
 export { enum_ as enum }
 function enum_<K extends string>(...members: Array<K>): Type<K> {
   return Type({
+    name: "enum",
     factory: enum_,
     args: members,
   })
@@ -67,6 +75,7 @@ export function taggedUnion<
   Extract<M[keyof M], AnyType>["P"]
 > {
   return Type({
+    name: "taggedUnion",
     factory: taggedUnion,
     args: [tagKey, members],
   })
@@ -77,6 +86,7 @@ export function transform<F, P extends keyof any, T>(
   f: (value: F) => T,
 ): Type<T, P> {
   return Type({
+    name: "transform",
     factory: transform,
     args: [From, f],
   })
@@ -84,6 +94,7 @@ export function transform<F, P extends keyof any, T>(
 
 export function deferred<T, P extends keyof any>(getType: () => Type<T, P>): Type<T, P> {
   return Type({
+    name: "deferred",
     factory: deferred,
     args: [getType],
   })

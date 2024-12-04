@@ -3,8 +3,7 @@ import { T } from "structured-outputs"
 import { ResponseFormat } from "structured-outputs/client"
 import "@std/dotenv/load"
 import { refined } from "structured-outputs/client"
-import { dbg } from "testing"
-import { asserts } from "../util/mod.ts"
+import { asserts, dbg } from "../util/mod.ts"
 
 const openai = new Openai()
 
