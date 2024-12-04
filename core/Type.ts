@@ -1,9 +1,9 @@
 import type { EnsureLiteralKeys } from "../util/mod.ts"
-import { type Args, type Assertion, Context, type Params } from "./Context.ts"
+import { type Assertion, Context, type DescriptionArgs, type DescriptionParams } from "./Context.ts"
 
 /** The core unit of schema composition. */
 export interface Type<T, P extends keyof any = never> {
-  <P2 extends Params>(
+  <P2 extends DescriptionParams>(
     template: TemplateStringsArray,
     ...params: EnsureLiteralKeys<P2>
   ): Type<T, P | P2[number]>
@@ -21,12 +21,15 @@ export interface Type<T, P extends keyof any = never> {
   }
 
   /** Fill in parameterized context. */
-  fill: <A extends Partial<Args<P>>>(
+  fill: <A extends Partial<DescriptionArgs<P>>>(
     args: A,
   ) => Type<T, Exclude<P, keyof { [K in keyof A as A[K] extends undefined ? never : K]: never }>>
 
   /** Specify assertions to be run on the type's output. */
-  assert: <A extends unknown[]>(f: Assertion<T, A>, ...args: A) => Type<T, P>
+  assert: <A extends unknown[]>(
+    f: (target: T, ...args: A) => void | Promise<void>,
+    ...args: A
+  ) => Type<T, P>
 
   /** Annotate the type with arbitrary metadata. */
   annotate: (metadata: Record<keyof any, unknown>) => Type<T, P>
@@ -41,29 +44,37 @@ export function Type<T, P extends keyof any = never>(
 ): Type<T, P> {
   ctx = ctx ?? new Context([], [], {})
   const self = Object.assign(
-    (template: TemplateStringsArray, ...params: Params) =>
+    (template: TemplateStringsArray, ...params: DescriptionParams) =>
       Type(
         declaration,
-        new Context([{ template, params }, ...ctx.parts], ctx.assertions, ctx.metadata),
+        new Context(
+          [{ template, params }, ...ctx.descriptionParts],
+          ctx.assertionConfigs,
+          ctx.metadata,
+        ),
       ),
     {
       [typeKey]: { declaration, ctx },
-      fill: (args: Args) =>
+      fill: (args: DescriptionArgs) =>
         Type(
           declaration,
-          new Context([{ args }, ...ctx.parts], ctx.assertions, ctx.metadata),
+          new Context([{ args }, ...ctx.descriptionParts], ctx.assertionConfigs, ctx.metadata),
         ),
       assert: (assertion: Assertion, ...args: unknown[]) => {
         const trace = new Error().stack ?? ""
         return Type(
           declaration,
-          new Context(ctx.parts, [...ctx.assertions, { assertion, args, trace }], ctx.metadata),
+          new Context(
+            ctx.descriptionParts,
+            [...ctx.assertionConfigs, { assertion, args, trace }],
+            ctx.metadata,
+          ),
         )
       },
       annotate: (metadata: Record<keyof any, unknown>) =>
         Type(
           declaration,
-          new Context(ctx.parts, ctx.assertions, {
+          new Context(ctx.descriptionParts, ctx.assertionConfigs, {
             ...ctx.metadata,
             ...metadata,
           }),
@@ -72,7 +83,7 @@ export function Type<T, P extends keyof any = never>(
       toJSON: () => ({
         type: declaration.name,
         value: {
-          description: "TODO",
+          description: ctx.formatDescription({}),
           ...declaration.factory ? declaration.argsLookup : {},
         },
       }),

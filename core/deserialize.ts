@@ -29,12 +29,12 @@ export type ValueVisitor = (
 
 const visitor = new TypeVisitor<never, ValueVisitor>()
   .middleware((next, _1, type, ...args) => {
-    const { assertions } = type[typeKey].ctx
+    const { assertionConfigs } = type[typeKey].ctx
     const visit = next(undefined!, type, ...args)
     return (ctx, value) => {
       const { diagnosticsPending } = ctx
-      if (diagnosticsPending && assertions) {
-        for (const { assertion, args, trace } of assertions) {
+      if (diagnosticsPending && assertionConfigs) {
+        for (const { assertion, args, trace } of assertionConfigs) {
           diagnosticsPending.push((async () => {
             try {
               await assertion(value, args)

@@ -1,5 +1,4 @@
-import { recombine } from "../util/mod.ts"
-import type { Args } from "./Context.ts"
+import type { DescriptionArgs } from "./Context.ts"
 import { Schema } from "./Schema.ts"
 import * as T from "./T.ts"
 import { type AnyType, type Type, typeKey } from "./Type.ts"
@@ -26,13 +25,11 @@ export function toSchema<T>(type: Type<T>): Schema {
   return { ...root, $defs }
 }
 
-type ToSchemaVisitorContext = {
-  args: Args
+const visitor = new TypeVisitor<{
+  args: DescriptionArgs
   ids: Map<AnyType, number>
   $defs: Record<number, undefined | Schema>
-}
-
-const visitor = new TypeVisitor<ToSchemaVisitorContext, Schema>()
+}, Schema>()
   .middleware((next, ctx, type, ...factoryArgs) => {
     let defId = ctx.ids.get(type)
     if (defId === undefined) {
@@ -42,13 +39,13 @@ const visitor = new TypeVisitor<ToSchemaVisitorContext, Schema>()
     if (!(defId in ctx.$defs)) {
       ctx.$defs[defId] = undefined
       const args = { ...ctx.args }
-      const description = formatDescription(type, args)
+      const description = type[typeKey].ctx.formatDescription(args)
       ctx.$defs[defId] = {
         description,
         ...next({ ...ctx, args }, type, ...factoryArgs),
       }
     }
-    return ref(defId)
+    return { $ref: `#/$defs/${defId}` }
   })
   .add(T.boolean, () => ({ type: "boolean" }))
   .add(T.integer, () => ({ type: "integer" }))
@@ -93,23 +90,3 @@ const visitor = new TypeVisitor<ToSchemaVisitorContext, Schema>()
   }))
   .add(T.transform, (ctx, _0, _1, from): Schema => visitor.visit(ctx, from))
   .add(T.deferred, (ctx, _0, getType): Schema => visitor.visit(ctx, getType()))
-
-function ref(defId: number): Schema {
-  return { $ref: `#/$defs/${defId}` }
-}
-
-function formatDescription(type: AnyType, args: Args): string | undefined {
-  const segments: Array<string> = []
-  for (const part of type[typeKey].ctx.parts) {
-    if (typeof part === "string") {
-      segments.push(part)
-    } else if (part.template) {
-      segments.unshift(
-        recombine(part.template, part.params.map((paramKey) => args[paramKey])),
-      )
-    } else {
-      Object.assign(args, part.args)
-    }
-  }
-  return segments.length ? segments.join(" ") : undefined
-}

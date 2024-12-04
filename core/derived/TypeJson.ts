@@ -1,9 +1,10 @@
-import type { Expand } from "../../util/type_util.ts"
 import type { Type } from "../Type.ts"
+import type { TypeJson as TypeJson_ } from "../TypeJson.ts"
 import * as T from "../types/mod.ts"
-import { Record, Union } from "./mod.ts"
+import { Record } from "./Record.ts"
+import { Union } from "./Union.ts"
 
-export const TypeMetadata: Type<TypeMetadata, never> = T.taggedUnion("type", {
+export const TypeJson: Type<TypeJson_, never> = T.taggedUnion("type", {
   boolean: T.object({
     description: T.string,
   }),
@@ -15,15 +16,15 @@ export const TypeMetadata: Type<TypeMetadata, never> = T.taggedUnion("type", {
   }),
   array: T.object({
     description: T.string,
-    element: T.deferred(() => TypeMetadata),
+    element: T.deferred(() => TypeJson),
   }),
   object: T.object({
     description: T.string,
-    fields: Record(T.deferred(() => TypeMetadata)),
+    fields: Record(T.deferred(() => TypeJson)),
   }),
   option: T.object({
     description: T.string,
-    some: T.deferred(() => TypeMetadata),
+    some: T.deferred(() => TypeJson),
   }),
   enum: T.object({
     description: T.string,
@@ -32,36 +33,6 @@ export const TypeMetadata: Type<TypeMetadata, never> = T.taggedUnion("type", {
   taggedUnion: T.object({
     description: T.string,
     tag: Union(T.number, T.string),
-    members: Record(T.option(T.deferred(() => TypeMetadata))),
+    members: Record(T.option(T.deferred(() => TypeJson))),
   }),
-})`Type Definition.`
-
-export type TypeMetadata = MakeTypeMetadata<{
-  boolean: {}
-  number: {}
-  integer: {}
-  string: {}
-  array: {
-    element: TypeMetadata
-  }
-  object: {
-    fields: Record<string, TypeMetadata>
-  }
-  option: {
-    some: TypeMetadata
-  }
-  enum: {
-    values: Array<string>
-  }
-  taggedUnion: {
-    tag: number | string
-    members: Record<number | string, TypeMetadata | undefined>
-  }
-}>
-
-type MakeTypeMetadata<L> = {
-  [K in keyof L]: {
-    type: K
-    value: Expand<{ description: string } & L[K]>
-  }
-}[keyof L]
+})`A representation of a type definition.`

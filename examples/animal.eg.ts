@@ -6,17 +6,17 @@ import { dbg } from "../util/mod.ts"
 const Dog = T.object({
   bark: T.string,
   favoriteToy: T.string,
-})`Some description of ${"nationality"} dog.`
+})`Some description of a dog.`
 
 const Elephant = T.object({
   troopId: T.number,
   remembersYourFace: T.boolean,
-})`Some description of ${"nationality"} elephant.`
+})`Some description of an elephant.`
 
 const SlowLoris = T.object({
   poisonousElbows: T.boolean,
   cuteAsCouldBe: T.boolean,
-})`Some description of ${"nationality"} slow loris.`
+})`Some description of a slow loris.`
 
 export const Animal = T.taggedUnion("type", {
   Dog,
@@ -26,12 +26,7 @@ export const Animal = T.taggedUnion("type", {
 
 const openai = new Openai()
 
-const response_format = ResponseFormat(
-  "generate_animal",
-  Animal.fill({
-    nationality: "American",
-  }),
-)
+const response_format = ResponseFormat("generate_animal", Animal)
 
 await openai.chat.completions
   .create({
