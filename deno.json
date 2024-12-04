@@ -14,10 +14,11 @@
       "dependencies": ["mod"]
     },
     "test": {
+      "description": "Run all tests.",
       "command": "deno test -A"
     },
     "test:update": {
-      "description": "Update test snapshots.",
+      "description": "Run all tests and update snapshots.",
       "command": "deno task test -- --update"
     }
   },
