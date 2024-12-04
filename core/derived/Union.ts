@@ -1,9 +1,10 @@
-import type { AnyType, Type } from "../Type.ts"
+import type { Derived } from "../Derived.ts"
+import type { AnyType } from "../Type.ts"
 import { taggedUnion, transform } from "../types.ts"
 
 export function Union<M extends Array<AnyType>>(
   ...members: M
-): Type<M[number]["T"], M[number]["P"]> {
+): Derived<M[number]["T"], M> {
   return transform(
     "Union",
     taggedUnion("type", Object.fromEntries(members.map((member, i) => [i, member]))),

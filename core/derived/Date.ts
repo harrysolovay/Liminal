@@ -8,7 +8,7 @@ const YearMonthDay: Type<{
   year: number
   month: number
   day: number
-}, never> = object({
+}> = object({
   year: number,
   month: ZeroBasedInteger.assert(asserts.number.max, 11),
   day: number.assert(asserts.number.min, 1).assert(asserts.number.max, 31),
@@ -23,7 +23,7 @@ const YearMonthDay: Type<{
   })
 
 export { Date_ as Date }
-const Date_: Type<Date, never> = transform(
+const Date_: Type<Date> = transform(
   "Date",
   object({
     yearMonthDay: YearMonthDay,
