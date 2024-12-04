@@ -1,10 +1,10 @@
-import type { AnyType, Type } from "../Type.ts"
+import type { Derived } from "../Derived.ts"
+import type { AnyType } from "../Type.ts"
 import { object, transform } from "../types.ts"
 
-export function Tuple<E extends Array<AnyType>>(...elements: E): Type<
-  { [K in keyof E]: E[K]["T"] },
-  E[number]["P"]
-> {
+export function Tuple<E extends Array<AnyType>>(
+  ...elements: E
+): Derived<{ [K in keyof E]: E[K]["T"] }, E> {
   const { length } = elements
   return transform(
     "Tuple",
