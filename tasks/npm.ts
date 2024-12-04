@@ -3,7 +3,7 @@ import type { SpecifierMappings } from "@deno/dnt/transform"
 import { parseArgs } from "@std/cli"
 import * as fs from "@std/fs"
 import * as path from "@std/path"
-import { LIB_DESCRIPTION } from "../constants.ts"
+import { description } from "../deno.json" with { type: "json" }
 import { collect, splitLast } from "../util/mod.ts"
 
 const outDir = "target/npm"
@@ -49,7 +49,7 @@ await build({
   package: {
     name: "structured-outputs",
     version,
-    description: LIB_DESCRIPTION,
+    description,
     license: "Apache-2.0",
     repository: "github:harrysolovay/structured-outputs.git",
     type: "module",

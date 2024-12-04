@@ -4,6 +4,5 @@
 // moderate
 
 export * from "./client/mod.ts"
-export * from "./constants.ts"
 export * from "./core/mod.ts"
 export * from "./util/mod.ts"

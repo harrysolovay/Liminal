@@ -1,10 +1,10 @@
 import { transformerTwoslash } from "@shikijs/vitepress-twoslash"
 import { DefaultTheme, defineConfig } from "vitepress"
-import { LIB_DESCRIPTION } from "../../constants"
+import { description } from "../../deno.json" with { type: "json" }
 
 export default defineConfig({
   title: "Structured Outputs TS",
-  description: LIB_DESCRIPTION,
+  description,
   markdown: {
     codeTransformers: [transformerTwoslash()],
     theme: {
