@@ -18,8 +18,8 @@ export function unwrapChoice(completion: ChatCompletion): string {
 
 export function parseChoice(choice: string): Schema {
   const parsed = JSON.parse(choice)
-  if ("__unsafe_structured_output" in parsed) {
-    return parsed.__unsafe_structured_output
+  if ("value" in parsed) {
+    return parsed.value
   }
   return parsed
 }

@@ -5,30 +5,28 @@ import { dbg } from "../util/mod.ts"
 
 const openai = new Openai()
 
-const typeDefRf = ResponseFormat(
+const response_format_0 = ResponseFormat(
   "story_data_schema",
   T.TypeDef,
 )`Generate a type definition for an object that contains information about a fictional story world.`
 
-const def = await openai.chat.completions
+const dynType = await openai.chat.completions
   .create({
     model: "gpt-4o-mini",
     messages: [{ role: "system", content: [] }],
-    response_format: typeDefRf,
+    response_format: response_format_0,
   })
-  .then(typeDefRf.into)
+  .then(response_format_0.into)
   .then(dbg)
+  .then(T.hydrateType)
 
-const instanceRf = ResponseFormat(
-  "story_data_schema",
-  T.hydrateType(def),
-)`Generate a type definition for an object that contains information about a fictional story world.`
+const response_format_1 = ResponseFormat("story_data", dynType)
 
 await openai.chat.completions
   .create({
     model: "gpt-4o-mini",
     messages: [{ role: "system", content: [] }],
-    response_format: instanceRf,
+    response_format: response_format_1,
   })
-  .then(typeDefRf.into)
+  .then(response_format_1.into)
   .then(dbg)

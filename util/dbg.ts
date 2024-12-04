@@ -5,9 +5,9 @@ import { tap } from "./tap.ts"
 export const dbg: <T>(value: T) => T = tap(async (value) => {
   console.debug(value)
   await ensureDir(TMP_DIR)
-  const dest = `${TMP_DIR}${Date.now()}.json`
+  const dest = `${TMP_DIR}/${Date.now()}.json`
   await writeTextFile(dest, JSON.stringify(value, null, 2))
-  console.log(`Written to ${dest}.`)
+  console.debug(`Written to ${dest}.`)
 })
 
 const TMP_DIR = ".structured_outputs"

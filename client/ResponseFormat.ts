@@ -1,6 +1,6 @@
 import type { ChatCompletion } from "openai/resources/chat/completions"
 import type { ResponseFormatJSONSchema } from "openai/resources/shared"
-import { deserialize, Schema, toSchema, type Type } from "../core/mod.ts"
+import { deserialize, toSchema, type Type } from "../core/mod.ts"
 import { recombine } from "../util/mod.ts"
 import { parseChoice, unwrapChoice } from "./oai_util.ts"
 
@@ -38,24 +38,13 @@ function FinalResponseFormat<T>(
   type: Type<T>,
   description?: string,
 ): FinalResponseFormat<T> {
-  let schema = toSchema(type)
-  if (!Schema.isRootCompatible(schema)) {
-    schema = {
-      type: "object",
-      properties: {
-        __unsafe_structured_output: schema,
-      },
-      additionalProperties: false,
-      required: ["__unsafe_structured_output"],
-    }
-  }
   return {
     "": type,
     type: "json_schema",
     json_schema: {
       name,
       description,
-      schema,
+      schema: toSchema(type),
       strict: true,
     },
     into: (completion) => deserialize(type, parseChoice(unwrapChoice(completion))),

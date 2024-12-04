@@ -1,8 +1,4 @@
-// export * from "./client/mod.ts"
-// export * from "./core/mod.ts"
-
-// moderate
+// moderate --exclude util
 
 export * from "./client/mod.ts"
 export * from "./core/mod.ts"
-export * from "./util/mod.ts"

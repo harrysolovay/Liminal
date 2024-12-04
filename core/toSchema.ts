@@ -1,59 +1,56 @@
 import { recombine } from "../util/mod.ts"
 import type { Args } from "./Context.ts"
-import type { Schema } from "./Schema.ts"
+import { Schema } from "./Schema.ts"
 import * as T from "./T.ts"
 import { type AnyType, type Type, typeKey } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
 export function toSchema<T>(type: Type<T>): Schema {
-  return visitor.visit({
+  const $defs: Record<number, Schema> = {}
+  const root = visitor.visit({
     args: {},
-    visited: new WeakMap(),
+    ids: new Map(),
+    $defs,
   }, type)
+  if (!Schema.isRootCompatible(root)) {
+    return {
+      type: "object",
+      properties: {
+        value: root,
+      },
+      additionalProperties: false,
+      required: ["value"],
+      $defs,
+    }
+  }
+  return { ...root, $defs }
 }
 
-const visitor = new TypeVisitor<{
+type ToSchemaVisitorContext = {
   args: Args
-  visited: WeakMap<AnyType, Schema>
-}, Schema>()
+  ids: Map<AnyType, number>
+  $defs: Record<number, undefined | Schema>
+}
+
+const visitor = new TypeVisitor<ToSchemaVisitorContext, Schema>()
   .middleware((next, ctx, type, ...factoryArgs) => {
-    if (ctx.visited.has(type)) {
-      return ctx.visited.get(type)!
+    let defId = ctx.ids.get(type)
+    if (defId === undefined) {
+      defId = ctx.ids.size
+      ctx.ids.set(type, defId)
     }
-    const args = { ...ctx.args }
-    const segments: Array<string> = []
-    for (const part of type[typeKey].ctx.parts) {
-      if (typeof part === "string") {
-        segments.push(part)
-      } else if (part.template) {
-        segments.unshift(
-          recombine(
-            part.template,
-            part.params.map((paramKey) => ctx.args[paramKey]),
-          ),
-        )
-      } else {
-        Object.assign(args, part.args)
+    if (!(defId in ctx.$defs)) {
+      ctx.$defs[defId] = undefined
+      const args = { ...ctx.args }
+      const description = formatDescription(type, args)
+      ctx.$defs[defId] = {
+        description,
+        ...next({ ...ctx, args }, type, ...factoryArgs),
       }
     }
-    const description = segments.length ? segments.join(" ") : undefined
-    const schema = {
-      description,
-      ...next(
-        {
-          args,
-          visited: ctx.visited,
-        },
-        type,
-        ...factoryArgs,
-      ),
-    }
-    ctx.visited.set(type, schema)
-    return schema
+    return ref(defId)
   })
-  .add(T.boolean, () => {
-    return { type: "boolean" }
-  })
+  .add(T.boolean, () => ({ type: "boolean" }))
   .add(T.Integer, () => ({ type: "integer" }))
   .add(T.number, () => ({ type: "number" }))
   .add(T.string, () => ({ type: "string" }))
@@ -79,22 +76,40 @@ const visitor = new TypeVisitor<{
     type: "string",
     enum: members,
   }))
-  .add(T.taggedUnion, (ctx, _1, tagKey, members): Schema => {
-    return {
-      discriminator: tagKey,
-      anyOf: Object.entries(members).map(([k, v]) => ({
-        type: "object",
-        properties: {
-          [tagKey]: {
-            type: "string",
-            const: k,
-          },
-          ...(v === undefined ? {} : { value: visitor.visit(ctx, v) }),
+  .add(T.taggedUnion, (ctx, _1, tagKey, members): Schema => ({
+    discriminator: tagKey,
+    anyOf: Object.entries(members).map(([k, v]) => ({
+      type: "object",
+      properties: {
+        [tagKey]: {
+          type: "string",
+          const: k,
         },
-        required: [tagKey, ...v === undefined ? [] : ["value"]],
-        additionalProperties: false,
-      })),
-    }
-  })
+        ...(v === undefined ? {} : { value: visitor.visit(ctx, v) }),
+      },
+      required: [tagKey, ...v === undefined ? [] : ["value"]],
+      additionalProperties: false,
+    })),
+  }))
   .add(T.transform, (ctx, _0, from): Schema => visitor.visit(ctx, from))
   .add(T.deferred, (ctx, _0, getType): Schema => visitor.visit(ctx, getType()))
+
+function ref(defId: number): Schema {
+  return { $ref: `#/$defs/${defId}` }
+}
+
+function formatDescription(type: AnyType, args: Args): string | undefined {
+  const segments: Array<string> = []
+  for (const part of type[typeKey].ctx.parts) {
+    if (typeof part === "string") {
+      segments.push(part)
+    } else if (part.template) {
+      segments.unshift(
+        recombine(part.template, part.params.map((paramKey) => args[paramKey])),
+      )
+    } else {
+      Object.assign(args, part.args)
+    }
+  }
+  return segments.length ? segments.join(" ") : undefined
+}
