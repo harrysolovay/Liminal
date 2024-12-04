@@ -1,2 +1,1 @@
-export const LIB_DESCRIPTION = "Type-safe Iterative Refinement of Structured Output"
-// A Dynamic Type System For OpenAI
+export const LIB_DESCRIPTION = "A Framework for Integrating With OpenAI Structured Outputs"
