@@ -1,6 +1,5 @@
 import type { EnsureLiteralKeys } from "../util/mod.ts"
 import { type Args, type Assertion, Context, type Params } from "./Context.ts"
-import { inspectBearer } from "./inspect/inspectBearer.ts"
 
 /** The core unit of schema composition. */
 export interface Type<T, P extends keyof any = never> {
@@ -70,10 +69,31 @@ export function Type<T, P extends keyof any = never>(
           }),
         ),
       widen: () => self,
-      ...inspectBearer,
+      [Symbol.for("nodejs.util.inspect.custom")](
+        this: AnyType,
+        _0: unknown,
+        _1: unknown,
+        inspect_: (value: unknown) => string,
+      ): string {
+        return inspect(inspect_)
+      },
+      [Symbol.for("Deno.customInspect")](
+        this: AnyType,
+        inspect_: (value: unknown, opts: unknown) => string,
+        opts: unknown,
+      ): string {
+        return inspect((x) => inspect_(x, opts))
+      },
     },
   )
   return self as never
+
+  function inspect(inspect: (value: unknown) => string): string {
+    if (declaration.getAtom) {
+      return declaration.name
+    }
+    return `${declaration.name}(${declaration.args.map((arg) => inspect(arg)).join(", ")})`
+  }
 }
 
 export const typeKey: unique symbol = Symbol()

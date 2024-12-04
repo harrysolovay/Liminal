@@ -26,4 +26,4 @@ await refined(openai, {
   model: "gpt-4o-mini",
   response_format,
   messages: [{ role: "system", content: [] }],
-}).then(dbg)
+}).then(dbg("Refined"))

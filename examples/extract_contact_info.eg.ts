@@ -30,4 +30,4 @@ await new Openai().chat.completions
     }],
   })
   .then(response_format.into)
-  .then(dbg)
+  .then(dbg())

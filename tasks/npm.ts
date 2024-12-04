@@ -35,7 +35,9 @@ if (false as boolean) {
 await build({
   entryPoints: ["./mod.ts"],
   outDir,
-  shims: {},
+  shims: {
+    deno: true,
+  },
   scriptModule: false,
   declaration: "inline",
   compilerOptions: {

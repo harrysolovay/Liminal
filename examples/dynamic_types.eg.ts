@@ -17,7 +17,7 @@ const dynType = await openai.chat.completions
     response_format: response_format_0,
   })
   .then(response_format_0.into)
-  .then(dbg)
+  .then(dbg("TypeDef"))
   .then(T.hydrateType)
 
 const response_format_1 = ResponseFormat("story_data", dynType)
@@ -29,4 +29,4 @@ await openai.chat.completions
     response_format: response_format_1,
   })
   .then(response_format_1.into)
-  .then(dbg)
+  .then(dbg("Output"))
