@@ -7,7 +7,7 @@ const openai = new Openai()
 
 const response_format_0 = ResponseFormat(
   "story_data_schema",
-  T.TypeDef,
+  T.MetaType,
 )`Generate a type definition for an object that contains information about a fictional story world.`
 
 const dynType = await openai.chat.completions
@@ -17,8 +17,7 @@ const dynType = await openai.chat.completions
     response_format: response_format_0,
   })
   .then(response_format_0.into)
-  .then(dbg)
-  .then(T.hydrateType)
+  .then(dbg("MetaType"))
 
 const response_format_1 = ResponseFormat("story_data", dynType)
 
@@ -29,4 +28,4 @@ await openai.chat.completions
     response_format: response_format_1,
   })
   .then(response_format_1.into)
-  .then(dbg)
+  .then(dbg("Output"))

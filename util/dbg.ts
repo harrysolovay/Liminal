@@ -1,13 +1,22 @@
-import { ensureDir } from "./fs/ensureDir.ts"
-import { writeTextFile } from "./fs/writeTextFile.ts"
+import { yellow } from "@std/fmt/colors"
+import { ensureDir } from "../shim/ensureDir.ts"
+import { env } from "../shim/env.ts"
+import { writeTextFile } from "../shim/writeTextFile.ts"
 import { tap } from "./tap.ts"
 
-export const dbg: <T>(value: T) => T = tap(async (value) => {
-  console.debug(value)
-  await ensureDir(TMP_DIR)
-  const dest = `${TMP_DIR}/${Date.now()}.json`
-  await writeTextFile(dest, JSON.stringify(value, null, 2))
-  console.debug(`Written to ${dest}.`)
-})
+export function dbg(description?: string): <T>(value: T) => T {
+  const enabled = env("STRUCTURED_OUTPUTS_DEBUG")
+  if (!enabled) {
+    return (value) => value
+  }
+  const leading = description ? yellow(`${description}:`) : ""
+  return tap(async (value) => {
+    console.debug(leading, value)
+    await ensureDir(TMP_DIR)
+    const dest = `${TMP_DIR}/${Date.now()}.json`
+    await writeTextFile(dest, JSON.stringify(value, null, 2))
+    console.debug(leading, `Written to ${dest}.`)
+  })
+}
 
 const TMP_DIR = ".structured_outputs"

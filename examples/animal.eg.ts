@@ -40,4 +40,4 @@ await openai.chat.completions
     response_format,
   })
   .then(response_format.into)
-  .then(dbg)
+  .then(dbg("Animal"))

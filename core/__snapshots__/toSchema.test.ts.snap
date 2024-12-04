@@ -131,7 +131,7 @@ snapshot[`toSchema > integer 1`] = `
   "\$defs": {
     "0": {
       description: undefined,
-      type: "number",
+      type: "integer",
     },
   },
   additionalProperties: false,
@@ -152,7 +152,7 @@ snapshot[`toSchema > integer 2`] = `
   "\$defs": {
     "0": {
       description: "One.",
-      type: "number",
+      type: "integer",
     },
   },
   additionalProperties: false,
@@ -173,7 +173,7 @@ snapshot[`toSchema > integer 3`] = `
   "\$defs": {
     "0": {
       description: "One. Two.",
-      type: "number",
+      type: "integer",
     },
   },
   additionalProperties: false,

@@ -32,7 +32,7 @@ class DisplayVisitorContext {
 
 const visitor = new TypeVisitor<DisplayVisitorContext, string>()
   .add(T.boolean, () => "T.boolean")
-  .add(T.Integer, () => "T.integer")
+  .add(T.integer, () => "T.integer")
   .add(T.number, () => "T.number")
   .add(T.string, () => "T.string")
   .add(
@@ -67,7 +67,8 @@ const visitor = new TypeVisitor<DisplayVisitorContext, string>()
   })
   .add(
     T.transform,
-    (ctx, type, from): string => ctx.ingest(type, () => `T.transform(${visitor.visit(ctx, from)})`),
+    (ctx, type, name, from): string =>
+      ctx.ingest(type, () => `T.transform("${name}", ${visitor.visit(ctx, from)})`),
   )
   .add(
     T.deferred,
