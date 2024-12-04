@@ -1,7 +1,7 @@
-import type { Expand } from "../util/type_util.ts"
-import { Record, Union } from "./derived/mod.ts"
-import type { Type } from "./Type.ts"
-import * as T from "./types.ts"
+import type { Expand } from "../../util/type_util.ts"
+import type { Type } from "../Type.ts"
+import * as T from "../types/mod.ts"
+import { Record, Union } from "./mod.ts"
 
 export const TypeMetadata: Type<TypeMetadata, never> = T.taggedUnion("type", {
   boolean: T.object({

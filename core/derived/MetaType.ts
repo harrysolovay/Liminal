@@ -1,7 +1,7 @@
-import { Context } from "./Context.ts"
-import { Type, typeKey } from "./Type.ts"
+import { Context } from "../Context.ts"
+import { Type, typeKey } from "../Type.ts"
+import * as T from "../types/mod.ts"
 import { TypeMetadata } from "./TypeJson.ts"
-import * as T from "./types.ts"
 
 export const MetaType: Type<Type<unknown>> = T.transform("MetaType", TypeMetadata, hydrateType)
 
