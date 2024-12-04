@@ -14,13 +14,11 @@
       "dependencies": ["mod"]
     },
     "test": {
-      "command": "deno test -A",
-      "dependencies": ["check"]
+      "command": "deno test -A"
     },
     "test:update": {
       "description": "Update test snapshots.",
-      "command": "deno task test -- --update",
-      "dependencies": ["check"]
+      "command": "deno task test -- --update"
     }
   },
   "exclude": ["docs", "target"],
