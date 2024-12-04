@@ -1,10 +1,10 @@
 import type { Derived } from "../Derived.ts"
 import type { AnyType } from "../Type.ts"
-import { array, string, transform } from "../types.ts"
+import * as T from "../types/mod.ts"
 import { Tuple } from "./Tuple.ts"
 
 export function Record<V extends AnyType>(
   value: V,
 ): Derived<Record<string, V["T"]>, [V]> {
-  return transform("Record", array(Tuple(string, value)), Object.fromEntries)
+  return T.transform("Record", T.array(Tuple(T.string, value)), Object.fromEntries)
 }

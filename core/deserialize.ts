@@ -1,6 +1,6 @@
 import { type Type, typeKey, TypeVisitor } from "../core/mod.ts"
 import type { Diagnostic } from "./Diagnostic.ts"
-import * as T from "./T.ts"
+import * as T from "./types/mod.ts"
 
 export function deserialize<T>(
   type: Type<T, never>,
