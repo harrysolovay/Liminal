@@ -45,7 +45,8 @@
   },
   "scopes": {
     "./examples/": {
-      "structured-outputs": "./mod.ts"
+      "structured-outputs": "./mod.ts",
+      "structured-outputs/std": "./std/mod.ts"
     }
   },
   "lint": {

@@ -3,7 +3,7 @@ import type { SpecifierMappings } from "@deno/dnt/transform"
 import { parseArgs } from "@std/cli"
 import * as fs from "@std/fs"
 import * as path from "@std/path"
-import { description } from "../deno.json" with { type: "json" }
+import denoConfig from "../deno.json" with { type: "json" }
 import { collect, splitLast } from "../util/mod.ts"
 
 const outDir = "target/npm"
@@ -33,7 +33,10 @@ if (false as boolean) {
 }
 
 await build({
-  entryPoints: ["./mod.ts"],
+  entryPoints: ["./mod.ts", {
+    name: "./std",
+    path: "./std/mod.ts",
+  }],
   outDir,
   shims: {
     deno: true,
@@ -51,7 +54,7 @@ await build({
   package: {
     name: "structured-outputs",
     version,
-    description,
+    description: denoConfig.description,
     license: "Apache-2.0",
     repository: "github:harrysolovay/structured-outputs.git",
     type: "module",
