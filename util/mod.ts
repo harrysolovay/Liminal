@@ -1,6 +1,4 @@
-export * as asserts from "./asserts/mod.ts"
-
-// moderate --exclude asserts
+// moderate
 
 export * from "./assert.ts"
 export * from "./collect.ts"
