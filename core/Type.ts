@@ -69,6 +69,13 @@ export function Type<T, P extends keyof any = never>(
           }),
         ),
       widen: () => self,
+      toJSON: () => ({
+        type: declaration.name,
+        value: {
+          description: "TODO",
+          ...declaration.factory ? declaration.argsLookup : {},
+        },
+      }),
       [Symbol.for("nodejs.util.inspect.custom")](
         this: AnyType,
         _0: unknown,
@@ -110,6 +117,7 @@ export type TypeDeclaration =
     getAtom?: never
     factory: (...args: any) => AnyType
     args: unknown[]
+    argsLookup: Record<string, unknown>
   })
 
 export type AnyType = Type<any, any>

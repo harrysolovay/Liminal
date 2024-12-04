@@ -27,17 +27,17 @@ export function const_<V extends number | string>(value: V): Type<V> {
     name: "const",
     factory: const_,
     args: [value],
+    argsLookup: { value },
   })
 }
 Object.defineProperty(const_, "name", { value: "const" })
 
-export function array<E extends AnyType>(
-  Element: E,
-): Type<Array<E["T"]>, E["P"]> {
+export function array<E extends AnyType>(element: E): Type<Array<E["T"]>, E["P"]> {
   return Type({
     name: "array",
     factory: array,
-    args: [Element],
+    args: [element],
+    argsLookup: { element },
   })
 }
 
@@ -48,25 +48,26 @@ export function object<F extends Record<number | string, AnyType>>(
     name: "object",
     factory: object,
     args: [fields],
+    argsLookup: { fields },
   })
 }
 
-export function option<X extends AnyType>(
-  Some: X,
-): Type<X["T"] | undefined, X["P"]> {
+export function option<X extends AnyType>(some: X): Type<X["T"] | undefined, X["P"]> {
   return Type({
     name: "option",
     factory: option,
-    args: [Some],
+    args: [some],
+    argsLookup: { some },
   })
 }
 
 export { enum_ as enum }
-function enum_<K extends string>(...members: Array<K>): Type<K> {
+function enum_<K extends string>(...values: Array<K>): Type<K> {
   return Type({
     name: "enum",
     factory: enum_,
-    args: members,
+    args: values,
+    argsLookup: { values },
   })
 }
 Object.defineProperty(enum_, "name", { value: "enum" })
@@ -89,18 +90,20 @@ export function taggedUnion<
     name: "taggedUnion",
     factory: taggedUnion,
     args: [tagKey, members],
+    argsLookup: { tagKey, members },
   })
 }
 
 export function transform<F, P extends keyof any, T>(
   name: string,
-  From: Type<F, P>,
+  from: Type<F, P>,
   f: (value: F) => T,
 ): Type<T, P> {
   return Type({
     name: "transform",
     factory: transform,
-    args: [name, From, f],
+    args: [name, from, f],
+    argsLookup: { name, from, f },
   })
 }
 
@@ -111,5 +114,6 @@ export function deferred<T, P extends keyof any>(
     name: "deferred",
     factory: deferred,
     args: [getType],
+    argsLookup: { getType },
   })
 }

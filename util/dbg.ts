@@ -1,3 +1,4 @@
+import { yellow } from "@std/fmt/colors"
 import { ensureDir } from "../shim/ensureDir.ts"
 import { env } from "../shim/env.ts"
 import { writeTextFile } from "../shim/writeTextFile.ts"
@@ -8,7 +9,7 @@ export function dbg(description?: string): <T>(value: T) => T {
   if (!enabled) {
     return (value) => value
   }
-  const leading = description ? `${description}:` : ""
+  const leading = description ? yellow(`${description}:`) : ""
   return tap(async (value) => {
     console.debug(leading, value)
     await ensureDir(TMP_DIR)
