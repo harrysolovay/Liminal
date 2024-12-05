@@ -1,4 +1,5 @@
 import { transformerTwoslash } from "@shikijs/vitepress-twoslash"
+import footnotePlugin from "markdown-it-footnote"
 import { DefaultTheme, defineConfig } from "vitepress"
 import denoConfig from "../../deno.json" with { type: "json" }
 
@@ -11,6 +12,7 @@ export default defineConfig({
       dark: "github-dark",
       light: "github-light",
     },
+    config: (md) => md.use(footnotePlugin),
   },
   sitemap: {
     hostname: "http://structured-outputs.dev",
@@ -49,6 +51,11 @@ export default defineConfig({
       icon: "github",
       link: "https://github.com/harrysolovay/structured-outputs",
     }],
+    footer: { // TODO: get this rendering
+      message:
+        `Released under the <a href="https://github.com/harrysolovay/structured-outputs/blob/main/LICENSE">Apache 2.0 License</a>.`,
+      copyright: `Copyright © 2024-present <a href="https://x.com/harrysolovay">Harry Solovay</a>`,
+    },
   },
 })
 

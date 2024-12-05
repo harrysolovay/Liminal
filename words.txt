@@ -10,6 +10,7 @@ esbenp
 harrysolovay
 inspectable
 metatype
+miyazaki
 nodenext
 openai
 quasis

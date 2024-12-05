@@ -10,23 +10,23 @@ export function AssertAdherence(
   assertion: string,
   ...assertions: string[]
 ) => Promise<void> {
-  return async (value, assertion, ...assertions) => {
-    const maybeS = assertions.length ? "s" : ""
+  return async (value, ...assertions) => {
+    const plurality = assertions.length > 1 ? "s" : ""
     const stance = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [{
         role: "user",
-        content: `Weigh in on whether the value is valid for the corresponding assertion${maybeS}.
+        content:
+          `Weigh in on whether the value is valid for the corresponding assertion${plurality}.
 
-Assertion${maybeS}: ${
-          assertions.length
-            ? `
+Assertion${plurality}: ${
+            plurality
+              ? `
 
-- ${assertion}
 - ${assertions.join("\n- ")}
 `
-            : assertion
-        }
+              : assertions[0]!
+          }
 
 Value: ${value}`,
       }],

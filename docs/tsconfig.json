@@ -26,5 +26,5 @@
     "useDefineForClassFields": false
   },
   "exclude": ["node_modules"],
-  "include": [".vitepress"]
+  "include": [".vitepress/**/*"]
 }

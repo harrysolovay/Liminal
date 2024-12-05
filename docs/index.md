@@ -4,10 +4,84 @@ title: Overview
 
 # Structured Outputs TypeScript
 
-A library for working with
-[OpenAI structured outputs](https://platform.openai.com/docs/guides/structured-outputs).
+> A Framework for Integrating With
+> [OpenAI structured outputs](https://platform.openai.com/docs/guides/structured-outputs).
 
-## Overview
+OpenAI's structured outputs simplify the integration of LLMs into procedural code. Developers can
+now ensure that completions conform to a specified JSON schema. However, this raw capability
+presents subsequent challenges to developers. Structured Outputs TypeScript addresses these
+challenges:
+
+## Type-safe schema modeling
+
+```ts twoslash
+import { T } from "structured-outputs"
+// ---cut---
+const Dog = T.object({
+  toy: T.enum("Bone", "Shoe", "Homework"),
+})
+
+const Cow = T.object({
+  miyazaki: T.boolean,
+})
+
+const Animal = T.taggedUnion("type", {
+  Dog,
+  Cow,
+})
+
+Animal
+// ^?
+```
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+
+We can treat any type as a tagged template function to attach descriptions that serve as additional
+context to guide the LLM.
+
+```ts{2} twoslash
+import { T } from "structured-outputs"
+// ---cut---
+const Dog = T.object({
+  toy: T.enum("Bone", "Shoe", "Homework")`The dog's preferred chew toy.`,
+})
+```
+
+Types explored further in [a later section](./types/index.md).
+
+## Iterative Refinement
+
+Standalone OpenAI structured outputs are limited (see in the official). Only a subset of JSON schema
+is supported.[^1] Moreover, there are constraints that cannot be represented in JSON schema.
+
+Structured Outputs TypeScript allows developers to attach runtime assertions to types.
+
+```ts twoslash
+import { type AssertAdherence, T } from "structured-outputs"
+declare const assertAdherence: ReturnType<typeof AssertAdherence>
+// ---cut---
+const StorySummary = T.string`A summary of a story.`
+  .assert(assertAdherence, "The summary is uplifting.")
+```
+
+> Assertions can be asynchronous. In this case, `assertAdherence` produces a promise that may reject
+> with an `AssertionError`.
+
+For example, we may want to ensure that an LLM-produced value does not already exist in a database.
+For use cases such as this, we need to perform validation at runtime.
+
+There are many constraints that we cannot specify in JSON schema.
 
 Developers compose representations of types.
 
@@ -174,3 +248,5 @@ contact
 <br />
 <br />
 <br />
+
+[^1]: [OpenAI structured output backend limitations](https://platform.openai.com/docs/guides/structured-outputs#supported-schemas).

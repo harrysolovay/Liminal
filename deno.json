@@ -9,8 +9,8 @@
       "command": "deno run -A https://deno.land/x/moderate@0.0.5/mod.ts --exclude '*.test.ts' --exclude target && dprint fmt"
     },
     "check": {
-      "description": "Ensure all project files type-check and then lint.",
-      "command": "deno check . && deno lint",
+      "description": "Ensure all TypeScript pass typechecking and linting.",
+      "command": "deno check . && deno lint && cd docs && ./node_modules/.bin/tsc",
       "dependencies": ["mod"]
     },
     "test": {
