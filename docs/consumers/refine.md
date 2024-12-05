@@ -1,4 +1,4 @@
-# Iterative Refinement
+# `refine`
 
 ## Correctness vs. Speed
 

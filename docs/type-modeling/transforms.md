@@ -1,3 +1,0 @@
-# `T.transform`
-
-## Computed Fields

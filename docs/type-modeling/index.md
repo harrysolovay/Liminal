@@ -1,3 +1,0 @@
-# Modeling Types
-
-## Context

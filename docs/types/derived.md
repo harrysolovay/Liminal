@@ -1,13 +1,12 @@
----
-prev:
-  text: Patterns Overview
-  link: patterns
-next:
-  text: Pattern Conventions
-  link: patterns/conventions
----
+# Derived Types
 
-# Authoring Patterns
+## `T.Derived`
+
+## Explicit Signatures
+
+For JSR
+
+## Generic Functions
 
 ## Atomic Patterns
 

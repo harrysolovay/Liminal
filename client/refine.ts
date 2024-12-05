@@ -7,9 +7,9 @@ import { deserialize, Diagnostic, T } from "../core/mod.ts"
 import { assert, tap } from "../util/mod.ts"
 import { parseChoice, unwrapChoice } from "./oai_util.ts"
 import { ResponseFormat } from "./ResponseFormat.ts"
-import type { TokenAllowanceManager } from "./TokenAllowanceManager.ts"
+import type { TokenAllowance } from "./TokenAllowance.ts"
 
-export interface RefinedParams<T = any> extends
+export interface RefineParams<T = any> extends
   Omit<
     ChatCompletionCreateParamsNonStreaming,
     "audio" | "modalities" | "response_format" | "stream" | "stream_options"
@@ -18,17 +18,17 @@ export interface RefinedParams<T = any> extends
   response_format: ResponseFormat<T>
 }
 
-export interface RefinedOptions {
+export interface RefineOptions {
   signal?: AbortSignal
   max?: number
-  allowance?: TokenAllowanceManager
+  allowance?: TokenAllowance
 }
 
 /** Get the completion and then loop refinement assertions and resubmission until all assertions pass. */
-export async function refined<T>(
+export async function refine<T>(
   client: Openai,
-  params: RefinedParams<T>,
-  options?: RefinedOptions,
+  params: RefineParams<T>,
+  options?: RefineOptions,
 ): Promise<T> {
   const { signal, max, allowance } = options ?? {}
   assert(
@@ -107,7 +107,7 @@ function Corrections(diagnostics: Array<Diagnostic>) {
 }
 
 function prompt(
-  params: RefinedParams,
+  params: RefineParams,
   diagnostics: Array<Diagnostic>,
 ): string {
   const messageSection = maybeSerializeMessages(params)
@@ -144,7 +144,7 @@ const SECTIONS = [
   "the unmet constraints",
 ]
 
-function maybeSerializeMessages(params: RefinedParams) {
+function maybeSerializeMessages(params: RefineParams) {
   if (!params.messages.length) {
     return ""
   }

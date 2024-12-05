@@ -3,29 +3,29 @@ import { Context } from "./Context.ts"
 import { Type, typeKey } from "./Type.ts"
 import * as T from "./types/mod.ts"
 
-export type TypeJson = TypeJson.Make<{
+export type TypeInfo = TypeInfo.Make<{
   boolean: {}
   number: {}
   integer: {}
   string: {}
   array: {
-    element: TypeJson
+    element: TypeInfo
   }
   object: {
-    fields: Record<string, TypeJson>
+    fields: Record<string, TypeInfo>
   }
   option: {
-    some: TypeJson
+    some: TypeInfo
   }
   enum: {
     values: Array<string>
   }
   taggedUnion: {
     tag: number | string
-    members: Record<number | string, TypeJson | undefined>
+    members: Record<number | string, TypeInfo | undefined>
   }
 }>
-namespace TypeJson {
+namespace TypeInfo {
   export type Make<L> = {
     [K in keyof L]: {
       type: K
@@ -34,9 +34,9 @@ namespace TypeJson {
   }[keyof L]
 }
 
-export function hydrateType(metadata: TypeJson): Type<unknown> {
+export function hydrateType(into: TypeInfo): Type<unknown> {
   const base = (() => {
-    switch (metadata.type) {
+    switch (into.type) {
       case "boolean": {
         return T.boolean
       }
@@ -50,27 +50,27 @@ export function hydrateType(metadata: TypeJson): Type<unknown> {
         return T.string
       }
       case "array": {
-        return T.array(hydrateType(metadata.value.element))
+        return T.array(hydrateType(into.value.element))
       }
       case "object": {
         return T.object(
           Object.fromEntries(
-            Object.entries(metadata.value.fields).map(([k, v]) => [k, hydrateType(v)]),
+            Object.entries(into.value.fields).map(([k, v]) => [k, hydrateType(v)]),
           ),
         )
       }
       case "option": {
-        return T.option(hydrateType(metadata.value.some))
+        return T.option(hydrateType(into.value.some))
       }
       case "enum": {
-        return T.enum(...metadata.value.values)
+        return T.enum(...into.value.values)
       }
       case "taggedUnion": {
         return T.taggedUnion(
-          metadata.value.tag,
+          into.value.tag,
           Object.fromEntries(
             Object
-              .entries(metadata.value.members)
+              .entries(into.value.members)
               .map(([k, v]) => [k, v ? hydrateType(v) : undefined]),
           ),
         )
@@ -81,7 +81,7 @@ export function hydrateType(metadata: TypeJson): Type<unknown> {
   return Type(
     declaration,
     new Context(
-      [metadata.value.description, ...ctx.descriptionParts],
+      [into.value.description, ...ctx.descriptionParts],
       ctx.assertionConfigs,
       ctx.metadata,
     ),

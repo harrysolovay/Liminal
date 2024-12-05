@@ -1,10 +1,10 @@
 import { transformerTwoslash } from "@shikijs/vitepress-twoslash"
 import { DefaultTheme, defineConfig } from "vitepress"
-import { description } from "../../deno.json" with { type: "json" }
+import denoConfig from "../../deno.json" with { type: "json" }
 
 export default defineConfig({
   title: "Structured Outputs TS",
-  description,
+  description: denoConfig.description,
   markdown: {
     codeTransformers: [transformerTwoslash()],
     theme: {
@@ -28,8 +28,8 @@ export default defineConfig({
         link: "/",
       },
       {
-        text: "Patterns",
-        link: "/patterns",
+        text: "Examples",
+        link: "/examples",
       },
     ],
     search: {
@@ -55,56 +55,59 @@ export default defineConfig({
 function manualItems(): DefaultTheme.SidebarItem[] {
   return [
     {
-      text: "Overview",
-      link: "/",
+      text: "Introduction",
       items: [
-        { text: "Setup", link: "setup" },
-        { text: "Basic Examples", link: "basic-example" },
-        { text: "Types" },
+        { text: "Overview", link: "/" },
+        { text: "Setup", link: "/setup" },
+        { text: "Quickstart", link: "/quickstart" },
       ],
     },
     {
       text: "Types",
+      base: "/types",
       collapsed: false,
       items: [
-        { text: "Primitives", link: "primitive-types" },
-        { text: "Collections", link: "collection-types" },
-        { text: "Transforms", link: "transform-types" },
-        { text: "Recursion", link: "recursive-types" },
-        { text: "Utility Types", link: "utility-types" },
-        { text: "Derivations", link: "derived-types" },
-        { text: "Dynamic Types", link: "dynamic-types" },
-        { text: "MetaType", link: "metatype" },
+        { text: "Types Overview", link: "/" },
+        { text: "Primitives", link: "/primitives" },
+        { text: "Collections", link: "/collections" },
+        { text: "Unions", link: "/unions" },
+        { text: "<code>T.Intersection</code>", link: "/intersection" },
+        { text: "Recursion", link: "/recursion" },
+        { text: "<code>T.Transform</code>", link: "/transform" },
+        { text: "<code>T.Derived</code>", link: "/derived" },
+        { text: "Dynamic Types", link: "/dynamic" },
+        { text: "<code>T.MetaType</code>", link: "/metatype" },
       ],
     },
     {
       text: "Context",
+      base: "/context",
       collapsed: false,
       items: [
-        { text: "Composition" },
-        { text: "Parameterization" },
+        { text: "Context Composition", link: "/composition" },
+        { text: "Context Parameters", link: "/parameters" },
       ],
     },
     {
       text: "Consuming Types",
+      base: "/consumers",
       collapsed: false,
       items: [
-        { text: "ResponseFormat" },
-        { text: "Refined" },
-        { text: "Adherence Assertions" },
-        { text: "Observability" },
-        { text: "Token Allowance" },
-        { text: "Type Visitors" },
-        { text: "Tool" },
+        { text: "<code>ResponseFormat</code>", link: "/response-format" },
+        { text: "<code>refine</code>", link: "/refine" },
+        { text: "<code>AssertAdherence</code>", link: "/assert-adherence" },
+        { text: "<code>TokenAllowance</code>", link: "/token-allowance" },
+        { text: "<code>TypeVisitor</code>", link: "/type-visitor" },
+        { text: "<code>Tool</code> (Realtime)", link: "/tool" },
       ],
     },
     {
-      text: "Guide XYZ",
+      text: "XYZ",
+      base: "/xyz",
       collapsed: false,
       items: [
-        { text: "Conventions", link: "conventions" },
-        { text: "Iterative Refinement" },
-        { text: "Troubleshooting", link: "troubleshooting" },
+        { text: "Conventions", link: "/conventions" },
+        { text: "Troubleshooting", link: "/troubleshooting" },
       ],
     },
   ]

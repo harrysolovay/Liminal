@@ -1,11 +1,6 @@
----
-prev:
-  text: Context
-  link: context
-next: false
----
+# Troubleshooting
 
-root-wrapping
+TODO: root-wrapping
 
 ## Unfilled Parameters
 

@@ -1,5 +1,5 @@
 import type { Type } from "./Type.ts"
-import { hydrateType, type TypeJson as TypeJson_ } from "./TypeJson.ts"
+import { hydrateType, type TypeInfo as TypeJson_ } from "./TypeJson.ts"
 import * as T from "./types/mod.ts"
 import { Record, Union } from "./utility/mod.ts"
 

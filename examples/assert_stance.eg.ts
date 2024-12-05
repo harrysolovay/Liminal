@@ -1,11 +1,5 @@
 import Openai from "openai"
-import {
-  AssertAdherence,
-  refined,
-  ResponseFormat,
-  T,
-  TokenAllowanceManager,
-} from "structured-outputs"
+import { AssertAdherence, refine, ResponseFormat, T, TokenAllowance } from "structured-outputs"
 import "@std/dotenv/load"
 import { dbg } from "../util/mod.ts"
 
@@ -19,11 +13,11 @@ const ReasonToBeHappy = T
 
 const response_format = ResponseFormat("ReasonToBeHappy", ReasonToBeHappy)
 
-const allowance = new TokenAllowanceManager({
+const allowance = new TokenAllowance({
   total_tokens: 1_000,
 })
 
-await refined(openai, {
+await refine(openai, {
   model: "gpt-4o-mini",
   messages: [{ role: "system", content: [] }],
   response_format,

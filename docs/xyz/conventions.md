@@ -1,12 +1,3 @@
----
-prev:
-  text: Authoring Patterns
-  link: patterns/authoring
-next:
-  text: Custom Types
-  link: patterns/custom-types
----
-
 # Conventions
 
 ## Exposing Parameter Keys

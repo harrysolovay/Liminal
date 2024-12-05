@@ -20,6 +20,14 @@
     "test:update": {
       "description": "Run all tests and update snapshots.",
       "command": "deno task test -- --update"
+    },
+    "npm": {
+      "description": "Build (`target/npm`) for use within Node.js and Bun projects.",
+      "command": "deno run -A tasks/npm.ts"
+    },
+    "docs": {
+      "description": "Serve the documentation site in watch mode.",
+      "command": "cd docs && npm i && ./node_modules/.bin/vitepress"
     }
   },
   "exclude": ["docs", "target"],

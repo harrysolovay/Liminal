@@ -1,6 +1,6 @@
 import type { ChatCompletion } from "openai/resources/chat/completions"
 
-export interface TokenAllowances {
+export interface TokenAllowanceOptions {
   /** Number of tokens in the generated completion. */
   completion_tokens?: number
   /** Number of tokens in the prompt. */
@@ -9,18 +9,18 @@ export interface TokenAllowances {
   total_tokens?: number
 }
 
-export class TokenAllowanceManager {
+export class TokenAllowance {
   stop: boolean = false
   constructor(
-    readonly allowances: TokenAllowances,
-    readonly halt?: (self: TokenAllowanceManager) => boolean,
+    readonly allowances: TokenAllowanceOptions,
+    readonly halt?: (self: TokenAllowance) => boolean,
   ) {}
 
   ingest = (completion: ChatCompletion): void => {
     const { usage } = completion
     if (usage) {
       Object.keys(this.allowances).forEach((key) => {
-        if (!(this.allowances[key as keyof TokenAllowances]! -= usage[key as never])) {
+        if (!(this.allowances[key as keyof TokenAllowanceOptions]! -= usage[key as never])) {
           this.stop = true
         }
       })
