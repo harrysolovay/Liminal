@@ -1,6 +1,7 @@
 # Structured Outputs TypeScript
 
-> A library for working with OpenAI's structured outputs.
+> A Framework for Integrating With
+> [OpenAI structured outputs](https://platform.openai.com/docs/guides/structured-outputs).
 
 - [Documentation &rarr;](https://structured-outputs.dev)<br />Expanded introduction and usage
   guides.
@@ -13,7 +14,7 @@
 
 ## **Code of Conduct**
 
-Please ensure you adhere to our [Code of Conduct](CODE_OF_CONDUCT.md) when interacting in this
+Please ensure you adhere to our [code of conduct](CODE_OF_CONDUCT.md) when interacting in this
 repository.
 
 ---
@@ -27,4 +28,4 @@ before you dive in.
 
 ## **License**
 
-Structured Outputs TypeScript is [Apache licensed](LICENSE).
+Structured Outputs TypeScript is [Apache-licensed](LICENSE).
