@@ -12,7 +12,7 @@ now ensure that completions conform to a specified JSON schema. However, this ra
 presents subsequent challenges to developers. Structured Outputs TypeScript addresses these
 challenges:
 
-## Type-safe schema modeling
+## Schema-modeling
 
 ```ts twoslash
 import { T } from "structured-outputs"
@@ -47,6 +47,10 @@ Animal
 <br />
 <br />
 
+[Full documentation of types &rarr;](./types/index.md)
+
+## Context
+
 We can treat any type as a tagged template function to attach descriptions that serve as additional
 context to guide the LLM.
 
@@ -58,32 +62,67 @@ const Dog = T.object({
 })
 ```
 
-Types explored further in [a later section](./types/index.md).
+### Parameterized Context
+
+We can describe the structure of commonly-used types and later inject context depending on the use
+case.
+
+```ts
+const Person = T.object({
+  hometown: T.string`An ${"nationality"} city.`,
+  favoriteFood: T.string`A delicious ${"nationality"} food.`,
+})`An ${nationality} person.`
+
+const AmericanPerson = Person.fill({
+  nationality: "American",
+})
+```
 
 ## Iterative Refinement
 
-Standalone OpenAI structured outputs are limited (see in the official). Only a subset of JSON schema
-is supported.[^1] Moreover, there are constraints that cannot be represented in JSON schema.
+Standalone OpenAI structured outputs are limited to a narrow subset of JSON schema.[^1] Moreover,
+developers often need to constrain data types in ways that can only be represented with runtime
+code; JSON Schema alone is insufficient.
+
+### LLM-Assisted Assertions
+
+Using specialized agents to validate specialized data.
+
+```ts twoslash
+import { type AssertAdherence } from "structured-outputs"
+```
 
 Structured Outputs TypeScript allows developers to attach runtime assertions to types.
 
-```ts twoslash
+```ts{2} twoslash
 import { type AssertAdherence, T } from "structured-outputs"
 declare const assertAdherence: ReturnType<typeof AssertAdherence>
 // ---cut---
-const StorySummary = T.string`A summary of a story.`
+const UpliftingSummary = T.string`A summary.`
   .assert(assertAdherence, "The summary is uplifting.")
 ```
 
 > Assertions can be asynchronous. In this case, `assertAdherence` produces a promise that may reject
 > with an `AssertionError`.
 
-For example, we may want to ensure that an LLM-produced value does not already exist in a database.
-For use cases such as this, we need to perform validation at runtime.
+We then utilize `refine` to execute our completion request.
 
-There are many constraints that we cannot specify in JSON schema.
+```ts twoslash
+import Openai from "openai"
+// import { refine, ResponseFormat, T } from "structured-outputs"
 
-Developers compose representations of types.
+// const openai = new Openai()
+
+// const response_format = ResponseFormat("refined_summary", Refined)
+
+// const refined = await refine(openai, {
+//   model: "gpt-4o-mini",
+//   response_format,
+//   messages: [{ role: "system", content: [] }],
+// })
+```
+
+Upon receiving the structured output
 
 ```ts twoslash
 import { T } from "structured-outputs"
@@ -95,14 +134,12 @@ const Contact = T.object({
 })
 ```
 
-[Full documentation of types &rarr;](./types.md)
-
 `structured-outputs` was designed to enable the creation of libraries that abstract over the core
-types described in [the types section](../types.md). The aim is to enable an ecosystem of reusable
-type libraries.
+types described in [the types section](./types/index.md). The aim is to enable an ecosystem of
+reusable type libraries.
 
 Such library types can have parameterized context, thereby enabling end developers to apply context
-as necessary ([see context section](../context.md)).
+as necessary ([see context section](./context/parameters.md)).
 
 ## Requesting Patterns
 

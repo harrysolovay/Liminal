@@ -21,11 +21,10 @@ point of `structured-outputs`.
 import { T } from "structured-outputs"
 ```
 
-Every `Type` has three type parameters:
+Every `Type` has two type parameters:
 
 - `T`: The native TypeScript type to which the response data decodes.
-- `R extends Record<string, unknown>`: The refinements that can be applied to the given type.
 - `P extends keyof any`: The literal types of context parameter keys (more on this
-  [in the context section](./context.md)).
+  [in the context section](../context/parameters.md)).
 
 ## Context

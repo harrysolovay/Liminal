@@ -1,7 +1,18 @@
 import { transformerTwoslash } from "@shikijs/vitepress-twoslash"
+import dedent from "dedent"
 import footnotePlugin from "markdown-it-footnote"
 import { DefaultTheme, defineConfig } from "vitepress"
 import denoConfig from "../../deno.json" with { type: "json" }
+
+// cspell:disable
+const GOOGLE_ANALYTICS = dedent`
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0VS5ZGHX74');
+`
+// cspell:enable
+const x = "asdfasdf"
 
 export default defineConfig({
   title: "Structured Outputs TS",
@@ -20,6 +31,18 @@ export default defineConfig({
   lastUpdated: true,
   cleanUrls: true,
   metaChunk: true,
+  head: [
+    ["link", { rel: "preconnect", link: "https://fonts.googleapis.com" }],
+    ["link", { rel: "preconnect", link: "https://fonts.gstatic.com", crossorigin: "" }],
+    ["link", {
+      rel: "stylesheet",
+      link:
+        "https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap",
+      crossorigin: "",
+    }],
+    ["script", { async: "", src: "https://www.googletagmanager.com/gtag/js?id=G-0VS5ZGHX74" }],
+    ["script", {}, GOOGLE_ANALYTICS],
+  ],
   themeConfig: {
     editLink: {
       pattern: "https://github.com/harrysolovay/structured-outputs/edit/main/docs/:path",

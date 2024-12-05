@@ -13,6 +13,7 @@ metatype
 miyazaki
 nodenext
 openai
+parameterizing
 quasis
 shiki
 shikijs

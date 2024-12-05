@@ -44,7 +44,7 @@ DrinkSuggestion
 ```ts twoslash
 import { T } from "structured-outputs"
 // ---cut---
-const Coords = T.tuple(
+const Coords = T.Tuple(
   T.number`Latitude`,
   T.number`Longitude`,
 )

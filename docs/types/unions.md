@@ -25,7 +25,7 @@ const Organism = T.taggedUnion("type", {
   Cat: T.object({
     meow: T.string,
   }),
-  Bacteria: null,
+  Bacteria: undefined,
 })
 
 Organism
