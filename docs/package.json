@@ -1,17 +1,15 @@
 {
-  "scripts": {
-    "check": "tsc",
-    "dev": "vitepress dev",
-    "build": "vitepress build",
-    "preview": "vitepress preview"
-  },
+  "type": "module",
   "devDependencies": {
     "@shikijs/vitepress-twoslash": "^1.23.1",
+    "@types/markdown-it-footnote": "^3.0.4",
     "structured-outputs": "file:../target/npm",
     "typescript": "^5.7.2",
     "vitepress": "^1.5.0"
   },
   "dependencies": {
+    "dedent": "^1.5.3",
+    "markdown-it-footnote": "^4.0.0",
     "openai": "^4.73.0"
   }
 }

@@ -1,10 +1,9 @@
-import type { Type } from "../Type.ts"
-import type { TypeJson as TypeJson_ } from "../TypeJson.ts"
-import * as T from "../types/mod.ts"
-import { Record } from "./Record.ts"
-import { Union } from "./Union.ts"
+import type { Type } from "./Type.ts"
+import { hydrateType, type TypeInfo as TypeJson_ } from "./TypeJson.ts"
+import * as T from "./types/mod.ts"
+import { Record, Union } from "./utility/mod.ts"
 
-export const TypeJson: Type<TypeJson_, never> = T.taggedUnion("type", {
+const TypeJson: Type<TypeJson_, never> = T.taggedUnion("type", {
   boolean: T.object({
     description: T.string,
   }),
@@ -36,3 +35,5 @@ export const TypeJson: Type<TypeJson_, never> = T.taggedUnion("type", {
     members: Record(T.option(T.deferred(() => TypeJson))),
   }),
 })`A representation of a type definition.`
+
+export const MetaType: Type<Type<unknown>> = T.transform("MetaType", TypeJson, hydrateType)

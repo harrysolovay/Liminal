@@ -1,8 +1,9 @@
 import type { DescriptionArgs } from "./Context.ts"
-import { Schema } from "./Schema.ts"
 import * as T from "./T.ts"
 import { type AnyType, type Type, typeKey } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
+
+export type Schema = Record<string, unknown>
 
 export function toSchema<T>(type: Type<T>): Schema {
   const $defs: Record<number, Schema> = {}
@@ -11,7 +12,7 @@ export function toSchema<T>(type: Type<T>): Schema {
     ids: new Map(),
     $defs,
   }, type)
-  if (!Schema.isRootCompatible(root)) {
+  if (!isRootCompatible(root)) {
     return {
       type: "object",
       properties: {
@@ -23,6 +24,10 @@ export function toSchema<T>(type: Type<T>): Schema {
     }
   }
   return { ...root, $defs }
+}
+
+function isRootCompatible(schema: Schema): boolean {
+  return "type" in schema && schema.type === "object"
 }
 
 const visitor = new TypeVisitor<{

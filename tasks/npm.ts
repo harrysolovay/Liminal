@@ -11,9 +11,6 @@ await fs.emptyDir(outDir)
 
 const { version } = parseArgs(Deno.args, {
   string: ["version"],
-  default: {
-    version: "0.0.0-local.0",
-  },
 })
 
 const mappingTargets = await collect(fs.walk(".", {
@@ -53,7 +50,7 @@ await build({
   mappings,
   package: {
     name: "structured-outputs",
-    version,
+    version: version ?? "0.0.0-local.0",
     description: denoConfig.description,
     license: "Apache-2.0",
     repository: "github:harrysolovay/structured-outputs.git",
@@ -62,17 +59,20 @@ await build({
   },
 })
 
-// TODO: delete upon resolution of https://github.com/denoland/dnt/issues/433.
-{
-  const packageJsonPath = path.join(outDir, "package.json")
-  await Deno.readTextFile(packageJsonPath).then(async (v) => {
-    const initial = JSON.parse(v)
+const packageJsonPath = path.join(outDir, "package.json")
+await Deno.readTextFile(packageJsonPath).then(async (v) => {
+  const initial = JSON.parse(v)
+
+  { // TODO: delete upon resolution of https://github.com/denoland/dnt/issues/433.
     const { openai } = initial.dependencies
     delete initial.dependencies
     initial.peerDependencies = { openai }
-    await Deno.writeTextFile(packageJsonPath, JSON.stringify(initial, null, 2))
-  })
-}
+  }
+  if (version === undefined) {
+    initial.private = true
+  }
+  await Deno.writeTextFile(packageJsonPath, JSON.stringify(initial, null, 2))
+})
 
 await Promise.all(
   ["README.md", "LICENSE"].map((assetPath) =>
