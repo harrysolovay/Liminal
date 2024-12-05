@@ -5,8 +5,6 @@
 
 - [Documentation &rarr;](https://structured-outputs.dev)<br />Expanded introduction and usage
   guides.
-- [OpenAI Guide &rarr;](https://platform.openai.com/docs/guides/structured-outputs)<br />The OpenAI
-  platform's guide on Structured Outputs
 - [Examples &rarr;](https://structured-outputs.dev/examples)<br />Examples that illustrate common
   use cases.
 
