@@ -114,7 +114,7 @@ function manualItems(): DefaultTheme.SidebarItem[] {
       base: "/context",
       collapsed: false,
       items: [
-        { text: "Context Composition", link: "/composition" },
+        { text: "Context Chaining", link: "/chaining" },
         { text: "Context Parameters", link: "/parameters" },
       ],
     },

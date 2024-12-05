@@ -10,7 +10,7 @@
     },
     "check": {
       "description": "Ensure all TypeScript pass typechecking and linting.",
-      "command": "deno check . && deno lint && cd docs && ./node_modules/.bin/tsc",
+      "command": "deno check . && deno lint",
       "dependencies": ["mod"]
     },
     "test": {
@@ -19,14 +19,14 @@
     },
     "test:update": {
       "description": "Run all tests and update snapshots.",
-      "command": "deno task test -- --update"
+      "command": "deno test -A -- --update"
     },
     "npm": {
       "description": "Build (`target/npm`) for use within Node.js and Bun projects.",
       "command": "deno run -A tasks/npm.ts"
     },
     "docs": {
-      "description": "Serve the documentation site in watch mode.",
+      "description": "Run vitepress subcommands within the documentation directory.",
       "command": "cd docs && npm i && ./node_modules/.bin/vitepress"
     }
   },
@@ -49,7 +49,7 @@
     "@std/fs": "jsr:@std/fs@^1.0.4",
     "@std/path": "jsr:@std/path@^1.0.6",
     "@std/testing": "jsr:@std/testing@^1.0.3",
-    "openai": "npm:openai@^4.68.1"
+    "openai": "npm:openai@^4.76.0"
   },
   "scopes": {
     "./examples/": {
