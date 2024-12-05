@@ -3,83 +3,28 @@
 > A library for working with OpenAI's structured outputs.
 
 - [Documentation &rarr;](https://structured-outputs.dev)<br />Expanded introduction and usage
-  instructions.
+  guides.
 - [OpenAI Guide &rarr;](https://platform.openai.com/docs/guides/structured-outputs)<br />The OpenAI
   platform's guide on Structured Outputs
-- [Pattern Libraries &rarr;](https://structured-outputs.dev/patterns)<br />Pattern libraries for
-  common use cases with Structured Outputs TypeScript.
+- [Examples &rarr;](https://structured-outputs.dev/examples)<br />Examples that illustrate common
+  use cases.
 
-## Installation
+---
 
-### Node
+## **Code of Conduct**
 
-```sh
-npm i structured-outputs
-```
+Please ensure you adhere to our [Code of Conduct](CODE_OF_CONDUCT.md) when interacting in this
+repository.
 
-### Deno
+---
 
-```ts
-deno add jsr:@crosshatch/structured-outputs@0.1.0-beta.X
-```
+## **Contributing**
 
-> Note: replace "X" with the latest beta version number. Version specificity will be unnecessary
-> upon the first stable release of `structured-outputs`.
+Contributions are welcome and appreciated! Check out the [contributing guide](CONTRIBUTING.md)
+before you dive in.
 
-## Example Usage
+---
 
-### Declare a Type
-
-```ts
-import { T } from "structured-outputs"
-
-const Character = T.object({
-  name: T.string,
-  age: T.number`Ensure between 1 and 110.`,
-  home: T.string`The name of a fictional realm of magic and wonder.`,
-  disposition: T.enum("Optimistic", "Reserved", "Inquisitive"),
-})
-```
-
-### Create a `ResponseFormat`
-
-```ts
-// ...
-
-import { ResponseFormat } from "structured-outputs"
-
-const response_format = ResponseFormat("create_character", Character)`
-  Create a character to be the protagonist of a children's story.
-`
-```
-
-### Create Chat Completions
-
-```ts
-// ...
-
-const character = await openai.chat.completions
-  .create({
-    model: "gpt-4o-mini",
-    messages: [...yourMessages],
-    response_format,
-  })
-  .then(response_format.into)
-```
-
-### Utilize The Typed, Unwrapped Data
-
-```ts
-// ...
-
-character satisfies {
-  name: string
-  age: number
-  home: string
-  disposition: "Optimistic" | "Reserved" | "Inquisitive"
-}
-```
-
-## License
+## **License**
 
 Structured Outputs TypeScript is [Apache licensed](LICENSE).
