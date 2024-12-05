@@ -108,9 +108,9 @@ export function Type<T, P extends keyof any = never>(
 
   function inspect(inspect: (value: unknown) => string): string {
     if (declaration.getAtom) {
-      return declaration.name
+      return `T.${declaration.name}`
     }
-    return `${declaration.name}(${declaration.args.map((arg) => inspect(arg)).join(", ")})`
+    return `T.${declaration.name}(${declaration.args.map((arg) => inspect(arg)).join(", ")})`
   }
 }
 
@@ -131,7 +131,7 @@ export type TypeDeclaration =
     argsLookup: Record<string, unknown>
   })
 
-export type AnyType = Type<any, any>
+export type AnyType<T = any> = Type<T, any>
 
 export function isType(value: unknown): value is AnyType {
   return typeof value === "object" && value !== null && typeKey in value

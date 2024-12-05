@@ -15,4 +15,4 @@ const C = T.object({
   b: B,
 })
 
-display(C)
+console.log(C)

@@ -5,6 +5,8 @@ prev:
 next: false
 ---
 
+root-wrapping
+
 ## Unfilled Parameters
 
 At the time of `ResponseFormat` creation, arguments must be applied to all parameters of the root

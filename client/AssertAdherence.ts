@@ -3,17 +3,30 @@ import { T } from "../core/mod.ts"
 import { AssertionError } from "../util/mod.ts"
 import { ResponseFormat } from "./ResponseFormat.ts"
 
-export function AssertStance(
+export function AssertAdherence(
   openai: Openai,
-): (value: number | string, assertion: string) => Promise<void> {
-  return async (value, assertion) => {
+): (
+  value: number | string,
+  assertion: string,
+  ...assertions: string[]
+) => Promise<void> {
+  return async (value, assertion, ...assertions) => {
+    const maybeS = assertions.length ? "s" : ""
     const stance = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [{
         role: "user",
-        content: `Weigh in on whether the value is valid for the corresponding assertion.
+        content: `Weigh in on whether the value is valid for the corresponding assertion${maybeS}.
 
-Assertion: ${assertion}
+Assertion${maybeS}: ${
+          assertions.length
+            ? `
+
+- ${assertion}
+- ${assertions.join("\n- ")}
+`
+            : assertion
+        }
 
 Value: ${value}`,
       }],

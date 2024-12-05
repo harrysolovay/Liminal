@@ -9,6 +9,7 @@ dprint
 esbenp
 harrysolovay
 inspectable
+metatype
 nodenext
 openai
 quasis

@@ -34,7 +34,7 @@ namespace TypeJson {
   }[keyof L]
 }
 
-export function fromJson(metadata: TypeJson): Type<unknown> {
+export function hydrateType(metadata: TypeJson): Type<unknown> {
   const base = (() => {
     switch (metadata.type) {
       case "boolean": {
@@ -50,17 +50,17 @@ export function fromJson(metadata: TypeJson): Type<unknown> {
         return T.string
       }
       case "array": {
-        return T.array(fromJson(metadata.value.element))
+        return T.array(hydrateType(metadata.value.element))
       }
       case "object": {
         return T.object(
           Object.fromEntries(
-            Object.entries(metadata.value.fields).map(([k, v]) => [k, fromJson(v)]),
+            Object.entries(metadata.value.fields).map(([k, v]) => [k, hydrateType(v)]),
           ),
         )
       }
       case "option": {
-        return T.option(fromJson(metadata.value.some))
+        return T.option(hydrateType(metadata.value.some))
       }
       case "enum": {
         return T.enum(...metadata.value.values)
@@ -71,7 +71,7 @@ export function fromJson(metadata: TypeJson): Type<unknown> {
           Object.fromEntries(
             Object
               .entries(metadata.value.members)
-              .map(([k, v]) => [k, v ? fromJson(v) : undefined]),
+              .map(([k, v]) => [k, v ? hydrateType(v) : undefined]),
           ),
         )
       }

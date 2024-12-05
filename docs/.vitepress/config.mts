@@ -40,9 +40,9 @@ export default defineConfig({
         base: "",
         items: manualItems(),
       },
-      "/patterns/": {
+      "/examples/": {
         base: "",
-        items: patternsItems(),
+        items: examplesItems(),
       },
     },
     socialLinks: [{
@@ -55,33 +55,65 @@ export default defineConfig({
 function manualItems(): DefaultTheme.SidebarItem[] {
   return [
     {
-      text: "Manual",
+      text: "Overview",
+      link: "/",
+      items: [
+        { text: "Setup", link: "setup" },
+        { text: "Basic Examples", link: "basic-example" },
+        { text: "Types" },
+      ],
+    },
+    {
+      text: "Types",
       collapsed: false,
       items: [
-        { text: "Overview", link: "/" },
-        { text: "Quickstart", link: "quickstart" },
-        { text: "Types", link: "types" },
-        { text: "Context", link: "context" },
-        { text: "Common Errors", link: "common-errors" },
+        { text: "Primitives", link: "primitive-types" },
+        { text: "Collections", link: "collection-types" },
+        { text: "Transforms", link: "transform-types" },
+        { text: "Recursion", link: "recursive-types" },
+        { text: "Utility Types", link: "utility-types" },
+        { text: "Derivations", link: "derived-types" },
+        { text: "Dynamic Types", link: "dynamic-types" },
+        { text: "MetaType", link: "metatype" },
+      ],
+    },
+    {
+      text: "Context",
+      collapsed: false,
+      items: [
+        { text: "Composition" },
+        { text: "Parameterization" },
+      ],
+    },
+    {
+      text: "Consuming Types",
+      collapsed: false,
+      items: [
+        { text: "ResponseFormat" },
+        { text: "Refined" },
+        { text: "Adherence Assertions" },
+        { text: "Observability" },
+        { text: "Token Allowance" },
+        { text: "Type Visitors" },
+        { text: "Tool" },
+      ],
+    },
+    {
+      text: "Guide XYZ",
+      collapsed: false,
+      items: [
+        { text: "Conventions", link: "conventions" },
+        { text: "Iterative Refinement" },
+        { text: "Troubleshooting", link: "troubleshooting" },
       ],
     },
   ]
 }
 
-function patternsItems(): DefaultTheme.SidebarItem[] {
+function examplesItems(): DefaultTheme.SidebarItem[] {
   return [
     {
-      text: "Patterns",
-      collapsed: false,
-      items: [
-        { text: "Overview", link: "patterns" },
-        { text: "Authoring", link: "patterns/authoring" },
-        { text: "Conventions", link: "patterns/conventions" },
-        { text: "Custom Types", link: "patterns/custom-types" },
-      ],
-    },
-    {
-      text: "Pattern Libraries",
+      text: "Example Group A",
       collapsed: false,
       items: [
         { text: "..." },
