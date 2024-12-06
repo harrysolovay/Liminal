@@ -67,7 +67,7 @@ const Dog = T.object({
 
 Context attachment can be chained, enabling us to legibly compose types with richer context.
 
-```ts twoslash
+```ts {12} twoslash
 // @include: assert
 import { T } from "structured-outputs"
 // ---cut---
@@ -161,7 +161,7 @@ const month = refine(openai, {
 })
 ```
 
-## [AssertAdherence &rarr;](./consumers/assert-adherence.md)
+## [Adherence Assertions &rarr;](./consumers/assert-adherence.md)
 
 Assertions can be asynchronous, which allows us to use natural language to reflect on whether a
 value adheres to our expectations. This may be useful in cases involving agents specialized in

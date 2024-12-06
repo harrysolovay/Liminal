@@ -5,3 +5,14 @@
 .DocSearch-Button-Container {
   padding-bottom: 2px;
 }
+
+.VPNavBar {
+  .VPNavBarTitle span {
+    position: relative;
+    top: 2px;
+  }
+
+  .content-body {
+    padding-top: 2px;
+  }
+}
