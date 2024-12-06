@@ -13,12 +13,14 @@ export interface Type<T, P extends keyof any = never> {
   /** The union of literal types of parameter keys. */
   P: P
 
-  [typeKey]: {
-    /** Readonly values that describe the type. */
-    declaration: TypeDeclaration
-    /** Container to be filled with context parts as chaining occurs. */
-    ctx: Context
-  }
+  /** Used to check if a value is a `Type`. */
+  [typeKey]: true
+
+  /** Readonly values that describe the type. */
+  declaration: TypeDeclaration
+
+  /** Container to be filled with context parts as chaining occurs. */
+  ctx: Context
 
   /** Fill in parameterized context. */
   of: <A extends Partial<DescriptionArgs<P>>>(
@@ -54,7 +56,9 @@ export function Type<T, P extends keyof any = never>(
         ),
       ),
     {
-      [typeKey]: { declaration, ctx },
+      [typeKey]: true,
+      declaration,
+      ctx,
       of: (args: DescriptionArgs) =>
         Type(
           declaration,
@@ -81,7 +85,7 @@ export function Type<T, P extends keyof any = never>(
         ),
       widen: () => self,
       toJSON: () => ({
-        type: declaration.name,
+        type: declaration.kind,
         value: {
           description: ctx.formatDescription({}),
           ...declaration.factory ? declaration.argsLookup : {},
@@ -108,22 +112,19 @@ export function Type<T, P extends keyof any = never>(
 
   function inspect(inspect: (value: unknown) => string): string {
     if (declaration.getAtom) {
-      return `T.${declaration.name}`
+      return `T.${declaration.kind}`
     }
-    return `T.${declaration.name}(${declaration.args.map((arg) => inspect(arg)).join(", ")})`
+    return `T.${declaration.kind}(${declaration.args.map((arg) => inspect(arg)).join(", ")})`
   }
 }
 
-export const typeKey: unique symbol = Symbol()
-
 export type TypeDeclaration =
-  & {
-    name: string
-  }
+  & { kind: string }
   & ({
     getAtom: () => AnyType
     factory?: never
     args?: never
+    argsLookup?: never
   } | {
     getAtom?: never
     factory: (...args: any) => AnyType
@@ -136,3 +137,4 @@ export type AnyType<T = any> = Type<T, any>
 export function isType(value: unknown): value is AnyType {
   return typeof value === "object" && value !== null && typeKey in value
 }
+export const typeKey: unique symbol = Symbol()

@@ -4,7 +4,7 @@ export function deferred<T, P extends keyof any>(
   getType: () => Type<T, P>,
 ): Type<T, P> {
   return Type({
-    name: "deferred",
+    kind: "deferred",
     factory: deferred,
     args: [getType],
     argsLookup: { getType },

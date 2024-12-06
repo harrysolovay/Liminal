@@ -1,4 +1,4 @@
-import { type Type, typeKey, TypeVisitor } from "../core/mod.ts"
+import { type Type, TypeVisitor } from "../core/mod.ts"
 import type { Diagnostic } from "./Diagnostic.ts"
 import * as T from "./types/mod.ts"
 
@@ -29,13 +29,13 @@ export type ValueVisitor = (
 
 const visitor = new TypeVisitor<never, ValueVisitor>()
   .middleware((next, _1, type, ...args) => {
-    const { assertionConfigs } = type[typeKey].ctx
+    const { assertionConfigs } = type.ctx
     const visit = next(undefined!, type, ...args)
     return (ctx, value) => {
       const { diagnosticsPending } = ctx
       if (diagnosticsPending && assertionConfigs) {
         for (const { assertion, args, trace } of assertionConfigs) {
-          diagnosticsPending.push((async () => {
+          diagnosticsPending.push((async (): Promise<Diagnostic | undefined> => {
             try {
               await assertion(value, args)
             } catch (e: unknown) {
@@ -44,7 +44,6 @@ const visitor = new TypeVisitor<never, ValueVisitor>()
                   error: e,
                   trace,
                   type,
-                  typePath: "",
                   value,
                   valuePath: ctx.path,
                   setValue: ctx.set,
