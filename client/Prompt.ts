@@ -58,7 +58,7 @@ export class Prompt {
       .join("")
   }
 
-  indent = (useInnerPrompt: (innerPrompt: Prompt) => void) => {
+  indent = (useInnerPrompt: (innerPrompt: Prompt) => void): void => {
     const prompt = new Prompt(this.depth + 1)
     useInnerPrompt(prompt)
     this.segments.push(prompt)

@@ -1,5 +1,5 @@
 import type { Type } from "./Type.ts"
-import { hydrateType, type TypeInfo as TypeJson_ } from "./TypeJson.ts"
+import { deserializeType, type TypeInfo as TypeJson_ } from "./TypeInfo.ts"
 import * as T from "./types/mod.ts"
 import { Record, Union } from "./utility/mod.ts"
 
@@ -36,4 +36,4 @@ const TypeJson: Type<TypeJson_, never> = T.taggedUnion("type", {
   }),
 })`A representation of a type definition.`
 
-export const MetaType: Type<Type<unknown>> = T.transform("MetaType", TypeJson, hydrateType)
+export const MetaType: Type<Type<unknown>> = T.transform("MetaType", TypeJson, deserializeType)

@@ -1,27 +1,44 @@
 # `T.transform`
 
-We may often want to transform the data returned by the OpenAI service into a different type. In
-these situations, we can utilize the `transform` type.
+We can abstract over transformations of underlying structured output. This allows us reason about
+preprocessed values instead of their raw counterpart.
 
-TODO: this mechanism underlays misc. types
+Let's say we want to generate colors. The raw schema may look as follows.
 
-TODO: notes about serialization
+<div style="display: none">
 
-For example, we may query OpenAI for an RGB color object, which we then transform into a hex string.
-
-```ts twoslash
+```ts twoslash include color-rgb
 import { T } from "structured-outputs"
 // ---cut---
-declare function assertMin(value: number, min: number): void
-declare function assertMax(value: number, max: number): void
+const ColorChannel = T.number`Ranging from 1 to 255.`
+const ColorRgb = T.Tuple(
+  ColorChannel,
+  ColorChannel,
+  ColorChannel,
+)
+// - 1
+```
 
-const Channel = T.number.assert(assertMin, 1).assert(assertMax, 255)
+</div>
 
-const Rgb = T.Tuple(Channel, Channel, Channel)
+```ts twoslash
+// @include: color-rgb
 
+ColorRgb
+// ^?
+```
+
+<br />
+
+However, we may prefer to deal with generated colors in hexadecimal string form. We can achieve this
+with `T.transform`.
+
+```ts twoslash
+// @include: color-rgb
+// ---cut---
 const ColorHex = T.transform(
   "ColorHex",
-  Rgb,
+  ColorRgb,
   (channels) => channels.map((c) => c.toString(16).padStart(2, "0")).join(""),
 )
 
@@ -29,4 +46,7 @@ ColorHex
 // ^?
 ```
 
-## Computed Fields
+<br />
+
+> Note: `T.transform` types specify JavaScript functions, and therefore cannot be safely serialized
+> into a predictable format. Therefore, they cannot be serialized into `TypeInfo`.

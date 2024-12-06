@@ -34,7 +34,7 @@ namespace TypeInfo {
   }[keyof L]
 }
 
-export function hydrateType(into: TypeInfo): Type<unknown> {
+export function deserializeType(into: TypeInfo): Type<unknown> {
   const base = (() => {
     switch (into.type) {
       case "boolean": {
@@ -50,17 +50,17 @@ export function hydrateType(into: TypeInfo): Type<unknown> {
         return T.string
       }
       case "array": {
-        return T.array(hydrateType(into.value.element))
+        return T.array(deserializeType(into.value.element))
       }
       case "object": {
         return T.object(
           Object.fromEntries(
-            Object.entries(into.value.fields).map(([k, v]) => [k, hydrateType(v)]),
+            Object.entries(into.value.fields).map(([k, v]) => [k, deserializeType(v)]),
           ),
         )
       }
       case "option": {
-        return T.option(hydrateType(into.value.some))
+        return T.option(deserializeType(into.value.some))
       }
       case "enum": {
         return T.enum(...into.value.values)
@@ -71,7 +71,7 @@ export function hydrateType(into: TypeInfo): Type<unknown> {
           Object.fromEntries(
             Object
               .entries(into.value.members)
-              .map(([k, v]) => [k, v ? hydrateType(v) : undefined]),
+              .map(([k, v]) => [k, v ? deserializeType(v) : undefined]),
           ),
         )
       }
