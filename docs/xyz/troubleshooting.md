@@ -29,7 +29,7 @@ const Root = T.object({
   value: T.string`Arg: ${"param_key"}.`,
 })
 // ---cut---
-ResponseFormat("my_format", Root.fill({ param_key: "missing context" }))
+ResponseFormat("my_format", Root.of({ param_key: "missing context" }))
 ```
 
 ## Context Parameter Keys
@@ -57,5 +57,5 @@ import { T } from "structured-outputs"
 // ---cut---
 const MyType = T
   .string`Some text we want to interpolate: ${"_"}.`
-  .fill({ _: "the text" })
+  .of({ _: "the text" })
 ```

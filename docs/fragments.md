@@ -23,7 +23,8 @@ import { T } from "structured-outputs"
 ```
 
 ```ts twoslash include assert
-declare function assert(expr: unknown, msg?: string): asserts expr
+declare function assert(expr: unknown, msg?: string): void
+declare function assertEquals(actual: unknown, expected: unknown, msg?: string): void
 ```
 
 ```ts twoslash include openai

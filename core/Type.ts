@@ -21,7 +21,7 @@ export interface Type<T, P extends keyof any = never> {
   }
 
   /** Fill in parameterized context. */
-  fill: <A extends Partial<DescriptionArgs<P>>>(
+  of: <A extends Partial<DescriptionArgs<P>>>(
     args: A,
   ) => Type<T, Exclude<P, keyof { [K in keyof A as A[K] extends undefined ? never : K]: never }>>
 
@@ -55,7 +55,7 @@ export function Type<T, P extends keyof any = never>(
       ),
     {
       [typeKey]: { declaration, ctx },
-      fill: (args: DescriptionArgs) =>
+      of: (args: DescriptionArgs) =>
         Type(
           declaration,
           new Context([{ args }, ...ctx.descriptionParts], ctx.assertionConfigs, ctx.metadata),
