@@ -40,7 +40,7 @@ For example, we can create a `Range` pattern, which attaches important context t
 import { T } from "structured-outputs"
 // ---cut---
 export function Range(from: number, to: number) {
-  return T.number`A number between ${"from"} and ${"to"}`.fill({ from, to })
+  return T.number`A number between ${"from"} and ${"to"}`.of({ from, to })
 }
 ```
 

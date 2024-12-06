@@ -24,7 +24,7 @@ const Character = T.object({
   behavior: T.string,
 })`A ${"character_type"} character of a ${"story_type"} story.`
 // ---cut---
-const StoryCharacters = Character.fill({
+const StoryCharacters = Character.of({
   character_type: "virtuous",
   story_type: "romance",
 })
@@ -46,7 +46,7 @@ const Character = T.object({
   behavior: T.string,
 })`A ${"character_type"} character of a ${"story_type"} story.`
 // ---cut---
-const StoryCharacters = Character.fill({
+const StoryCharacters = Character.of({
   // ^|
 })
 ``` -->

@@ -114,7 +114,7 @@ function manualItems(): DefaultTheme.SidebarItem[] {
       base: "/context",
       collapsed: false,
       items: [
-        { text: "Context Composition", link: "/composition" },
+        { text: "Context Chaining", link: "/chaining" },
         { text: "Context Parameters", link: "/parameters" },
       ],
     },
@@ -126,7 +126,6 @@ function manualItems(): DefaultTheme.SidebarItem[] {
         { text: "<code>ResponseFormat</code>", link: "/response-format" },
         { text: "<code>refine</code>", link: "/refine" },
         { text: "<code>AssertAdherence</code>", link: "/assert-adherence" },
-        { text: "<code>TokenAllowance</code>", link: "/token-allowance" },
         { text: "<code>TypeVisitor</code>", link: "/type-visitor" },
         { text: "<code>Tool</code> (Realtime)", link: "/tool" },
       ],

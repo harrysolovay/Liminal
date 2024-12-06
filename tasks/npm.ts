@@ -22,9 +22,9 @@ const mappings: SpecifierMappings = Object.fromEntries(
 )
 // TODO: enable upon resolution of https://github.com/denoland/dnt/issues/433.
 if (false as boolean) {
-  mappings["npm:openai@^4.68.1"] = {
+  mappings["npm:openai@^4.76.0"] = {
     name: "openai",
-    version: "^4.68.1",
+    version: "^4.76.0",
     peerDependency: true,
   }
 }

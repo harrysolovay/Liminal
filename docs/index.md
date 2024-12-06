@@ -7,31 +7,18 @@ title: Overview
 > A Framework for Integrating With
 > [OpenAI structured outputs](https://platform.openai.com/docs/guides/structured-outputs).
 
-OpenAI's structured outputs simplify the integration of LLMs into procedural code. Developers can
-now ensure that completions conform to a specified JSON schema. However, this raw capability
-presents subsequent challenges to developers. Structured Outputs TypeScript addresses these
-challenges:
+OpenAI's structured outputs streamline the integration of LLMs into procedural code by ensuring that
+completions adhere to a specified JSON schema. While this feature provides developers with a
+valuable predictability, it also introduces new challenges to managing and utilizing these outputs
+effectively. **Structured Outputs TypeScript** is a framework for addressing these challenges:
 
-## Schema-modeling
+## [Model Types &rarr;](./types/index.md)
 
 ```ts twoslash
-import { T } from "structured-outputs"
-// ---cut---
-const Dog = T.object({
-  toy: T.enum("Bone", "Shoe", "Homework"),
-})
+// @include: animal
 
-const Cow = T.object({
-  miyazaki: T.boolean,
-})
-
-const Animal = T.taggedUnion("type", {
-  Dog,
-  Cow,
-})
-
-Animal
-// ^?
+type Animal = typeof Animal["T"]
+//   ^?
 ```
 
 <br />
@@ -45,16 +32,32 @@ Animal
 <br />
 <br />
 <br />
-<br />
 
-[Full documentation of types &rarr;](./types/index.md)
+## [Create and Parse Completions](./consumers/response-format.md)
 
-## Context
+```ts {3,9,11} twoslash
+// @include: animal
+// @include: openai
+// ---cut---
+import { ResponseFormat } from "structured-outputs"
+
+const response_format = ResponseFormat("generate_animal", Animal)
+
+const animal = await openai.chat.completions
+  .create({
+    model: "gpt-4o-mini",
+    messages: [{ role: "system", content: [] }],
+    response_format,
+  })
+  .then(response_format.into)
+```
+
+## [Attach Context To Types &rarr;](./context/chaining.md)
 
 We can treat any type as a tagged template function to attach descriptions that serve as additional
 context to guide the LLM.
 
-```ts{2} twoslash
+```ts twoslash {2}
 import { T } from "structured-outputs"
 // ---cut---
 const Dog = T.object({
@@ -62,228 +65,114 @@ const Dog = T.object({
 })
 ```
 
-### Parameterized Context
+Context attachment can be chained, enabling us to legibly compose types with richer context.
 
-We can describe the structure of commonly-used types and later inject context depending on the use
-case.
+```ts twoslash
+// @include: assert
+import { T } from "structured-outputs"
+// ---cut---
+import { toSchema } from "structured-outputs"
 
-```ts
-const Person = T.object({
-  hometown: T.string`An ${"nationality"} city.`,
-  favoriteFood: T.string`A delicious ${"nationality"} food.`,
-})`An ${nationality} person.`
+const song = T.string`A song.`
 
-const AmericanPerson = Person.fill({
-  nationality: "American",
+const hiphopSong = song`Genre is hip hop.`
+
+const upliftingHipHopSong = hiphopSong`Ensure it is uplifting.`
+
+const schema = toSchema(upliftingHipHopSong)
+
+assertEquals(schema, {
+  description: "A song. Genre is hip hop. Ensure it is uplifting.",
+  type: "string",
 })
 ```
 
-## Iterative Refinement
+## [Parameterize Context &rarr;](./context/parameters.md)
 
-Standalone OpenAI structured outputs are limited to a narrow subset of JSON schema.[^1] Moreover,
-developers often need to constrain data types in ways that can only be represented with runtime
-code; JSON Schema alone is insufficient.
+We can parameterize context to enable reuse of common types for different use case.
 
-### LLM-Assisted Assertions
+```ts twoslash include nationality-context-param
+import { T } from "structured-outputs"
+// ---cut---
+const key = Symbol()
 
-Using specialized agents to validate specialized data.
-
-```ts twoslash
-import { type AssertAdherence } from "structured-outputs"
+const Person = T.object({
+  hometown: T.string`${key} city.`,
+  favoriteFood: T.string`A delicious ${key} food.`,
+})`An ${key}.`
 ```
 
-Structured Outputs TypeScript allows developers to attach runtime assertions to types.
+We can then utilize the parameterized type in different parts of our program.
 
-```ts{2} twoslash
+```ts twoslash
+// @include: nationality-context-param
+// ---cut---
+const AmericanPerson = Person.of({
+  [key]: "American",
+})
+
+const AustralianPerson = Person.of({
+  [key]: "Australian",
+})
+```
+
+## [Iterative Refinement &rarr;](./consumers/refine.md)
+
+OpenAI structured outputs are limited to a narrow subset of JSON schema.[^1] Moreover, developers
+often need to constrain data types in ways that can only be represented at runtime; JSON Schema
+alone is insufficient.
+
+To address this shortcoming, we can attach assertions to types.
+
+```ts twoslash include refine-month
+import { T } from "structured-outputs"
+// @include: assert
+// ---cut---
+const Month = T.integer`Positive, zero-based month of the gregorian calendar.`
+  .assert(assertMin, 0)
+  .assert(assertMax, 11)
+
+function assertMin(value: number, min: number) {
+  assert(value >= min, `Must be gte ${min}; received ${value}.`)
+}
+
+function assertMax(value: number, max: number) {
+  assert(value <= max, `Must be lte ${max}; received ${value}.`)
+}
+```
+
+We can then utilize `refine`, which gets the structured output and runs all type-specific
+assertions. If any of the assertions throw errors, those errors are serialized into subsequent
+requests for corrected values, which are then injected into the original structured output. We can
+loop until all values satisfy their corresponding type's assertions.
+
+```ts twoslash {5} include refine-month
+// @include: openai
+// @include: refine-month
+// ---cut---
+import { refine, ResponseFormat } from "structured-outputs"
+
+const response_format = ResponseFormat("month", Month)
+
+const month = refine(openai, {
+  model: "gpt-4o-mini",
+  response_format,
+  messages: [{ role: "system", content: [] }],
+})
+```
+
+## [AssertAdherence &rarr;](./consumers/assert-adherence.md)
+
+Assertions can be asynchronous, which allows us to use natural language to reflect on whether a
+value adheres to our expectations. This may be useful in cases involving agents specialized in
+certain kinds of data.
+
+```ts twoslash {2}
 import { type AssertAdherence, T } from "structured-outputs"
 declare const assertAdherence: ReturnType<typeof AssertAdherence>
 // ---cut---
 const UpliftingSummary = T.string`A summary.`
   .assert(assertAdherence, "The summary is uplifting.")
 ```
-
-> Assertions can be asynchronous. In this case, `assertAdherence` produces a promise that may reject
-> with an `AssertionError`.
-
-We then utilize `refine` to execute our completion request.
-
-```ts twoslash
-import Openai from "openai"
-// import { refine, ResponseFormat, T } from "structured-outputs"
-
-// const openai = new Openai()
-
-// const response_format = ResponseFormat("refined_summary", Refined)
-
-// const refined = await refine(openai, {
-//   model: "gpt-4o-mini",
-//   response_format,
-//   messages: [{ role: "system", content: [] }],
-// })
-```
-
-Upon receiving the structured output
-
-```ts twoslash
-import { T } from "structured-outputs"
-
-const Contact = T.object({
-  name: T.string,
-  phone: T.number,
-  email: T.string,
-})
-```
-
-`structured-outputs` was designed to enable the creation of libraries that abstract over the core
-types described in [the types section](./types/index.md). The aim is to enable an ecosystem of
-reusable type libraries.
-
-Such library types can have parameterized context, thereby enabling end developers to apply context
-as necessary ([see context section](./context/parameters.md)).
-
-## Requesting Patterns
-
-If you have an idea for a `structured-outputs` pattern, please
-[open an issue](https://github.com/harrysolovay/structured-outputs/issues/new).
-
-If you've already created a library, please submit a pull request that adds it to the "Pattern
-Libraries" list of this very documentation.
-
-## Context
-
-Descriptions in schema definitions serve as additional context for the LLM. We may want to attach
-context per-type.
-
-```ts twoslash
-import { T } from "structured-outputs"
-// ---cut---
-const Contact = T.object({
-  name: T.string`
-    Ensure normal length for a person's full name.
-  `,
-  phone: T.number`
-    Ensure the format is that of a phone number.
-  `,
-  email: T.string`
-    Ensure the format is that of an email address.
-  `,
-})`
-  A collection of information common in contact cards.
-`
-```
-
-## Parameterized Context
-
-We can specify placeholders for context to be filled in later. This simplifies reuse of types for
-different use cases.
-
-```ts twoslash
-import { T } from "structured-outputs"
-// ---cut---
-const nationality = Symbol()
-
-const Person = T.object({
-  hometown: T.string`An ${nationality} city.`,
-  favoriteFood: T.string`A delicious ${nationality} food.`,
-})`An ${nationality} person.`
-
-const AmericanPerson = Person.fill({
-  [nationality]: "American",
-})
-```
-
-## `ResponseFormat`
-
-Create `ResponseFormat` for use with OpenAI clients.
-
-```ts{1-3,7} twoslash
-import Openai from "openai"
-import { ResponseFormat, T } from "structured-outputs"
-declare const openai: Openai
-const Contact = T.object({
-  name: T.string,
-  phone: T.number,
-  email: T.string,
-})
-// ---cut---
-const response_format = ResponseFormat("extract_contact_information", Contact)`
-  The contact information extracted from the supplied text.
-`
-
-const contact = await openai.chat.completions.create({
-  model: "gpt-4o-mini",
-  response_format,
-  messages: [],
-})
-```
-
-## Native TypeScript Types
-
-Refer to the native typescript type.
-
-```ts twoslash
-import { T } from "structured-outputs"
-const Contact = T.object({
-  name: T.string,
-  phone: T.number,
-  email: T.string,
-})
-// ---cut---
-function sendText(args: typeof Contact["T"]): void {
-  //              ^?
-  // ...
-}
-```
-
-<br />
-<br />
-
-## Get Typed Objects
-
-Utilize convenience methods to unwrap typed data directly from chat completion responses.
-
-```ts twoslash
-import Openai from "openai"
-import { ResponseFormat, T } from "structured-outputs"
-
-declare const openai: Openai
-
-const response_format = ResponseFormat(
-  "",
-  T.object({
-    name: T.string,
-    phone: T.number,
-    email: T.string,
-  }),
-)
-// ---cut---
-const contact = await openai.chat.completions
-  .create({
-    model: "gpt-4o-mini",
-    response_format,
-    messages: [
-      {
-        role: "user",
-        content: [{
-          type: "text",
-          text: `
-            Extract data from the following message:
-
-            Please call John Doe at 555-123-4567 or email him at john.doe@example.com.
-          `,
-        }],
-      },
-    ],
-  })
-  .then(response_format.into)
-
-contact
-// ^?
-```
-
-<br />
-<br />
-<br />
-<br />
 
 [^1]: [OpenAI structured output backend limitations](https://platform.openai.com/docs/guides/structured-outputs#supported-schemas).
