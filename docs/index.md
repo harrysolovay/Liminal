@@ -92,7 +92,7 @@ assertEquals(schema, {
 We can parameterize context to enable reuse of common types for different use case.
 
 ```ts twoslash include nationality-context-param
-// @include: import-T
+import { T } from "structured-outputs"
 // ---cut---
 const key = Symbol()
 

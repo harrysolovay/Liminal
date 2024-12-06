@@ -17,11 +17,6 @@ const Animal = T.taggedUnion("type", {
 })
 ```
 
-```ts twoslash include import-T
-// - 1
-import { T } from "structured-outputs"
-```
-
 ```ts twoslash include assert
 declare function assert(expr: unknown, msg?: string): void
 declare function assertEquals(actual: unknown, expected: unknown, msg?: string): void

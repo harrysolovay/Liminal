@@ -9,21 +9,20 @@ Common assertion failure patterns will produce schemas that get cached?
 We can limit the token consumption of an iterative refinement loop using `TokenAllowance`.
 
 ```ts twoslash
-// @include: refine-month
-import { RefineParams } from "structured-outputs"
+import Openai from "openai"
+import { refine, RefineParams } from "structured-outputs"
+declare const openai: Openai
 declare const params: RefineParams
 // ---cut---
 import { TokenAllowance } from "structured-outputs"
 
 const signal = new AbortSignal()
 
-const max = 5
-
 const allowance = new TokenAllowance({ total_tokens: 1000 })
 
 refine(openai, params, {
   signal,
-  max,
+  max: 5,
   allowance,
 })
 ```

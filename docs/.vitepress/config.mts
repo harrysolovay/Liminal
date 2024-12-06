@@ -126,7 +126,6 @@ function manualItems(): DefaultTheme.SidebarItem[] {
         { text: "<code>ResponseFormat</code>", link: "/response-format" },
         { text: "<code>refine</code>", link: "/refine" },
         { text: "<code>AssertAdherence</code>", link: "/assert-adherence" },
-        { text: "<code>TokenAllowance</code>", link: "/token-allowance" },
         { text: "<code>TypeVisitor</code>", link: "/type-visitor" },
         { text: "<code>Tool</code> (Realtime)", link: "/tool" },
       ],
