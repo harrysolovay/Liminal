@@ -12,7 +12,6 @@ const GOOGLE_ANALYTICS = dedent`
   gtag('config', 'G-0VS5ZGHX74');
 `
 // cspell:enable
-const x = "asdfasdf"
 
 export default defineConfig({
   title: "Structured Outputs TS",
@@ -104,8 +103,7 @@ function manualItems(): DefaultTheme.SidebarItem[] {
         { text: "<code>T.Intersection</code>", link: "/intersection" },
         { text: "Recursion", link: "/recursion" },
         { text: "<code>T.Transform</code>", link: "/transform" },
-        { text: "<code>T.Derived</code>", link: "/derived" },
-        { text: "Dynamic Types", link: "/dynamic" },
+        { text: "<code>Derived</code>", link: "/derived" },
         { text: "<code>T.MetaType</code>", link: "/metatype" },
       ],
     },

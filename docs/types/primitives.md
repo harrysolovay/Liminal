@@ -1,25 +1,37 @@
 # Primitive Types
 
-## `boolean`s
-
 ```ts twoslash
 import { T } from "structured-outputs"
 // ---cut---
 T.boolean
+// ^?
 ```
 
-## `number`s
+<br />
 
 ```ts twoslash
 import { T } from "structured-outputs"
 // ---cut---
 T.number
+// ^?
 ```
 
-## `string`s
+<br />
+
+```ts twoslash
+import { T } from "structured-outputs"
+// ---cut---
+T.integer
+// ^?
+```
+
+<br />
 
 ```ts twoslash
 import { T } from "structured-outputs"
 // ---cut---
 T.string
+// ^?
 ```
+
+<br />

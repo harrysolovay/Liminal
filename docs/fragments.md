@@ -1,7 +1,11 @@
-# Fragments
+<div style="display: none">
+
+```ts twoslash include T
+import { T } from "structured-outputs"
+```
 
 ```ts twoslash include animal
-import { T } from "structured-outputs"
+// @include: T
 
 const Dog = T.object({
   toy: T.enum("Bone", "Shoe", "Homework"),
@@ -22,7 +26,13 @@ declare function assert(expr: unknown, msg?: string): void
 declare function assertEquals(actual: unknown, expected: unknown, msg?: string): void
 ```
 
+```ts twoslash include rf
+import { ResponseFormat } from "structured-outputs"
+```
+
 ```ts twoslash include openai
 import Openai from "openai"
 declare const openai: Openai
 ```
+
+</div>

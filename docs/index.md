@@ -2,14 +2,16 @@
 title: Overview
 ---
 
+<!--@include: ./fragments.md-->
+
 # Structured Outputs TypeScript
 
 > A Framework for Integrating With
 > [OpenAI structured outputs](https://platform.openai.com/docs/guides/structured-outputs).
 
 OpenAI's structured outputs streamline the integration of LLMs into procedural code by ensuring that
-completions adhere to a specified JSON schema. While this feature provides developers with a
-valuable predictability, it also introduces new challenges to managing and utilizing these outputs
+completions adhere to a specified schema. While this feature provides developers with a valuable
+predictability, it also introduces new challenges to managing and utilizing these outputs
 effectively. **Structured Outputs TypeScript** is a framework for addressing these challenges:
 
 ## [Model Types &rarr;](./types/index.md)
@@ -58,7 +60,7 @@ We can treat any type as a tagged template function to attach descriptions that 
 context to guide the LLM.
 
 ```ts twoslash {2}
-import { T } from "structured-outputs"
+// @include: T
 // ---cut---
 const Dog = T.object({
   toy: T.enum("Bone", "Shoe", "Homework")`The dog's preferred chew toy.`,
@@ -67,9 +69,9 @@ const Dog = T.object({
 
 Context attachment can be chained, enabling us to legibly compose types with richer context.
 
-```ts twoslash
+```ts {12} twoslash
+// @include: T
 // @include: assert
-import { T } from "structured-outputs"
 // ---cut---
 import { toSchema } from "structured-outputs"
 
@@ -92,7 +94,7 @@ assertEquals(schema, {
 We can parameterize context to enable reuse of common types for different use case.
 
 ```ts twoslash include nationality-context-param
-import { T } from "structured-outputs"
+// @include: T
 // ---cut---
 const key = Symbol()
 
@@ -125,7 +127,7 @@ alone is insufficient.
 To address this shortcoming, we can attach assertions to types.
 
 ```ts twoslash include refine-month
-import { T } from "structured-outputs"
+// @include: T
 // @include: assert
 // ---cut---
 const Month = T.integer`Positive, zero-based month of the gregorian calendar.`
@@ -147,8 +149,8 @@ requests for corrected values, which are then injected into the original structu
 loop until all values satisfy their corresponding type's assertions.
 
 ```ts twoslash {5} include refine-month
-// @include: openai
 // @include: refine-month
+// @include: openai
 // ---cut---
 import { refine, ResponseFormat } from "structured-outputs"
 
@@ -161,7 +163,7 @@ const month = refine(openai, {
 })
 ```
 
-## [AssertAdherence &rarr;](./consumers/assert-adherence.md)
+## [Adherence Assertions &rarr;](./consumers/assert-adherence.md)
 
 Assertions can be asynchronous, which allows us to use natural language to reflect on whether a
 value adheres to our expectations. This may be useful in cases involving agents specialized in

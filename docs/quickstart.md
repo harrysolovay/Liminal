@@ -1,72 +1,41 @@
 # Quickstart
 
-Let's say we're generating a superhero story. Let's create a type with which we can generate
-character super-abled characters (`Supe`s):
+Let's generate super-powered characters.
 
-```ts twoslash
-import { ResponseFormat, T } from "structured-outputs"
+## 1. Create the `Character` Type
 
-const Supe = T.object({
-  name: T.string`The super-abled character's name.`,
+```ts twoslash include supe
+import { T } from "structured-outputs"
+
+const Character = T.object({
+  name: T.string`The character's name.`,
   role: T.enum("Hero", "Villain", "Indifferent"),
-  age: T.number`Between 18 and 200 years of age.`,
   power: T.string`The name of a supernatural ability.`,
-})
+})`A super-powered character.`
 ```
 
-Create a `ResponseFormat` with the `Supe` type.
+## 2. Create a `ResponseFormat`
 
-```ts twoslash
-import { ResponseFormat, T } from "structured-outputs"
+```ts twoslash include supe-rf
+// @include: supe
+// ---cut--
+import { ResponseFormat } from "structured-outputs"
 
-const Supe = T.object({
-  name: T.string,
-  role: T.enum("Hero", "Villain", "Indifferent"),
-  age: T.number,
-})
 // ---cut---
-const response_format = ResponseFormat("create_supe", Supe)
-//    ^?
-```
-
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-
-We can give a description to the response format if we so choose.
-
-```ts twoslash
-import { ResponseFormat, T } from "structured-outputs"
-
-const Supe = T.object({
-  name: T.string,
-  role: T.enum("Hero", "Villain", "Indifferent"),
-  age: T.number,
-})
-// ---cut---
-const response_format = ResponseFormat("create_supe", Supe)`
-  Information about a super-abled character.
+const response_format = ResponseFormat("create_characters", T.array(Character))`
+  A list of characters in a story.
 `
 ```
 
-Finally, send the completion request via the OpenAI TypeScript client, then use the
-`ResponseFormat`'s `into` method to parse the inner JSON and deserialize any sub-values according to
-the `T`-described type.
+## 3. Request and Unwrap The Completion
 
-```ts{7} twoslash
+Send the completion request via OpenAI's [JavaScript client](https://github.com/openai/openai-node)
+and parse the inner data into a typed object.
+
+```ts{4,7} twoslash
+// @include: supe-rf
 import Openai from "openai"
-import { ResponseFormat, T } from "structured-outputs"
-
 declare const openai: Openai
-
-declare const response_format: ResponseFormat<{
-  name: string
-  role: "Hero" | "Villain" | "Indifferent"
-  age: number
-}>
 // ---cut---
 const supe = await openai.chat.completions
   .create({
@@ -84,3 +53,30 @@ supe
 <br />
 <br />
 <br />
+<br />
+<br />
+
+## Example Output
+
+`animal` may contain data similar to the following.
+
+```jsonc
+[
+  {
+    "name": "Echo",
+    "role": "Hero",
+    "power": "Sound Manipulation"
+  },
+  {
+    "name": "The Puppeteer",
+    "role": "Villain",
+    "power": "Telekinesis"
+  },
+  {
+    "name": "Glimmer",
+    "role": "Hero",
+    "power": "Light Generation"
+  }
+  // ...
+]
+```

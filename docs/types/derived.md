@@ -1,58 +1,39 @@
-# Derived Types
+# `Derived`
 
-## `T.Derived`
+`Derived` is a utility type for amalgamating multiple `Type`s. This is useful for explicitly-typing
+functions that accept and return types (somewhat of a requirement for [JSR](http://jsr.io).[^1]
 
-## Explicit Signatures
+## Signature
 
-For JSR
+`Derived` has the following signature.
 
-## Generic Functions
-
-## Atomic Patterns
-
-A pattern can be as simple as attaching some context to a type.
-
-```ts twoslash
-import { T } from "structured-outputs"
-// ---cut---
-export const Song = T.string`Ensure this text is a 16-bars song.`
+```ts
+export type Derived<
+  T,
+  X extends Array<AnyType>,
+  P extends keyof any = never,
+>
 ```
 
-## Parameterized Context
+### `T`
 
-Patterns can contain unfilled/parameterized context.
+Corresponds to the native TypeScript type.
 
-```ts twoslash
-import { T } from "structured-outputs"
-// ---cut---
-export const Song = T.string`Ensure this text is a 16-bars song in the style of ${"song_style"}.`
-```
+### `X`
 
-## Functional Patterns
+A list of all types from which the new derived type is composed.
 
-Functional patterns are simply functions that return types.
+### `P`
 
-### Basic Example
-
-For example, we can create a `Range` pattern, which attaches important context to a `number`.
+## Example
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { AnyType, Derived } from "structured-outputs"
 // ---cut---
-export function Range(from: number, to: number) {
-  return T.number`A number between ${"from"} and ${"to"}`.of({ from, to })
+
+function LeastLikely<X extends AnyType>(ty: X): Derived<X["T"], [X]> {
+  return ty`Ensure that this value is the least likely version of itself.`
 }
 ```
 
-### Types as Arguments
-
-You may want to accept types as arguments, which inform the type of the return.
-
-```ts twoslash
-import { AnyType } from "structured-outputs"
-// ---cut---
-
-function MostUnlikely<X extends AnyType>(ty: X) {
-  return ty`Ensure that this generated type is the most unlikely version of itself.`
-}
-```
+[^1]: [slow types documentation](https://jsr.io/docs/about-slow-types)

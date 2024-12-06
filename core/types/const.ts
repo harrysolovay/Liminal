@@ -1,7 +1,7 @@
 import { Type } from "../Type.ts"
 
 export { const_ as const }
-export function const_<V extends number | string>(value: V): Type<V> {
+function const_<V extends number | string>(value: V): Type<V> {
   return Type({
     kind: "const",
     factory: const_,

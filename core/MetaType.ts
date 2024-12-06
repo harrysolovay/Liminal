@@ -1,9 +1,9 @@
 import type { Type } from "./Type.ts"
-import { hydrateType, type TypeInfo as TypeJson_ } from "./TypeJson.ts"
+import { deserializeType, type TypeInfo as TypeInfo_ } from "./TypeInfo.ts"
 import * as T from "./types/mod.ts"
 import { Record, Union } from "./utility/mod.ts"
 
-const TypeJson: Type<TypeJson_, never> = T.taggedUnion("type", {
+const TypeInfo: Type<TypeInfo_, never> = T.taggedUnion("type", {
   boolean: T.object({
     description: T.string,
   }),
@@ -15,15 +15,15 @@ const TypeJson: Type<TypeJson_, never> = T.taggedUnion("type", {
   }),
   array: T.object({
     description: T.string,
-    element: T.deferred(() => TypeJson),
+    element: T.deferred(() => TypeInfo),
   }),
   object: T.object({
     description: T.string,
-    fields: Record(T.deferred(() => TypeJson)),
+    fields: Record(T.deferred(() => TypeInfo)),
   }),
   option: T.object({
     description: T.string,
-    some: T.deferred(() => TypeJson),
+    some: T.deferred(() => TypeInfo),
   }),
   enum: T.object({
     description: T.string,
@@ -32,8 +32,8 @@ const TypeJson: Type<TypeJson_, never> = T.taggedUnion("type", {
   taggedUnion: T.object({
     description: T.string,
     tag: Union(T.number, T.string),
-    members: Record(T.option(T.deferred(() => TypeJson))),
+    members: Record(T.option(T.deferred(() => TypeInfo))),
   }),
 })`A representation of a type definition.`
 
-export const MetaType: Type<Type<unknown>> = T.transform("MetaType", TypeJson, hydrateType)
+export const MetaType: Type<Type<unknown>> = T.transform("MetaType", TypeInfo, deserializeType)

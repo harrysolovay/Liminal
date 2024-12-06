@@ -10,9 +10,4 @@ const B = T.taggedUnion("type", {
   B: T.string,
 })
 
-const C = T.object({
-  a: A,
-  b: B,
-})
-
-console.log(C)
+console.log(B)
