@@ -12,7 +12,6 @@ const GOOGLE_ANALYTICS = dedent`
   gtag('config', 'G-0VS5ZGHX74');
 `
 // cspell:enable
-const x = "asdfasdf"
 
 export default defineConfig({
   title: "Structured Outputs TS",

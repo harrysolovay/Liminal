@@ -33,6 +33,8 @@ StoryWorld
 
 If we inspect this type, we may see something like the following.
 
+<!-- cspell:disable -->
+
 ```ts
 T.object({
   name: T.string,
@@ -44,6 +46,8 @@ T.object({
   conflicts: T.array(T.string),
 })
 ```
+
+<!-- cspell:enable -->
 
 Let's send a subsequent completion requests using this dynamic type as the response format schema.
 
