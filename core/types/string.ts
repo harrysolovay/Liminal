@@ -1,6 +1,6 @@
 import { Type } from "../Type.ts"
 
 export const string: Type<string> = Type({
-  name: "string",
+  kind: "string",
   getAtom: () => string,
 })

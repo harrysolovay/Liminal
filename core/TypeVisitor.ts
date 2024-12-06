@@ -1,5 +1,5 @@
 import { assert } from "../util/mod.ts"
-import { type AnyType, typeKey } from "./Type.ts"
+import type { AnyType } from "./Type.ts"
 
 export class TypeVisitor<C, R> {
   #fallback?: Visitor<C, R>
@@ -45,7 +45,7 @@ export class TypeVisitor<C, R> {
   ): TypeVisitor<C, R> => new TypeVisitor(this.visitors, f, this.#middleware)
 
   visit = (ctx: C, type: AnyType): R => {
-    const { declaration } = type[typeKey]
+    const { declaration } = type
     if (declaration.factory) {
       const visitor = this.visitors.get(declaration.factory)
       if (visitor) {

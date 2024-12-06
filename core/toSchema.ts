@@ -1,6 +1,6 @@
 import type { DescriptionArgs } from "./Context.ts"
 import * as T from "./T.ts"
-import { type AnyType, type Type, typeKey } from "./Type.ts"
+import type { AnyType, Type } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
 export type Schema = Record<string, unknown>
@@ -44,7 +44,7 @@ const visitor = new TypeVisitor<{
     if (!(defId in ctx.$defs)) {
       ctx.$defs[defId] = undefined
       const args = { ...ctx.args }
-      const description = type[typeKey].ctx.formatDescription(args)
+      const description = type.ctx.formatDescription(args)
       ctx.$defs[defId] = {
         description,
         ...next({ ...ctx, args }, type, ...factoryArgs),

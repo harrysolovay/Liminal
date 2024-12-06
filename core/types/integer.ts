@@ -1,6 +1,6 @@
 import { Type } from "../Type.ts"
 
 export const integer: Type<number> = Type({
-  name: "integer",
+  kind: "integer",
   getAtom: () => integer,
 })

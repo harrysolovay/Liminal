@@ -19,7 +19,7 @@ export function taggedUnion<
   Extract<M[keyof M], AnyType>["P"]
 > {
   return Type({
-    name: "taggedUnion",
+    kind: "taggedUnion",
     factory: taggedUnion,
     args: [tagKey, members],
     argsLookup: { tagKey, members },

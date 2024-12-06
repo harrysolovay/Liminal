@@ -1,6 +1,6 @@
 import type { Expand } from "../util/mod.ts"
 import { Context } from "./Context.ts"
-import { Type, typeKey } from "./Type.ts"
+import { Type } from "./Type.ts"
 import * as T from "./types/mod.ts"
 
 export type TypeInfo = TypeInfo.Make<{
@@ -77,7 +77,7 @@ export function hydrateType(into: TypeInfo): Type<unknown> {
       }
     }
   })()
-  const { declaration, ctx } = base[typeKey]
+  const { declaration, ctx } = base
   return Type(
     declaration,
     new Context(

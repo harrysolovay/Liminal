@@ -2,7 +2,7 @@ import { assert, recombine } from "../util/mod.ts"
 
 export class Context {
   constructor(
-    readonly descriptionParts: DescriptionParts[] = [],
+    readonly descriptionParts: DescriptionParts[],
     readonly assertionConfigs: Array<AssertionConfig>,
     readonly metadata: Record<symbol, unknown>,
   ) {}

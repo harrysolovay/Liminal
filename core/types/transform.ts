@@ -6,7 +6,7 @@ export function transform<F, P extends keyof any, T>(
   f: (value: F) => T,
 ): Type<T, P> {
   return Type({
-    name: "transform",
+    kind: "transform",
     factory: transform,
     args: [name, from, f],
     argsLookup: { name, from, f },
