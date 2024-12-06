@@ -3,9 +3,10 @@ import type {
   ChatCompletionCreateParamsNonStreaming,
   ChatCompletionMessageParam,
 } from "openai/resources/chat/completions"
-import { deserialize, Diagnostic, T } from "../core/mod.ts"
+import { deserialize, Diagnostic, T, type Type } from "../core/mod.ts"
 import { assert, tap } from "../util/mod.ts"
 import { parseChoice, unwrapChoice } from "./oai_util.ts"
+import { Prompt } from "./Prompt.ts"
 import { ResponseFormat } from "./ResponseFormat.ts"
 import type { TokenAllowance } from "./TokenAllowance.ts"
 
@@ -64,13 +65,14 @@ export async function refine<T>(
     }
     const CurrentCorrections = Corrections(diagnostics)
     const response_format = ResponseFormat("corrections", CurrentCorrections)
-    initialCorrection = false
     messages.push({
       role: "user",
       content: initialCorrection
         ? prompt(params, diagnostics)
         : diagnostics.map(Diagnostic.toString).join("\n\n"),
     })
+    initialCorrection = false
+    messages.forEach((message) => console.log(message.content))
     const correctionsCompletion = await client.chat.completions.create({
       ...params,
       messages,
@@ -96,79 +98,71 @@ export async function refine<T>(
   return root
 }
 
-function Corrections(diagnostics: Array<Diagnostic>) {
-  return T
-    .object(
-      Object.fromEntries(
-        diagnostics.map(({ valuePath, type }) => [valuePath, type]),
-      ),
-    )`The corrections to be applied to a previously-generated structured output.`
-    .widen()
+function Corrections(diagnostics: Array<Diagnostic>): Type<any, never> {
+  return T.object(
+    Object.fromEntries(
+      diagnostics.map(({ valuePath, type }) => [valuePath, type]),
+    ),
+  )`The corrections to be applied to a previously-generated structured output.`.widen()
 }
 
 function prompt(
   params: RefineParams,
   diagnostics: Array<Diagnostic>,
 ): string {
-  const messageSection = maybeSerializeMessages(params)
-  return `## Overview
-
-${prefaceSection(!!messageSection)}
-${messageSection}
-## Initially-requested Structured Output JSON Schema
-
-\`\`\`json
-${JSON.stringify(params.response_format.json_schema, null, 2)}
-\`\`\`
-
-## Diagnostics
-
-${diagnostics.map(Diagnostic.toString).join("\n\n")}`
-}
-
-function prefaceSection(includeMessages: boolean) {
-  const sections = [...SECTIONS]
-  if (!includeMessages) {
-    sections.shift()
-  }
-  return `A chat completion request was submitted with a JSON schema describing structured output requirements. In the following sections, we'll cover the following:
-
-${sections.map((description, i) => `${i + 1}. ${description}`).join("\n")}
-
-Offer new and correct values for each of the specified diagnostics.`
-}
-
-const SECTIONS = [
-  "the initial messages passed along to the completions endpoint",
-  "the JSON schema of the initially-requested structured output",
-  "the unmet constraints",
-]
-
-function maybeSerializeMessages(params: RefineParams) {
-  if (!params.messages.length) {
-    return ""
-  }
-  const messages = params.messages.map((message, i) => {
-    if (message.role === "system" || message.role === "user") {
-      const contents = typeof message.content === "string"
-        ? message.content
-        : message.content.map((part) => {
+  const prompt = new Prompt()
+  prompt.h(1, "Overview")
+  prompt.lineBreak(2)
+  prompt.span`
+    A chat completion request was submitted with a JSON schema describing structured
+    output requirements. In the following sections, we'll cover the following.
+  `
+  prompt.lineBreak(2)
+  const hasMessages = !!params.messages.length
+    && params.messages.every((message) => {
+      const { content } = message
+      return (typeof content === "string" && !!content) || (
+        Array.isArray(content) && !!content.length
+        && content.every((part) => part.type === "text" && !!part.text)
+      )
+    })
+  prompt.list([
+    hasMessages && "The initial messages passed along to the completions endpoint.",
+    "The JSON schema of the initially-requested structured output.",
+    "The unmet constraints.",
+  ])
+  prompt.lineBreak(2)
+  prompt.span`Offer new and correct values for each of the specified diagnostics.`
+  prompt.lineBreak(2)
+  if (hasMessages) {
+    prompt.h(2, "Messages")
+    prompt.lineBreak(2)
+    params.messages.forEach((message, i) => {
+      prompt.h(3, `Message ${i} (${message.role})`)
+      const { content } = message
+      if (typeof content === "string") {
+        prompt.span(content)
+      } else if (Array.isArray(content)) {
+        content.forEach((part, i) => {
+          if (i !== 0) {
+            prompt.span(" ")
+          }
           assert(
             part.type === "text",
             `${part.type} message content parts cannot be used in conjunction with structured outputs.`,
           )
-          return part.text
-        }).join("\n")
-      return contents.length
-        ? `### Message ${i} (${message.role})
-
-${contents}`
-        : undefined
-    }
-  }).filter(Boolean)
-  return messages.length
-    ? `## Initial Messages
-
-${messages}`
-    : ""
+          prompt.span(part.text)
+        })
+      }
+    })
+    prompt.lineBreak(2)
+  }
+  prompt.h(2, "Initial JSON Schema")
+  prompt.lineBreak(2)
+  prompt.json(params.response_format.json_schema)
+  prompt.lineBreak(2)
+  prompt.h(2, "Diagnostics")
+  prompt.lineBreak(2)
+  prompt.list(diagnostics.map(Diagnostic.toString))
+  return prompt.toString()
 }

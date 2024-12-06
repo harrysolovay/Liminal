@@ -35,7 +35,7 @@ const visitor = new TypeVisitor<never, ValueVisitor>()
       const { diagnosticsPending } = ctx
       if (diagnosticsPending && assertionConfigs) {
         for (const { assertion, args, trace } of assertionConfigs) {
-          diagnosticsPending.push((async () => {
+          diagnosticsPending.push((async (): Promise<Diagnostic | undefined> => {
             try {
               await assertion(value, args)
             } catch (e: unknown) {
@@ -44,7 +44,6 @@ const visitor = new TypeVisitor<never, ValueVisitor>()
                   error: e,
                   trace,
                   type,
-                  typePath: "",
                   value,
                   valuePath: ctx.path,
                   setValue: ctx.set,

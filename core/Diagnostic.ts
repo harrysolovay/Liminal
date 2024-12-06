@@ -4,17 +4,14 @@ export type Diagnostic = {
   error: Error
   trace: string
   type: AnyType
-  typePath: string
   value: unknown
   valuePath: string
   setValue: (parentValue: unknown) => void
 }
 
 export namespace Diagnostic {
-  export function toString({ error, value, valuePath, typePath }: Diagnostic): string {
-    return `${error.name}; ${error.message}
-    Invalid value: ${value}
-    Value path: ${valuePath}
-    Type path: ${typePath}`
+  // TODO: should this implicitly include `value`, even though it's likely present in the assertion.
+  export function toString({ error, valuePath }: Diagnostic): string {
+    return `Encountered ${error.name} at value path ${valuePath}: ${error.message}`
   }
 }

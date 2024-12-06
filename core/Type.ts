@@ -56,7 +56,9 @@ export function Type<T, P extends keyof any = never>(
         ),
       ),
     {
-      [typeKey]: { declaration, ctx },
+      [typeKey]: true,
+      declaration,
+      ctx,
       of: (args: DescriptionArgs) =>
         Type(
           declaration,
