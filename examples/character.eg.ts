@@ -4,6 +4,8 @@ import { ResponseFormat, T } from "structured-outputs"
 import { asserts, ColorHex, Date } from "structured-outputs/std"
 import { dbg } from "../util/mod.ts"
 
+const openai = new Openai()
+
 const greeting = T.taggedUnion("greeting", {
   Hi: T.string,
   Yo: T.number,
@@ -32,7 +34,7 @@ const response_format = ResponseFormat("create_character", Character)`
   Create a new character to be the protagonist of a children's story.
 `
 
-await new Openai().chat.completions
+await openai.chat.completions
   .create({
     model: "gpt-4o-mini",
     response_format,

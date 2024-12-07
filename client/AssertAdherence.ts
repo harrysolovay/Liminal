@@ -5,30 +5,17 @@ import { ResponseFormat } from "./ResponseFormat.ts"
 
 export function AssertAdherence(
   openai: Openai,
-): (
-  value: number | string,
-  assertion: string,
-  ...assertions: string[]
-) => Promise<void> {
-  return async (value, ...assertions) => {
-    const plurality = assertions.length > 1 ? "s" : ""
+): (value: unknown, assertion: string) => Promise<void> {
+  return async (value, assertion) => {
     const stance = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [{
         role: "user",
-        content:
-          `Weigh in on whether the value is valid for the corresponding assertion${plurality}.
+        content: `Weigh in on whether the value is valid for the corresponding assertion.
 
-Assertion${plurality}: ${
-            plurality
-              ? `
+Assertion: ${assertion}
 
-- ${assertions.join("\n- ")}
-`
-              : assertions[0]!
-          }
-
-Value: ${value}`,
+Value: ${JSON.stringify(value, null, 2)}`,
       }],
       response_format,
     }).then(response_format.into)

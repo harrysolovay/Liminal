@@ -35,7 +35,7 @@ type Animal = typeof Animal["T"]
 <br />
 <br />
 
-## [Create and Parse Completions](./consumers/response-format.md)
+## [Create and Parse Completions &rarr;](./consumers/response-format.md)
 
 ```ts {3,9,11} twoslash
 // @include: animal

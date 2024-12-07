@@ -1,7 +1,7 @@
 import { Type } from "../Type.ts"
 
 export { enum_ as enum }
-function enum_<K extends string>(...values: Array<K>): Type<K> {
+function enum_<V extends Array<string>>(...values: V): Type<V[number]> {
   return Type({
     kind: "enum",
     factory: enum_,

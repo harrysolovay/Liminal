@@ -1,5 +1,5 @@
 import "@std/dotenv/load"
-import { T } from "structured-outputs"
+import { display, T } from "structured-outputs"
 
 const A = T.object({
   a: T.string,
@@ -10,4 +10,9 @@ const B = T.taggedUnion("type", {
   B: T.string,
 })
 
-console.log(B)
+const C = T.taggedUnion("type", {
+  B,
+  C: T.string,
+})
+
+console.log(display(C))
