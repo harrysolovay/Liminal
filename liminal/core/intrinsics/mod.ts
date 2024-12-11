@@ -1,6 +1,5 @@
 // moderate
 
-export * from "./_.ts"
 export * from "./array.ts"
 export * from "./const.ts"
 export * from "./enum.ts"
