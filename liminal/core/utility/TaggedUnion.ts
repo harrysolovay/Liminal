@@ -12,7 +12,7 @@ export function TaggedUnion<M extends Record<string, AnyType | Falsy>>(
       & { type: K }
       & (M[K] extends AnyType ? { value: M[K]["T"] } : {})
     >
-  },
+  }[keyof M],
   Extract<M[keyof M], AnyType>["P"]
 > {
   const tags = Object.keys(members)
