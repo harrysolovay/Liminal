@@ -1,6 +1,6 @@
 import type { Falsy } from "@std/assert"
 import type { Expand } from "../../../util/mod.ts"
-import { const as const_, object, string, union } from "../intrinsics/mod.ts"
+import * as L from "../intrinsics/mod.ts"
 import type { AnyType, Type } from "../Type.ts"
 
 export function TaggedUnion<M extends Record<string, AnyType | Falsy>>(
@@ -17,10 +17,10 @@ export function TaggedUnion<M extends Record<string, AnyType | Falsy>>(
 > {
   const tags = Object.keys(members)
   tags.sort()
-  return union(
+  return L.union(
     ...tags.map((tag) =>
-      object({
-        type: const_(string, tag),
+      L.object({
+        type: L.const(L.string, tag),
         ...members[tag] ? { value: members[tag]! } : {},
       } as never)
     ),

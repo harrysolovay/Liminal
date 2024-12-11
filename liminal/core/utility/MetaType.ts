@@ -1,14 +1,4 @@
-import {
-  array,
-  boolean,
-  const as const_,
-  enum as enum_,
-  object,
-  ref,
-  string,
-  transform,
-  union,
-} from "../intrinsics/mod.ts"
+import * as L from "../intrinsics/mod.ts"
 import type { JSONType } from "../JSONSchema.ts"
 import type { AnyType, Type } from "../Type.ts"
 import { Option } from "./Option.ts"
@@ -16,23 +6,23 @@ import { Record } from "./Record.ts"
 import { TaggedUnion } from "./TaggedUnion.ts"
 
 export type MetaType = Type<"union", JSONType, never>
-export const MetaType: MetaType = union(...[
-  object({
-    type: enum_("null", "boolean", "integer", "number"),
+export const MetaType: MetaType = L.union(...[
+  L.object({
+    type: L.enum("null", "boolean", "integer", "number"),
   }),
-  object({
-    type: const_(string, "string"),
-    enum: transform(Option(array(string)), (value) => value ? value : undefined),
+  L.object({
+    type: L.const(L.string, "string"),
+    enum: L.transform(Option(L.array(L.string)), (value) => value ? value : undefined),
   }),
-  transform(
+  L.transform(
     TaggedUnion({
-      array: object({
-        items: ref((): AnyType => MetaType),
+      array: L.object({
+        items: L.ref((): AnyType => MetaType),
       }),
-      object: transform(
-        object({
-          properties: Record(ref((): AnyType => MetaType)),
-          additionalProperties: const_(boolean, false),
+      object: L.transform(
+        L.object({
+          properties: Record(L.ref((): AnyType => MetaType)),
+          additionalProperties: L.const(L.boolean, false),
         }),
         ({ properties, ...rest }) => ({
           properties,
@@ -43,7 +33,7 @@ export const MetaType: MetaType = union(...[
     }),
     ({ type, value }) => ({ type, ...value }),
   ),
-  object({
-    anyOf: array(ref((): AnyType => MetaType)),
+  L.object({
+    anyOf: L.array(L.ref((): AnyType => MetaType)),
   }),
 ] as never)
