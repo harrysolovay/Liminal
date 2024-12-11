@@ -16,12 +16,13 @@ import { Record } from "./Record.ts"
 import { TaggedUnion } from "./TaggedUnion.ts"
 
 export type MetaType = Type<"union", JSONType, never>
-export const MetaType: MetaType = union(
+export const MetaType: MetaType = union(...[
   object({
     type: enum_("null", "boolean", "integer", "number"),
   }),
   object({
-    anyOf: array(ref((): AnyType => MetaType)),
+    type: const_(string, "string"),
+    enum: transform(Option(array(string)), (value) => value ? value : undefined),
   }),
   transform(
     TaggedUnion({
@@ -43,7 +44,6 @@ export const MetaType: MetaType = union(
     ({ type, value }) => ({ type, ...value }),
   ),
   object({
-    type: const_(string, "string"),
-    enum: Option(array(string)),
+    anyOf: array(ref((): AnyType => MetaType)),
   }),
-)
+] as never)
