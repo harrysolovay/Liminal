@@ -8,15 +8,18 @@ import { TaggedUnion } from "./TaggedUnion.ts"
 export type MetaType = Type<"union", JSONType, never>
 export const MetaType: MetaType = I.ref(() =>
   I.union(...[
-    I.object({
-      type: I.enum("null", "boolean", "integer", "number"),
-    }),
-    I.object({
-      type: I.const(I.string, "string"),
-      enum: I.transform(Option(I.array(I.string)), (value) => value ? value : undefined),
-    }),
     I.transform(
       TaggedUnion({
+        null: null,
+        boolean: null,
+        integer: null,
+        number: null,
+        string: I.object({
+          enum: I.transform(
+            Option(I.array(I.string)),
+            (value) => value === null ? undefined : value,
+          ),
+        }),
         array: I.object({
           items: MetaType,
         }),
@@ -32,10 +35,10 @@ export const MetaType: MetaType = I.ref(() =>
           }),
         ),
       }),
-      ({ type, value }) => ({ type, ...value }),
+      ({ type, value }) => ({ type, ...value ?? {} } as never),
     ),
     I.object({
       anyOf: I.array(MetaType),
     }),
-  ] as never)
+  ])
 )

@@ -10,7 +10,7 @@ export function TaggedUnion<M extends Record<string, AnyType | Falsy>>(
   {
     [K in keyof M]: Expand<
       & { type: K }
-      & (M[K] extends AnyType ? { value: M[K]["T"] } : {})
+      & (M[K] extends AnyType ? { value: M[K]["T"] } : { value?: undefined })
     >
   }[keyof M],
   Extract<M[keyof M], AnyType>["P"]
