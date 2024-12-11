@@ -3,13 +3,13 @@ import type { Annotation, DescriptionTemplatePart, ReduceP } from "./Annotation.
 import { assert } from "./assert.ts"
 import { description } from "./description.ts"
 import { deserializeValue } from "./deserializeValue.ts"
-import type { JSONTypeName } from "./JSONSchema.ts"
+import type { JSONTypeKind } from "./JSONSchema.ts"
 import { metadata } from "./metadata.ts"
 import { signature } from "./signature.ts"
 import { toJSON } from "./toJSON.ts"
 import type { Type, TypeDeclaration } from "./Type.ts"
 
-export function declare<K extends JSONTypeName, T, P extends symbol>(
+export function declare<K extends JSONTypeKind, T, P extends symbol>(
   kind: K,
   declaration: TypeDeclaration<T>,
   annotations: Array<Annotation> = [],
@@ -18,7 +18,7 @@ export function declare<K extends JSONTypeName, T, P extends symbol>(
     Type,
     {
       type: "Type",
-      kind,
+      K,
       declaration,
       annotations,
       signature,

@@ -1,7 +1,7 @@
 import type { Expand } from "../../util/mod.ts"
 
-export type JSONType = JSONTypes[JSONTypeName]
-export type JSONTypeName = keyof JSONTypes
+export type JSONType = JSONTypes[JSONTypeKind]
+export type JSONTypeKind = keyof JSONTypes
 export type JSONTypes = JSONTypes.Make<{
   null: {
     type: "null"
@@ -42,6 +42,7 @@ namespace JSONTypes {
     [K in keyof T]: Expand<
       T[K] & {
         description?: string
+        const?: unknown
       }
     >
   }

@@ -11,16 +11,17 @@ export interface Type<K extends keyof JSONTypes, T, P extends symbol> {
 
   <A extends Array<Annotation>>(...annotations: A): Type<K, T, ReduceP<P, A>>
 
+  type: "Type"
+
+  K: K
   T: T
   P: P
 
-  type: "Type"
-  kind: K
   declaration: TypeDeclaration<T>
   annotations: Array<Annotation>
 
   signature(): string
-  description(this: Type<K, T, never>, ctx?: DescriptionContext): string
+  description(this: Type<K, T, never>, ctx: DescriptionContext): string
   metadata(): Record<symbol, unknown>
   toJSON(this: Type<K, T, never>): JSONTypes[K]
   assert: (value: unknown) => asserts value is T

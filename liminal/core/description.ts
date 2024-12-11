@@ -1,10 +1,13 @@
 import { recombine } from "../util/mod.ts"
-import type { JSONTypeName } from "./JSONSchema.ts"
+import type { JSONTypeKind } from "./JSONSchema.ts"
 import type { AnyType } from "./mod.ts"
 import type { Type } from "./Type.ts"
 
 export class DescriptionContext {
-  constructor(readonly pins: Map<AnyType, string>, readonly args: Record<symbol, string>) {}
+  constructor(
+    readonly pins: Map<AnyType, string>,
+    readonly args: Record<symbol, string>,
+  ) {}
 
   pin = (type: AnyType): string => {
     let pin = this.pins.get(type)
@@ -14,14 +17,10 @@ export class DescriptionContext {
     }
     return pin
   }
-
-  next = (args: Record<symbol, string>): DescriptionContext => {
-    return new DescriptionContext(this.pins, args)
-  }
 }
 
 export function description(
-  this: Type<JSONTypeName, any, never>,
+  this: Type<JSONTypeKind, any, never>,
   ctx: DescriptionContext,
 ): string {
   const assertionDescriptions: Array<string> = []
