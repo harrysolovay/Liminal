@@ -1,6 +1,6 @@
-import type { Diagnostic } from "./Diagnostic.ts"
 import type { JSONTypeName } from "./JSONSchema.ts"
 import type { Type } from "./Type.ts"
+import type { Diagnostic } from "./utility/Diagnostic.ts"
 
 export function deserializeValue<T>(
   this: Type<JSONTypeName, T, never>,

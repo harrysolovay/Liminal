@@ -1,4 +1,4 @@
-import type { AnyType } from "./mod.ts"
+import type { AnyType } from "../mod.ts"
 
 export interface Diagnostic {
   error: Error

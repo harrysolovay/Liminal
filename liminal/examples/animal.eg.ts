@@ -1,21 +1,29 @@
-import { Annotation as A, Type as T } from "../mod.ts"
+import { L } from "../mod.ts"
 
 const U_: unique symbol = Symbol()
-const U = T._(U_)
+const U = L._(U_)
 
-const Dog = T.object({
-  bark: T.string,
-  favoriteToy: T.string,
+const Dog = L.object({
+  bark: L.string,
+  favoriteToy: L.string,
 })
 
-const Elephant = T.object({
-  troopId: T.number,
-  remembersYourFace: T.boolean,
+const Elephant = L.object({
+  troopId: L.number,
+  remembersYourFace: L.boolean,
 })
 
-const Option = T.union(
-  T.object({
+const Option = L.union(
+  L.object({
     value: Dog,
   }),
-  T.null,
+  L.null,
 )
+
+const Container = L.object({
+  Dog,
+  Elephant,
+  Option,
+})
+
+console.log(Container)

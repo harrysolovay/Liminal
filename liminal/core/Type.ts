@@ -1,8 +1,6 @@
 import type { Annotation, DescriptionTemplatePart, ReduceP } from "./Annotation.ts"
-import type { Diagnostic } from "./Diagnostic.ts"
 import type { JSONTypes } from "./JSONSchema.ts"
-
-export * as Type from "./Type_statics.ts"
+import type { Diagnostic } from "./utility/Diagnostic.ts"
 
 export interface Type<K extends keyof JSONTypes, T, P extends symbol> {
   <A extends Array<DescriptionTemplatePart>>(
