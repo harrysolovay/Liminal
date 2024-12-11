@@ -1,4 +1,4 @@
-// moderate --exclude make.ts
+// moderate
 
 export * from "./_.ts"
 export * from "./array.ts"

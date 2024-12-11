@@ -11,7 +11,7 @@ export interface Diagnostic {
 
 export namespace Diagnostic {
   export function toString({ error, valuePath, value }: Diagnostic): string {
-    return `Encountered error "${error.name}" from value \`${
+    return `Error "${error.name}" with value \`${
       JSON.stringify(value)
     }\` at \`root${valuePath}\`: ${error.message}`
   }

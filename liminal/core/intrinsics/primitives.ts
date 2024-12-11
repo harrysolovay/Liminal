@@ -1,12 +1,39 @@
+import { assert } from "@std/assert"
+import { declare } from "../declare.ts"
 import type { Type } from "../Type.ts"
 
 export { null_ as null }
-declare const null_: Type<"null", null, never>
+const null_: Type<"null", null, never> = declare("null", {
+  getAtom: () => null_,
+  assert: (value) => {
+    assert(value === null)
+  },
+})
 
-export declare const boolean: Type<"boolean", boolean, never>
+export const boolean: Type<"boolean", boolean, never> = declare("boolean", {
+  getAtom: () => boolean,
+  assert: (value) => {
+    assert(typeof value === "boolean")
+  },
+})
 
-export declare const integer: Type<"integer", number, never>
+export const integer: Type<"integer", number, never> = declare("integer", {
+  getAtom: () => integer,
+  assert: (value) => {
+    assert(Number.isInteger(value))
+  },
+})
 
-export declare const number: Type<"number", number, never>
+export const number: Type<"number", number, never> = declare("number", {
+  getAtom: () => number,
+  assert: (value) => {
+    assert(typeof value === "number")
+  },
+})
 
-export declare const string: Type<"string", string, never>
+export const string: Type<"string", string, never> = declare("string", {
+  getAtom: () => string,
+  assert: (value) => {
+    assert(typeof value === "string")
+  },
+})

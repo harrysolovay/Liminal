@@ -8,15 +8,46 @@ export type Annotation<T = any> =
   | AnyType
   | DescriptionParam
   | DescriptionArg
-  | Assert<T>
+  | Assertion<T>
   | Metadata
 
 export namespace Annotation {
-  export function _<K extends symbol, T>(key: K, serializer?: (value: T) => string): void {}
+  export function _<K extends symbol, T>(
+    key: K,
+    serializer?: (value: T) => string,
+  ): DescriptionParam<K, T> {
+    return Object.assign(
+      (): DescriptionArg<K, T> => ({
+        type: "DescriptionArg",
+        key,
+        serializer,
+      }),
+      {
+        type: "DescriptionParam" as const,
+        key,
+      },
+    )
+  }
 
-  export function assert() {}
+  export function assertion<T, A extends unknown[]>(
+    description: string | ((...args: A) => string),
+    f?: (value: T, ...args: A) => void | Promise<void>,
+  ): (...args: A) => Assertion<T, A> {
+    return (...args) => ({
+      type: "Assertion",
+      description,
+      f,
+      args,
+    })
+  }
 
-  export function metadata() {}
+  export function metadata(key: symbol, value: unknown): Metadata {
+    return {
+      type: "Metadata",
+      key,
+      value,
+    }
+  }
 }
 
 export interface DescriptionTemplate {
@@ -29,20 +60,20 @@ export interface DescriptionTemplate {
 export type DescriptionTemplatePart = string | AnyType | DescriptionParam
 
 export interface DescriptionParam<K extends symbol = symbol, T = any> {
-  (arg: T): DescriptionArg<K>
+  (arg: T): DescriptionArg<K, T>
   type: "DescriptionParam"
   key: K
 }
 
-export interface DescriptionArg<K extends symbol = symbol> {
+export interface DescriptionArg<K extends symbol = symbol, T = any> {
   type: "DescriptionArg"
   key: K
-  serializer?: (value: unknown) => string
+  serializer?: (value: T) => string
 }
 
-export interface Assert<T = any, A extends unknown[] = any> {
-  type: "Assert"
-  message: string | ((...args: A) => string)
+export interface Assertion<T = any, A extends unknown[] = any> {
+  type: "Assertion"
+  description: string | ((...args: A) => string)
   f?: (value: T, ...args: A) => void | Promise<void>
   args: A
 }
@@ -52,3 +83,12 @@ export interface Metadata {
   key: symbol
   value: unknown
 }
+
+export type ReduceP<D extends symbol, A extends Array<Annotation>> = A extends
+  [infer Part0, ...infer PartRest extends Array<Annotation>] ? ReduceP<
+    Part0 extends DescriptionParam<infer K> ? D | K
+      : Part0 extends DescriptionArg<infer K> ? Exclude<D, K>
+      : D,
+    PartRest
+  >
+  : D
