@@ -37,14 +37,13 @@ export function description(
               annotation.parts.map((part) => {
                 if (typeof part === "string") {
                   return part
-                } else {
-                  switch (part.type) {
-                    case "DescriptionParam": {
-                      return ctx.args[part.key]
-                    }
-                    case "Type": {
-                      return ctx.pin(part)
-                    }
+                }
+                switch (part.type) {
+                  case "DescriptionParam": {
+                    return ctx.args[part.key]
+                  }
+                  case "Type": {
+                    return ctx.pin(part)
                   }
                 }
               }),

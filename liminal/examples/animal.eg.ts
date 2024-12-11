@@ -1,29 +1,32 @@
-import { L } from "../mod.ts"
+import { L, Tool } from "../mod.ts"
 
 const U_: unique symbol = Symbol()
 const U = L._(U_)
 
 const Dog = L.object({
-  bark: L.string,
+  bark: L.string`Have stuff here.`,
   favoriteToy: L.string,
 })
 
 const Elephant = L.object({
   troopId: L.number,
   remembersYourFace: L.boolean,
+  x: L.Tuple(L.number, L.string),
 })
 
-const Option = L.union(
+const Intersection = L.Intersection(
   L.object({
-    value: Dog,
+    value: Dog`Add a ref to ${Elephant}`,
   }),
-  L.null,
+  L.object({
+    value: Elephant,
+  }),
 )
 
-const Container = L.object({
+const Container = L.TaggedUnion({
   Dog,
   Elephant,
-  Option,
-})
+  Intersection,
+})(U("something"))
 
-console.log(Container)
+console.log(JSON.stringify(Container, null, 2))

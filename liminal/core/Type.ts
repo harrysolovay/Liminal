@@ -1,9 +1,9 @@
 import type { Annotation, DescriptionTemplatePart, ReduceP } from "./Annotation.ts"
 import type { DescriptionContext } from "./description.ts"
 import type { Diagnostic } from "./Diagnostic.ts"
-import type { JSONTypes } from "./JSONSchema.ts"
+import type { JSONTypeKind, JSONTypes } from "./JSONSchema.ts"
 
-export interface Type<K extends keyof JSONTypes, T, P extends symbol> {
+export interface Type<K extends JSONTypeKind, T, P extends symbol> {
   <A extends Array<DescriptionTemplatePart>>(
     template: TemplateStringsArray,
     ...descriptionParts: A
@@ -23,7 +23,7 @@ export interface Type<K extends keyof JSONTypes, T, P extends symbol> {
   signature(): string
   description(this: Type<K, T, never>, ctx: DescriptionContext): string
   metadata(): Record<symbol, unknown>
-  toJSON(this: Type<K, T, never>): JSONTypes[K]
+  toJSON(): JSONTypes[K]
   assert: (value: unknown) => asserts value is T
   deserializeValue(raw: unknown, diagnostics?: Array<Diagnostic>): Promise<T>
 }

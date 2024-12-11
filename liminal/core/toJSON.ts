@@ -3,7 +3,7 @@ import type { JSONType, JSONTypeKind, JSONTypes } from "./JSONSchema.ts"
 import type { AnyType, Type } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
-export function toJSON(this: Type<"object", any, never>): JSONTypes["object"] {
+export function toJSON<K extends JSONTypeKind>(this: Type<K, unknown, any>): JSONTypes[K] {
   const ctx = new VisitContext(
     new Map(),
     {},
@@ -107,7 +107,9 @@ const visit = TypeVisitor<VisitContext, JSONType>({
     }
   },
   ref(ctx, _1, get): JSONType {
-    return visit(ctx, get())
+    return {
+      $ref: `#/$defs/${ctx.ids.get(get())!}`,
+    }
   },
   transform(ctx, _1, from): JSONType {
     return visit(ctx, from)

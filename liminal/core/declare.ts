@@ -10,7 +10,7 @@ import { toJSON } from "./toJSON.ts"
 import type { Type, TypeDeclaration } from "./Type.ts"
 
 export function declare<K extends JSONTypeKind, T, P extends symbol>(
-  kind: K,
+  K: K,
   declaration: TypeDeclaration<T>,
   annotations: Array<Annotation> = [],
 ): Type<K, T, P> {
@@ -40,12 +40,12 @@ export function declare<K extends JSONTypeKind, T, P extends symbol>(
     ...parts: Array<Annotation>
   ): Type<K, T, symbol> {
     if (isTemplateStringsArray(maybeTemplate)) {
-      return declare(kind, declaration, [...annotations, {
+      return declare(K, declaration, [...annotations, {
         type: "DescriptionTemplate",
         template: maybeTemplate,
         parts: parts as Array<DescriptionTemplatePart>,
       }])
     }
-    return declare(kind, declaration, [maybeTemplate, ...annotations, ...parts])
+    return declare(K, declaration, [maybeTemplate, ...annotations, ...parts])
   }
 }

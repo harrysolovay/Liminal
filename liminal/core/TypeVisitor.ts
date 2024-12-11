@@ -24,8 +24,8 @@ export type TypeVisitorArms<C, R> = Expand<
 type IntrinsicArms<C, R> = {
   [K in keyof I]: (
     ctx: C,
-    type: I[K] extends AnyType ? I[K] : ReturnType<I[K]>,
-    ...args: I[K] extends AnyType ? [] : Parameters<I[K]>
+    ...rest: I[K] extends AnyType ? [type: I[K]]
+      : [type: ReturnType<I[K]>, ...args: Parameters<I[K]>]
   ) => R
 }
 

@@ -19,7 +19,7 @@ export function Hydrated(type: JSONTypes["object"]): Type<"object", unknown, nev
     return ((): Type<JSONTypeKind, unknown, never> => {
       if ("$ref" in type) {
         const id = type.$ref.split("#/$defs/").pop()!
-        return I.ref(() => types[id]!)
+        return I.f(() => types[id]!)
       } else if ("anyOf" in type) {
         return I.union(...type.anyOf.map(visit))
       } else {
