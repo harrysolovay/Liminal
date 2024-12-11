@@ -17,6 +17,7 @@ export function declare<K extends JSONTypeName, T, P extends symbol>(
   return Object.assign(
     Type,
     {
+      type: "Type",
       kind,
       declaration,
       annotations,

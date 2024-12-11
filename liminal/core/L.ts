@@ -3,14 +3,15 @@ import type { Assertion, DescriptionArg, DescriptionParam, Metadata } from "./An
 export * from "./intrinsics/mod.ts"
 export * from "./utility/mod.ts"
 
-export function _<K extends symbol, T>(
+export function _<K extends symbol, T = string>(
   key: K,
   serializer?: (value: T) => string,
 ): DescriptionParam<K, T> {
   return Object.assign(
-    (): DescriptionArg<K, T> => ({
+    (value: T): DescriptionArg<K, T> => ({
       type: "DescriptionArg",
       key,
+      value,
       serializer,
     }),
     {

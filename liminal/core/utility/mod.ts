@@ -1,5 +1,6 @@
 // moderate
 
+export * from "./Hydrated.ts"
 export * from "./Intersection.ts"
 export * from "./MetaType.ts"
 export * from "./MetaTypeMigration.ts"

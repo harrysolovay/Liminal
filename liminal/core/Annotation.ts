@@ -29,6 +29,7 @@ export interface DescriptionParam<K extends symbol = symbol, T = any> {
 export interface DescriptionArg<K extends symbol = symbol, T = any> {
   type: "DescriptionArg"
   key: K
+  value: T
   serializer?: (value: T) => string
 }
 

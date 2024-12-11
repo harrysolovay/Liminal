@@ -1,5 +1,5 @@
 export * from "./Annotation.ts"
+export * from "./Diagnostic.ts"
 export * as L from "./L.ts"
 export * from "./Type.ts"
 export * from "./TypeVisitor.ts"
-export * from "./utility/Diagnostic.ts"
