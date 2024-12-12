@@ -9,8 +9,11 @@ export function array<T, P extends symbol>(
   return declare("array", {
     factory: array,
     args: [element],
-    assert: (value) => {
+    assert: (value, ctx) => {
       assert(Array.isArray(value))
+      value.forEach((value, i) => {
+        ctx.visit(element, value, i)
+      })
     },
   })
 }

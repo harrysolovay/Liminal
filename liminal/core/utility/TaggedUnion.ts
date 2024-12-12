@@ -2,6 +2,7 @@ import type { Falsy } from "@std/assert"
 import type { Expand } from "../../../util/mod.ts"
 import * as I from "../intrinsics/mod.ts"
 import type { AnyType, Type } from "../Type.ts"
+import { Tagged } from "./Tagged.ts"
 
 export function TaggedUnion<M extends Record<string, AnyType | Falsy>>(
   members: M,
@@ -15,14 +16,9 @@ export function TaggedUnion<M extends Record<string, AnyType | Falsy>>(
   }[keyof M],
   Extract<M[keyof M], AnyType>["P"]
 > {
-  const tags = Object.keys(members)
-  tags.sort()
   return I.union(
-    ...tags.map((tag) =>
-      I.object({
-        type: I.const(I.string, tag),
-        ...members[tag] ? { value: members[tag]! } : {},
-      } as never)
+    ...Object.keys(members).toSorted().map((tag) =>
+      Tagged("type", tag, members[tag] ? { value: members[tag]! } : undefined) as never
     ),
   )
 }

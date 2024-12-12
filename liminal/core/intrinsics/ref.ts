@@ -8,5 +8,8 @@ export function ref<K extends JSONTypeKind, T, P extends symbol>(
   return declare("ref", {
     factory: ref,
     args: [get],
+    assert: (value, ctx) => {
+      ctx.visit(get(), value)
+    },
   }) as never
 }
