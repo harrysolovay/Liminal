@@ -3,14 +3,14 @@ import type { Annotation, DescriptionTemplatePart, ReduceP } from "./Annotation.
 import { assert } from "./assert.ts"
 import { description } from "./description.ts"
 import { deserialize } from "./deserialize.ts"
-import type { JSONTypeKind } from "./JSONSchema.ts"
+import type { JSONTypeName } from "./JSONSchema.ts"
 import { metadata } from "./metadata.ts"
 import { signature } from "./signature.ts"
 import { toJSON } from "./toJSON.ts"
 import type { Type, TypeDeclaration } from "./Type.ts"
 
-export function declare<K extends JSONTypeKind, T, P extends symbol>(
-  jsonType: K,
+export function declare<K extends JSONTypeName, T, P extends symbol>(
+  jsonTypeName: K,
   declaration: TypeDeclaration,
   annotations: Array<Annotation> = [],
 ): Type<K, T, P> {
@@ -18,7 +18,7 @@ export function declare<K extends JSONTypeKind, T, P extends symbol>(
     Type,
     {
       type: "Type",
-      jsonType,
+      jsonTypeName,
       trace: new Error().stack!,
       declaration,
       annotations,
@@ -41,12 +41,12 @@ export function declare<K extends JSONTypeKind, T, P extends symbol>(
     ...parts: Array<Annotation>
   ): Type<K, T, symbol> {
     if (isTemplateStringsArray(maybeTemplate)) {
-      return declare(jsonType, declaration, [...annotations, {
+      return declare(jsonTypeName, declaration, [...annotations, {
         type: "DescriptionTemplate",
         template: maybeTemplate,
         parts: parts as Array<DescriptionTemplatePart>,
       }])
     }
-    return declare(jsonType, declaration, [maybeTemplate, ...annotations, ...parts])
+    return declare(jsonTypeName, declaration, [maybeTemplate, ...annotations, ...parts])
   }
 }

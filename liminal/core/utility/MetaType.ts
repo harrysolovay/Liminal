@@ -1,6 +1,6 @@
 import { nullToUndefined } from "../../util/mod.ts"
 import * as I from "../intrinsics/mod.ts"
-import type { JSONType, JSONTypeKind, JSONTypes } from "../JSONSchema.ts"
+import type { JSONType, JSONTypeName, JSONTypes } from "../JSONSchema.ts"
 import type { Type } from "../Type.ts"
 import { Option } from "./Option.ts"
 import { Record } from "./Record.ts"
@@ -49,4 +49,4 @@ export const MetaType: Type<"union", JSONType, never> = I.union(
   ObjectMetaType,
 )
 
-type Base<K extends JSONTypeKind = JSONTypeKind> = [Type<"object", JSONTypes[K], never>][0]
+type Base<K extends JSONTypeName = JSONTypeName> = [Type<"object", JSONTypes[K], never>][0]

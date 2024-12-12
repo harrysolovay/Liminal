@@ -1,66 +1,47 @@
 import { AssertionError } from "@std/assert"
-import { L, type Type } from "../core/mod.ts"
-import type { SessionConfig } from "./SessionConfig.ts"
+import { type JSONTypeName, L, type Type } from "../core/mod.ts"
+import type { Adapter } from "./Adapter.ts"
+import { Thread } from "./Thread.ts"
 
-export class Session<M, N extends string> {
-  constructor(
-    readonly config: SessionConfig<M, N>,
-    readonly threads: WeakSet<Thread<M, N>> = new WeakSet(),
-  ) {}
+export class Session<M, A extends unknown[]> {
+  constructor(readonly adapter: Adapter<M, A>) {}
 
-  thread = (system?: string): Thread<M, N> => {
-    const thread = new Thread(
-      this,
-      system ? [this.config.toMessage(system, "system")] : [],
-    )
-    this.threads.add(thread)
-    return thread
+  thread = async (...args: A): Promise<Thread<M, A>> => {
+    return new Thread(this, await this.adapter.open(...args))
   }
 
-  completion: CreateCompletion<M, N> = (
-    name,
-    description,
-    type,
-    messages,
-    model,
-  ) =>
-    this.config.completion(
-      name,
-      description,
-      type.toJSON(),
-      messages.length ? messages : [this.config.toMessage(this.config.defaultSystemText, "user")],
-      model ?? this.config.defaultModel,
-    ) as never
-
-  value = async <T>(type: Type<"object", T, never>, model: N) => {
-    const thread = this.thread()
-    const result = await thread.completion("animal", undefined, type, [], model)
-    return result
-  }
-
-  assert = async (value: unknown, statement: string, model?: N): Promise<void> => {
-    const result = await this.config.completion(
-      "assert",
-      "reflect on the provided value+assertion pair.",
-      AssertionResult.toJSON(),
-      [
-        this.config.toMessage(
-          `
-            Does the value satisfy the assertion?
-
-            ## The value:
-
-            \`\`\`json
-            ${JSON.stringify(value, null, 2)}
-            \`\`\
-
-            ## The assertion: ${statement}
-          `,
-          "user",
-        ),
+  value = async <T>(type: Type<JSONTypeName, T, never>, ...args: A) => {
+    const thread = await this.thread(...args)
+    return await thread.completion({
+      name: "liminal_value",
+      messages: [
+        this.adapter.text("user", [
+          "Generate a value based on the specified structured output schema.",
+        ]),
       ],
-      model ?? this.config.defaultModel,
-    )
+      type,
+    })
+  }
+
+  assert = async (value: unknown, statement: string, ...args: A): Promise<void> => {
+    const thread = await this.thread(...args)
+    const result = await thread.completion({
+      name: "liminal_assert",
+      messages: [this.adapter.text("user", [
+        `
+          Does the value satisfy the assertion?
+
+          ## The value:
+
+          \`\`\`json
+          ${JSON.stringify(value, null, 2)}
+          \`\`\
+
+          ## The assertion: ${statement}
+        `,
+      ])],
+      type: AssertionResult,
+    })
     const maybeReason = await AssertionResult.deserialize(result)
     if (maybeReason) {
       throw new AssertionError(maybeReason)
@@ -69,29 +50,3 @@ export class Session<M, N extends string> {
 }
 
 const AssertionResult = L.Option(L.string`Reason behind assertion failure.`)
-
-export class Thread<M, N extends string> {
-  constructor(
-    readonly session: Session<M, N>,
-    readonly messages: Array<M> = [],
-  ) {}
-
-  completion: CreateCompletion<M, N> = (name, description, type, messages, model) => {
-    this.messages.push(...messages)
-    return this.session.completion(
-      name,
-      description,
-      type,
-      messages,
-      model,
-    )
-  }
-}
-
-export type CreateCompletion<M, N extends string> = <T>(
-  name: string,
-  description: undefined | string,
-  type: Type<"object", T, never>,
-  messages: Array<M>,
-  model?: N,
-) => Promise<T>

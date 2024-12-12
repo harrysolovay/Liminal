@@ -1,9 +1,9 @@
 import { DescriptionContext } from "./description.ts"
-import type { JSONType, JSONTypeKind, JSONTypes } from "./JSONSchema.ts"
+import type { JSONType, JSONTypeName, JSONTypes } from "./JSONSchema.ts"
 import type { AnyType, Type } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
-export function toJSON<K extends JSONTypeKind>(this: Type<K, unknown, any>): JSONTypes[K] {
+export function toJSON<K extends JSONTypeName>(this: Type<K, unknown, any>): JSONTypes[K] {
   const ctx = new VisitContext(
     new Map(),
     {},
@@ -27,9 +27,9 @@ const visit = TypeVisitor<VisitContext, JSONType>({
     let jsonType: JSONType
     args = { ...args }
     const descriptionCtx = new DescriptionContext(pins, args)
-    const description = (type as Type<JSONTypeKind, unknown, never>).description(descriptionCtx)
+    const description = (type as Type<JSONTypeName, unknown, never>).description(descriptionCtx)
     const ctx = new VisitContext(ids, defs, descriptionCtx)
-    switch (type.K) {
+    switch (type.jsonTypeName) {
       case "array":
       case "object":
       case "union": {

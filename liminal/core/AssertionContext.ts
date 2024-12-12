@@ -1,4 +1,4 @@
-import type { JSONTypeKind } from "./JSONSchema.ts"
+import type { JSONTypeName } from "./JSONSchema.ts"
 import type { AnyType, Type } from "./Type.ts"
 
 export interface Diagnostic {
@@ -26,7 +26,7 @@ export class AssertionContext {
   ) {}
 
   visit = <T>(
-    type: Type<JSONTypeKind, T, symbol>,
+    type: Type<JSONTypeName, T, symbol>,
     value: unknown,
     junction?: number | string,
   ) => {

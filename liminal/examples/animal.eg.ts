@@ -1,6 +1,7 @@
 import Openai from "openai"
 import "@std/dotenv/load"
-import { L, OpenaiSessionConfig, Session } from "../mod.ts"
+import { L, Session } from "../mod.ts"
+import { OpenaiAdapter } from "../openai/mod.ts"
 
 const Dog = L.object({
   bark: L.string,
@@ -18,12 +19,8 @@ const Animal = L.TaggedUnion({
   SlowLoris: null,
 })
 
-const Root = L.object({
-  root: Animal,
-})
+const session = new Session(OpenaiAdapter(new Openai()))
 
-const session = new Session(OpenaiSessionConfig(() => new Openai()))
-
-const value = await session.value(Root, "gpt-4o-mini")
+const value = await session.value(Animal)
 
 console.log(value)
