@@ -5,5 +5,5 @@ export function deserialize<T>(
   this: Type<JSONTypeName, T, never>,
   value: unknown,
 ): Promise<T> {
-  throw 0
+  return value
 }

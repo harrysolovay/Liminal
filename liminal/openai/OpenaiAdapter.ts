@@ -9,9 +9,10 @@ import type { Adapter } from "../client/Adapter.ts"
 import { L } from "../core/mod.ts"
 
 export function OpenaiAdapter(
-  openai: Openai,
+  openai: Openai | typeof Openai,
   model: ChatCompletionCreateParamsBase["model"] = "gpt-4o-mini",
 ): Adapter<ChatCompletionMessageParam, [instruction?: string]> {
+  const client = ("OpenAI" in openai && openai.OpenAI === openai ? new openai() : openai) as Openai
   return {
     text: (role, texts) => ({
       role,
@@ -26,7 +27,7 @@ export function OpenaiAdapter(
     }],
     completion: async ({ messages, name, description, type }) => {
       if (!type || type.declaration.factory === L.string) {
-        return await openai.chat.completions
+        return await client.chat.completions
           .create({
             model,
             messages: [
@@ -44,7 +45,7 @@ export function OpenaiAdapter(
       const Root = type.jsonTypeName === "object"
         ? type
         : L.transform(L.object({ value: type }), ({ value }) => value)
-      return await openai.chat.completions
+      return await client.chat.completions
         .create({
           model,
           messages,

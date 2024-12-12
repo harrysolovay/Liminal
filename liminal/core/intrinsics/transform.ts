@@ -9,8 +9,6 @@ export function transform<K extends JSONTypeName, T, P extends symbol, R>(
   return declare(from.jsonTypeName, {
     factory: transform,
     args: [from, f],
-    assert: (value, ctx) => {
-      throw 0
-    },
+    assert: (value, ctx) => {},
   })
 }
