@@ -12,25 +12,24 @@ export interface Type<K extends JSONTypeKind, T, P extends symbol> {
 
   <A extends Array<Annotation>>(...annotations: A): Type<K, T, ReduceP<P, A>>
 
-  type: "Type"
-
-  K: K
   T: T
   P: P
 
+  type: "Type"
+  jsonType: K
   trace: string
-  declaration: TypeDeclaration<T>
+  declaration: TypeDeclaration
   annotations: Array<Annotation>
 
   signature(): string
   description(this: Type<K, T, never>, ctx: DescriptionContext): string
   metadata(): Record<symbol, unknown>
   toJSON(): JSONTypes[K]
-  assert: (value: unknown) => void | Promise<void>
-  deserializeValue(raw: unknown, diagnostics?: Array<Diagnostic>): Promise<T>
+  assert(value: unknown): Promise<void>
+  deserialize(raw: unknown, diagnostics?: Array<Diagnostic>): Promise<T>
 }
 
-export type TypeDeclaration<T> =
+export type TypeDeclaration =
   & {
     assert: (value: unknown, assertionContext: AssertionContext) => void
   }

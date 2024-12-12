@@ -14,13 +14,13 @@ export function Intersection<S extends Array<IntersectionSourceType>>(
 
 export type IntersectionSourceType = Type<"object", object, symbol>
 
-type Ensure<S extends Array<IntersectionSourceType>> = [Overlap<S>] extends [never] ? S
+type Ensure<S extends Array<IntersectionSourceType>> = [ConflictingKey<S>] extends [never] ? S
   : never
 
-type Overlap<S extends Array<IntersectionSourceType>, V extends string = never> = S extends [
+type ConflictingKey<S extends Array<IntersectionSourceType>, V extends string = never> = S extends [
   infer E0 extends IntersectionSourceType,
   ...infer ERest extends Array<IntersectionSourceType>,
 ] ?
     | keyof { [K in keyof E0["T"] as K extends V ? K : never]: true }
-    | Overlap<ERest, V | Extract<keyof E0["T"], string>>
+    | ConflictingKey<ERest, V | Extract<keyof E0["T"], string>>
   : never
