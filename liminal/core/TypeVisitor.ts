@@ -44,8 +44,11 @@ export function TypeVisitor<C, R>(arms: TypeVisitorArms<C, R>): (ctx: C, type: A
         case I.enum: {
           return "enum"
         }
+        case I.const: {
+          return "const"
+        }
         default: {
-          return type.K
+          return type.jsonType
         }
       }
     })()

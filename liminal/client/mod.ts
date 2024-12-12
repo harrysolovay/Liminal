@@ -1,4 +1,5 @@
 // moderate
 
-export * from "./assertAdherence.ts"
+export * from "./OpenaiSessionConfig.ts"
 export * from "./Session.ts"
+export * from "./SessionConfig.ts"

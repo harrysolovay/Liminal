@@ -1,32 +1,29 @@
-import { L, Tool } from "../mod.ts"
-
-const U_: unique symbol = Symbol()
-const U = L._(U_)
+import Openai from "openai"
+import "@std/dotenv/load"
+import { L, OpenaiSessionConfig, Session } from "../mod.ts"
 
 const Dog = L.object({
-  bark: L.string`Have stuff here.`,
+  bark: L.string,
   favoriteToy: L.string,
 })
 
 const Elephant = L.object({
   troopId: L.number,
   remembersYourFace: L.boolean,
-  x: L.Tuple(L.number, L.string),
 })
 
-const Intersection = L.Intersection(
-  L.object({
-    value: Dog`Add a ref to ${Elephant}`,
-  }),
-  L.object({
-    value: Elephant,
-  }),
-)
-
-const Container = L.TaggedUnion({
+const Animal = L.TaggedUnion({
   Dog,
   Elephant,
-  Intersection,
-})(U("something"))
+  SlowLoris: null,
+})
 
-console.log(JSON.stringify(Container, null, 2))
+const Root = L.object({
+  root: Animal,
+})
+
+const session = new Session(OpenaiSessionConfig(() => new Openai()))
+
+const value = await session.value(Root, "gpt-4o-mini")
+
+console.log(value)
