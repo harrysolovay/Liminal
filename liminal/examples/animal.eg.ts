@@ -19,7 +19,7 @@ const Animal = L.TaggedUnion({
   SlowLoris: null,
 })
 
-const session = new Session(OpenaiAdapter(Openai))
+const session = new Session(OpenaiAdapter(new Openai()))
 
 const value = await session.value(Animal)
 

@@ -9,10 +9,9 @@ import type { Adapter } from "../client/Adapter.ts"
 import { L } from "../core/mod.ts"
 
 export function OpenaiAdapter(
-  openai: Openai | typeof Openai,
+  openai: Openai,
   model: ChatCompletionCreateParamsBase["model"] = "gpt-4o-mini",
 ): Adapter<ChatCompletionMessageParam, [instruction?: string]> {
-  const client = ("OpenAI" in openai && openai.OpenAI === openai ? new openai() : openai) as Openai
   return {
     text: (role, texts) => ({
       role,
@@ -25,9 +24,9 @@ export function OpenaiAdapter(
       role: "system",
       content: instruction ?? "",
     }],
-    completion: async ({ messages, name, description, type }) => {
+    completion: async ({ messages, description, type }) => {
       if (!type || type.declaration.factory === L.string) {
-        return await client.chat.completions
+        return await openai.chat.completions
           .create({
             model,
             messages: [
@@ -45,14 +44,14 @@ export function OpenaiAdapter(
       const Root = type.jsonTypeName === "object"
         ? type
         : L.transform(L.object({ value: type }), ({ value }) => value)
-      return await client.chat.completions
+      return await openai.chat.completions
         .create({
           model,
           messages,
           response_format: {
             type: "json_schema",
             json_schema: {
-              name,
+              name: Root.signature(),
               description,
               schema: Root.toJSON(),
               strict: true,
@@ -71,10 +70,10 @@ function unwrapChoice(completion: ChatCompletion): string {
   const { finish_reason, message } = firstChoice
   assert(
     finish_reason === "stop",
-    `Completion responded with "${finish_reason}" as finish reason; ${message}`,
+    `Completion responded with "${finish_reason}" as finish reason; ${message}.`,
   )
   const { content, refusal } = message
-  assert(!refusal, `Openai refused to fulfill completion request; ${refusal}`)
+  assert(!refusal, `Openai refused to fulfill completion request; ${refusal}.`)
   assert(content, "First response choice contained no content.")
   return content
 }

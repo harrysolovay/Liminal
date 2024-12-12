@@ -9,15 +9,18 @@ export interface Adapter<M, A extends unknown[]> {
 export type CompletionParams<M, T> =
   & {
     messages: Array<M>
-    description?: string
   }
   & (
     | {
-      name: string
-      type: Type<JSONTypeName, T, never>
+      type: Type<Exclude<JSONTypeName, "string">, T, never>
+      description?: string
     }
     | {
-      name?: never
+      type: Type<"string", T, never>
+      description?: never
+    }
+    | {
       type?: never
+      description?: never
     }
   )
