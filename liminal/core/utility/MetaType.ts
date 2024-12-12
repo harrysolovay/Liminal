@@ -1,44 +1,52 @@
+import { nullToUndefined } from "../../util/mod.ts"
 import * as I from "../intrinsics/mod.ts"
-import type { JSONType } from "../JSONSchema.ts"
+import type { JSONType, JSONTypeKind, JSONTypes } from "../JSONSchema.ts"
 import type { Type } from "../Type.ts"
 import { Option } from "./Option.ts"
 import { Record } from "./Record.ts"
-import { TaggedUnion } from "./TaggedUnion.ts"
+import { Tagged } from "./Tagged.ts"
 
-export type MetaType = Type<"union", JSONType, never>
-export const MetaType: MetaType = I.ref(() =>
-  I.union(...[
-    I.transform(
-      TaggedUnion({
-        null: null,
-        boolean: null,
-        integer: null,
-        number: null,
-        string: I.object({
-          enum: I.transform(
-            Option(I.array(I.string)),
-            (value) => value === null ? undefined : value,
-          ),
-        }),
-        array: I.object({
-          items: MetaType,
-        }),
-        object: I.transform(
-          I.object({
-            properties: Record(MetaType),
-            additionalProperties: I.const(I.boolean, false),
-          }),
-          ({ properties, ...rest }) => ({
-            properties,
-            ...rest,
-            required: Object.keys(properties),
-          }),
-        ),
-      }),
-      ({ type, value }) => ({ type, ...value ?? {} } as never),
-    ),
-    I.object({
-      anyOf: I.array(MetaType),
-    }),
-  ])
+export const NullMetaType: Base<"null"> = Tagged("type", "null")
+
+export const BooleanMetaType: Base<"boolean"> = Tagged("type", "boolean")
+
+export const IntegerMetaType: Base<"integer"> = Tagged("type", "integer")
+
+export const NumberMetaType: Base<"number"> = Tagged("type", "number")
+
+export const StringMetaType: Base<"string"> = Tagged("type", "string", {
+  enum: I.transform(Option(I.array(I.string)), nullToUndefined),
+})
+
+export const ArrayMetaType: Base<"array"> = Tagged("type", "array", {
+  items: I.ref((): MetaType => MetaType),
+})
+
+export const ObjectMetaType: Base<"object"> = I.transform(
+  Tagged("type", "object", {
+    properties: Record(I.ref((): MetaType => MetaType)),
+    additionalProperties: I.const(I.boolean, false),
+  }),
+  ({ properties, ...rest }) => ({
+    properties,
+    ...rest,
+    required: Object.keys(properties),
+  }),
 )
+
+export const UnionMetaType: Base<"union"> = I.object({
+  anyOf: I.array(I.ref(() => MetaType)),
+})
+
+export type MetaType = typeof MetaType
+export const MetaType: Type<"union", JSONType, never> = I.union(
+  NullMetaType,
+  BooleanMetaType,
+  IntegerMetaType,
+  NumberMetaType,
+  StringMetaType,
+  ArrayMetaType,
+  ObjectMetaType,
+)
+
+type Base<K extends JSONTypeKind = JSONTypeKind> = [Type<"object", JSONTypes[K], never>][0]
