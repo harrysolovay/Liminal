@@ -17,6 +17,7 @@ export interface Type<K extends JSONTypeKind, T, P extends symbol> {
   T: T
   P: P
 
+  trace: string
   declaration: TypeDeclaration<T>
   annotations: Array<Annotation>
 
@@ -24,13 +25,13 @@ export interface Type<K extends JSONTypeKind, T, P extends symbol> {
   description(this: Type<K, T, never>, ctx: DescriptionContext): string
   metadata(): Record<symbol, unknown>
   toJSON(): JSONTypes[K]
-  assert: (value: unknown) => asserts value is T
+  assert: (value: unknown) => void | Promise<void>
   deserializeValue(raw: unknown, diagnostics?: Array<Diagnostic>): Promise<T>
 }
 
 export type TypeDeclaration<T> =
   & {
-    assert?: (value: unknown) => asserts value is T
+    assert?: (value: unknown) => void
   }
   & ({
     getAtom: () => AnyType

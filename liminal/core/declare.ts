@@ -14,11 +14,13 @@ export function declare<K extends JSONTypeKind, T, P extends symbol>(
   declaration: TypeDeclaration<T>,
   annotations: Array<Annotation> = [],
 ): Type<K, T, P> {
+  const trace = new Error().stack!
   return Object.assign(
     Type,
     {
       type: "Type",
       K,
+      trace,
       declaration,
       annotations,
       signature,

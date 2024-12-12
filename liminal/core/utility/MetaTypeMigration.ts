@@ -2,36 +2,33 @@ import * as I from "../intrinsics/mod.ts"
 import type { JSONType } from "../JSONSchema.ts"
 import type { Type } from "../Type.ts"
 import { MetaType } from "./MetaType.ts"
+import { PathLike } from "./PathLike.ts"
 import { TaggedUnion } from "./TaggedUnion.ts"
 
 export type MetaTypeMigration = {
+  id: string
   defId: string
-  path: number | string | Array<number | string>
-  suggestion: {
+  path: PathLike
+  change: {
     type: "Create"
     value: JSONType
   } | {
     type: "Update"
     value: JSONType
   } | {
-    type: "Remove"
+    type: "Delete"
   }
   rationale: string
 }
 
-export const MetaTypeMigration: Type<"object", MetaTypeMigration, never> = I.f(() =>
-  I.object({
-    defId: I.string,
-    path: I.union(
-      I.integer,
-      I.string,
-      I.array(I.union(I.integer, I.string)),
-    ),
-    suggestion: TaggedUnion({
-      Create: MetaType,
-      Update: MetaType,
-      Remove: null,
-    }),
-    rationale: I.string,
-  })
-)
+export const MetaTypeMigration: Type<"object", MetaTypeMigration, never> = I.object({
+  id: I.string,
+  defId: I.string,
+  path: PathLike,
+  change: TaggedUnion({
+    Create: MetaType,
+    Update: MetaType,
+    Delete: null,
+  }),
+  rationale: I.string,
+})

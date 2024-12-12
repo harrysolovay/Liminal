@@ -1,8 +1,7 @@
 import type { AnyType } from "./mod.ts"
 
 export interface Diagnostic {
-  error: Error
-  trace: string
+  exception: unknown
   type: AnyType
   value: unknown
   valuePath: string
@@ -10,9 +9,11 @@ export interface Diagnostic {
 }
 
 export namespace Diagnostic {
-  export function toString({ error, valuePath, value }: Diagnostic): string {
-    return `Error "${error.name}" with value \`${
-      JSON.stringify(value)
-    }\` at \`root${valuePath}\`: ${error.message}`
+  export function toString({ exception, valuePath, value }: Diagnostic): string {
+    return `${
+      exception instanceof Error ? `Error "${exception.name}"` : "Exception"
+    } from value \`${JSON.stringify(value)}\` at \`root${valuePath}\`: ${
+      exception instanceof Error ? exception.message : JSON.stringify(exception)
+    }`
   }
 }
