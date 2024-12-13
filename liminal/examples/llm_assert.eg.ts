@@ -3,21 +3,9 @@ import "@std/dotenv/load"
 import { OpenAIAdapter } from "../client/openai/mod.ts"
 import { L, Liminal } from "../mod.ts"
 
-const Dog = L.object({
-  bark: L.string,
-  favoriteToy: L.string,
-})
-
-const Elephant = L.object({
-  troopId: L.number,
-  remembersYourFace: L.boolean,
-})
-
-const Animal = L.TaggedUnion({
-  Dog,
-  Elephant,
-  SlowLoris: null,
-})
+const Contradiction = L.string`A reason to be sad.`(
+  L.assert("Is a reason to be happy.")(),
+)
 
 const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
@@ -26,6 +14,6 @@ const liminal = new Liminal(OpenAIAdapter({
 
 const session = await liminal.session()
 
-const value = await session.value(Animal)
+const value = await session.value(Contradiction)
 
 console.log(value)

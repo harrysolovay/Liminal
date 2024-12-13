@@ -2,7 +2,7 @@ import { assert } from "@std/assert"
 import { L, type Type } from "../mod.ts"
 import { max, min } from "./assertions.eg.ts"
 
-const ymd = L.assertion(
+const ymd = L.assert(
   "Ensure the day is valid for corresponding year and month.",
   (ymd: [number, number, number]) => assertValidYMD(...ymd),
 )

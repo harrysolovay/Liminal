@@ -5,18 +5,16 @@ import type { Liminal } from "./Liminal.ts"
 import { Tool, type ToolConfig } from "./Tool.ts"
 
 export class Session<D extends AdapterDescriptor> {
-  #listeners: Set<ReadableStreamDefaultController<Array<D["message"]>>> = new Set()
+  #listeners: Set<ReadableStreamDefaultController<D["message"]>> = new Set()
 
   constructor(
     readonly liminal: Liminal<D>,
-    readonly id: string,
-    public messages: Array<D["message"]>,
-    public resumedIndex?: number,
+    public history: Array<D["message"]> = [],
   ) {}
 
   readable = () => {
     const abort = new AbortController()
-    return new ReadableStream<Array<D["message"]>>({
+    return new ReadableStream<D["message"]>({
       start: (ctl) => {
         this.#listeners.add(ctl)
         abort.signal.addEventListener("abort", () => this.#listeners.delete(ctl))
@@ -33,7 +31,7 @@ export class Session<D extends AdapterDescriptor> {
 
   text = (messages: Array<D["message"]>, model?: D["model"]): Promise<string> => {
     const assistantMessage = this.liminal.adapter.completeText(
-      [...this.messages, ...messages],
+      [this.#history(), ...messages],
       model,
     )
     this.#onMessages(...messages, assistantMessage)
@@ -47,14 +45,14 @@ export class Session<D extends AdapterDescriptor> {
     if (isType(config)) {
       assistantMessage = await this.liminal.adapter.completeValue({
         type,
-        messages: this.messages,
+        messages: this.#history(),
       })
       this.#onMessages(assistantMessage)
     } else {
       const { type: _type, messages, ...rest } = config
       assistantMessage = await this.liminal.adapter.completeValue({
         type,
-        messages: [...this.messages, ...messages ?? []],
+        messages: [...this.#history(), ...messages ?? []],
         ...rest,
       })
       this.#onMessages(...messages ?? [], assistantMessage)
@@ -83,9 +81,15 @@ export class Session<D extends AdapterDescriptor> {
     }
   }
 
+  #history = (): Array<D["message"]> =>
+    this.history.length ? this.history : [this.liminal.adapter.defaults.opening]
+
   #onMessages = (...messages: Array<D["message"]>) => {
-    this.messages.push(...messages)
-    this.#listeners.forEach((listener) => listener.enqueue(messages))
+    this.history.push(
+      ...this.history.length ? [] : [this.liminal.adapter.defaults.opening],
+      ...messages,
+    )
+    this.#listeners.forEach((listener) => messages.forEach(listener.enqueue))
   }
 }
 

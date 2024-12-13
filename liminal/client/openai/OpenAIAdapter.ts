@@ -6,9 +6,8 @@ import type {
   ChatCompletionMessage,
   ChatCompletionMessageParam,
 } from "openai/resources/chat/completions"
-import { Type } from "../../../core/mod.ts"
 import { DescriptionContext, L } from "../../core/mod.ts"
-import type { Adapter, AdapterDefaults, LoadMessages } from "../Adapter.ts"
+import type { Adapter, AdapterDefaults } from "../Adapter.ts"
 import { DEFAULT_INSTRUCTIONS } from "../constants.ts"
 
 export interface OpenAIAdapterDescriptor {
@@ -22,30 +21,27 @@ export interface OpenAIAdapterConfig {
   openai: Openai
   defaultModel: (string & {}) | ChatModel
   defaultInstructions?: string
-  loadMessages?: LoadMessages<OpenAIAdapterDescriptor>
 }
 
 export function OpenAIAdapter({
   openai,
   defaultModel,
   defaultInstructions,
-  loadMessages,
 }: OpenAIAdapterConfig): Adapter<OpenAIAdapterDescriptor> {
   const defaults: AdapterDefaults<OpenAIAdapterDescriptor> = {
     model: defaultModel,
-    instructions: defaultInstructions ?? DEFAULT_INSTRUCTIONS,
     role: "user",
+    opening: {
+      role: "system",
+      content: [{
+        type: "text",
+        text: defaultInstructions ?? DEFAULT_INSTRUCTIONS,
+      }],
+    },
   }
   return {
     unstructured: ["o1-mini"],
     defaults,
-    loadMessages: loadMessages ?? (() => [{
-      role: "system",
-      content: [{
-        type: "text",
-        text: defaults.instructions,
-      }],
-    }]),
     formatMessage,
     unwrapMessage: ({ content }) => {
       assert(typeof content === "string")

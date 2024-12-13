@@ -22,9 +22,9 @@ export function _<K extends symbol, T = string>(
   )
 }
 
-export function assertion<T, A extends unknown[]>(
+export function assert<T, A extends unknown[]>(
   description: string | ((...args: A) => string),
-  f: undefined | ((value: T, ...args: A) => PromiseOr<void>),
+  f?: (value: T, ...args: A) => PromiseOr<void>,
 ): (...args: A) => Assertion<T, A> {
   return (...args) => ({
     type: "Assertion",
