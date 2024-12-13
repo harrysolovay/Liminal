@@ -1,8 +1,7 @@
 import { assert } from "@std/assert"
 import { L, type Type } from "../mod.ts"
+import { max, min } from "./assertions.eg.ts"
 
-const min = L.assertion((min) => `Must be gte ${min}.`, assertMin)
-const max = L.assertion((max) => `Must be lte ${max}.`, assertMax)
 const ymd = L.assertion(
   "Ensure the day is valid for corresponding year and month.",
   (ymd: [number, number, number]) => assertValidYMD(...ymd),
@@ -16,14 +15,6 @@ export const LDate: Type<Date, never> = L.transform(
   )(ymd()),
   ([y, m, d]) => new Date(y, m, d),
 )
-
-function assertMin(value: number, min: number) {
-  assert(value >= min, `Must be gte ${min}; received ${value}.`)
-}
-
-function assertMax(value: number, max: number) {
-  assert(value <= max, `Must be lte ${max}; received ${value}.`)
-}
 
 function assertValidYMD(year: number, month: number, day: number) {
   const date = new Date(year, month, day)
