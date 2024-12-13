@@ -11,19 +11,27 @@ export function union<M extends Array<AnyType>>(
     factory: union,
     args: members,
     assert: (value, ctx) => {
-      const queue = [...members]
-      let matched = false
-      while (queue.length) {
-        const current = queue.pop()!
-        const exceptions: Array<Diagnostic> = []
-        new AssertionContext(ctx.path, exceptions).visit(current, value)
-        if (exceptions.length) {
-          continue
-        }
-        matched = true
-        break
-      }
-      assert(matched, `No union member matched.`)
+      const match = union.match(members, value)
+      assert(match !== undefined)
+      ctx.visit(match, value)
     },
   })
+}
+
+export namespace union {
+  export function match<M extends Array<AnyType>>(
+    members: M,
+    value: unknown,
+  ): M[number] | undefined {
+    const queue = [...members]
+    while (queue.length) {
+      const current = queue.pop()!
+      const exceptions: Array<Diagnostic> = []
+      new AssertionContext("", exceptions).visit(current, value)
+      if (exceptions.length) {
+        continue
+      }
+      return current
+    }
+  }
 }

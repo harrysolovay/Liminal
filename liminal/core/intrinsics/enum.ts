@@ -7,7 +7,7 @@ function enum_<V extends Array<string>>(...values: V): Type<V[number], never> {
   return declare({
     jsonType: "string",
     factory: enum_,
-    args: values,
+    args: values.toSorted(),
     assert: (value) => {
       assert(typeof value === "string")
       assertArrayIncludes(values, [value])

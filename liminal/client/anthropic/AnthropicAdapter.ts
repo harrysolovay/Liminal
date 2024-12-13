@@ -1,7 +1,7 @@
 import type Anthropic from "@anthropic-ai/sdk"
 import type { MessageParam, Model } from "@anthropic-ai/sdk/resources/messages"
-import type { AdapterDefaults, LoadThread } from "../Adapter.ts"
-import type { SaveThread } from "../Adapter.ts"
+import type { AdapterDefaults, LoadSession } from "../Adapter.ts"
+import type { SaveSession } from "../Adapter.ts"
 
 export interface AnthropicAdapterDescriptor {
   message: MessageParam
@@ -12,8 +12,8 @@ export interface AnthropicAdapterDescriptor {
 
 export interface AnthropicAdapterConfig {
   anthropic: Anthropic
-  loadThread?: LoadThread<AnthropicAdapterDescriptor>
-  saveThread?: SaveThread<AnthropicAdapterDescriptor>
+  loadThread?: LoadSession<AnthropicAdapterDescriptor>
+  saveThread?: SaveSession<AnthropicAdapterDescriptor>
   defaults: Omit<AdapterDefaults<AnthropicAdapterDescriptor>, "role">
 }
 

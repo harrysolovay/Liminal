@@ -1,4 +1,4 @@
-import { assert } from "@std/assert"
+import { assert, type Falsy } from "@std/assert"
 import type Openai from "openai"
 import type { ChatModel } from "openai/resources/chat/chat"
 import type {
@@ -7,7 +7,7 @@ import type {
   ChatCompletionMessageParam,
 } from "openai/resources/chat/completions"
 import { DescriptionContext, L } from "../../core/mod.ts"
-import type { Adapter, AdapterDefaults, LoadThread, SaveThread } from "../Adapter.ts"
+import type { Adapter, AdapterDefaults, LoadSession, SaveSession } from "../Adapter.ts"
 import { DEFAULT_INSTRUCTIONS } from "../constants.ts"
 
 export interface OpenAIAdapterDescriptor {
@@ -19,36 +19,36 @@ export interface OpenAIAdapterDescriptor {
 
 export interface OpenAIAdapterConfig {
   openai: Openai
-  loadThread?: LoadThread<OpenAIAdapterDescriptor>
-  saveThread?: SaveThread<OpenAIAdapterDescriptor>
-}
-
-const OPENAI_ADAPTER_DEFAULTS: AdapterDefaults<OpenAIAdapterDescriptor> = {
-  model: "gpt-4o-mini",
-  instructions: DEFAULT_INSTRUCTIONS,
-  role: "user",
+  defaultModel: (string & {}) | ChatModel
+  defaultInstructions?: string
+  loadSession?: LoadSession<OpenAIAdapterDescriptor>
+  saveSession?: SaveSession<OpenAIAdapterDescriptor>
 }
 
 export function OpenAIAdapter({
   openai,
-  loadThread,
-  saveThread,
+  defaultModel,
+  defaultInstructions,
+  loadSession,
+  saveSession,
 }: OpenAIAdapterConfig): Adapter<OpenAIAdapterDescriptor> {
+  const defaults: AdapterDefaults<OpenAIAdapterDescriptor> = {
+    model: defaultModel,
+    instructions: defaultInstructions ?? DEFAULT_INSTRUCTIONS,
+    role: "user",
+  }
   return {
     unstructured: ["o1-mini"],
-    defaults: OPENAI_ADAPTER_DEFAULTS,
-    loadThread: loadThread ?? (() => [{
+    defaults,
+    loadSession: loadSession ?? (() => [{
       role: "system",
-      content: [],
-    }]),
-    saveThread,
-    formatMessage: (texts, role) => ({
-      role: role ?? OPENAI_ADAPTER_DEFAULTS.role,
-      content: texts.map((text) => ({
+      content: [{
         type: "text",
-        text,
-      })),
-    }),
+        text: defaults.instructions,
+      }],
+    }]),
+    saveSession,
+    formatMessage,
     unwrapMessage: ({ content }) => {
       assert(typeof content === "string")
       return content
@@ -60,28 +60,25 @@ export function OpenAIAdapter({
       if (type.declaration.factory === L.string) {
         return completeText([
           ...messages ?? [],
-          ...description
-            ? [{
-              role: "system" as const,
-              content: description,
-            }]
-            : [],
-          {
-            role: "user",
-            content: rootTypeDescription,
-          },
+          formatMessage([description, rootTypeDescription], "system"),
         ])
       }
       const Root = type.declaration.jsonType === "object"
         ? type
         : L.transform(L.object({ value: type }), ({ value }) => value)
+      if (!name) {
+        name = await type.signatureHash()
+      }
+      messages = !messages?.length
+        ? [{
+          role: "system",
+          content: defaults.instructions,
+        }]
+        : messages
       return await openai.chat.completions
         .create({
-          model: model ?? OPENAI_ADAPTER_DEFAULTS.model,
-          messages: messages ?? [{
-            role: "system",
-            content: DEFAULT_INSTRUCTIONS,
-          }],
+          model: model ?? defaults.model,
+          messages,
           response_format: {
             type: "json_schema",
             json_schema: {
@@ -96,12 +93,25 @@ export function OpenAIAdapter({
     },
   }
 
+  function formatMessage(
+    texts: Array<string | Falsy>,
+    role?: OpenAIAdapterDescriptor["role"],
+  ): OpenAIAdapterDescriptor["message"] {
+    return {
+      role: role ?? defaults.role,
+      content: texts.filter((v): v is string => !!v).map((text) => ({
+        type: "text",
+        text,
+      })),
+    }
+  }
+
   function completeText(
     messages: Array<ChatCompletionMessageParam>,
     model?: OpenAIAdapterDescriptor["model"],
   ): Promise<ChatCompletionMessage> {
     return openai.chat.completions.create({
-      model: model ?? OPENAI_ADAPTER_DEFAULTS.model,
+      model: model ?? defaults.model,
       messages,
     }).then(unwrapChoice)
   }

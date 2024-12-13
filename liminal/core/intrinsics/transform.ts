@@ -9,6 +9,8 @@ export function transform<T, P extends symbol, R>(
     jsonType: from.declaration.jsonType,
     factory: transform,
     args: [from, f],
-    assert: (value, ctx) => {},
+    assert: (value, ctx) => {
+      ctx.visit(from, value)
+    },
   })
 }

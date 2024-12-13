@@ -30,8 +30,9 @@ type IntrinsicArms<C, R> = {
 }
 
 export function TypeVisitor<C, R>(arms: TypeVisitorArms<C, R>): (ctx: C, type: AnyType) => R {
-  if (arms.hook) {
-    return (ctx, type) => arms.hook!(next, ctx, type)
+  const { hook } = arms
+  if (hook) {
+    return (ctx, type) => hook(next, ctx, type)
   }
   return next
 
@@ -52,8 +53,8 @@ export function TypeVisitor<C, R>(arms: TypeVisitorArms<C, R>): (ctx: C, type: A
         }
       }
     })()
-    const arm = arms[armKey] ?? arms.fallback
-    return arm!(
+    const arm = arms[armKey] ?? arms.fallback!
+    return arm(
       ctx,
       type as never,
       ...type.declaration.factory ? type.declaration.args as never : [],

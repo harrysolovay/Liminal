@@ -3,7 +3,7 @@ import type { Annotation, DescriptionTemplatePart, ReduceP } from "./Annotation.
 import { assert } from "./assert.ts"
 import { deserialize } from "./deserialize.ts"
 import { metadata } from "./metadata.ts"
-import { signature } from "./signature.ts"
+import { signature, signatureHash } from "./signature.ts"
 import { toJSON } from "./toJSON.ts"
 import type { Type, TypeDeclaration } from "./Type.ts"
 
@@ -19,6 +19,7 @@ export function declare<T, P extends symbol>(
       declaration,
       annotations,
       signature,
+      signatureHash,
       metadata,
       toJSON,
       assert,

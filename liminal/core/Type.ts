@@ -20,10 +20,11 @@ export interface Type<T, P extends symbol> {
 
   // TODO: re-add description?
   signature(): string
+  signatureHash(): Promise<string>
   metadata(): Record<symbol, unknown>
   toJSON(): JSONType
   assert(value: unknown): Promise<void>
-  deserialize(raw: unknown): Promise<T>
+  deserialize(jsonText: string): T
 }
 
 export type TypeDeclaration =

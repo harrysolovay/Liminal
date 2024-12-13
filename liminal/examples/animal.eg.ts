@@ -21,11 +21,9 @@ const Animal = L.TaggedUnion({
 
 const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
+  defaultModel: "gpt-4o-mini",
 }))
 
-const value = await liminal.value({
-  name: "some_name",
-  type: Animal,
-})
-
+const session = await liminal.session()
+const value = await session.value(Animal)
 console.log(value)
