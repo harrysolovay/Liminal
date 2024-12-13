@@ -11,8 +11,8 @@ export interface AdapterDescriptor {
 export interface Adapter<D extends AdapterDescriptor> {
   unstructured?: Array<D["model"]>
   defaults: AdapterDefaults<D>
-  loadSession: LoadSession<D>
-  saveSession?: SaveSession<D>
+  transformType?: <T>(type: Type<T, never>) => Type<T, never>
+  loadMessages: LoadMessages<D>
   formatMessage: (texts: Array<string>, role?: D["role"]) => D["message"]
   unwrapMessage: (message: D["message"]) => string
   completeText: (messages: Array<D["message"]>, model?: D["model"]) => Promise<D["message"]>
@@ -25,15 +25,9 @@ export interface AdapterDefaults<D extends AdapterDescriptor> {
   role: D["role"]
 }
 
-export type LoadSession<D extends AdapterDescriptor> = (
-  id?: string,
+export type LoadMessages<D extends AdapterDescriptor> = (
+  sessionId?: string,
 ) => PromiseOr<Array<D["message"]>>
-
-export type SaveSession<D extends AdapterDescriptor> = (
-  id: string,
-  current: Array<D["message"]>,
-  previous?: Array<D["message"]>,
-) => PromiseOr<void>
 
 export interface CompletionValueConfig<D extends AdapterDescriptor, T> {
   messages?: Array<D["message"]>

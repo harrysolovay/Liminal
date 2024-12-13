@@ -1,9 +1,9 @@
 import { DescriptionContext } from "./DescriptionContext.ts"
-import type { JSONType, JSONTypeName, JSONTypes } from "./JSONSchema.ts"
+import type { JSONType } from "./JSONSchema.ts"
 import type { AnyType, Type } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
-export function toJSON<K extends JSONTypeName>(this: Type<unknown, any>): JSONTypes[K] {
+export function toJSON(this: Type<unknown, any>): JSONType {
   const ctx = new VisitContext(
     new Map(),
     {},

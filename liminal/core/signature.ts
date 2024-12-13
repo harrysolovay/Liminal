@@ -1,38 +1,27 @@
 import { encodeBase32 } from "@std/encoding"
 import type { AnyType } from "./Type.ts"
+import { TypeMemo } from "./TypeMemo.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
-const signatureCache = new WeakMap<AnyType, string>()
-export function signature(this: AnyType): string {
-  let signature = signatureCache.get(this)
-  if (!signature) {
-    const ctx = new VisitContext()
-    visit(ctx, this)
-    signature = `{\n  ${Object.entries(ctx.defs).map(([k, v]) => `${k}: ${v}`).join("\n  ")}\n}`
-    signatureCache.set(this, signature)
-  }
-  return signature
-}
+export const signature: TypeMemo<string> = TypeMemo((type) => {
+  const ctx = new SignatureContext()
+  visit(ctx, type)
+  return `{\n  ${Object.entries(ctx.defs).map(([k, v]) => `${k}: ${v}`).join("\n  ")}\n}`
+})
 
-const signatureHashPendingCache = new WeakMap<AnyType, Promise<string>>()
-export function signatureHash(this: AnyType): Promise<string> {
-  let signatureHashPending = signatureHashPendingCache.get(this)
-  if (!signatureHashPending) {
-    signatureHashPending = crypto.subtle
-      .digest("SHA-256", new TextEncoder().encode(this.signature()))
-      .then(encodeBase32)
-      .then((v) => v.slice(0, -4))
-    signatureHashPendingCache.set(this, signatureHashPending)
-  }
-  return signatureHashPending
-}
+export const signatureHash: TypeMemo<Promise<string>> = TypeMemo((type) =>
+  crypto.subtle
+    .digest("SHA-256", new TextEncoder().encode(signature(type)))
+    .then(encodeBase32)
+    .then((v) => v.slice(0, -4))
+)
 
-class VisitContext {
+class SignatureContext {
   ids: Map<AnyType, string> = new Map()
   defs: Record<string, undefined | string> = {}
 }
 
-const visit = TypeVisitor<VisitContext, string>({
+const visit = TypeVisitor<SignatureContext, string>({
   hook(next, ctx, type): string {
     const { ids, defs } = ctx
     switch (type.declaration.jsonType) {
@@ -62,21 +51,21 @@ const visit = TypeVisitor<VisitContext, string>({
     return JSON.stringify(value)
   },
   array(ctx, _1, element): string {
-    return `L.array(${visit(ctx, element)})`
+    return `array(${visit(ctx, element)})`
   },
   object(ctx, _1, fields): string {
-    return `L.object({${
+    return `object({ ${
       Object
         .entries(fields)
         .map(([k, v]) => `${escapeDoubleQuotes(k)}: ${visit(ctx, v)}`)
         .join(", ")
-    }})`
+    } })`
   },
   enum(_0, _1, ...values) {
-    return `L.enum("${values.map(escapeDoubleQuotes).join(`", "`)}")`
+    return `enum("${values.map(escapeDoubleQuotes).join(`", "`)}")`
   },
   union(ctx, _1, ...members): string {
-    return `L.union(${members.map((member) => visit(ctx, member)).join(", ")})`
+    return `union(${members.map((member) => visit(ctx, member)).join(", ")})`
   },
   ref(ctx, _1, get): string {
     return visit(ctx, get())
@@ -85,7 +74,7 @@ const visit = TypeVisitor<VisitContext, string>({
     return visit(ctx, from)
   },
   fallback(_0, type) {
-    return `L.${type.declaration.jsonType}`
+    return `${type.declaration.jsonType}`
   },
 })
 

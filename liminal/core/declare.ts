@@ -1,11 +1,11 @@
 import { isTemplateStringsArray } from "../util/mod.ts"
 import type { Annotation, DescriptionTemplatePart, ReduceP } from "./Annotation.ts"
-import { assert } from "./assert.ts"
+import { AssertionContext } from "./AssertionContext.ts"
+import { DescriptionContext } from "./DescriptionContext.ts"
 import { deserialize } from "./deserialize.ts"
-import { metadata } from "./metadata.ts"
 import { signature, signatureHash } from "./signature.ts"
 import { toJSON } from "./toJSON.ts"
-import type { Type, TypeDeclaration } from "./Type.ts"
+import { type Type, type TypeDeclaration, TypeKey } from "./Type.ts"
 
 export function declare<T, P extends symbol>(
   declaration: TypeDeclaration,
@@ -14,16 +14,36 @@ export function declare<T, P extends symbol>(
   const self = Object.assign(
     Type,
     {
+      [TypeKey]: true,
       type: "Type",
       trace: new Error().stack!,
       declaration,
       annotations,
-      signature,
-      signatureHash,
-      metadata,
+      description: (): string => new DescriptionContext(new Map(), {}).format(self),
+      signature: (): string => signature(self),
+      signatureHash: (): Promise<string> => signatureHash(self),
+      metadata: () => {
+        return Object.fromEntries(
+          annotations
+            .filter((annotation) =>
+              typeof annotation === "object" && annotation?.type === "Metadata"
+            )
+            .map(({ key, value }) => [key, value]),
+        )
+      },
       toJSON,
-      assert,
-      deserialize: (jsonText): T => deserialize(self, jsonText),
+      assert: async (value) => {
+        const ctx = new AssertionContext("root", [], [])
+        ctx.visit(self, value)
+        const diagnostics = [
+          ...ctx.structuralDiagnostics,
+          ...await Promise.all(ctx.annotationDiagnostics ?? []).then((v) => v.filter((e) => !!e)),
+        ]
+        if (diagnostics.length) {
+          throw new AggregateError(diagnostics.map(({ exception }) => exception))
+        }
+      },
+      deserialize: (jsonText): T => deserialize(JSON.parse(jsonText), self) as never,
     } satisfies Omit<Type<T, P>, "T" | "P"> as never,
   )
   return self

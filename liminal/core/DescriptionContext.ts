@@ -17,7 +17,7 @@ export class DescriptionContext {
     return pin
   }
 
-  format(type: Type<any, never>): string {
+  format = (type: Type<any, never>): string => {
     const assertionDescriptions: Array<string> = []
     const segments: Array<string> = []
     type.annotations.forEach((annotation) => {

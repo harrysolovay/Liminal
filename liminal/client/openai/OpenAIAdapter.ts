@@ -6,8 +6,9 @@ import type {
   ChatCompletionMessage,
   ChatCompletionMessageParam,
 } from "openai/resources/chat/completions"
+import { Type } from "../../../core/mod.ts"
 import { DescriptionContext, L } from "../../core/mod.ts"
-import type { Adapter, AdapterDefaults, LoadSession, SaveSession } from "../Adapter.ts"
+import type { Adapter, AdapterDefaults, LoadMessages } from "../Adapter.ts"
 import { DEFAULT_INSTRUCTIONS } from "../constants.ts"
 
 export interface OpenAIAdapterDescriptor {
@@ -21,16 +22,14 @@ export interface OpenAIAdapterConfig {
   openai: Openai
   defaultModel: (string & {}) | ChatModel
   defaultInstructions?: string
-  loadSession?: LoadSession<OpenAIAdapterDescriptor>
-  saveSession?: SaveSession<OpenAIAdapterDescriptor>
+  loadMessages?: LoadMessages<OpenAIAdapterDescriptor>
 }
 
 export function OpenAIAdapter({
   openai,
   defaultModel,
   defaultInstructions,
-  loadSession,
-  saveSession,
+  loadMessages,
 }: OpenAIAdapterConfig): Adapter<OpenAIAdapterDescriptor> {
   const defaults: AdapterDefaults<OpenAIAdapterDescriptor> = {
     model: defaultModel,
@@ -40,20 +39,23 @@ export function OpenAIAdapter({
   return {
     unstructured: ["o1-mini"],
     defaults,
-    loadSession: loadSession ?? (() => [{
+    loadMessages: loadMessages ?? (() => [{
       role: "system",
       content: [{
         type: "text",
         text: defaults.instructions,
       }],
     }]),
-    saveSession,
     formatMessage,
     unwrapMessage: ({ content }) => {
       assert(typeof content === "string")
       return content
     },
     completeText,
+    transformType: (type) =>
+      type.declaration.jsonType === "object"
+        ? type
+        : L.transform(L.object({ value: type }), ({ value }) => value),
     completeValue: async ({ messages, name, description, type, model }) => {
       const descriptionCtx = new DescriptionContext()
       const rootTypeDescription = descriptionCtx.format(type)
@@ -63,9 +65,6 @@ export function OpenAIAdapter({
           formatMessage([description, rootTypeDescription], "system"),
         ])
       }
-      const Root = type.declaration.jsonType === "object"
-        ? type
-        : L.transform(L.object({ value: type }), ({ value }) => value)
       if (!name) {
         name = await type.signatureHash()
       }
@@ -84,7 +83,7 @@ export function OpenAIAdapter({
             json_schema: {
               name,
               description,
-              schema: Root.toJSON(),
+              schema: type.toJSON(),
               strict: true,
             },
           },
@@ -99,10 +98,12 @@ export function OpenAIAdapter({
   ): OpenAIAdapterDescriptor["message"] {
     return {
       role: role ?? defaults.role,
-      content: texts.filter((v): v is string => !!v).map((text) => ({
-        type: "text",
-        text,
-      })),
+      content: texts
+        .filter((v): v is string => !!v)
+        .map((text) => ({
+          type: "text",
+          text,
+        })),
     }
   }
 

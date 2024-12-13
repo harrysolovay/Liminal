@@ -10,6 +10,8 @@ export interface Type<T, P extends symbol> {
 
   <A extends Array<Annotation<T>>>(...annotations: A): Type<T, ReduceP<P, A>>
 
+  [TypeKey]: true
+
   T: T
   P: P
 
@@ -18,13 +20,19 @@ export interface Type<T, P extends symbol> {
   declaration: TypeDeclaration
   annotations: Array<Annotation>
 
-  // TODO: re-add description?
+  description(): string
   signature(): string
   signatureHash(): Promise<string>
   metadata(): Record<symbol, unknown>
   toJSON(): JSONType
   assert(value: unknown): Promise<void>
   deserialize: (jsonText: string) => T
+}
+
+export const TypeKey: unique symbol = Symbol()
+
+export function isType(value: unknown): value is AnyType {
+  return typeof value === "function" && value !== null && TypeKey in value
 }
 
 export type TypeDeclaration =
