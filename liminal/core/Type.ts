@@ -24,7 +24,7 @@ export interface Type<T, P extends symbol> {
   metadata(): Record<symbol, unknown>
   toJSON(): JSONType
   assert(value: unknown): Promise<void>
-  deserialize(jsonText: string): T
+  deserialize: (jsonText: string) => T
 }
 
 export type TypeDeclaration =

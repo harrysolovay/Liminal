@@ -11,7 +11,7 @@ export function declare<T, P extends symbol>(
   declaration: TypeDeclaration,
   annotations: Array<Annotation> = [],
 ): Type<T, P> {
-  return Object.assign(
+  const self = Object.assign(
     Type,
     {
       type: "Type",
@@ -23,9 +23,10 @@ export function declare<T, P extends symbol>(
       metadata,
       toJSON,
       assert,
-      deserialize,
+      deserialize: (jsonText): T => deserialize(self, jsonText),
     } satisfies Omit<Type<T, P>, "T" | "P"> as never,
   )
+  return self
 
   function Type<A extends Array<DescriptionTemplatePart>>(
     template: TemplateStringsArray,

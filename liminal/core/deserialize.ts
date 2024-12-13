@@ -2,8 +2,8 @@ import * as I from "./intrinsics/mod.ts"
 import type { AnyType } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
-export function deserialize<T>(this: AnyType<T>, jsonText: string): T {
-  return applyTransforms(JSON.parse(jsonText), this) as never
+export function deserialize<T>(type: AnyType<T>, jsonText: string): T {
+  return applyTransforms(JSON.parse(jsonText), type) as never
 }
 
 const applyTransforms = TypeVisitor<unknown, unknown>({
