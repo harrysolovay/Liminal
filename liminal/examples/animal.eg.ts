@@ -1,7 +1,7 @@
-import Openai from "openai"
+import OpenAI from "openai"
 import "@std/dotenv/load"
-import { OpenaiAdapter } from "../client/openai/mod.ts"
-import { L, Session } from "../mod.ts"
+import { OpenAIAdapter } from "../client/openai/mod.ts"
+import { L, Liminal } from "../mod.ts"
 
 const Dog = L.object({
   bark: L.string,
@@ -19,8 +19,13 @@ const Animal = L.TaggedUnion({
   SlowLoris: null,
 })
 
-const session = new Session(OpenaiAdapter(new Openai()))
+const liminal = new Liminal(OpenAIAdapter({
+  openai: new OpenAI(),
+}))
 
-const value = await session.value(Animal)
+const value = await liminal.json({
+  name: "",
+  type: Animal,
+})
 
 console.log(value)

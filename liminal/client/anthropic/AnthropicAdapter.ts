@@ -14,7 +14,7 @@ export interface AnthropicAdapterConfig {
   anthropic: Anthropic
   loadThread?: LoadThread<AnthropicAdapterDescriptor>
   saveThread?: SaveThread<AnthropicAdapterDescriptor>
-  defaults: AdapterDefaults<AnthropicAdapterDescriptor>
+  defaults: Omit<AdapterDefaults<AnthropicAdapterDescriptor>, "role">
 }
 
 export function AnthropicAdapter(

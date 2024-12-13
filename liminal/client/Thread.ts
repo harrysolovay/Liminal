@@ -1,20 +1,46 @@
-import type { CompletionJSONParams } from "./Adapter.ts"
-import type { Session } from "./Session.ts"
+import type { AdapterDescriptor, CompletionJSONParams } from "./Adapter.ts"
+import type { Liminal } from "./Liminal.ts"
 
-export class Thread<M, A extends unknown[]> {
+export class Thread<D extends AdapterDescriptor> {
   constructor(
-    readonly session: Session<M, A>,
-    readonly messages: Array<M>,
+    readonly session: Liminal<D>,
+    readonly threadId: string,
+    readonly messages: Array<D["message"]>,
+    public resumeIndex?: number,
   ) {}
 
-  completion = async <T>(
-    { messages, description, type }: CompletionJSONParams<M, T>,
-  ): Promise<T> => {
+  text = (messages: Array<D["message"]>, model?: D["model"]) => {
     this.messages.push(...messages)
-    return await this.session.adapter.completeJSON({
-      messages: this.messages,
-      description,
-      type,
-    }).then(type.deserialize)
+    const assistantMessage = this.session.adapter.completeText(this.messages, model)
+    this.messages.push(assistantMessage)
+    return assistantMessage.then(this.session.adapter.unwrapMessage)
+  }
+
+  json = <T>(
+    { messages, name, description, type, model }: CompletionJSONParams<D, T>,
+  ): Promise<T> => {
+    if (messages) {
+      this.messages.push(...messages)
+    }
+    const assistantMessage = this.session.adapter
+      .completeJSON({
+        messages: this.messages,
+        name,
+        description,
+        type,
+        model,
+      })
+      .then(this.session.adapter.unwrapMessage)
+    this.messages.push(assistantMessage)
+    return assistantMessage.then(type.deserialize)
+  }
+
+  save = async (): Promise<void> => {
+    await this.session.adapter.saveThread?.(
+      this.threadId,
+      this.messages.slice(this.resumeIndex ?? 0),
+      typeof this.resumeIndex === "number" ? this.messages.slice(0, this.resumeIndex) : undefined,
+    )
+    this.resumeIndex = this.messages.length - 1
   }
 }
