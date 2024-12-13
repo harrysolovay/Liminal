@@ -8,7 +8,7 @@ export interface Type<T, P extends symbol> {
     ...descriptionParts: A
   ): Type<T, ReduceP<P, A>>
 
-  <A extends Array<Annotation>>(...annotations: A): Type<T, ReduceP<P, A>>
+  <A extends Array<Annotation<T>>>(...annotations: A): Type<T, ReduceP<P, A>>
 
   T: T
   P: P

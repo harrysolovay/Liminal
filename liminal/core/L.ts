@@ -1,3 +1,4 @@
+import type { PromiseOr } from "../util/mod.ts"
 import type { Assertion, DescriptionArg, DescriptionParam, Metadata } from "./Annotation.ts"
 
 export * from "./intrinsics/mod.ts"
@@ -23,7 +24,7 @@ export function _<K extends symbol, T = string>(
 
 export function assertion<T, A extends unknown[]>(
   description: string | ((...args: A) => string),
-  f?: (value: T, ...args: A) => void | Promise<void>,
+  f: undefined | ((value: T, ...args: A) => PromiseOr<void>),
 ): (...args: A) => Assertion<T, A> {
   return (...args) => ({
     type: "Assertion",
