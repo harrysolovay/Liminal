@@ -1,6 +1,6 @@
 import { AssertionError } from "@std/assert"
 import { L } from "../core/mod.ts"
-import type { Adapter, AdapterDescriptor, CompletionJSONParams } from "./Adapter.ts"
+import type { Adapter, AdapterDescriptor, CompletionValueConfig } from "./Adapter.ts"
 import { Thread } from "./Thread.ts"
 
 export class Liminal<D extends AdapterDescriptor> {
@@ -14,11 +14,11 @@ export class Liminal<D extends AdapterDescriptor> {
   text = (messages: Array<D["message"]>, model?: D["model"]) =>
     this.adapter.completeText(messages, model).then(this.adapter.unwrapMessage)
 
-  json = <T>(
-    { messages, name, description, type, model }: CompletionJSONParams<D, T>,
+  value = <T>(
+    { messages, name, description, type, model }: CompletionValueConfig<D, T>,
   ): Promise<T> => {
     return this.adapter
-      .completeJSON({
+      .completeValue({
         messages,
         name,
         description,
@@ -26,6 +26,7 @@ export class Liminal<D extends AdapterDescriptor> {
         model,
       })
       .then(this.adapter.unwrapMessage)
+      .then(JSON.parse)
       .then(type.deserialize)
   }
 

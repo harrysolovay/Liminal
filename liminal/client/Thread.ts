@@ -1,4 +1,4 @@
-import type { AdapterDescriptor, CompletionJSONParams } from "./Adapter.ts"
+import type { AdapterDescriptor, CompletionValueConfig } from "./Adapter.ts"
 import type { Liminal } from "./Liminal.ts"
 
 export class Thread<D extends AdapterDescriptor> {
@@ -17,13 +17,13 @@ export class Thread<D extends AdapterDescriptor> {
   }
 
   json = <T>(
-    { messages, name, description, type, model }: CompletionJSONParams<D, T>,
+    { messages, name, description, type, model }: CompletionValueConfig<D, T>,
   ): Promise<T> => {
     if (messages) {
       this.messages.push(...messages)
     }
     const assistantMessage = this.session.adapter
-      .completeJSON({
+      .completeValue({
         messages: this.messages,
         name,
         description,

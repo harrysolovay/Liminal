@@ -1,16 +1,13 @@
 import { isTemplateStringsArray } from "../util/mod.ts"
 import type { Annotation, DescriptionTemplatePart, ReduceP } from "./Annotation.ts"
 import { assert } from "./assert.ts"
-import { description } from "./DescriptionContext.ts"
 import { deserialize } from "./deserialize.ts"
-import type { JSONTypeName } from "./JSONSchema.ts"
 import { metadata } from "./metadata.ts"
 import { signature } from "./signature.ts"
 import { toJSON } from "./toJSON.ts"
 import type { Type, TypeDeclaration } from "./Type.ts"
 
 export function declare<T, P extends symbol>(
-  jsonTypeName: JSONTypeName,
   declaration: TypeDeclaration,
   annotations: Array<Annotation> = [],
 ): Type<T, P> {
@@ -22,7 +19,6 @@ export function declare<T, P extends symbol>(
       declaration,
       annotations,
       signature,
-      description,
       metadata,
       toJSON,
       assert,
@@ -40,12 +36,12 @@ export function declare<T, P extends symbol>(
     ...parts: Array<Annotation>
   ): Type<T, symbol> {
     if (isTemplateStringsArray(maybeTemplate)) {
-      return declare(jsonTypeName, declaration, [...annotations, {
+      return declare(declaration, [...annotations, {
         type: "DescriptionTemplate",
         template: maybeTemplate,
         parts: parts as Array<DescriptionTemplatePart>,
       }])
     }
-    return declare(jsonTypeName, declaration, [maybeTemplate, ...annotations, ...parts])
+    return declare(declaration, [maybeTemplate, ...annotations, ...parts])
   }
 }

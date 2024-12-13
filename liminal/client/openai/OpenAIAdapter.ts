@@ -6,8 +6,9 @@ import type {
   ChatCompletionMessage,
   ChatCompletionMessageParam,
 } from "openai/resources/chat/completions"
-import { L } from "../../core/mod.ts"
+import { DescriptionContext, L } from "../../core/mod.ts"
 import type { Adapter, AdapterDefaults, LoadThread, SaveThread } from "../Adapter.ts"
+import { DEFAULT_INSTRUCTIONS } from "../constants.ts"
 
 export interface OpenAIAdapterDescriptor {
   message: ChatCompletionMessageParam
@@ -22,10 +23,9 @@ export interface OpenAIAdapterConfig {
   saveThread?: SaveThread<OpenAIAdapterDescriptor>
 }
 
-// instructions: "You are an expert type theorist and ontologist.",
-
 const OPENAI_ADAPTER_DEFAULTS: AdapterDefaults<OpenAIAdapterDescriptor> = {
   model: "gpt-4o-mini",
+  instructions: DEFAULT_INSTRUCTIONS,
   role: "user",
 }
 
@@ -54,7 +54,9 @@ export function OpenAIAdapter({
       return content
     },
     completeText,
-    completeJSON: async ({ messages, name, description, type, model }) => {
+    completeValue: async ({ messages, name, description, type, model }) => {
+      const descriptionCtx = new DescriptionContext()
+      const rootTypeDescription = descriptionCtx.format(type)
       if (type.declaration.factory === L.string) {
         return completeText([
           ...messages ?? [],
@@ -66,7 +68,7 @@ export function OpenAIAdapter({
             : [],
           {
             role: "user",
-            content: type.description(),
+            content: rootTypeDescription,
           },
         ])
       }
@@ -76,7 +78,10 @@ export function OpenAIAdapter({
       return await openai.chat.completions
         .create({
           model: model ?? OPENAI_ADAPTER_DEFAULTS.model,
-          messages: messages ?? [],
+          messages: messages ?? [{
+            role: "system",
+            content: DEFAULT_INSTRUCTIONS,
+          }],
           response_format: {
             type: "json_schema",
             json_schema: {

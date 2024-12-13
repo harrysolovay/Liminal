@@ -48,7 +48,7 @@ export function TypeVisitor<C, R>(arms: TypeVisitorArms<C, R>): (ctx: C, type: A
           return "const"
         }
         default: {
-          return type.jsonTypeName
+          return type.declaration.jsonType
         }
       }
     })()

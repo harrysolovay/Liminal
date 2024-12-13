@@ -4,8 +4,8 @@ import type { Type } from "./Type.ts"
 
 export class DescriptionContext {
   constructor(
-    readonly pins: Map<AnyType, string>,
-    readonly args: Record<symbol, string>,
+    readonly pins: Map<AnyType, string> = new Map(),
+    readonly args: Record<symbol, string> = {},
   ) {}
 
   pin = (type: AnyType): string => {
@@ -16,67 +16,64 @@ export class DescriptionContext {
     }
     return pin
   }
-}
 
-export function description(
-  this: Type<any, never>,
-  ctx: DescriptionContext,
-): string {
-  const assertionDescriptions: Array<string> = []
-  const segments: Array<string> = []
-  this.annotations.forEach((annotation) => {
-    if (annotation) {
-      if (typeof annotation === "string") {
-        segments.push(annotation)
-      } else {
-        switch (annotation.type) {
-          case "DescriptionTemplate": {
-            segments.push(recombine(
-              annotation.template,
-              annotation.parts.map((part) => {
-                if (typeof part === "string") {
-                  return part
-                }
-                switch (part.type) {
-                  case "DescriptionParam": {
-                    return ctx.args[part.key]
+  format(type: Type<any, never>): string {
+    const assertionDescriptions: Array<string> = []
+    const segments: Array<string> = []
+    type.annotations.forEach((annotation) => {
+      if (annotation) {
+        if (typeof annotation === "string") {
+          segments.push(annotation)
+        } else {
+          switch (annotation.type) {
+            case "DescriptionTemplate": {
+              segments.push(recombine(
+                annotation.template,
+                annotation.parts.map((part) => {
+                  if (typeof part === "string") {
+                    return part
                   }
-                  case "Type": {
-                    return ctx.pin(part)
+                  switch (part.type) {
+                    case "DescriptionParam": {
+                      return this.args[part.key]
+                    }
+                    case "Type": {
+                      return this.pin(part)
+                    }
                   }
-                }
-              }),
-            ))
-            break
-          }
-          case "Type": {
-            segments.push(ctx.pin(annotation))
-            break
-          }
-          case "DescriptionParam": {
-            const arg = ctx.args[annotation.key]!
-            segments.push(arg)
-            break
-          }
-          case "DescriptionArg": {
-            ctx.args[annotation.key] = annotation.serializer?.(annotation.value)
-              ?? annotation.value
-            break
-          }
-          case "Assertion": {
-            const { description, args } = annotation
-            assertionDescriptions.push(
-              typeof description === "string" ? description : description(...args),
-            )
-            break
+                }),
+              ))
+              break
+            }
+            case "Type": {
+              segments.push(this.pin(annotation))
+              break
+            }
+            case "DescriptionParam": {
+              const arg = this.args[annotation.key]!
+              segments.push(arg)
+              break
+            }
+            case "DescriptionArg": {
+              this.args[annotation.key] = annotation.serializer?.(annotation.value)
+                ?? annotation.value
+              break
+            }
+            case "Assertion": {
+              const { description, args } = annotation
+              assertionDescriptions.push(
+                typeof description === "string" ? description : description(...args),
+              )
+              break
+            }
           }
         }
       }
-    }
-  })
-  return [
-    ...segments,
-    "\n\nEnsure:\n\n",
-    ...assertionDescriptions.map((d) => `- ${d}`).join("\n"),
-  ].join(" ")
+    })
+    return [
+      ...segments,
+      "\n\nEnsure:\n\n",
+      ...assertionDescriptions.map((d) => `- ${d}`).join("\n"),
+    ].join(" ")
+  }
 }

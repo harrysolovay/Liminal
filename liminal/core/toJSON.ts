@@ -27,7 +27,7 @@ const visit = TypeVisitor<VisitContext, JSONType>({
     let jsonType: JSONType
     args = { ...args }
     const descriptionCtx = new DescriptionContext(pins, args)
-    const description = (type as Type<unknown, never>).description(descriptionCtx)
+    const description = descriptionCtx.format(type as never)
     const ctx = new VisitContext(ids, defs, descriptionCtx)
     switch (type.declaration.jsonType) {
       case "array":
@@ -54,10 +54,7 @@ const visit = TypeVisitor<VisitContext, JSONType>({
         break
       }
     }
-    return {
-      description,
-      ...jsonType,
-    }
+    return { description, ...jsonType }
   },
   null() {
     return { type: "null" }

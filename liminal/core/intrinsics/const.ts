@@ -7,7 +7,8 @@ function const_<T, P extends symbol, const A extends T>(
   type: Type<T, P>,
   value: A,
 ): Type<A, P> {
-  return declare(type.jsonTypeName, {
+  return declare({
+    jsonType: type.declaration.jsonType,
     factory: const_,
     args: [type, value],
     assert: (value_) => {

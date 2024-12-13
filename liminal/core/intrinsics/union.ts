@@ -6,7 +6,8 @@ import type { AnyType, Type } from "../Type.ts"
 export function union<M extends Array<AnyType>>(
   ...members: M
 ): Type<M[number]["T"], M[number]["P"]> {
-  return declare("union", {
+  return declare({
+    jsonType: "union",
     factory: union,
     args: members,
     assert: (value, ctx) => {

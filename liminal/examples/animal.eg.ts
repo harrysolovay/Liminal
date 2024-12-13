@@ -23,8 +23,8 @@ const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-const value = await liminal.json({
-  name: "",
+const value = await liminal.value({
+  name: "some_name",
   type: Animal,
 })
 

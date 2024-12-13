@@ -16,12 +16,12 @@ export interface Adapter<D extends AdapterDescriptor> {
   formatMessage: (texts: Array<string>, role?: D["role"]) => D["message"]
   unwrapMessage: (message: D["message"]) => string
   completeText: (messages: Array<D["message"]>, model?: D["model"]) => Promise<D["message"]>
-  completeJSON: <T>(params: CompletionJSONParams<D, T>) => Promise<D["message"]>
+  completeValue: <T>(params: CompletionValueConfig<D, T>) => Promise<D["message"]>
 }
 
 export interface AdapterDefaults<D extends AdapterDescriptor> {
   model: D["model"]
-  // instructions: string
+  instructions: string
   role: D["role"]
 }
 
@@ -35,7 +35,7 @@ export type SaveThread<D extends AdapterDescriptor> = (
   previous?: Array<D["message"]>,
 ) => PromiseOr<void>
 
-export interface CompletionJSONParams<D extends AdapterDescriptor, T> {
+export interface CompletionValueConfig<D extends AdapterDescriptor, T> {
   messages?: Array<D["message"]>
   name: string
   type: Type<T, never>

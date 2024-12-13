@@ -18,8 +18,8 @@ export interface Type<T, P extends symbol> {
   declaration: TypeDeclaration
   annotations: Array<Annotation>
 
+  // TODO: re-add description?
   signature(): string
-  description(this: Type<T, never>): string
   metadata(): Record<symbol, unknown>
   toJSON(): JSONType
   assert(value: unknown): Promise<void>

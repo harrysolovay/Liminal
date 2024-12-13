@@ -5,7 +5,8 @@ export function transform<T, P extends symbol, R>(
   from: Type<T, P>,
   f: (value: T) => R,
 ): Type<R, P> {
-  return declare(from.jsonTypeName, {
+  return declare({
+    jsonType: from.declaration.jsonType,
     factory: transform,
     args: [from, f],
     assert: (value, ctx) => {},
