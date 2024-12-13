@@ -1,9 +1,9 @@
 import * as I from "../intrinsics/mod.ts"
-import type { JSONType, JSONTypeName, JSONTypes } from "../JSONSchema.ts"
+import type { JSONType } from "../JSONSchema.ts"
 import type { Type } from "../Type.ts"
 
-export function Hydrated(type: JSONTypes["object"]): Type<"object", unknown, never> {
-  const types: Record<string, undefined | Type<JSONTypeName, unknown, never>> = {}
+export function Hydrated(type: JSONType): Type<unknown, never> {
+  const types: Record<string, undefined | Type<unknown, never>> = {}
   if (type.$defs) {
     const $defsEntries = Object.entries(type.$defs)
     $defsEntries.forEach(([id]) => {
@@ -16,7 +16,7 @@ export function Hydrated(type: JSONTypes["object"]): Type<"object", unknown, nev
   return visit(type) as never
 
   function visit(type: JSONType) {
-    return ((): Type<JSONTypeName, unknown, never> => {
+    return ((): Type<unknown, never> => {
       if ("$ref" in type) {
         const id = type.$ref.split("#/$defs/").pop()!
         return I.ref(() => types[id]!)

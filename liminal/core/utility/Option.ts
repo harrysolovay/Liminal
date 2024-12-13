@@ -1,9 +1,6 @@
 import * as I from "../intrinsics/mod.ts"
-import type { JSONTypeName } from "../JSONSchema.ts"
 import type { Type } from "../Type.ts"
 
-export function Option<V, P extends symbol>(
-  some: Type<JSONTypeName, V, P>,
-): Type<"union", V | null, P> {
+export function Option<V, P extends symbol>(some: Type<V, P>): Type<V | null, P> {
   return I.union(I.null, some)
 }

@@ -39,7 +39,7 @@ export const UnionMetaType: Base<"union"> = I.object({
 })
 
 export type MetaType = typeof MetaType
-export const MetaType: Type<"union", JSONType, never> = I.union(
+export const MetaType: Type<JSONType, never> = I.union(
   NullMetaType,
   BooleanMetaType,
   IntegerMetaType,
@@ -49,4 +49,4 @@ export const MetaType: Type<"union", JSONType, never> = I.union(
   ObjectMetaType,
 )
 
-type Base<K extends JSONTypeName = JSONTypeName> = [Type<"object", JSONTypes[K], never>][0]
+type Base<K extends JSONTypeName = JSONTypeName> = [Type<JSONTypes[K], never>][0]

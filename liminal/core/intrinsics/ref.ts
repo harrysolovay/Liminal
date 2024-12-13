@@ -1,10 +1,9 @@
 import { declare } from "../declare.ts"
-import type { JSONTypeName } from "../JSONSchema.ts"
 import type { Type } from "../Type.ts"
 
-export function ref<K extends JSONTypeName, T, P extends symbol>(
-  get: () => Type<K, T, P>,
-): Type<K, T, P> {
+export function ref<T, P extends symbol>(
+  get: () => Type<T, P>,
+): Type<T, P> {
   return declare("ref", {
     factory: ref,
     args: [get],

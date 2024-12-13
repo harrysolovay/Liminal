@@ -7,7 +7,6 @@ import { Tagged } from "./Tagged.ts"
 export function TaggedUnion<M extends Record<string, AnyType | Falsy>>(
   members: M,
 ): Type<
-  "union",
   {
     [K in keyof M]: Expand<
       & { type: K }

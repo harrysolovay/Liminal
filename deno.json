@@ -39,6 +39,7 @@
   },
   "lock": false,
   "imports": {
+    "@anthropic-ai/sdk": "npm:@anthropic-ai/sdk@^0.32.1",
     "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
     "@std/assert": "jsr:@std/assert@1",
     "@std/async": "jsr:@std/async@^1.0.7",

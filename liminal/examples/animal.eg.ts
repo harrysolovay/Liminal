@@ -1,7 +1,7 @@
 import Openai from "openai"
 import "@std/dotenv/load"
+import { OpenaiAdapter } from "../client/openai/mod.ts"
 import { L, Session } from "../mod.ts"
-import { OpenaiAdapter } from "../openai/mod.ts"
 
 const Dog = L.object({
   bark: L.string,

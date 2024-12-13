@@ -1,10 +1,10 @@
 import type { Expand, U2I } from "../../util/mod.ts"
 import * as I from "../intrinsics/mod.ts"
-import type { Type } from "../Type.ts"
+import type { AnyType, Type } from "../Type.ts"
 
 export function Intersection<S extends Array<IntersectionSourceType>>(
   ...sources: Ensure<S>
-): Type<"object", Expand<U2I<S[number]["T"]>>, S[number]["P"]> {
+): Type<Expand<U2I<S[number]["T"]>>, S[number]["P"]> {
   return I.object(
     Object.fromEntries(
       sources.flatMap((source) => Object.entries(source.declaration.args![0]!)),
@@ -12,7 +12,7 @@ export function Intersection<S extends Array<IntersectionSourceType>>(
   )
 }
 
-export type IntersectionSourceType = Type<"object", object, symbol>
+export type IntersectionSourceType = AnyType<object> // TODO
 
 type Ensure<S extends Array<IntersectionSourceType>> = [ConflictingKey<S>] extends [never] ? S
   : never

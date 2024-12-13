@@ -22,11 +22,18 @@ const mappings: SpecifierMappings = Object.fromEntries(
 )
 // TODO: enable upon resolution of https://github.com/denoland/dnt/issues/433.
 if (false as boolean) {
-  mappings["npm:openai@^4.76.0"] = {
-    name: "openai",
-    version: "^4.76.0",
-    peerDependency: true,
-  }
+  Object.assign(mappings, {
+    "npm:@anthropic-ai/sdk@^0.32.1": {
+      name: "@anthropic-ai",
+      version: "^0.32.1",
+      peerDependency: true,
+    },
+    "npm:openai@^4.76.0": {
+      name: "openai",
+      version: "^4.76.0",
+      peerDependency: true,
+    },
+  })
 }
 
 await build({
@@ -64,9 +71,15 @@ await Deno.readTextFile(packageJsonPath).then(async (v) => {
   const initial = JSON.parse(v)
 
   { // TODO: delete upon resolution of https://github.com/denoland/dnt/issues/433.
-    const { openai } = initial.dependencies
+    const {
+      "@anthropic-ai/sdk": anthropic,
+      openai,
+    } = initial.dependencies
     delete initial.dependencies
-    initial.peerDependencies = { openai }
+    initial.peerDependencies = {
+      "@anthropic-ai/sdk": anthropic,
+      openai,
+    }
   }
   if (version === undefined) {
     initial.private = true

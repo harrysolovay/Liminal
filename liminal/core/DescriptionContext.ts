@@ -1,5 +1,4 @@
 import { recombine } from "../util/mod.ts"
-import type { JSONTypeName } from "./JSONSchema.ts"
 import type { AnyType } from "./mod.ts"
 import type { Type } from "./Type.ts"
 
@@ -20,7 +19,7 @@ export class DescriptionContext {
 }
 
 export function description(
-  this: Type<JSONTypeName, any, never>,
+  this: Type<any, never>,
   ctx: DescriptionContext,
 ): string {
   const assertionDescriptions: Array<string> = []

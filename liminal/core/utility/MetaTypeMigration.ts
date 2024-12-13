@@ -21,7 +21,7 @@ export type MetaTypeMigration = {
   rationale: string
 }
 
-export const MetaTypeMigration: Type<"object", MetaTypeMigration, never> = I.object({
+export const MetaTypeMigration: Type<MetaTypeMigration, never> = I.object({
   id: I.string,
   defId: I.string,
   path: PathLike,

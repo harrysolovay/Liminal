@@ -1,29 +1,27 @@
 import type { Annotation, DescriptionTemplatePart, ReduceP } from "./Annotation.ts"
 import type { AssertionContext } from "./AssertionContext.ts"
-import type { DescriptionContext } from "./description.ts"
-import type { JSONTypeName, JSONTypes } from "./JSONSchema.ts"
+import type { JSONType, JSONTypeName } from "./JSONSchema.ts"
 
-export interface Type<K extends JSONTypeName, T, P extends symbol> {
+export interface Type<T, P extends symbol> {
   <A extends Array<DescriptionTemplatePart>>(
     template: TemplateStringsArray,
     ...descriptionParts: A
-  ): Type<K, T, ReduceP<P, A>>
+  ): Type<T, ReduceP<P, A>>
 
-  <A extends Array<Annotation>>(...annotations: A): Type<K, T, ReduceP<P, A>>
+  <A extends Array<Annotation>>(...annotations: A): Type<T, ReduceP<P, A>>
 
   T: T
   P: P
 
   type: "Type"
-  jsonTypeName: K
   trace: string
   declaration: TypeDeclaration
   annotations: Array<Annotation>
 
   signature(): string
-  description(this: Type<K, T, never>, ctx: DescriptionContext): string
+  description(this: Type<T, never>): string
   metadata(): Record<symbol, unknown>
-  toJSON(): JSONTypes[K]
+  toJSON(): JSONType
   assert(value: unknown): Promise<void>
   deserialize(raw: unknown): Promise<T>
 }
@@ -31,6 +29,7 @@ export interface Type<K extends JSONTypeName, T, P extends symbol> {
 export type TypeDeclaration =
   & {
     assert: (value: unknown, assertionContext: AssertionContext) => void
+    jsonType: JSONTypeName
   }
   & ({
     getAtom: () => AnyType
@@ -42,4 +41,4 @@ export type TypeDeclaration =
     args: unknown[]
   })
 
-export type AnyType = Type<keyof JSONTypes, any, symbol>
+export type AnyType<T = any> = Type<T, symbol>

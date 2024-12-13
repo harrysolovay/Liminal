@@ -17,7 +17,7 @@ export function Tagged<
   tagKey: B,
   tag: K,
   fields?: Ensure<B, F>,
-): Type<"object", T, F[keyof F]["P"]> {
+): Type<T, F[keyof F]["P"]> {
   return I.object({
     [tagKey]: I.const(I.string, tag),
     ...fields,

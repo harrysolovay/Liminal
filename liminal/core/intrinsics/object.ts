@@ -4,7 +4,7 @@ import type { AnyType, Type } from "../Type.ts"
 
 export function object<F extends Record<string, AnyType>>(
   fields: F,
-): Type<"object", { [K in keyof F]: F[K]["T"] }, F[keyof F]["P"]> {
+): Type<{ [K in keyof F]: F[K]["T"] }, F[keyof F]["P"]> {
   const keys = Object.keys(fields).toSorted()
   return declare("object", {
     factory: object,

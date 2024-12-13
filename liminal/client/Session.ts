@@ -1,5 +1,5 @@
 import { AssertionError } from "@std/assert"
-import { type JSONTypeName, L, type Type } from "../core/mod.ts"
+import { L, type Type } from "../core/mod.ts"
 import type { Adapter } from "./Adapter.ts"
 import { Thread } from "./Thread.ts"
 
@@ -10,12 +10,11 @@ export class Session<M, A extends unknown[]> {
     return new Thread(this, await this.adapter.open(...args))
   }
 
-  value = async <T>(type: Type<JSONTypeName, T, never>, ...args: A) => {
+  value = async <T>(type: Type<T, never>, ...args: A) => {
     const thread = await this.thread(...args)
     return await thread.completion({
-      name: "liminal_value",
       messages: [
-        this.adapter.text("user", [
+        this.adapter.formatMessage("user", [
           "Generate a value based on the specified structured output schema.",
         ]),
       ],
@@ -26,8 +25,7 @@ export class Session<M, A extends unknown[]> {
   assert = async (value: unknown, statement: string, ...args: A): Promise<void> => {
     const thread = await this.thread(...args)
     const result = await thread.completion({
-      name: "liminal_assert",
-      messages: [this.adapter.text("user", [
+      messages: [this.adapter.formatMessage("user", [
         `
           Does the value satisfy the assertion?
 
