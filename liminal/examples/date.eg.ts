@@ -1,6 +1,6 @@
 import { assert } from "@std/assert"
 import { L, type Type } from "../mod.ts"
-import { max, min } from "./assertions.eg.ts"
+import * as A from "./assertions.eg.ts"
 
 const ymd = L.assert(
   "Ensure the day is valid for corresponding year and month.",
@@ -10,8 +10,14 @@ const ymd = L.assert(
 export const LDate: Type<Date, never> = L.transform(
   L.Tuple(
     L.number`Year.`,
-    L.number`Month.`(min(0), max(11)),
-    L.number`Day.`(min(0), max(31)),
+    L.number`Month.`(
+      A.number.min(0),
+      A.number.max(11),
+    ),
+    L.number`Day.`(
+      A.number.min(0),
+      A.number.max(31),
+    ),
   )(ymd()),
   ([y, m, d]) => new Date(y, m, d),
 )

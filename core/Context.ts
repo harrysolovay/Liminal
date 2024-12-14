@@ -1,4 +1,5 @@
-import { assert, recombine } from "../util/mod.ts"
+import { assert } from "@std/assert"
+import { recombine } from "../util/mod.ts"
 
 export class Context {
   constructor(

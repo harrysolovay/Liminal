@@ -1,6 +1,6 @@
+import { assert } from "@std/assert"
 import type { ChatCompletion } from "openai/resources/chat/completions"
 import type { Schema } from "../core/mod.ts"
-import { assert } from "../util/mod.ts"
 
 export function unwrapChoice(completion: ChatCompletion): string {
   const { choices: [firstChoice] } = completion

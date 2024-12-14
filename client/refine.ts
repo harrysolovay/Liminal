@@ -1,10 +1,11 @@
+import { assert } from "@std/assert"
 import type Openai from "openai"
 import type {
   ChatCompletionCreateParamsNonStreaming,
   ChatCompletionMessageParam,
 } from "openai/resources/chat/completions"
 import { deserialize, Diagnostic, T, type Type } from "../core/mod.ts"
-import { assert, tap } from "../util/mod.ts"
+import { tap } from "../util/mod.ts"
 import { parseChoice, unwrapChoice } from "./oai_util.ts"
 import { Prompt } from "./Prompt.ts"
 import { ResponseFormat } from "./ResponseFormat.ts"

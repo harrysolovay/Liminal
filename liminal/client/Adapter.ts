@@ -13,8 +13,8 @@ export interface Adapter<D extends AdapterDescriptor> {
   transformType?: <T>(type: Type<T, never>) => Type<T, never>
   formatMessage: (texts: Array<string>, role?: D["role"]) => D["message"]
   unwrapMessage: (message: D["message"]) => string
-  completeText: (messages: Array<D["message"]>, model?: D["model"]) => Promise<D["message"]>
-  completeValue: <T>(params: CompletionValueConfig<D, T>) => Promise<D["message"]>
+  text: (messages: Array<D["message"]>, config?: TextConfig<D>) => Promise<D["message"]>
+  value: <T>(type: Type<T, never>, params: ValueConfig<D>) => Promise<D["message"]>
 }
 
 export interface AdapterDefaults<D extends AdapterDescriptor> {
@@ -23,10 +23,13 @@ export interface AdapterDefaults<D extends AdapterDescriptor> {
   opening: D["message"]
 }
 
-export interface CompletionValueConfig<D extends AdapterDescriptor, T> {
+export interface TextConfig<D extends AdapterDescriptor> {
+  model?: D["model"]
+}
+
+export interface ValueConfig<D extends AdapterDescriptor> {
   messages?: Array<D["message"]>
   name?: string
-  type: Type<T, never>
   description?: string
   model?: D["model"]
 }

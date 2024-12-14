@@ -1,4 +1,4 @@
-import { assert } from "../util/mod.ts"
+import { assert } from "@std/assert"
 import type { AnyType } from "./Type.ts"
 
 export class TypeVisitor<C, R> {

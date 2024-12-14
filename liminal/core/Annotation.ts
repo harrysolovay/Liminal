@@ -1,4 +1,5 @@
 import type { Falsy } from "@std/assert"
+import { PromiseOr } from "../util/mod.ts"
 import type { AnyType } from "./Type.ts"
 
 export type Annotation<T = any> =
@@ -36,7 +37,7 @@ export interface DescriptionArg<K extends symbol = symbol, T = any> {
 export interface Assertion<T = any, A extends unknown[] = any> {
   type: "Assertion"
   description: string | ((...args: A) => string)
-  f?: (value: T, ...args: A) => void | Promise<void>
+  f?: boolean | ((value: T, ...args: A) => PromiseOr<void>)
   args: A
 }
 

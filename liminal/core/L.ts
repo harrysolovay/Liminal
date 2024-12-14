@@ -24,7 +24,7 @@ export function _<K extends symbol, T = string>(
 
 export function assert<T, A extends unknown[]>(
   description: string | ((...args: A) => string),
-  f?: (value: T, ...args: A) => PromiseOr<void>,
+  f?: boolean | ((value: T, ...args: A) => PromiseOr<void>),
 ): (...args: A) => Assertion<T, A> {
   return (...args) => ({
     type: "Assertion",

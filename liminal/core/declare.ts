@@ -5,7 +5,7 @@ import { DescriptionContext } from "./DescriptionContext.ts"
 import { deserialize } from "./deserialize.ts"
 import { signature, signatureHash } from "./signature.ts"
 import { toJSON } from "./toJSON.ts"
-import { type Type, type TypeDeclaration, TypeKey } from "./Type.ts"
+import type { Type, TypeDeclaration } from "./Type.ts"
 
 export function declare<T, P extends symbol>(
   declaration: TypeDeclaration,
@@ -14,12 +14,11 @@ export function declare<T, P extends symbol>(
   const self = Object.assign(
     Type,
     {
-      [TypeKey]: true,
       type: "Type",
       trace: new Error().stack!,
       declaration,
       annotations,
-      description: (): string => new DescriptionContext(new Map(), {}).format(self),
+      description: (): undefined | string => new DescriptionContext(new Map(), {}).format(self),
       signature: (): string => signature(self),
       signatureHash: (): Promise<string> => signatureHash(self),
       metadata: () => {

@@ -1,6 +1,6 @@
+import { AssertionError } from "@std/assert"
 import type Openai from "openai"
 import { T } from "../core/mod.ts"
-import { AssertionError } from "../util/mod.ts"
 import { ResponseFormat } from "./ResponseFormat.ts"
 
 export function AssertAdherence(

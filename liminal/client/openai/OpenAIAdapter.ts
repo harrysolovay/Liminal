@@ -7,7 +7,7 @@ import type {
   ChatCompletionMessageParam,
 } from "openai/resources/chat/completions"
 import { DescriptionContext, L } from "../../core/mod.ts"
-import type { Adapter, AdapterDefaults } from "../Adapter.ts"
+import type { Adapter, AdapterDefaults, TextConfig } from "../Adapter.ts"
 import { DEFAULT_INSTRUCTIONS } from "../constants.ts"
 
 export interface OpenAIAdapterDescriptor {
@@ -19,7 +19,7 @@ export interface OpenAIAdapterDescriptor {
 
 export interface OpenAIAdapterConfig {
   openai: Openai
-  defaultModel: (string & {}) | ChatModel
+  defaultModel?: (string & {}) | ChatModel
   defaultInstructions?: string
 }
 
@@ -29,14 +29,11 @@ export function OpenAIAdapter({
   defaultInstructions,
 }: OpenAIAdapterConfig): Adapter<OpenAIAdapterDescriptor> {
   const defaults: AdapterDefaults<OpenAIAdapterDescriptor> = {
-    model: defaultModel,
+    model: defaultModel ?? "chatgpt-4o-latest",
     role: "user",
     opening: {
       role: "system",
-      content: [{
-        type: "text",
-        text: defaultInstructions ?? DEFAULT_INSTRUCTIONS,
-      }],
+      content: defaultInstructions ?? DEFAULT_INSTRUCTIONS,
     },
   }
   return {
@@ -47,29 +44,23 @@ export function OpenAIAdapter({
       assert(typeof content === "string")
       return content
     },
-    completeText,
+    text,
     transformType: (type) =>
       type.declaration.jsonType === "object"
         ? type
         : L.transform(L.object({ value: type }), ({ value }) => value),
-    completeValue: async ({ messages, name, description, type, model }) => {
+    value: async (type, { messages, name, description, model }) => {
+      messages ??= []
       const descriptionCtx = new DescriptionContext()
-      const rootTypeDescription = descriptionCtx.format(type)
       if (type.declaration.factory === L.string) {
-        return completeText([
+        return text([
           ...messages ?? [],
-          formatMessage([description, rootTypeDescription], "system"),
+          formatMessage([description, descriptionCtx.format(type)], "system"),
         ])
       }
       if (!name) {
         name = await type.signatureHash()
       }
-      messages = !messages?.length
-        ? [{
-          role: "system",
-          content: defaults.instructions,
-        }]
-        : messages
       return await openai.chat.completions
         .create({
           model: model ?? defaults.model,
@@ -103,12 +94,12 @@ export function OpenAIAdapter({
     }
   }
 
-  function completeText(
+  function text(
     messages: Array<ChatCompletionMessageParam>,
-    model?: OpenAIAdapterDescriptor["model"],
+    config?: TextConfig<OpenAIAdapterDescriptor>,
   ): Promise<ChatCompletionMessage> {
     return openai.chat.completions.create({
-      model: model ?? defaults.model,
+      model: config?.model ?? defaults.model,
       messages,
     }).then(unwrapChoice)
   }
