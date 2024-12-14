@@ -25,7 +25,7 @@ await session.value(L.number, {
     role: "user",
     content: "What is the weather like in New York City?",
   }],
-}).then(dbg())
+}).then(dbg("examples"))
 
 function fetchWeather(latitude: number, longitude: number): Promise<unknown> {
   return fetch(

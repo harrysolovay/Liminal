@@ -18,4 +18,4 @@ const liminal = new Liminal(OpenAIAdapter({
   defaultModel: "gpt-4o-mini",
 }))
 
-await liminal.session().value(Character).then(dbg())
+await liminal.session().value(Character).then(dbg("examples"))

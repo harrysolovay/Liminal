@@ -24,4 +24,4 @@ await liminal.session().value(Contact, {
       \`\`\`
     `,
   }],
-}).then(dbg())
+}).then(dbg("examples"))

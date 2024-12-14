@@ -3,6 +3,7 @@ import type { Annotation, DescriptionTemplatePart, ReduceP } from "./Annotation.
 import { AssertionContext } from "./AssertionContext.ts"
 import { DescriptionContext } from "./DescriptionContext.ts"
 import { deserialize } from "./deserialize.ts"
+import type { JSONType } from "./JSONSchema.ts"
 import { signature, signatureHash } from "./signature.ts"
 import { toJSON } from "./toJSON.ts"
 import type { Type, TypeDeclaration } from "./Type.ts"
@@ -30,7 +31,7 @@ export function declare<T, P extends symbol>(
             .map(({ key, value }) => [key, value]),
         )
       },
-      toJSON,
+      toJSON: (): JSONType => toJSON(self),
       assert: async (value) => {
         const ctx = new AssertionContext("root", [], [])
         ctx.visit(self, value)

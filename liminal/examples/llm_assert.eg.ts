@@ -13,4 +13,4 @@ const liminal = new Liminal(OpenAIAdapter({
   defaultModel: "gpt-4o-mini",
 }))
 
-await liminal.session().value(Contradiction).then(dbg())
+await liminal.session().value(Contradiction).then(dbg("examples"))

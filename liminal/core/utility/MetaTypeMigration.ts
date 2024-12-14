@@ -1,5 +1,4 @@
 import * as I from "../intrinsics/mod.ts"
-import type { JSONType } from "../JSONSchema.ts"
 import type { Type } from "../Type.ts"
 import { MetaType } from "./MetaType.ts"
 import { PathLike } from "./PathLike.ts"
@@ -11,10 +10,10 @@ export type MetaTypeMigration = {
   path: PathLike
   change: {
     type: "Create"
-    value: JSONType
+    value: Type<unknown, never>
   } | {
     type: "Update"
-    value: JSONType
+    value: Type<unknown, never>
   } | {
     type: "Delete"
   }

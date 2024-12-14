@@ -14,8 +14,8 @@ export function dbg(...flags: Array<string>): <T>(value: T) => T {
     dirname(import.meta.dirname!),
     fromFileUrl(new URL(new Error().stack?.split("\n").pop()?.split("    at ").pop()!)),
   )
-  const [leading, col] = splitLast(path, ":")!
-  const [filename, row] = splitLast(leading, ":")!
+  const [leading, row] = splitLast(path, ":")!
+  const [filename, col] = splitLast(leading, ":")!
 
   return tap(async (value) => {
     console.debug(yellow(path), value)
