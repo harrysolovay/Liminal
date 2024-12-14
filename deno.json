@@ -1,6 +1,6 @@
 {
-  "name": "@crosshatch/structured-outputs",
-  "description": "A Framework for Integrating With OpenAI Structured Outputs",
+  "name": "@crosshatch/liminal",
+  "description": "A framework for integrating with LLM structured outputs.",
   "version": "0.0.0-local.0",
   "exports": "./mod.ts",
   "tasks": {
@@ -55,8 +55,7 @@
   },
   "scopes": {
     "./examples/": {
-      "structured-outputs": "./mod.ts",
-      "structured-outputs/std": "./std/mod.ts"
+      "liminal": "./mod.ts"
     }
   },
   "lint": {

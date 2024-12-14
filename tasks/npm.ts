@@ -18,7 +18,7 @@ const mappingTargets = await collect(fs.walk(".", {
   includeDirs: false,
 }))
 const mappings: SpecifierMappings = Object.fromEntries(
-  mappingTargets.map(({ path }) => [`${splitLast(path, ".node.ts")[0]}.ts`, path]),
+  mappingTargets.map(({ path }) => [`${splitLast(path, ".node.ts")![0]}.ts`, path]),
 )
 // TODO: enable upon resolution of https://github.com/denoland/dnt/issues/433.
 if (false as boolean) {
