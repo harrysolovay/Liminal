@@ -37,10 +37,7 @@ if (false as boolean) {
 }
 
 await build({
-  entryPoints: ["./mod.ts", {
-    name: "./std",
-    path: "./std/mod.ts",
-  }],
+  entryPoints: ["./mod.ts"],
   outDir,
   shims: {
     deno: true,
@@ -56,11 +53,11 @@ await build({
   test: false,
   mappings,
   package: {
-    name: "structured-outputs",
-    version: version ?? "0.0.0-local.0",
+    name: "liminal",
+    version: version ?? denoConfig.version,
     description: denoConfig.description,
     license: "Apache-2.0",
-    repository: "github:harrysolovay/structured-outputs.git",
+    repository: "github:harrysolovay/liminal.git",
     type: "module",
     main: "./esm/mod.js",
   },

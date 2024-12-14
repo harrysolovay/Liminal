@@ -25,7 +25,7 @@ export default defineConfig({
     config: (md) => md.use(footnotePlugin),
   },
   sitemap: {
-    hostname: "http://structured-outputs.dev",
+    hostname: "http://liminal.land",
   },
   lastUpdated: true,
   cleanUrls: true,
@@ -44,7 +44,7 @@ export default defineConfig({
   ],
   themeConfig: {
     editLink: {
-      pattern: "https://github.com/harrysolovay/structured-outputs/edit/main/docs/:path",
+      pattern: "https://github.com/harrysolovay/liminal/edit/main/docs/:path",
     },
     nav: [
       {
@@ -71,11 +71,11 @@ export default defineConfig({
     },
     socialLinks: [{
       icon: "github",
-      link: "https://github.com/harrysolovay/structured-outputs",
+      link: "https://github.com/harrysolovay/liminal",
     }],
     footer: { // TODO: get this rendering
       message:
-        `Released under the <a href="https://github.com/harrysolovay/structured-outputs/blob/main/LICENSE">Apache 2.0 License</a>.`,
+        `Released under the <a href="https://github.com/harrysolovay/liminal/blob/main/LICENSE">Apache 2.0 License</a>.`,
       copyright: `Copyright © 2024-present <a href="https://x.com/harrysolovay">Harry Solovay</a>`,
     },
   },

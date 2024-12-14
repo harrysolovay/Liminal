@@ -1,12 +1,9 @@
-# Structured Outputs TypeScript
+# Liminal
 
-> A Framework for Integrating With
-> [OpenAI structured outputs](https://platform.openai.com/docs/guides/structured-outputs).
+> A framework for integrating with LLM structured outputs.
 
-- [Documentation &rarr;](https://structured-outputs.dev)<br />Expanded introduction and usage
-  guides.
-- [Examples &rarr;](https://structured-outputs.dev/examples)<br />Examples that illustrate common
-  use cases.
+- [Documentation &rarr;](https://liminal.land)<br />Expanded introduction and usage guides.
+- [Examples &rarr;](https://liminal.land/examples)<br />Examples that illustrate common use cases.
 
 ---
 
