@@ -1,21 +1,21 @@
 <div style="display: none">
 
-```ts twoslash include T
-import { T } from "structured-outputs"
+```ts twoslash include L
+import { L } from "liminal"
 ```
 
 ```ts twoslash include animal
-// @include: T
+// @include: L
 
-const Dog = T.object({
-  toy: T.enum("Bone", "Shoe", "Homework"),
+const Dog = L.object({
+  toy: L.enum("Bone", "Shoe", "Homework"),
 })
 
-const Cow = T.object({
-  a5: T.boolean,
+const Cow = L.object({
+  a5: L.boolean,
 })
 
-const Animal = T.taggedUnion("type", {
+const Animal = L.TaggedUnion({
   Dog,
   Cow,
 })
@@ -27,7 +27,7 @@ declare function assertEquals(actual: unknown, expected: unknown, msg?: string):
 ```
 
 ```ts twoslash include rf
-import { ResponseFormat } from "structured-outputs"
+import { OpenAIResponseFormat } from "liminal"
 ```
 
 ```ts twoslash include openai

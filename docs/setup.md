@@ -5,11 +5,11 @@
 ::: code-group
 
 ```sh [Node.js]
-npm i structured-outputs
+npm i liminal
 ```
 
 ```sh [Deno]
-deno add jsr:@crosshatch/structured-outputs
+deno add jsr:@crosshatch/liminal
 ```
 
 :::

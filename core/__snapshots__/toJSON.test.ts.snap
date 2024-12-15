@@ -1,0 +1,406 @@
+export const snapshot = {};
+
+snapshot[`toJSON > null 1`] = `
+{
+  "\$defs": {},
+  description: undefined,
+  type: "null",
+}
+`;
+
+snapshot[`toJSON > null 2`] = `
+{
+  "\$defs": {},
+  description: "One.",
+  type: "null",
+}
+`;
+
+snapshot[`toJSON > null 3`] = `
+{
+  "\$defs": {},
+  description: "One. Two.",
+  type: "null",
+}
+`;
+
+snapshot[`toJSON > const 1`] = `
+{
+  "\$defs": {},
+  const: "Hello Liminal!",
+  description: undefined,
+  type: "string",
+}
+`;
+
+snapshot[`toJSON > const 2`] = `
+{
+  "\$defs": {},
+  const: "Hello Liminal!",
+  description: undefined,
+  type: "string",
+}
+`;
+
+snapshot[`toJSON > const 3`] = `
+{
+  "\$defs": {},
+  const: "Hello Liminal!",
+  description: undefined,
+  type: "string",
+}
+`;
+
+snapshot[`toJSON > boolean 1`] = `
+{
+  "\$defs": {},
+  description: undefined,
+  type: "boolean",
+}
+`;
+
+snapshot[`toJSON > boolean 2`] = `
+{
+  "\$defs": {},
+  description: "One.",
+  type: "boolean",
+}
+`;
+
+snapshot[`toJSON > boolean 3`] = `
+{
+  "\$defs": {},
+  description: "One. Two.",
+  type: "boolean",
+}
+`;
+
+snapshot[`toJSON > number 1`] = `
+{
+  "\$defs": {},
+  description: undefined,
+  type: "number",
+}
+`;
+
+snapshot[`toJSON > number 2`] = `
+{
+  "\$defs": {},
+  description: "One.",
+  type: "number",
+}
+`;
+
+snapshot[`toJSON > number 3`] = `
+{
+  "\$defs": {},
+  description: "One. Two.",
+  type: "number",
+}
+`;
+
+snapshot[`toJSON > integer 1`] = `
+{
+  "\$defs": {},
+  description: undefined,
+  type: "integer",
+}
+`;
+
+snapshot[`toJSON > integer 2`] = `
+{
+  "\$defs": {},
+  description: "One.",
+  type: "integer",
+}
+`;
+
+snapshot[`toJSON > integer 3`] = `
+{
+  "\$defs": {},
+  description: "One. Two.",
+  type: "integer",
+}
+`;
+
+snapshot[`toJSON > string 1`] = `
+{
+  "\$defs": {},
+  description: undefined,
+  type: "string",
+}
+`;
+
+snapshot[`toJSON > string 2`] = `
+{
+  "\$defs": {},
+  description: "One.",
+  type: "string",
+}
+`;
+
+snapshot[`toJSON > string 3`] = `
+{
+  "\$defs": {},
+  description: "One. Two.",
+  type: "string",
+}
+`;
+
+snapshot[`toJSON > array 1`] = `
+{
+  "\$defs": {},
+  description: undefined,
+  items: {
+    description: undefined,
+    type: "string",
+  },
+  type: "array",
+}
+`;
+
+snapshot[`toJSON > array 2`] = `
+{
+  "\$defs": {},
+  description: "One.",
+  items: {
+    description: undefined,
+    type: "string",
+  },
+  type: "array",
+}
+`;
+
+snapshot[`toJSON > array 3`] = `
+{
+  "\$defs": {},
+  description: "One. Two.",
+  items: {
+    description: undefined,
+    type: "string",
+  },
+  type: "array",
+}
+`;
+
+snapshot[`toJSON > object 1`] = `
+{
+  "\$defs": {},
+  additionalProperties: false,
+  description: undefined,
+  properties: {
+    a: {
+      description: undefined,
+      type: "boolean",
+    },
+    b: {
+      description: undefined,
+      type: "number",
+    },
+    c: {
+      description: undefined,
+      type: "string",
+    },
+  },
+  required: [
+    "a",
+    "b",
+    "c",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toJSON > object 2`] = `
+{
+  "\$defs": {},
+  additionalProperties: false,
+  description: "One.",
+  properties: {
+    a: {
+      description: undefined,
+      type: "boolean",
+    },
+    b: {
+      description: undefined,
+      type: "number",
+    },
+    c: {
+      description: undefined,
+      type: "string",
+    },
+  },
+  required: [
+    "a",
+    "b",
+    "c",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toJSON > object 3`] = `
+{
+  "\$defs": {},
+  additionalProperties: false,
+  description: "One. Two.",
+  properties: {
+    a: {
+      description: undefined,
+      type: "boolean",
+    },
+    b: {
+      description: undefined,
+      type: "number",
+    },
+    c: {
+      description: undefined,
+      type: "string",
+    },
+  },
+  required: [
+    "a",
+    "b",
+    "c",
+  ],
+  type: "object",
+}
+`;
+
+snapshot[`toJSON > enum 1`] = `
+{
+  "\$defs": {},
+  description: undefined,
+  enum: [
+    "A",
+    "B",
+    "C",
+  ],
+  type: "string",
+}
+`;
+
+snapshot[`toJSON > enum 2`] = `
+{
+  "\$defs": {},
+  description: "One.",
+  enum: [
+    "A",
+    "B",
+    "C",
+  ],
+  type: "string",
+}
+`;
+
+snapshot[`toJSON > enum 3`] = `
+{
+  "\$defs": {},
+  description: "One. Two.",
+  enum: [
+    "A",
+    "B",
+    "C",
+  ],
+  type: "string",
+}
+`;
+
+snapshot[`toJSON > union 1`] = `
+{
+  "\$defs": {},
+  anyOf: [
+    {
+      description: undefined,
+      type: "null",
+    },
+    {
+      description: undefined,
+      type: "string",
+    },
+  ],
+  description: undefined,
+}
+`;
+
+snapshot[`toJSON > union 2`] = `
+{
+  "\$defs": {},
+  anyOf: [
+    {
+      description: undefined,
+      type: "null",
+    },
+    {
+      description: undefined,
+      type: "string",
+    },
+  ],
+  description: "One.",
+}
+`;
+
+snapshot[`toJSON > union 3`] = `
+{
+  "\$defs": {},
+  anyOf: [
+    {
+      description: undefined,
+      type: "null",
+    },
+    {
+      description: undefined,
+      type: "string",
+    },
+  ],
+  description: "One. Two.",
+}
+`;
+
+snapshot[`toJSON > ref 1`] = `
+{
+  "\$defs": {},
+  description: undefined,
+  type: "string",
+}
+`;
+
+snapshot[`toJSON > ref 2`] = `
+{
+  "\$defs": {},
+  description: undefined,
+  type: "string",
+}
+`;
+
+snapshot[`toJSON > ref 3`] = `
+{
+  "\$defs": {},
+  description: undefined,
+  type: "string",
+}
+`;
+
+snapshot[`toJSON > transform 1`] = `
+{
+  "\$defs": {},
+  description: undefined,
+  type: "string",
+}
+`;
+
+snapshot[`toJSON > transform 2`] = `
+{
+  "\$defs": {},
+  description: undefined,
+  type: "string",
+}
+`;
+
+snapshot[`toJSON > transform 3`] = `
+{
+  "\$defs": {},
+  description: undefined,
+  type: "string",
+}
+`;

@@ -1,17 +1,17 @@
-# `Derived`
+# Libraries
 
 `Derived` is a utility type for amalgamating multiple `Type`s. This is useful for explicitly-typing
 functions that accept and return types (somewhat of a requirement for [JSR](http://jsr.io).[^1]
 
 ## Signature
 
-`Derived` has the following signature.
+`DerivedType` has the following signature.
 
 ```ts
-export type Derived<
+export type DerivedType<
   T,
   X extends Array<AnyType>,
-  P extends keyof any = never,
+  P extends symbol = never,
 >
 ```
 
@@ -28,11 +28,11 @@ A list of all types from which the new derived type is composed.
 ## Example
 
 ```ts twoslash
-import { AnyType, Derived } from "structured-outputs"
+import { AnyType, DerivedType } from "liminal"
 // ---cut---
 
-function LeastLikely<X extends AnyType>(ty: X): Derived<X["T"], [X]> {
-  return ty`Ensure that this value is the least likely version of itself.`
+function LeastLikely<X extends AnyType>(type: X): DerivedType<X["T"], [X]> {
+  return type`Ensure that this value is the least likely version of itself.`
 }
 ```
 

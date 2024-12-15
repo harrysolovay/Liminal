@@ -1,140 +1,76 @@
-import type { EnsureLiteralKeys } from "../util/mod.ts"
-import { type Assertion, Context, type DescriptionArgs, type DescriptionParams } from "./Context.ts"
+import type { Annotation, DescriptionTemplatePart, MetadataHandle, ReduceP } from "./Annotation.ts"
+import type { AssertionContext } from "./AssertionContext.ts"
+import type { JSONType, JSONTypeName } from "./JSONSchema.ts"
 
-/** The core unit of schema composition. */
-export interface Type<T, P extends keyof any = never> {
-  <P2 extends DescriptionParams>(
+export interface Type<T, P extends symbol> {
+  <A extends Array<DescriptionTemplatePart>>(
     template: TemplateStringsArray,
-    ...params: EnsureLiteralKeys<P2>
-  ): Type<T, P | P2[number]>
+    ...descriptionParts: A
+  ): Type<T, ReduceP<P, A>>
 
-  /** The native type. */
+  <A extends Array<Annotation<T>>>(...annotations: A): Type<T, ReduceP<P, A>>
+
   T: T
-  /** The union of literal types of parameter keys. */
   P: P
 
-  /** Used to check if a value is a `Type`. */
-  [typeKey]: true
-
-  /** Readonly values that describe the type. */
+  type: "Type"
+  trace: string
   declaration: TypeDeclaration
+  annotations: Array<Annotation>
 
-  /** Container to be filled with context parts as chaining occurs. */
-  ctx: Context
-
-  /** Fill in parameterized context. */
-  of: <A extends Partial<DescriptionArgs<P>>>(
-    args: A,
-  ) => Type<T, Exclude<P, keyof { [K in keyof A as A[K] extends undefined ? never : K]: never }>>
-
-  /** Specify assertions to be run on the type's output. */
-  assert: <A extends unknown[]>(
-    f: (target: T, ...args: A) => void | Promise<void>,
-    ...args: A
-  ) => Type<T, P>
-
-  /** Annotate the type with arbitrary metadata. */
-  annotate: (metadata: Record<keyof any, unknown>) => Type<T, P>
-
-  /** Widen the type for dynamic use cases. */
-  widen: () => Type<any, never>
-}
-
-export function Type<T, P extends keyof any = never>(
-  declaration: TypeDeclaration,
-  ctx?: Context,
-): Type<T, P> {
-  ctx = ctx ?? new Context([], [], {})
-  const self = Object.assign(
-    (template: TemplateStringsArray, ...params: DescriptionParams) =>
-      Type(
-        declaration,
-        new Context(
-          [{ template, params }, ...ctx.descriptionParts],
-          ctx.assertionConfigs,
-          ctx.metadata,
-        ),
-      ),
-    {
-      [typeKey]: true,
-      declaration,
-      ctx,
-      of: (args: DescriptionArgs) =>
-        Type(
-          declaration,
-          new Context([{ args }, ...ctx.descriptionParts], ctx.assertionConfigs, ctx.metadata),
-        ),
-      assert: (assertion: Assertion, ...args: unknown[]) => {
-        const trace = new Error().stack ?? ""
-        return Type(
-          declaration,
-          new Context(
-            ctx.descriptionParts,
-            [...ctx.assertionConfigs, { assertion, args, trace }],
-            ctx.metadata,
-          ),
-        )
-      },
-      annotate: (metadata: Record<keyof any, unknown>) =>
-        Type(
-          declaration,
-          new Context(ctx.descriptionParts, ctx.assertionConfigs, {
-            ...ctx.metadata,
-            ...metadata,
-          }),
-        ),
-      widen: () => self,
-      toJSON: () => ({
-        type: declaration.kind,
-        value: {
-          description: ctx.formatDescription({}),
-          ...declaration.factory ? declaration.argsLookup : {},
-        },
-      }),
-      [Symbol.for("nodejs.util.inspect.custom")](
-        this: AnyType,
-        _0: unknown,
-        _1: unknown,
-        inspect_: (value: unknown) => string,
-      ): string {
-        return inspect(inspect_)
-      },
-      [Symbol.for("Deno.customInspect")](
-        this: AnyType,
-        inspect_: (value: unknown, opts: unknown) => string,
-        opts: unknown,
-      ): string {
-        return inspect((x) => inspect_(x, opts))
-      },
-    },
-  )
-  return self as never
-
-  function inspect(inspect: (value: unknown) => string): string {
-    if (declaration.getAtom) {
-      return `T.${declaration.kind}`
-    }
-    return `T.${declaration.kind}(${declaration.args.map((arg) => inspect(arg)).join(", ")})`
-  }
+  display(): string
+  description(): undefined | string
+  signature(): string
+  signatureHash(): Promise<string>
+  metadata<V>(handle: MetadataHandle<V>): Array<V>
+  toJSON(): JSONType
+  assert(value: unknown): Promise<void>
+  deserialize: (jsonText: string) => T
 }
 
 export type TypeDeclaration =
-  & { kind: string }
+  & {
+    assert: (value: unknown, assertionContext: AssertionContext) => void
+    jsonType: JSONTypeName
+  }
   & ({
     getAtom: () => AnyType
     factory?: never
     args?: never
-    argsLookup?: never
   } | {
     getAtom?: never
     factory: (...args: any) => AnyType
     args: unknown[]
-    argsLookup: Record<string, unknown>
   })
 
-export type AnyType<T = any> = Type<T, any>
+export type AnyType<T = any> = Type<T, symbol>
 
-export function isType(value: unknown): value is AnyType {
-  return typeof value === "object" && value !== null && typeKey in value
+export type DerivedType<
+  T,
+  X extends Array<AnyType>,
+  P extends symbol = never,
+> = [Type<T, P | X[number]["P"]>][0]
+
+export const TypeKey: unique symbol = Symbol()
+
+export function isType<T>(
+  value: unknown,
+  ...intrinsics: Array<AnyType<T> | ((...args: any) => AnyType<T>)>
+): value is AnyType<T> {
+  if (typeof value === "function" && TypeKey in value) {
+    if (intrinsics.length) {
+      const { declaration } = value as never as AnyType
+      for (const intrinsic of intrinsics) {
+        const matched = isType(intrinsic)
+          ? declaration.getAtom?.() === intrinsic
+          : declaration.factory === intrinsic
+        if (matched) {
+          return true
+        }
+      }
+    } else {
+      return true
+    }
+  }
+  return false
 }
-export const typeKey: unique symbol = Symbol()

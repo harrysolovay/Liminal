@@ -14,7 +14,7 @@ const GOOGLE_ANALYTICS = dedent`
 // cspell:enable
 
 export default defineConfig({
-  title: "Structured Outputs TS",
+  title: "Liminal",
   description: denoConfig.description,
   markdown: {
     codeTransformers: [transformerTwoslash()],
@@ -25,7 +25,7 @@ export default defineConfig({
     config: (md) => md.use(footnotePlugin),
   },
   sitemap: {
-    hostname: "http://structured-outputs.dev",
+    hostname: "http://liminal.land",
   },
   lastUpdated: true,
   cleanUrls: true,
@@ -44,7 +44,7 @@ export default defineConfig({
   ],
   themeConfig: {
     editLink: {
-      pattern: "https://github.com/harrysolovay/structured-outputs/edit/main/docs/:path",
+      pattern: "https://github.com/harrysolovay/liminal/edit/main/docs/:path",
     },
     nav: [
       {
@@ -71,11 +71,11 @@ export default defineConfig({
     },
     socialLinks: [{
       icon: "github",
-      link: "https://github.com/harrysolovay/structured-outputs",
+      link: "https://github.com/harrysolovay/liminal",
     }],
     footer: { // TODO: get this rendering
       message:
-        `Released under the <a href="https://github.com/harrysolovay/structured-outputs/blob/main/LICENSE">Apache 2.0 License</a>.`,
+        `Released under the <a href="https://github.com/harrysolovay/liminal/blob/main/LICENSE">Apache 2.0 License</a>.`,
       copyright: `Copyright © 2024-present <a href="https://x.com/harrysolovay">Harry Solovay</a>`,
     },
   },
@@ -100,32 +100,31 @@ function manualItems(): DefaultTheme.SidebarItem[] {
         { text: "Primitives", link: "/primitives" },
         { text: "Collections", link: "/collections" },
         { text: "Unions", link: "/unions" },
-        { text: "<code>T.Intersection</code>", link: "/intersection" },
+        { text: "Utilities", link: "/utilities" },
         { text: "Recursion", link: "/recursion" },
-        { text: "<code>T.Transform</code>", link: "/transform" },
-        { text: "<code>Derived</code>", link: "/derived" },
-        { text: "<code>T.MetaType</code>", link: "/metatype" },
+        { text: "Libraries", link: "/libraries" },
       ],
     },
     {
-      text: "Context",
-      base: "/context",
+      text: "Annotations",
+      base: "/annotations",
       collapsed: false,
       items: [
-        { text: "Context Chaining", link: "/chaining" },
-        { text: "Context Parameters", link: "/parameters" },
+        { text: "Annotations Overview", link: "/" },
+        { text: "Descriptions", link: "/descriptions" },
+        { text: "Assertions", link: "/assertions" },
+        { text: "Metadata", link: "/metadata" },
       ],
     },
     {
-      text: "Consuming Types",
-      base: "/consumers",
+      text: "Client",
+      base: "/client",
       collapsed: false,
       items: [
-        { text: "<code>ResponseFormat</code>", link: "/response-format" },
-        { text: "<code>refine</code>", link: "/refine" },
-        { text: "<code>AssertAdherence</code>", link: "/assert-adherence" },
-        { text: "<code>TypeVisitor</code>", link: "/type-visitor" },
-        { text: "<code>Tool</code> (Realtime)", link: "/tool" },
+        { text: "<code>ResponseFormats</code>", link: "/sessions" },
+        { text: "<code>Session</code>", link: "/sessions" },
+        { text: "<code>Adapter</code>", link: "/adapters" },
+        { text: "<code>OpenAIAdapter</code>", link: "/adapters" },
       ],
     },
     {
@@ -133,8 +132,10 @@ function manualItems(): DefaultTheme.SidebarItem[] {
       base: "/xyz",
       collapsed: false,
       items: [
+        { text: "<code>TypeVisitor</code>", link: "/type-visitor" },
         { text: "Conventions", link: "/conventions" },
         { text: "Troubleshooting", link: "/troubleshooting" },
+        { text: "Contributing", link: "/contributing" },
       ],
     },
   ]

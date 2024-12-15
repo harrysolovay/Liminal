@@ -6,6 +6,7 @@ combinators
 deno
 denoland
 dprint
+egts
 esbenp
 harrysolovay
 inspectable

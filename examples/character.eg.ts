@@ -1,47 +1,28 @@
-import Openai from "openai"
+import OpenAI from "openai"
 import "@std/dotenv/load"
-import { ResponseFormat, T } from "structured-outputs"
-import { asserts, ColorHex, Date } from "structured-outputs/std"
-import { dbg } from "../util/mod.ts"
+import { DEFAULT_INSTRUCTIONS, L, OpenAIResponseFormat } from "liminal"
+import { dbg } from "testing"
+import { ColorHex } from "./color.eg.ts"
 
-const openai = new Openai()
-
-const greeting = T.taggedUnion("greeting", {
-  Hi: T.string,
-  Yo: T.number,
-  Hey: undefined,
-})
-
-const Character = T.object({
-  name: T.string
-    .assert(asserts.string.minLength, 4)
-    .assert(asserts.string.maxLength, 30),
-  home: T.string`The name of a fictional realm of magic and wonder.`,
-  disposition: T.enum("Optimistic", "Reserved", "Inquisitive"),
-  born: Date`Date the character was born. Make sure it aligns with the age.`,
-  stateOfAffairs: T.Tuple(
-    T.string`Home life.`,
-    T.string`Professional life.`,
-    T.string`Health.`,
-  )`How are things going for the character in these various domains?`,
-  randomValue: T.Union(T.string, T.number),
-  friends: T.array(T.string)`Names of the character's friends.`,
-  greeting,
+const Character = L.object({
+  name: L.string,
+  home: L.string`The name of a fictional realm of magic and wonder.`,
+  disposition: L.enum("Optimistic", "Reserved", "Inquisitive"),
+  age: L.number`Age of the character.`,
+  friends: L.array(L.string)`Names of the character's friends.`,
   favoriteColor: ColorHex,
 })
 
-const response_format = ResponseFormat("create_character", Character)`
-  Create a new character to be the protagonist of a children's story.
-`
+const response_format = OpenAIResponseFormat("animal", Character)
 
-await openai.chat.completions
+await new OpenAI().chat.completions
   .create({
     model: "gpt-4o-mini",
-    response_format,
     messages: [{
       role: "system",
-      content: [],
+      content: DEFAULT_INSTRUCTIONS,
     }],
+    response_format,
   })
-  .then(response_format.into)
-  .then(dbg())
+  .then(response_format.deserialize)
+  .then(dbg)

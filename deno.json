@@ -1,15 +1,15 @@
 {
-  "name": "@crosshatch/structured-outputs",
-  "description": "A Framework for Integrating With OpenAI Structured Outputs",
+  "name": "@crosshatch/liminal",
+  "description": "Types for LLMs.",
   "version": "0.0.0-local.0",
   "exports": "./mod.ts",
   "tasks": {
     "mod": {
       "description": "Regenerate barrels and run formatting.",
-      "command": "deno run -A https://deno.land/x/moderate@0.0.5/mod.ts --exclude '*.test.ts' --exclude target && dprint fmt"
+      "command": "deno run -A https://deno.land/x/moderate@0.0.5/mod.ts --exclude '*.test.ts' --exclude target --exclude '*.node.ts' && dprint fmt"
     },
     "check": {
-      "description": "Ensure all TypeScript pass typechecking and linting.",
+      "description": "Ensure all TypeScript files pass typechecking and linting.",
       "command": "deno check . && deno lint",
       "dependencies": ["mod"]
     },
@@ -39,22 +39,24 @@
   },
   "lock": false,
   "imports": {
+    "@anthropic-ai/sdk": "npm:@anthropic-ai/sdk@^0.32.1",
     "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
     "@std/assert": "jsr:@std/assert@1",
     "@std/async": "jsr:@std/async@^1.0.7",
     "@std/cli": "jsr:@std/cli@^1.0.6",
     "@std/collections": "jsr:@std/collections@^1.0.9",
     "@std/dotenv": "jsr:@std/dotenv@^0.225.2",
+    "@std/encoding": "jsr:@std/encoding@^1.0.5",
     "@std/fmt": "jsr:@std/fmt@^1.0.3",
     "@std/fs": "jsr:@std/fs@^1.0.4",
     "@std/path": "jsr:@std/path@^1.0.6",
     "@std/testing": "jsr:@std/testing@^1.0.3",
-    "openai": "npm:openai@^4.76.0"
+    "openai": "npm:openai@^4.76.0",
+    "testing": "./testing/mod.ts"
   },
   "scopes": {
     "./examples/": {
-      "structured-outputs": "./mod.ts",
-      "structured-outputs/std": "./std/mod.ts"
+      "liminal": "./mod.ts"
     }
   },
   "lint": {

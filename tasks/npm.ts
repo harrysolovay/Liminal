@@ -18,26 +18,28 @@ const mappingTargets = await collect(fs.walk(".", {
   includeDirs: false,
 }))
 const mappings: SpecifierMappings = Object.fromEntries(
-  mappingTargets.map(({ path }) => [`${splitLast(path, ".node.ts")[0]}.ts`, path]),
+  mappingTargets.map(({ path }) => [`${splitLast(path, ".node.ts")![0]}.ts`, path]),
 )
 // TODO: enable upon resolution of https://github.com/denoland/dnt/issues/433.
 if (false as boolean) {
-  mappings["npm:openai@^4.76.0"] = {
-    name: "openai",
-    version: "^4.76.0",
-    peerDependency: true,
-  }
+  Object.assign(mappings, {
+    "npm:@anthropic-ai/sdk@^0.32.1": {
+      name: "@anthropic-ai",
+      version: "^0.32.1",
+      peerDependency: true,
+    },
+    "npm:openai@^4.76.0": {
+      name: "openai",
+      version: "^4.76.0",
+      peerDependency: true,
+    },
+  })
 }
 
 await build({
-  entryPoints: ["./mod.ts", {
-    name: "./std",
-    path: "./std/mod.ts",
-  }],
+  entryPoints: ["./mod.ts"],
   outDir,
-  shims: {
-    deno: true,
-  },
+  shims: {},
   scriptModule: false,
   declaration: "inline",
   compilerOptions: {
@@ -49,11 +51,11 @@ await build({
   test: false,
   mappings,
   package: {
-    name: "structured-outputs",
-    version: version ?? "0.0.0-local.0",
+    name: "liminal",
+    version: version ?? denoConfig.version,
     description: denoConfig.description,
     license: "Apache-2.0",
-    repository: "github:harrysolovay/structured-outputs.git",
+    repository: "github:harrysolovay/liminal.git",
     type: "module",
     main: "./esm/mod.js",
   },
@@ -62,11 +64,16 @@ await build({
 const packageJsonPath = path.join(outDir, "package.json")
 await Deno.readTextFile(packageJsonPath).then(async (v) => {
   const initial = JSON.parse(v)
-
   { // TODO: delete upon resolution of https://github.com/denoland/dnt/issues/433.
-    const { openai } = initial.dependencies
+    const {
+      "@anthropic-ai/sdk": anthropic,
+      openai,
+    } = initial.dependencies
     delete initial.dependencies
-    initial.peerDependencies = { openai }
+    initial.peerDependencies = {
+      "@anthropic-ai/sdk": anthropic,
+      openai,
+    }
   }
   if (version === undefined) {
     initial.private = true

@@ -8,7 +8,7 @@ It enables us to ask completions for new structured output schemas. We can use t
 schemas for subsequent completions. The aim of `MetaType` is to enable the LLM to tell you what
 structured output to ask for.
 
-```ts twoslash
+```ts
 // @include: openai
 // @include: T
 // @include: rf
@@ -47,9 +47,9 @@ T.object({
 
 Let's send a subsequent completion requests using this dynamic type as the response format schema.
 
-```ts twoslash
+```ts
 // @include: openai
-import { ResponseFormat, Type } from "structured-outputs"
+import { ResponseFormat, Type } from "liminal"
 declare const StoryWorld: Type<unknown, never>
 // ---cut---
 

@@ -9,9 +9,9 @@ type.
 
 Therefore, an error is produced if you try to create a `ResponseFormat` with an unapplied type.
 
-```ts twoslash
+```ts
 // @errors: 2345
-import { ResponseFormat, T } from "structured-outputs"
+import { ResponseFormat, T } from "liminal"
 // ---cut---
 const Root = T.object({
   value: T.string`Arg: ${"param_key"}.`,
@@ -22,8 +22,8 @@ ResponseFormat("my_format", Root)
 
 To solve this error, fill in the missing parameter.
 
-```ts twoslash
-import { ResponseFormat, T } from "structured-outputs"
+```ts
+import { ResponseFormat, T } from "liminal"
 
 const Root = T.object({
   value: T.string`Arg: ${"param_key"}.`,
@@ -39,9 +39,9 @@ time of `ResponseFormat` creation. Widening of the union type of all parameter k
 type-level assurance. Therefore, widened key types are disallowed; it is not possible to
 parameterize context with a widened `number`, `string` or `symbol`.
 
-```ts twoslash
+```ts
 // @errors: 2345
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 declare const param_key: string
 
@@ -52,8 +52,8 @@ If you see this error, it may indicate that you are trying to interpolate some r
 rather than parameterize the context. In cases such as this, utilize a short-lived parameter
 instead.
 
-```ts twoslash
-import { T } from "structured-outputs"
+```ts
+import { T } from "liminal"
 // ---cut---
 const MyType = T
   .string`Some text we want to interpolate: ${"_"}.`

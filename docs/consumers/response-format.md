@@ -2,14 +2,14 @@
 
 Create `ResponseFormat` for use with OpenAI clients.
 
-```ts{1-3,7} twoslash
+```ts{1-3,7}
 import Openai from "openai"
-import { ResponseFormat, T } from "structured-outputs"
+import { ResponseFormat, L } from "liminal"
 declare const openai: Openai
-const Contact = T.object({
-  name: T.string,
-  phone: T.number,
-  email: T.string,
+const Contact = L.object({
+  name: L.string,
+  phone: L.number,
+  email: L.string,
 })
 // ---cut---
 const response_format = ResponseFormat("extract_contact_information", Contact)`

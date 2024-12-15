@@ -1,38 +1,34 @@
-import Openai from "openai"
-import { ResponseFormat, T } from "structured-outputs"
+import OpenAI from "openai"
 import "@std/dotenv/load"
-import { dbg } from "../util/mod.ts"
+import { DEFAULT_INSTRUCTIONS, L, OpenAIResponseFormat } from "liminal"
+import { dbg } from "testing"
 
-const Dog = T.object({
-  bark: T.string,
-  favoriteToy: T.string,
-})`Some description of a dog.`
-
-const Elephant = T.object({
-  troopId: T.number,
-  remembersYourFace: T.boolean,
-})`Some description of an elephant.`
-
-const SlowLoris = T.object({
-  poisonousElbows: T.boolean,
-  cuteAsCouldBe: T.boolean,
-})`Some description of a slow loris.`
-
-export const Animal = T.taggedUnion("type", {
-  Dog,
-  Elephant,
-  SlowLoris,
+const Dog = L.object({
+  bark: L.string,
+  favoriteToy: L.string,
 })
 
-const openai = new Openai()
+const Elephant = L.object({
+  troopId: L.number,
+  remembersYourFace: L.boolean,
+})
 
-const response_format = ResponseFormat("generate_animal", Animal)
+const Animal = L.TaggedUnion({
+  Dog,
+  Elephant,
+  SlowLoris: null,
+})
 
-await openai.chat.completions
+const response_format = OpenAIResponseFormat("animal", Animal)
+
+await new OpenAI().chat.completions
   .create({
     model: "gpt-4o-mini",
-    messages: [{ role: "system", content: [] }],
+    messages: [{
+      role: "system",
+      content: DEFAULT_INSTRUCTIONS,
+    }],
     response_format,
   })
-  .then(response_format.into)
-  .then(dbg("Animal"))
+  .then(response_format.deserialize)
+  .then(dbg)

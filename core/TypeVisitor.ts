@@ -1,89 +1,63 @@
-import { assert } from "../util/mod.ts"
+import type { Expand } from "../util/mod.ts"
+import * as I from "./intrinsics/mod.ts"
 import type { AnyType } from "./Type.ts"
 
-export class TypeVisitor<C, R> {
-  #fallback?: Visitor<C, R>
-  #middleware?: Array<Middleware<C, R>>
-  constructor(
-    readonly visitors: Map<VisitTarget, Visitor<C, R>> = new Map(),
-    fallback?: Visitor<C, R>,
-    middleware?: Array<Middleware<C, R>>,
-  ) {
-    this.#fallback = fallback
-    this.#middleware = middleware
+type I = typeof I
+
+export type TypeVisitorArms<C, R> = Expand<
+  & {
+    hook?: (
+      next: (ctx: C, type: AnyType) => R,
+      ctx: C,
+      type: AnyType,
+    ) => R
   }
-
-  middleware = (f: Middleware<C, R>): TypeVisitor<C, R> =>
-    new TypeVisitor(
-      this.visitors,
-      this.#fallback,
-      this.#middleware ? [f, ...this.#middleware] : [f],
+  & (
+    | ({ fallback?: never } & IntrinsicArms<C, R>)
+    | (
+      & { fallback: (ctx: C, type: AnyType, ...args: unknown[]) => R }
+      & Partial<IntrinsicArms<C, R>>
     )
+  )
+>
 
-  add<X extends AnyType>(
-    type: X,
-    visitor: (ctx: C, type: X) => R,
-  ): TypeVisitor<C, R>
-  add<A extends unknown[], X extends AnyType>(
-    typeFactory: (...args: A) => X,
-    visitor: (ctx: C, type: X, ...args: A) => R,
-  ): TypeVisitor<C, R>
-  add(
-    type: VisitTarget,
-    visitor: (ctx: C, type: AnyType, ...args: unknown[]) => R,
-  ): TypeVisitor<C, R> {
-    assert(!this.visitors.has(type), "Duplicate visitor for type.") // TODO: format
-    return new TypeVisitor(
-      new Map([...this.visitors, [type, visitor]]) as never,
-      this.#fallback,
-      this.#middleware,
-    )
-  }
-
-  fallback = (
-    f: (ctx: C, type: AnyType, ...args: unknown[]) => R,
-  ): TypeVisitor<C, R> => new TypeVisitor(this.visitors, f, this.#middleware)
-
-  visit = (ctx: C, type: AnyType): R => {
-    const { declaration } = type
-    if (declaration.factory) {
-      const visitor = this.visitors.get(declaration.factory)
-      if (visitor) {
-        return sequence.call(this, visitor, ...declaration.args)
-      }
-    } else {
-      const visitor = this.visitors.get(declaration.getAtom())
-      if (visitor) {
-        return sequence.call(this, visitor)
-      }
-    }
-    assert(
-      this.#fallback,
-      `Could not match type ${type} with visitor. No fallback specified.`,
-    )
-    return sequence.call(this, this.#fallback)
-
-    function sequence(
-      this: TypeVisitor<C, R>,
-      visitor: Visitor<C, R>,
-      ...args: unknown[]
-    ): R {
-      if (this.#middleware) {
-        return this.#middleware.reduce(
-          (next, cur) => (ctx, type, ...args) => cur(next, ctx, type, ...args),
-          visitor,
-        )(ctx, type, ...args)
-      }
-      return visitor(ctx, type, ...args)
-    }
-  }
+type IntrinsicArms<C, R> = {
+  [K in keyof I]: (
+    ctx: C,
+    ...rest: I[K] extends AnyType ? [type: I[K]]
+      : [type: ReturnType<I[K]>, ...args: Parameters<I[K]>]
+  ) => R
 }
 
-export type Visitor<C, R> = (ctx: C, type: AnyType, ...args: unknown[]) => R
-export type Middleware<C, R> = (
-  next: (ctx: C, type: AnyType, ...args: unknown[]) => R,
-  ctx: C,
-  type: AnyType,
-  ...args: unknown[]
-) => R
-export type VisitTarget = AnyType | ((...args: unknown[]) => AnyType)
+export function TypeVisitor<C, R>(arms: TypeVisitorArms<C, R>): (ctx: C, type: AnyType) => R {
+  const { hook } = arms
+  if (hook) {
+    return (ctx, type) => hook(next, ctx, type)
+  }
+  return next
+
+  function next(ctx: C, type: AnyType): R {
+    const armKey: keyof I = (() => {
+      switch (type.declaration.factory) {
+        case I.transform: {
+          return "transform"
+        }
+        case I.enum: {
+          return "enum"
+        }
+        case I.const: {
+          return "const"
+        }
+        default: {
+          return type.declaration.jsonType
+        }
+      }
+    })()
+    const arm = arms[armKey] ?? arms.fallback!
+    return arm(
+      ctx,
+      type as never,
+      ...type.declaration.factory ? type.declaration.args as never : [],
+    )
+  }
+}

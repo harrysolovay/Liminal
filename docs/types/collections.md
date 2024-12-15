@@ -1,11 +1,11 @@
 # Collections
 
-## `T.array`
+## `L.array`
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { L } from "liminal"
 // ---cut---
-const Mantras = T.array(T.string`A yogi mantra.`)
+const Mantras = L.array(L.string`A yogi mantra.`)
 
 Mantras
 // ^?
@@ -13,15 +13,15 @@ Mantras
 
 <br />
 
-## `T.object`
+## `L.object`
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { L } from "liminal"
 // ---cut---
-const DrinkSuggestion = T.object({
-  includeLemonZest: T.boolean,
-  alcoholType: T.string`A type of alcohol.`,
-  mysterySpice: T.string`A spice that tastes good in an alcoholic beverage.`,
+const DrinkSuggestion = L.object({
+  includeLemonZest: L.boolean,
+  alcoholType: L.string`A type of alcohol.`,
+  mysterySpice: L.string`A spice that tastes good in an alcoholic beverage.`,
 })
 
 DrinkSuggestion
@@ -38,11 +38,11 @@ DrinkSuggestion
 ## `T.Tuple`
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { L } from "liminal"
 // ---cut---
-const Coords = T.Tuple(
-  T.number`Latitude`,
-  T.number`Longitude`,
+const Coords = L.Tuple(
+  L.number`Latitude`,
+  L.number`Longitude`,
 )
 
 Coords
@@ -57,9 +57,9 @@ Coords
 ## `T.Record`
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { L } from "liminal"
 // ---cut---
-const CustomerIdLookup = T.Record(T.number)
+const CustomerIdLookup = L.Record(L.number)
 
 CustomerIdLookup
 // ^?

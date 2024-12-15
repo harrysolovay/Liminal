@@ -1,36 +1,36 @@
 # Primitive Types
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { L } from "liminal"
 // ---cut---
-T.boolean
+L.boolean
 // ^?
 ```
 
 <br />
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { L } from "liminal"
 // ---cut---
-T.number
+L.number
 // ^?
 ```
 
 <br />
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { L } from "liminal"
 // ---cut---
-T.integer
+L.integer
 // ^?
 ```
 
 <br />
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { L } from "liminal"
 // ---cut---
-T.string
+L.string
 // ^?
 ```
 

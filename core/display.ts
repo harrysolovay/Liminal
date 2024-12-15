@@ -1,76 +1,67 @@
-import * as T from "./T.ts"
-import type { AnyType, Type } from "./Type.ts"
+import type { AnyType } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
-// TODO: re-add context
-
-export function display(type: Type<any>): string {
-  const ctx = new DisplayVisitorContext()
-  visitor.visit(ctx, type)
-  console.log(ctx)
-  return "TODO"
+export function display(this: AnyType): string {
+  return visit(new DisplayContext(this, false, 0), this)
 }
 
-class DisplayVisitorContext {
-  signatures: Map<AnyType, string> = new Map()
-  signatureIds: Record<string, number> = {}
+class DisplayContext {
+  constructor(
+    readonly rootType: AnyType,
+    readonly visitedRoot: boolean,
+    readonly depth: number,
+  ) {}
 
-  ingest = (type: AnyType, makeSignature: () => string): string => {
-    let signature = this.signatures.get(type)
-    if (signature === undefined) {
-      signature = makeSignature()
-      this.signatures.set(type, signature)
-    }
-    let signatureId = this.signatureIds[signature]
-    if (signatureId === undefined) {
-      signatureId = this.signatures.size - 1
-      this.signatureIds[signature] = signatureId
-    }
-    return `_${signatureId}`
-  }
+  indentCtx = () => new DisplayContext(this.rootType, this.visitedRoot, this.depth + 1)
 }
 
-const visitor = new TypeVisitor<DisplayVisitorContext, string>()
-  .add(T.boolean, () => "T.boolean")
-  .add(T.integer, () => "T.integer")
-  .add(T.number, () => "T.number")
-  .add(T.string, () => "T.string")
-  .add(
-    T.array,
-    (ctx, type, element): string =>
-      ctx.ingest(type, () => `T.array(${visitor.visit(ctx, element)})`),
-  )
-  .add(T.object, (ctx, type, fields): string =>
-    ctx.ingest(
-      type,
-      () =>
-        `T.object({${
-          Object.entries(fields).map(([k, v]) => `${k}: ${visitor.visit(ctx, v)}`).join(", ")
-        }})`,
-    ))
-  .add(
-    T.option,
-    (ctx, type, Some): string => ctx.ingest(type, () => `T.option(${visitor.visit(ctx, Some)})`),
-  )
-  .add(
-    T.enum,
-    (ctx, type, ...members) => ctx.ingest(type, () => `T.enum(${members.join(", ")})`),
-  )
-  .add(T.taggedUnion, (ctx, type, tagKey, members): string => {
-    return ctx.ingest(type, () =>
-      `T.taggedUnion("${tagKey}", {${
-        Object
-          .entries(members)
-          .map(([k, v]) => `${k}: ${v ? visitor.visit(ctx, v) : "undefined"}`)
-          .join(", ")
-      }})`)
-  })
-  .add(
-    T.transform,
-    (ctx, type, name, from): string =>
-      ctx.ingest(type, () => `T.transform("${name}", ${visitor.visit(ctx, from)})`),
-  )
-  .add(
-    T.deferred,
-    (ctx, type, getType): string => ctx.ingest(type, () => visitor.visit(ctx, getType())),
-  )
+const visit = TypeVisitor<DisplayContext, string>({
+  hook(next, ctx, type): string {
+    if (type === ctx.rootType && ctx.visitedRoot) {
+      return "self"
+    }
+    return next(new DisplayContext(ctx.rootType, true, ctx.depth), type)
+  },
+  const(_0, _1, _2, value): string {
+    if (typeof value === "string") {
+      return `"${escapeDoubleQuotes(value)}"`
+    }
+    return JSON.stringify(value)
+  },
+  array(ctx, _1, element): string {
+    return `array(${visit(ctx, element)})`
+  },
+  object(ctx, _1, fields): string {
+    return `object({\n${
+      Object
+        .entries(fields)
+        .map(([k, v]) =>
+          `${"  ".repeat(ctx.depth + 1)}${escapeDoubleQuotes(k)}: ${visit(ctx.indentCtx(), v)}`
+        )
+        .join(",\n")
+    }\n${"  ".repeat(ctx.depth)}})`
+  },
+  enum(_0, _1, ...values) {
+    return `enum("${values.map(escapeDoubleQuotes).join(`", "`)}")`
+  },
+  union(ctx, _1, ...members): string {
+    return `union(\n${"  ".repeat(ctx.depth + 1)}${
+      members.map((member) => visit(ctx.indentCtx(), member)).join(
+        `,\n${"  ".repeat(ctx.depth + 1)}`,
+      )
+    }\n)`
+  },
+  ref(ctx, _1, get): string {
+    return visit(ctx, get())
+  },
+  transform(ctx, _1, from): string {
+    return `f(${visit(ctx, from)})`
+  },
+  fallback(_0, type) {
+    return `${type.declaration.jsonType}`
+  },
+})
+
+function escapeDoubleQuotes(value: string): string {
+  return value.indexOf(`"`) !== -1 ? JSON.stringify(value) : value
+}
