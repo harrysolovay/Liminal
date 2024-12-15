@@ -1,0 +1,23 @@
+{
+  "name": "Neotropolis",
+  "population": 5000000,
+  "species": [
+    "Elves",
+    "Orcs",
+    "Dragons",
+    "Fairies",
+    "Cyborgs"
+  ],
+  "magicTypes": [
+    "Elemental Magic",
+    "Illusion Magic",
+    "Arcane Engineering",
+    "Nature Magic",
+    "Necromancy"
+  ],
+  "technologyLevel": "Highly advanced with integrated AI, holography, and cybernetics, alongside various forms of magic-infused devices.",
+  "government": {
+    "type": "Corporate Democracy",
+    "rulingFaction": "The Arcane Syndicate"
+  }
+}

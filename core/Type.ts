@@ -18,6 +18,7 @@ export interface Type<T, P extends symbol> {
   declaration: TypeDeclaration
   annotations: Array<Annotation>
 
+  display(): string
   description(): undefined | string
   signature(): string
   signatureHash(): Promise<string>

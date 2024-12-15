@@ -1,0 +1,31 @@
+{
+  "Name": "Eldoria",
+  "Geography": [
+    "Frostbite Mountains",
+    "Verdant Forests",
+    "Arid Wastes",
+    "Shimmering Seas"
+  ],
+  "Magic System": {
+    "Type of Magic": [
+      "Elemental",
+      "Illusion",
+      "Healing",
+      "Necromancy"
+    ],
+    "Magic User Classes": [
+      "Mages",
+      "Druids",
+      "Sorcerers",
+      "Warlocks"
+    ]
+  },
+  "Races and Species": [
+    "Humans",
+    "Elves",
+    "Dwarves",
+    "Dragonkin"
+  ],
+  "History": "Eldoria has a rich history filled with wars between kingdoms, the rise and fall of empires, and the discovery of ancient artifacts.",
+  "Current Events": "Currently, the Kingdom of Aeloria is facing threats from bandits and dark sorcery, as well as internal political strife."
+}

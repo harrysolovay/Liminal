@@ -15,7 +15,7 @@ export const LDate: Type<Date, never> = L.transform(
       A.number.max(11),
     ),
     L.number`Day.`(
-      A.number.min(0),
+      A.number.min(1),
       A.number.max(31),
     ),
   )(ymd()),

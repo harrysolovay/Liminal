@@ -1,4 +1,3 @@
-import { signature } from "./signature.ts"
 import type { AnyType } from "./Type.ts"
 
 export const inspect = {
@@ -7,6 +6,6 @@ export const inspect = {
     _inspect: (value: unknown, opts: unknown) => string,
     _opts: unknown,
   ): string {
-    return `LiminalType ${signature.call(this)}`
+    return this.display()
   },
 }

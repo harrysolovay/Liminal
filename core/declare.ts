@@ -3,6 +3,7 @@ import type { Annotation, DescriptionTemplatePart, MetadataHandle, ReduceP } fro
 import { assert } from "./AssertionContext.ts"
 import { DescriptionContext } from "./DescriptionContext.ts"
 import { deserialize } from "./deserialize.ts"
+import { display } from "./display.ts"
 import { inspect } from "./inspect.ts"
 import { signature, signatureHash } from "./signature.ts"
 import { toJSON } from "./toJSON.ts"
@@ -21,6 +22,7 @@ export function declare<T, P extends symbol>(
       trace: new Error().stack!,
       declaration,
       annotations,
+      display,
       description,
       signature,
       signatureHash,

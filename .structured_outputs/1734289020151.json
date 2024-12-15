@@ -1,0 +1,70 @@
+{
+  "type": "object",
+  "value": {
+    "description": "A vibrant urban fantasy where magic and technology coexist, set in a futuristic city called Neotropolis. The city is a bustling metropolis filled with magical creatures, advanced technology, and secret societies vying for power.",
+    "fields": {
+      "name": {
+        "type": "string",
+        "value": {
+          "description": "The name of the city."
+        }
+      },
+      "population": {
+        "type": "number",
+        "value": {
+          "description": "The estimated population of Neotropolis."
+        }
+      },
+      "species": {
+        "type": "array",
+        "value": {
+          "description": "List of magical species that inhabit the city.",
+          "element": {
+            "type": "string",
+            "value": {
+              "description": "The name of a magical species."
+            }
+          }
+        }
+      },
+      "magicTypes": {
+        "type": "array",
+        "value": {
+          "description": "Types of magic practiced in the city.",
+          "element": {
+            "type": "string",
+            "value": {
+              "description": "The name of a type of magic."
+            }
+          }
+        }
+      },
+      "technologyLevel": {
+        "type": "string",
+        "value": {
+          "description": "A summary of the technology present in the city."
+        }
+      },
+      "government": {
+        "type": "object",
+        "value": {
+          "description": "Information about the city's governing body.",
+          "fields": {
+            "type": {
+              "type": "string",
+              "value": {
+                "description": "Type of government in place (e.g., democracy, monarchy)."
+              }
+            },
+            "rulingFaction": {
+              "type": "string",
+              "value": {
+                "description": "The name of the ruling faction or organization."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

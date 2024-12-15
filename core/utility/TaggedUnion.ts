@@ -1,5 +1,6 @@
 import type { Falsy } from "@std/assert"
 import type { Expand } from "../../util/mod.ts"
+import type { MetadataHandle } from "../Annotation.ts"
 import * as I from "../intrinsics/mod.ts"
 import { metadata } from "../L.ts"
 import type { AnyType, Type } from "../Type.ts"
@@ -37,4 +38,4 @@ type Ensure<K extends string, M extends Record<string, Falsy | AnyType>> = K ext
   : M
 
 const TaggedUnionKey = Symbol()
-export const TaggedUnionMetadata = metadata<string>(TaggedUnionKey)
+export const TaggedUnionMetadata: MetadataHandle<string> = metadata<string>(TaggedUnionKey)
