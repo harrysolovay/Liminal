@@ -2,7 +2,6 @@
 
 export * from "./ArrayOfLength.ts"
 export * from "./collect.ts"
-export * from "./dbg.ts"
 export * from "./isPromise.ts"
 export * from "./isTemplateStringsArray.ts"
 export * from "./PromiseOr.ts"

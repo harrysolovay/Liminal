@@ -1,7 +1,7 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
 import { DEFAULT_INSTRUCTIONS, L, OpenAIResponseFormat } from "liminal"
-import { dbg } from "../util/mod.ts"
+import { dbg } from "testing"
 
 const Contradiction = L.string`A reason to be sad.`(
   L.assert("Is a reason to be happy.")(),

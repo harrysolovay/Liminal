@@ -1,7 +1,7 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
 import { DEFAULT_INSTRUCTIONS, L, OpenAIResponseFormat } from "liminal"
-import { dbg } from "../util/mod.ts"
+import { dbg } from "testing"
 
 const Dog = L.object({
   bark: L.string,
@@ -13,7 +13,7 @@ const Elephant = L.object({
   remembersYourFace: L.boolean,
 })
 
-const Animal = L.TaggedUnion("type", {
+const Animal = L.TaggedUnion({
   Dog,
   Elephant,
   SlowLoris: null,

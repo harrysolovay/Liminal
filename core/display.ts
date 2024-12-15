@@ -12,7 +12,7 @@ class DisplayContext {
     readonly depth: number,
   ) {}
 
-  indent = () => new DisplayContext(this.rootType, this.visitedRoot, this.depth + 1)
+  indentCtx = () => new DisplayContext(this.rootType, this.visitedRoot, this.depth + 1)
 }
 
 const visit = TypeVisitor<DisplayContext, string>({
@@ -36,7 +36,7 @@ const visit = TypeVisitor<DisplayContext, string>({
       Object
         .entries(fields)
         .map(([k, v]) =>
-          `${"  ".repeat(ctx.depth + 1)}${escapeDoubleQuotes(k)}: ${visit(ctx.indent(), v)}`
+          `${"  ".repeat(ctx.depth + 1)}${escapeDoubleQuotes(k)}: ${visit(ctx.indentCtx(), v)}`
         )
         .join(",\n")
     }\n${"  ".repeat(ctx.depth)}})`
@@ -46,14 +46,16 @@ const visit = TypeVisitor<DisplayContext, string>({
   },
   union(ctx, _1, ...members): string {
     return `union(\n${"  ".repeat(ctx.depth + 1)}${
-      members.map((member) => visit(ctx.indent(), member)).join(`,\n${"  ".repeat(ctx.depth + 1)}`)
+      members.map((member) => visit(ctx.indentCtx(), member)).join(
+        `,\n${"  ".repeat(ctx.depth + 1)}`,
+      )
     }\n)`
   },
   ref(ctx, _1, get): string {
     return visit(ctx, get())
   },
   transform(ctx, _1, from): string {
-    return visit(ctx, from)
+    return `f(${visit(ctx, from)})`
   },
   fallback(_0, type) {
     return `${type.declaration.jsonType}`

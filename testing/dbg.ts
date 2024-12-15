@@ -1,8 +1,8 @@
 import { intersect } from "@std/collections"
 import { gray, yellow } from "@std/fmt/colors"
 import { ensureDir } from "@std/fs"
-import { dirname, relative } from "@std/path"
-import { splitLast } from "./splitLast.ts"
+import { relative } from "@std/path"
+import { splitLast } from "../util/splitLast.ts"
 
 export function dbg<T>(value: T, ...flags: Array<string>): T {
   const enabled = Deno.env.get("LIMINAL_DBG")?.split(",").map((v) => v.trim())
@@ -13,7 +13,7 @@ export function dbg<T>(value: T, ...flags: Array<string>): T {
 
   async function tap() {
     const path = relative(
-      dirname(import.meta.dirname!),
+      Deno.cwd(),
       new Error().stack?.split("\n").pop()?.split("file://").pop()!,
     )
     const [leading, row] = splitLast(path, ":")!

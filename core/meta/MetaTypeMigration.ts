@@ -24,7 +24,7 @@ export const MetaTypeMigration: Type<MetaTypeMigration, never> = I.object({
   id: I.string,
   defId: I.string,
   path: PathLike,
-  change: TaggedUnion("type", {
+  change: TaggedUnion({
     Create: MetaType,
     Update: MetaType,
     Delete: null,

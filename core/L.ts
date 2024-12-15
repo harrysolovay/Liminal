@@ -37,9 +37,9 @@ export function assert<T, A extends unknown[]>(
   })
 }
 
-export function metadata<T = undefined>(key: symbol): MetadataHandle<T> {
+export function metadata<V>(key: symbol): MetadataHandle<V> {
   return Object.assign(
-    (value: T) => ({
+    (value: V) => ({
       type: "Metadata",
       key,
       value,

@@ -1,6 +1,6 @@
 {
   "name": "@crosshatch/liminal",
-  "description": "A framework for integrating with LLMs.",
+  "description": "Types for LLMs.",
   "version": "0.0.0-local.0",
   "exports": "./mod.ts",
   "tasks": {

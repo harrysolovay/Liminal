@@ -57,8 +57,8 @@ function description(this: Type<any, never>): string | undefined {
   return new DescriptionContext(new Map(), {}).format(this)
 }
 
-function metadata<T>(this: Type<any, never>, handle: MetadataHandle<T>): Array<T> {
-  return this.annotations.reduce<Array<T>>((acc, cur) => [
+function metadata<V>(this: Type<any, never>, handle: MetadataHandle<V>): Array<V> {
+  return this.annotations.reduce<Array<V>>((acc, cur) => [
     ...acc,
     ...typeof cur === "object" && cur?.type === "Metadata" && cur.key === handle.key
       ? [cur.value]

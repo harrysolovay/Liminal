@@ -22,7 +22,7 @@ export interface Type<T, P extends symbol> {
   description(): undefined | string
   signature(): string
   signatureHash(): Promise<string>
-  metadata<T>(handle: MetadataHandle<T>): Array<T>
+  metadata<V>(handle: MetadataHandle<V>): Array<V>
   toJSON(): JSONType
   assert(value: unknown): Promise<void>
   deserialize: (jsonText: string) => T

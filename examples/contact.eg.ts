@@ -1,7 +1,7 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
 import { L, OpenAIResponseFormat } from "liminal"
-import { dbg } from "../util/mod.ts"
+import { dbg } from "testing"
 
 const Contact = L.object({
   name: L.string,

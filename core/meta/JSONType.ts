@@ -4,7 +4,7 @@ import type { AnyType, Type } from "../Type.ts"
 import { Record, TaggedUnion } from "../utility/mod.ts"
 
 export const JSONType: Type<JSONType_, never> = I.transform(
-  TaggedUnion("type", {
+  TaggedUnion({
     null: null,
     boolean: null,
     integer: null,
@@ -24,8 +24,6 @@ export const JSONType: Type<JSONType_, never> = I.transform(
   }),
   ({ type, value }) => ({
     ...type === "union" ? {} : { type },
-    ...value ? { value } : {},
+    ...value ? value : {},
   }),
 ) as never
-
-// `Prefer complex variants / represent a comprehensive data type, containing many subtypes.`

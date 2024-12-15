@@ -1,7 +1,7 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
 import { DEFAULT_INSTRUCTIONS, L, OpenAIResponseFormat } from "liminal"
-import { dbg } from "../util/mod.ts"
+import { dbg } from "testing"
 import { ColorHex } from "./color.eg.ts"
 
 const Character = L.object({

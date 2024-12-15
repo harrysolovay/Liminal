@@ -18,7 +18,6 @@ export interface DescriptionTemplate {
   parts: Array<DescriptionTemplatePart>
 }
 
-// TODO: Disallow `Falsy`?
 export type DescriptionTemplatePart = string | AnyType | DescriptionParam
 
 export interface DescriptionParam<K extends symbol = symbol, T = any> {
@@ -34,22 +33,22 @@ export interface DescriptionArg<K extends symbol = symbol, T = any> {
   serializer?: (value: T) => string
 }
 
-export interface Assertion<T = any, A extends unknown[] = any> {
+export interface Assertion<T = any, A extends Array<unknown> = Array<any>> {
   type: "Assertion"
   description: string | ((...args: A) => string)
   f?: (value: T, ...args: A) => PromiseOr<void>
   args: A
 }
 
-export interface MetadataHandle<T> {
-  (value: T): Metadata<T>
-  key: symbol
-}
-
-export interface Metadata<T = any> {
+export interface Metadata<V = any> {
   type: "Metadata"
   key: symbol
-  value: T
+  value: V
+}
+
+export interface MetadataHandle<V> {
+  (value: V): Metadata<V>
+  key: symbol
 }
 
 export type ReduceP<D extends symbol, A extends Array<Annotation>> = A extends
