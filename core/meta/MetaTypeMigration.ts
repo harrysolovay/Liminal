@@ -1,8 +1,8 @@
 import * as I from "../intrinsics/mod.ts"
 import type { Type } from "../Type.ts"
+import { TaggedUnion } from "../utility/mod.ts"
 import { MetaType } from "./MetaType.ts"
 import { PathLike } from "./PathLike.ts"
-import { TaggedUnion } from "./TaggedUnion.ts"
 
 export type MetaTypeMigration = {
   id: string

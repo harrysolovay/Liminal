@@ -4,6 +4,7 @@ import type { PromiseOr } from "../util/mod.ts"
 import type { Assertion, DescriptionArg, DescriptionParam, MetadataHandle } from "./Annotation.ts"
 
 export * from "./intrinsics/mod.ts"
+export * from "./meta/mod.ts"
 export * from "./utility/mod.ts"
 
 export function _<K extends symbol, T = string>(
