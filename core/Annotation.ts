@@ -41,10 +41,15 @@ export interface Assertion<T = any, A extends unknown[] = any> {
   args: A
 }
 
-export interface Metadata {
+export interface MetadataHandle<T> {
+  (value: T): Metadata<T>
+  key: symbol
+}
+
+export interface Metadata<T = any> {
   type: "Metadata"
   key: symbol
-  value: unknown
+  value: T
 }
 
 export type ReduceP<D extends symbol, A extends Array<Annotation>> = A extends

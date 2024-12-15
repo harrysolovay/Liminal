@@ -3,7 +3,7 @@ import * as I from "./intrinsics/mod.ts"
 import type { JSONType } from "./JSONSchema.ts"
 import { type AnyType, isType, type Type } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
-import { TaggedUnionKey } from "./utility/mod.ts"
+import { TaggedUnionMetadata } from "./utility/mod.ts"
 
 export function toJSON(this: Type<unknown, any>): JSONType {
   const ctx = new VisitorContext(
@@ -99,12 +99,10 @@ const visit = TypeVisitor<VisitorContext, JSONType>({
     }
   },
   union(ctx, type, ...members): JSONType {
-    const metadata = type.metadata()
+    const tagKey = type.metadata(TaggedUnionMetadata)[0]
     return {
       anyOf: members.map((member) => visit(ctx, member)),
-      ...TaggedUnionKey in metadata
-        ? { discriminator: metadata[TaggedUnionKey] }
-        : {},
+      ...tagKey ? { discriminator: tagKey } : {},
     }
   },
   ref(ctx, _1, get): JSONType {

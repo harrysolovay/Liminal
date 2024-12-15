@@ -1,5 +1,5 @@
 import { isTemplateStringsArray } from "../util/mod.ts"
-import type { Annotation, DescriptionTemplatePart, ReduceP } from "./Annotation.ts"
+import type { Annotation, DescriptionTemplatePart, MetadataHandle, ReduceP } from "./Annotation.ts"
 import { assert } from "./AssertionContext.ts"
 import { DescriptionContext } from "./DescriptionContext.ts"
 import { deserialize } from "./deserialize.ts"
@@ -55,10 +55,11 @@ function description(this: Type<any, never>): string | undefined {
   return new DescriptionContext(new Map(), {}).format(this)
 }
 
-function metadata(this: Type<any, never>): Record<symbol, unknown> {
-  return Object.fromEntries(
-    this.annotations
-      .filter((annotation) => typeof annotation === "object" && annotation?.type === "Metadata")
-      .map(({ key, value }) => [key, value]),
-  )
+function metadata<T>(this: Type<any, never>, handle: MetadataHandle<T>): Array<T> {
+  return this.annotations.reduce<Array<T>>((acc, cur) => [
+    ...acc,
+    ...typeof cur === "object" && cur?.type === "Metadata" && cur.key === handle.key
+      ? [cur.value]
+      : [],
+  ], [])
 }

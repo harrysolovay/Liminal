@@ -24,7 +24,8 @@ export function TaggedUnion<
     ...Object.keys(members).toSorted().map((tag) =>
       Tagged(tagKey, tag, (members[tag] ? { value: members[tag]! } : {}) as never)
     ),
-  )(metadata(TaggedUnionKey, tagKey))
+  )(TaggedUnionMetadata(tagKey))
 }
 
-export const TaggedUnionKey = Symbol()
+const TaggedUnionKey = Symbol()
+export const TaggedUnionMetadata = metadata<string>(TaggedUnionKey)

@@ -1,4 +1,4 @@
-import type { Annotation, DescriptionTemplatePart, ReduceP } from "./Annotation.ts"
+import type { Annotation, DescriptionTemplatePart, MetadataHandle, ReduceP } from "./Annotation.ts"
 import type { AssertionContext } from "./AssertionContext.ts"
 import type { JSONType, JSONTypeName } from "./JSONSchema.ts"
 
@@ -21,7 +21,7 @@ export interface Type<T, P extends symbol> {
   description(): undefined | string
   signature(): string
   signatureHash(): Promise<string>
-  metadata(): Record<symbol, unknown>
+  metadata<T>(handle: MetadataHandle<T>): Array<T>
   toJSON(): JSONType
   assert(value: unknown): Promise<void>
   deserialize: (jsonText: string) => T

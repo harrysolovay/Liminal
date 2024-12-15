@@ -1,5 +1,7 @@
+import "./intrinsics/mod.ts"
+
 import type { PromiseOr } from "../util/mod.ts"
-import type { Assertion, DescriptionArg, DescriptionParam, Metadata } from "./Annotation.ts"
+import type { Assertion, DescriptionArg, DescriptionParam, MetadataHandle } from "./Annotation.ts"
 
 export * from "./intrinsics/mod.ts"
 export * from "./utility/mod.ts"
@@ -34,10 +36,13 @@ export function assert<T, A extends unknown[]>(
   })
 }
 
-export function metadata(key: symbol, value?: unknown): Metadata {
-  return {
-    type: "Metadata",
-    key,
-    value,
-  }
+export function metadata<T = undefined>(key: symbol): MetadataHandle<T> {
+  return Object.assign(
+    (value: T) => ({
+      type: "Metadata",
+      key,
+      value,
+    }),
+    { key },
+  ) as never
 }
