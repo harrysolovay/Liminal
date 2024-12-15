@@ -1,21 +1,21 @@
 <div style="display: none">
 
-```ts twoslash include T
-import { T } from "liminal"
+```ts twoslash include L
+import { L } from "liminal"
 ```
 
 ```ts twoslash include animal
-// @include: T
+// @include: L
 
-const Dog = T.object({
-  toy: T.enum("Bone", "Shoe", "Homework"),
+const Dog = L.object({
+  toy: L.enum("Bone", "Shoe", "Homework"),
 })
 
-const Cow = T.object({
-  a5: T.boolean,
+const Cow = L.object({
+  a5: L.boolean,
 })
 
-const Animal = T.taggedUnion("type", {
+const Animal = L.TaggedUnion({
   Dog,
   Cow,
 })

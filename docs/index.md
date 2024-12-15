@@ -60,28 +60,28 @@ We can treat any type as a tagged template function to attach descriptions that 
 context to guide the LLM.
 
 ```ts twoslash {2}
-// @include: T
+// @include: L
 // ---cut---
-const Dog = T.object({
-  toy: T.enum("Bone", "Shoe", "Homework")`The dog's preferred chew toy.`,
+const Dog = L.object({
+  toy: L.enum("Bone", "Shoe", "Homework")`The dog's preferred chew toy.`,
 })
 ```
 
 Context attachment can be chained, enabling us to legibly compose types with richer context.
 
 ```ts {12} twoslash
-// @include: T
+// @include: L
 // @include: assert
 // ---cut---
 import { toSchema } from "liminal"
 
-const song = T.string`A song.`
+const song = L.string`A song.`
 
 const hiphopSong = song`Genre is hip hop.`
 
 const upliftingHipHopSong = hiphopSong`Ensure it is uplifting.`
 
-const schema = toSchema(upliftingHipHopSong)
+const schema = upliftingHipHopSong.toJSON()
 
 assertEquals(schema, {
   description: "A song. Genre is hip hop. Ensure it is uplifting.",
@@ -94,14 +94,14 @@ assertEquals(schema, {
 We can parameterize context to enable reuse of common types for different use case.
 
 ```ts twoslash include nationality-context-param
-// @include: T
+// @include: L
 // ---cut---
-const key = Symbol()
+// const key = Symbol()
 
-const Person = T.object({
-  hometown: T.string`${key} city.`,
-  favoriteFood: T.string`A delicious ${key} food.`,
-})`An ${key}.`
+// const Person = T.object({
+//   hometown: T.string`${key} city.`,
+//   favoriteFood: T.string`A delicious ${key} food.`,
+// })`An ${key}.`
 ```
 
 We can then utilize the parameterized type in different parts of our program.
@@ -109,13 +109,13 @@ We can then utilize the parameterized type in different parts of our program.
 ```ts twoslash
 // @include: nationality-context-param
 // ---cut---
-const AmericanPerson = Person.of({
-  [key]: "American",
-})
+// const AmericanPerson = Person.of({
+//   [key]: "American",
+// })
 
-const AustralianPerson = Person.of({
-  [key]: "Australian",
-})
+// const AustralianPerson = Person.of({
+//   [key]: "Australian",
+// })
 ```
 
 ## [Iterative Refinement &rarr;](./consumers/refine.md)

@@ -5,12 +5,12 @@ Let's generate super-powered characters.
 ## 1. Create the `Character` Type
 
 ```ts twoslash include supe
-import { T } from "liminal"
+import { L } from "liminal"
 
-const Character = T.object({
-  name: T.string`The character's name.`,
-  role: T.enum("Hero", "Villain", "Indifferent"),
-  power: T.string`The name of a supernatural ability.`,
+const Character = L.object({
+  name: L.string`The character's name.`,
+  role: L.enum("Hero", "Villain", "Indifferent"),
+  power: L.string`The name of a supernatural ability.`,
 })`A super-powered character.`
 ```
 
@@ -22,7 +22,7 @@ const Character = T.object({
 import { ResponseFormat } from "liminal"
 
 // ---cut---
-const response_format = ResponseFormat("create_characters", T.array(Character))`
+const response_format = ResponseFormat("create_characters", L.array(Character))`
   A list of characters in a story.
 `
 ```
