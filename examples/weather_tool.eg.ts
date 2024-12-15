@@ -1,7 +1,7 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
 import { L, Liminal, OpenAIAdapter } from "liminal"
-import { dbg } from "../util/dbg.ts"
+import { dbg } from "../util/mod.ts"
 
 const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
@@ -25,7 +25,7 @@ await session.value(L.number, {
     role: "user",
     content: "What is the weather like in New York City?",
   }],
-}).then(dbg("examples"))
+}).then(dbg)
 
 function fetchWeather(latitude: number, longitude: number): Promise<unknown> {
   return fetch(

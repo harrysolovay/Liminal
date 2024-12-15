@@ -28,7 +28,7 @@ export function OpenAIAdapter({
   hook,
 }: OpenAIAdapterConfig): Adapter<OpenAIAdapterDescriptor> {
   const defaults: AdapterDefaults<OpenAIAdapterDescriptor> = {
-    model: defaultModel ?? "chatgpt-4o-latest",
+    model: defaultModel ?? "gpt-4o-mini",
     role: "user",
     opening: {
       role: "system",

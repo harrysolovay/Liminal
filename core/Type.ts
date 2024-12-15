@@ -2,6 +2,8 @@ import type { Annotation, DescriptionTemplatePart, ReduceP } from "./Annotation.
 import type { AssertionContext } from "./AssertionContext.ts"
 import type { JSONType, JSONTypeName } from "./JSONSchema.ts"
 
+export * as Type from "./Type_statics.ts"
+
 export interface Type<T, P extends symbol> {
   <A extends Array<DescriptionTemplatePart>>(
     template: TemplateStringsArray,
@@ -49,3 +51,9 @@ export type DerivedType<
   X extends Array<AnyType>,
   P extends symbol = never,
 > = [Type<T, P | X[number]["P"]>][0]
+
+export const TypeKey: unique symbol = Symbol()
+
+export function isType(value: unknown): value is AnyType {
+  return typeof value === "function" && TypeKey in value
+}

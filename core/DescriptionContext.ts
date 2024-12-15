@@ -19,7 +19,7 @@ export class DescriptionContext {
 
   format = (type: Type<any, never>): undefined | string => {
     const assertionDescriptions: Array<string> = []
-    const segments: Array<string> = []
+    let segments: Array<string> = []
     type.annotations.forEach((annotation) => {
       if (annotation) {
         if (typeof annotation === "string") {
@@ -70,10 +70,15 @@ export class DescriptionContext {
         }
       }
     })
-    return [
+    segments = [
       ...segments,
-      "\n\nEnsure:\n\n",
-      ...assertionDescriptions.map((d) => `- ${d}`).join("\n"),
-    ].join(" ")
+      ...assertionDescriptions.length
+        ? [
+          "\n\nEnsure:\n\n",
+          ...assertionDescriptions.map((d) => `- ${d}`).join("\n"),
+        ]
+        : [],
+    ]
+    return segments.length ? segments.join(" ") : undefined
   }
 }

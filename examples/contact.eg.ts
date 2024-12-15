@@ -1,7 +1,7 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
 import { L, Liminal, OpenAIAdapter } from "liminal"
-import { dbg } from "../util/dbg.ts"
+import { dbg } from "../util/mod.ts"
 
 const Contact = L.object({
   name: L.string,
@@ -24,4 +24,4 @@ await liminal.session().value(Contact, {
       \`\`\`
     `,
   }],
-}).then(dbg("examples"))
+}).then(dbg)

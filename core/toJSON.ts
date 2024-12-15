@@ -1,10 +1,11 @@
 import { DescriptionContext } from "./DescriptionContext.ts"
+import * as I from "./intrinsics/mod.ts"
 import type { JSONType } from "./JSONSchema.ts"
-import type { AnyType, Type } from "./Type.ts"
+import { type AnyType, Type } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
 export function toJSON(type: Type<unknown, any>): JSONType {
-  const ctx = new VisitContext(
+  const ctx = new VisitorContext(
     new Map(),
     {},
     new DescriptionContext(new Map(), {}),
@@ -14,45 +15,43 @@ export function toJSON(type: Type<unknown, any>): JSONType {
   return { ...root, $defs } as never
 }
 
-class VisitContext {
+class VisitorContext {
   constructor(
     readonly ids: Map<AnyType, string>,
     readonly defs: Record<string, undefined | JSONType>,
     readonly descriptionCtx: DescriptionContext,
   ) {}
+
+  id(type: AnyType): string {
+    let id = this.ids.get(type)
+    if (id === undefined) {
+      id = this.ids.size.toString()
+      this.ids.set(type, id)
+    }
+    return id
+  }
 }
 
-const visit = TypeVisitor<VisitContext, JSONType>({
+const visit = TypeVisitor<VisitorContext, JSONType>({
   hook(next, { descriptionCtx: { args, pins }, ids, defs }, type) {
     let jsonType: JSONType
     args = { ...args }
     const descriptionCtx = new DescriptionContext(pins, args)
     const description = descriptionCtx.format(type as never)
-    const ctx = new VisitContext(ids, defs, descriptionCtx)
-    switch (type.declaration.jsonType) {
-      case "array":
-      case "object":
-      case "union": {
-        let id = ids.get(type)
-        if (id === undefined) {
-          id = ids.size.toString()
-          ids.set(type, id)
+    const ctx = new VisitorContext(ids, defs, descriptionCtx)
+    if (Type.extends(type, I.array, I.object, I.union)) {
+      const id = ctx.id(type)
+      if (id in defs) {
+        jsonType = defs[id] ?? {
+          $ref: id === "0" ? "#" : `#/$defs/${id}`,
         }
-        if (id in defs) {
-          jsonType = defs[id] ?? {
-            $ref: `#/$defs/${id}`,
-          }
-        } else {
-          defs[id] = undefined
-          defs[id] = next(ctx, type)
-        }
+      } else {
+        defs[id] = undefined
         jsonType = next(ctx, type)
-        break
+        defs[id] = jsonType
       }
-      default: {
-        jsonType = next(ctx, type)
-        break
-      }
+    } else {
+      jsonType = next(ctx, type)
     }
     return { description, ...jsonType }
   },
@@ -104,9 +103,7 @@ const visit = TypeVisitor<VisitContext, JSONType>({
     }
   },
   ref(ctx, _1, get): JSONType {
-    return {
-      $ref: `#/$defs/${ctx.ids.get(get())!}`,
-    }
+    return visit(ctx, get())
   },
   transform(ctx, _1, from): JSONType {
     return visit(ctx, from)

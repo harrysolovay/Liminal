@@ -6,7 +6,7 @@ import { deserialize } from "./deserialize.ts"
 import type { JSONType } from "./JSONSchema.ts"
 import { signature, signatureHash } from "./signature.ts"
 import { toJSON } from "./toJSON.ts"
-import type { Type, TypeDeclaration } from "./Type.ts"
+import { type Type, type TypeDeclaration, TypeKey } from "./Type.ts"
 
 export function declare<T, P extends symbol>(
   declaration: TypeDeclaration,
@@ -15,6 +15,7 @@ export function declare<T, P extends symbol>(
   const self = Object.assign(
     Type,
     {
+      [TypeKey as never]: true,
       type: "Type",
       trace: new Error().stack!,
       declaration,

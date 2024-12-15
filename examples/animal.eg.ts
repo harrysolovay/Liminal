@@ -2,7 +2,7 @@ import OpenAI from "openai"
 import "@std/dotenv/load"
 import { L, Liminal } from "liminal"
 import { OpenAIAdapter } from "../client/openai/mod.ts"
-import { dbg } from "../util/dbg.ts"
+import { dbg } from "../util/mod.ts"
 
 const Dog = L.object({
   bark: L.string,
@@ -25,4 +25,4 @@ const liminal = new Liminal(OpenAIAdapter({
   defaultModel: "gpt-4o-mini",
 }))
 
-await liminal.session().value(Animal).then(dbg("examples"))
+await liminal.session().value(Animal).then(dbg)

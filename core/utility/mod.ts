@@ -3,6 +3,7 @@
 export * from "./Flatten.ts"
 export * from "./Hydrated.ts"
 export * from "./Intersection.ts"
+export * from "./JSONType.ts"
 export * from "./MetaType.ts"
 export * from "./MetaTypeMigration.ts"
 export * from "./Option.ts"

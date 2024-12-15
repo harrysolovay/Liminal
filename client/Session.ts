@@ -6,6 +6,7 @@ import { Tool, type ToolConfig } from "./Tool.ts"
 
 export class Session<D extends AdapterDescriptor> {
   #listeners: Set<ReadableStreamDefaultController<D["message"]>> = new Set()
+  #tools: Set<Tool<D, unknown>> = new Set()
 
   constructor(
     readonly liminal: Liminal<D>,
@@ -26,7 +27,12 @@ export class Session<D extends AdapterDescriptor> {
   }
 
   tool = <T>(type: Type<T, never>, config: ToolConfig<T>): Tool<D, T> => {
-    return new Tool(this, type, config)
+    const tool = new Tool(this, type, config)
+    this.#tools.add(tool)
+    config.signal?.addEventListener("abort", () => {
+      this.#tools.delete(tool)
+    })
+    return tool
   }
 
   text = async (messages: Array<D["message"]>, config: TextConfig<D>): Promise<string> => {

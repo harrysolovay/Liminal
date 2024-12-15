@@ -34,7 +34,7 @@ export type JSONTypes = JSONTypes.Make<{
     anyOf: Array<JSONType>
   }
   ref: {
-    $ref: `#/$defs/${string}`
+    $ref: string
   }
 }>
 namespace JSONTypes {

@@ -1,7 +1,7 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
 import { L, Liminal, OpenAIAdapter } from "liminal"
-import { dbg } from "../util/dbg.ts"
+import { dbg } from "../util/mod.ts"
 import { ColorHex } from "./color.eg.ts"
 
 const Character = L.object({
@@ -18,4 +18,4 @@ const liminal = new Liminal(OpenAIAdapter({
   defaultModel: "gpt-4o-mini",
 }))
 
-await liminal.session().value(Character).then(dbg("examples"))
+await liminal.session().value(Character).then(dbg)

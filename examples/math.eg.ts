@@ -1,7 +1,7 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
 import { L, Liminal, OpenAIAdapter } from "liminal"
-import { dbg } from "../util/dbg.ts"
+import { dbg } from "../util/mod.ts"
 
 const MathReasoning = L.object({
   steps: L.array(L.object({
@@ -25,4 +25,4 @@ await session.value(MathReasoning, {
     role: "user",
     content: "How can I solve 8x + 7 = -23?",
   }],
-}).then(dbg("examples"))
+}).then(dbg)
