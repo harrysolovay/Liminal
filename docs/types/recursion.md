@@ -5,15 +5,15 @@ a current limitation of TypeScript). Because of this limitation, we must explici
 types.
 
 ```ts {8,10} twoslash
-import { T, Type } from "liminal"
+import { L, Type } from "liminal"
 
 type Person = {
   name: string
   friends: Person[]
 }
 
-const Person: Type<Person> = T.object({
-  name: T.string,
-  friends: T.array(T.deferred(() => Person)),
+const Person: Type<Person, never> = L.object({
+  name: L.string,
+  friends: L.array(L.ref(() => Person)),
 })
 ```

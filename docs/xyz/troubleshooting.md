@@ -9,7 +9,7 @@ type.
 
 Therefore, an error is produced if you try to create a `ResponseFormat` with an unapplied type.
 
-```ts twoslash
+```ts
 // @errors: 2345
 import { ResponseFormat, T } from "liminal"
 // ---cut---
@@ -22,7 +22,7 @@ ResponseFormat("my_format", Root)
 
 To solve this error, fill in the missing parameter.
 
-```ts twoslash
+```ts
 import { ResponseFormat, T } from "liminal"
 
 const Root = T.object({
@@ -39,7 +39,7 @@ time of `ResponseFormat` creation. Widening of the union type of all parameter k
 type-level assurance. Therefore, widened key types are disallowed; it is not possible to
 parameterize context with a widened `number`, `string` or `symbol`.
 
-```ts twoslash
+```ts
 // @errors: 2345
 import { T } from "liminal"
 // ---cut---
@@ -52,7 +52,7 @@ If you see this error, it may indicate that you are trying to interpolate some r
 rather than parameterize the context. In cases such as this, utilize a short-lived parameter
 instead.
 
-```ts twoslash
+```ts
 import { T } from "liminal"
 // ---cut---
 const MyType = T

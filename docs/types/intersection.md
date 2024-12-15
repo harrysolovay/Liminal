@@ -1,21 +1,21 @@
-# `T.Intersection`
+# `L.Intersection`
 
 ```ts twoslash
-import { T } from "liminal"
+import { L } from "liminal"
 // ---cut---
-const First = T.object({
-  a: T.boolean,
-  b: T.number,
+const First = L.object({
+  a: L.boolean,
+  b: L.number,
 })
 
-const Second = T.object({
-  c: T.integer,
-  d: T.string,
+const Second = L.object({
+  c: L.integer,
+  d: L.string,
 })
 
-const Intersected = T.Intersect(First, Second)
+const Intersection = L.Intersection(First, Second)
 
-Intersected
+Intersection
 // ^?
 ```
 

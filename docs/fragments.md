@@ -27,7 +27,7 @@ declare function assertEquals(actual: unknown, expected: unknown, msg?: string):
 ```
 
 ```ts twoslash include rf
-import { ResponseFormat } from "liminal"
+import { OpenAIResponseFormat } from "liminal"
 ```
 
 ```ts twoslash include openai

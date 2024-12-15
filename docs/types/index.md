@@ -6,9 +6,9 @@ Types and type factories can be accessed off of the root export `T`.
 
 ```ts twoslash
 // @noErrors
-import { T } from "liminal"
+import { L } from "liminal"
 
-T.
+L.
 //^|
 ```
 
@@ -42,9 +42,9 @@ Type<T, K extends keyof any = never>
 The native TypeScript type.
 
 ```ts twoslash
-import { T } from "liminal"
+import { L } from "liminal"
 // ---cut---
-type T = typeof T.number["T"]
+type L = typeof L.number["T"]
 //   ^?
 ```
 
@@ -55,9 +55,9 @@ type T = typeof T.number["T"]
 Any context parameter keys yet to be applied. For example:
 
 ```ts twoslash
-import { T } from "liminal"
+import { L } from "liminal"
 // ---cut---
-const Reply = T.string`Reply to: "Hello ${"subject"}."`
+const Reply = L.string`Reply to: "Hello ${"subject"}."`
 //    ^?
 ```
 
@@ -77,15 +77,15 @@ can be used to transport types between environments.
 Types implement `toJSON`, which enables direct use within `JSON.stringify`.
 
 ```ts twoslash
-import { T } from "liminal"
+import { L } from "liminal"
 // ---cut---
-const Characters = T.array(
-  T.object({
-    name: T.string`The character's name.`,
+const Characters = L.array(
+  L.object({
+    name: L.string`The character's name.`,
   }),
 )`A list of characters in a story.`
 
-const typeInfo = JSON.stringify(Characters, null, 2)
+const schema = JSON.stringify(Characters, null, 2)
 ```
 
 The resulting JSON representation looks as follows.
@@ -119,7 +119,7 @@ The resulting JSON representation looks as follows.
 
 We can use `deserializeType` to turn a `TypeInfo` object back into a `Type`.
 
-```ts twoslash
+```ts
 import { TypeInfo } from "liminal"
 declare const typeInfo: TypeInfo
 // ---cut---
@@ -140,15 +140,15 @@ there is a custom inspect that displays the type in a more compact form.
 For example, let's look at the console log resulting from the following.
 
 ```ts
-import { T } from "liminal"
+import { L } from "liminal"
 
-const A = T.object({
-  a: T.string,
+const A = L.object({
+  a: L.string,
 })
 
-const B = T.taggedUnion("type", {
+const B = L.TaggedUnion({
   A,
-  B: T.string,
+  B: L.string,
 })
 
 console.log(B)
@@ -157,8 +157,8 @@ console.log(B)
 The resulting console log approximates the TypeScript definition.
 
 ```ts
-T.taggedUnion("type", {
-  A: T.object({ a: T.string }),
-  B: T.string,
+L.taggedUnion({
+  A: L.object({ a: L.string }),
+  B: L.string,
 })
 ```

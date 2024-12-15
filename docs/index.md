@@ -4,15 +4,12 @@ title: Overview
 
 <!--@include: ./fragments.md-->
 
-# Structured Outputs TypeScript
+# Liminal Overview
 
-> A Framework for Integrating With
-> [OpenAI structured outputs](https://platform.openai.com/docs/guides/structured-outputs).
-
-OpenAI's structured outputs streamline the integration of LLMs into procedural code by ensuring that
+Structured outputs streamline the integration of LLMs into procedural code by ensuring that
 completions adhere to a specified schema. While this feature provides developers with a valuable
 predictability, it also introduces new challenges to managing and utilizing these outputs
-effectively. **Structured Outputs TypeScript** is a framework for addressing these challenges:
+effectively. **Liminal** is a framework for addressing these challenges:
 
 ## [Model Types &rarr;](./types/index.md)
 
@@ -41,9 +38,9 @@ type Animal = typeof Animal["T"]
 // @include: animal
 // @include: openai
 // ---cut---
-import { ResponseFormat } from "liminal"
+import { OpenAIResponseFormat } from "liminal"
 
-const response_format = ResponseFormat("generate_animal", Animal)
+const response_format = OpenAIResponseFormat("generate_animal", Animal)
 
 const animal = await openai.chat.completions
   .create({
@@ -51,7 +48,7 @@ const animal = await openai.chat.completions
     messages: [{ role: "system", content: [] }],
     response_format,
   })
-  .then(response_format.into)
+  .then(response_format.deserialize)
 ```
 
 ## [Attach Context To Types &rarr;](./context/chaining.md)
@@ -69,7 +66,7 @@ const Dog = L.object({
 
 Context attachment can be chained, enabling us to legibly compose types with richer context.
 
-```ts {12} twoslash
+```ts {12}
 // @include: L
 // @include: assert
 // ---cut---
@@ -127,12 +124,10 @@ alone is insufficient.
 To address this shortcoming, we can attach assertions to types.
 
 ```ts twoslash include refine-month
-// @include: T
+// @include: L
 // @include: assert
 // ---cut---
-const Month = T.integer`Positive, zero-based month of the gregorian calendar.`
-  .assert(assertMin, 0)
-  .assert(assertMax, 11)
+const Month = L.integer`Positive, zero-based month of the gregorian calendar.`() // TODO
 
 function assertMin(value: number, min: number) {
   assert(value >= min, `Must be gte ${min}; received ${value}.`)
@@ -148,13 +143,13 @@ assertions. If any of the assertions throw errors, those errors are serialized i
 requests for corrected values, which are then injected into the original structured output. We can
 loop until all values satisfy their corresponding type's assertions.
 
-```ts twoslash {5} include refine-month
+```ts {5} include refine-month
 // @include: refine-month
 // @include: openai
 // ---cut---
-import { refine, ResponseFormat } from "liminal"
+import { OpenAIResponseFormat, refine } from "liminal"
 
-const response_format = ResponseFormat("month", Month)
+const response_format = OpenAIResponseFormat("month", Month)
 
 const month = refine(openai, {
   model: "gpt-4o-mini",
@@ -169,7 +164,7 @@ Assertions can be asynchronous, which allows us to use natural language to refle
 value adheres to our expectations. This may be useful in cases involving agents specialized in
 certain kinds of data.
 
-```ts twoslash {2}
+```ts {2}
 import { type AssertAdherence, T } from "liminal"
 declare const assertAdherence: ReturnType<typeof AssertAdherence>
 // ---cut---

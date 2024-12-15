@@ -2,7 +2,7 @@
 
 ## `T.enum`
 
-```ts twoslash
+```ts
 import { T } from "liminal"
 // ---cut---
 const Mood = T.enum("Elated", "Devastated", "Fine")
@@ -15,7 +15,7 @@ Mood
 
 ## `T.taggedUnion`
 
-```ts twoslash
+```ts
 import { T } from "liminal"
 // ---cut---
 const Organism = T.taggedUnion("type", {
@@ -51,7 +51,7 @@ Organism
 
 If all members of your union are object-value-bearing, `T.taggedUnion` is preferred.
 
-```ts twoslash
+```ts
 import { T } from "liminal"
 // ---cut---
 const Key = T.Union(

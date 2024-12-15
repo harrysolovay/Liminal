@@ -4,9 +4,9 @@ The descriptions contained within your types serve as context for the LLM. It is
 that the core unit of `liminal`––`Ty`--is an infinitely-chainable tagged template function.
 
 ```ts twoslash
-import { T } from "liminal"
+import { L } from "liminal"
 // ---cut---
-const A = T.string`A.`
+const A = L.string`A.`
 const B = A`B.`
 const C = B`C.`
 ```
@@ -27,16 +27,16 @@ Descriptions in schema definitions serve as additional context for the LLM. We m
 context per-type.
 
 ```ts twoslash
-import { T } from "liminal"
+import { L } from "liminal"
 // ---cut---
-const Contact = T.object({
-  name: T.string`
+const Contact = L.object({
+  name: L.string`
     Ensure normal length for a person's full name.
   `,
-  phone: T.number`
+  phone: L.number`
     Ensure the format is that of a phone number.
   `,
-  email: T.string`
+  email: L.string`
     Ensure the format is that of an email address.
   `,
 })`

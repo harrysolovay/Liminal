@@ -19,10 +19,10 @@ const Character = L.object({
 ```ts twoslash include supe-rf
 // @include: supe
 // ---cut--
-import { ResponseFormat } from "liminal"
+import { OpenAIResponseFormat } from "liminal"
 
 // ---cut---
-const response_format = ResponseFormat("create_characters", L.array(Character))`
+const response_format = OpenAIResponseFormat("create_characters", L.array(Character))`
   A list of characters in a story.
 `
 ```
@@ -43,7 +43,7 @@ const supe = await openai.chat.completions
     response_format,
     messages: [{ role: "system", content: [] }],
   })
-  .then(response_format.into)
+  .then(response_format.deserialize)
 
 supe
 // ^?

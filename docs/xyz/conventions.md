@@ -5,7 +5,7 @@
 If you are publishing a pattern library of parameterized types, you may want to specify parameter
 keys as symbols, which you export from your library's entrypoint.
 
-```ts twoslash
+```ts
 import { T } from "liminal"
 // ---cut---
 export namespace P {
@@ -26,7 +26,7 @@ your pattern library to JSR, be weary of [slow types](https://jsr.io/docs/about-
 In the previous code block––for example––we would need to add an explicit type to avoid static
 analysis degradation.
 
-```ts{2} twoslash
+```ts{2}
 import { T, Type } from "liminal"
 
 export namespace P {
@@ -41,7 +41,7 @@ If we are creating a functional pattern, we explicitly return or unwrap type arg
 
 In the following example, the return type is simply the sole parameter type.
 
-```ts twoslash
+```ts
 import { T, Type } from "liminal"
 // ---cut---
 export function MostUnlikely<T, P extends keyof any>(
@@ -54,7 +54,7 @@ export function MostUnlikely<T, P extends keyof any>(
 However, we may encounter cases which require us to unwrap the `Ty` type parameter(s) and explicitly
 form a return `Ty` type.
 
-```ts twoslash
+```ts
 import { T, Type } from "liminal"
 // ---cut---
 export namespace P {
