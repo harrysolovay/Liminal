@@ -4,20 +4,24 @@ import * as I from "../intrinsics/mod.ts"
 import type { AnyType, Type } from "../Type.ts"
 import { Tagged } from "./Tagged.ts"
 
-export function TaggedUnion<M extends Record<string, AnyType | Falsy>>(
+export function TaggedUnion<
+  K extends string,
+  M extends Record<string, AnyType | Falsy>,
+>(
+  tagKey: K,
   members: M,
 ): Type<
   {
-    [K in keyof M]: Expand<
-      & { type: K }
-      & (M[K] extends AnyType ? { value: M[K]["T"] } : { value?: undefined })
+    [K2 in keyof M]: Expand<
+      & { [_ in K]: K2 }
+      & (M[K2] extends AnyType ? { value: M[K2]["T"] } : { value?: undefined })
     >
   }[keyof M],
   Extract<M[keyof M], AnyType>["P"]
 > {
   return I.union(
     ...Object.keys(members).toSorted().map((tag) =>
-      Tagged("type", tag, members[tag] ? { value: members[tag]! } : undefined) as never
+      Tagged(tagKey, tag, (members[tag] ? { value: members[tag]! } : {}) as never)
     ),
   )
 }

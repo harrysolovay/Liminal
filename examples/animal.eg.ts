@@ -14,7 +14,7 @@ const Elephant = L.object({
   remembersYourFace: L.boolean,
 })
 
-const Animal = L.TaggedUnion({
+const Animal = L.TaggedUnion("type", {
   Dog,
   Elephant,
   SlowLoris: null,
