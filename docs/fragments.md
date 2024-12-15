@@ -1,7 +1,7 @@
 <div style="display: none">
 
 ```ts twoslash include T
-import { T } from "structured-outputs"
+import { T } from "liminal"
 ```
 
 ```ts twoslash include animal
@@ -27,7 +27,7 @@ declare function assertEquals(actual: unknown, expected: unknown, msg?: string):
 ```
 
 ```ts twoslash include rf
-import { ResponseFormat } from "structured-outputs"
+import { ResponseFormat } from "liminal"
 ```
 
 ```ts twoslash include openai

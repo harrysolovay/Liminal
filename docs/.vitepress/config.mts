@@ -14,7 +14,7 @@ const GOOGLE_ANALYTICS = dedent`
 // cspell:enable
 
 export default defineConfig({
-  title: "Structured Outputs TS",
+  title: "Liminal",
   description: denoConfig.description,
   markdown: {
     codeTransformers: [transformerTwoslash()],
@@ -100,32 +100,31 @@ function manualItems(): DefaultTheme.SidebarItem[] {
         { text: "Primitives", link: "/primitives" },
         { text: "Collections", link: "/collections" },
         { text: "Unions", link: "/unions" },
-        { text: "<code>T.Intersection</code>", link: "/intersection" },
+        { text: "Utilities", link: "/utilities" },
         { text: "Recursion", link: "/recursion" },
-        { text: "<code>T.Transform</code>", link: "/transform" },
-        { text: "<code>Derived</code>", link: "/derived" },
-        { text: "<code>T.MetaType</code>", link: "/metatype" },
+        { text: "Libraries", link: "/libraries" },
       ],
     },
     {
-      text: "Context",
-      base: "/context",
+      text: "Annotations",
+      base: "/annotations",
       collapsed: false,
       items: [
-        { text: "Context Chaining", link: "/chaining" },
-        { text: "Context Parameters", link: "/parameters" },
+        { text: "Annotations Overview", link: "/" },
+        { text: "Descriptions", link: "/descriptions" },
+        { text: "Assertions", link: "/assertions" },
+        { text: "Metadata", link: "/metadata" },
       ],
     },
     {
-      text: "Consuming Types",
-      base: "/consumers",
+      text: "Client",
+      base: "/client",
       collapsed: false,
       items: [
-        { text: "<code>ResponseFormat</code>", link: "/response-format" },
-        { text: "<code>refine</code>", link: "/refine" },
-        { text: "<code>AssertAdherence</code>", link: "/assert-adherence" },
-        { text: "<code>TypeVisitor</code>", link: "/type-visitor" },
-        { text: "<code>Tool</code> (Realtime)", link: "/tool" },
+        { text: "<code>ResponseFormats</code>", link: "/sessions" },
+        { text: "<code>Session</code>", link: "/sessions" },
+        { text: "<code>Adapter</code>", link: "/adapters" },
+        { text: "<code>OpenAIAdapter</code>", link: "/adapters" },
       ],
     },
     {
@@ -133,8 +132,10 @@ function manualItems(): DefaultTheme.SidebarItem[] {
       base: "/xyz",
       collapsed: false,
       items: [
+        { text: "<code>TypeVisitor</code>", link: "/type-visitor" },
         { text: "Conventions", link: "/conventions" },
         { text: "Troubleshooting", link: "/troubleshooting" },
+        { text: "Contributing", link: "/contributing" },
       ],
     },
   ]

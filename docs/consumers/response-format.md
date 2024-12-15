@@ -4,7 +4,7 @@ Create `ResponseFormat` for use with OpenAI clients.
 
 ```ts{1-3,7} twoslash
 import Openai from "openai"
-import { ResponseFormat, T } from "structured-outputs"
+import { ResponseFormat, T } from "liminal"
 declare const openai: Openai
 const Contact = T.object({
   name: T.string,

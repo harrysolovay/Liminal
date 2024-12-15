@@ -1,17 +1,22 @@
-import { assert, type Falsy } from "@std/assert"
+import type { Falsy } from "@std/assert"
 import type Openai from "openai"
 import type { ChatModel } from "openai/resources/chat/chat"
-import type { ChatCompletion, ChatCompletionMessageParam } from "openai/resources/chat/completions"
+import type {
+  ChatCompletion,
+  ChatCompletionMessage,
+  ChatCompletionMessageParam,
+} from "openai/resources/chat/completions"
 import { DescriptionContext, L } from "../../core/mod.ts"
 import type { Adapter, AdapterDefaults, TextConfig } from "../Adapter.ts"
 import { DEFAULT_INSTRUCTIONS } from "../constants.ts"
+import { transformRootType, unwrapOutput, unwrapRaw } from "./openai_util.ts"
 
 export interface OpenAIAdapterDescriptor {
-  message: ChatCompletionMessageParam
   role: "system" | "user"
   model: (string & {}) | ChatModel
-  messageParams: [prompt?: string]
   completion: ChatCompletion
+  I: ChatCompletionMessageParam
+  O: ChatCompletionMessage
 }
 
 export interface OpenAIAdapterConfig {
@@ -36,37 +41,20 @@ export function OpenAIAdapter({
     },
   }
   return {
-    unstructured: ["o1-mini"],
     defaults,
-    formatMessage,
+    formatInput,
     hook,
-    unwrapMessage: ({ choices: [choice] }) => {
-      assert(choice, "No choices contained within the completion response.")
-      const { finish_reason, message } = choice
-      assert(
-        finish_reason === "stop",
-        `Completion responded with "${finish_reason}" as finish reason; ${message}.`,
-      )
-      const { refusal } = message
-      assert(!refusal, `Openai refused to fulfill completion request; ${refusal}.`)
-      return message
-    },
-    unwrapContent: ({ content }) => {
-      assert(typeof content === "string")
-      return content
-    },
+    unwrapOutput,
+    unwrapRaw,
     text,
-    transformType: (type) =>
-      type.declaration.jsonType === "object"
-        ? type
-        : L.transform(L.object({ value: type }), ({ value }) => value),
+    transformRootType,
     value: async (type, { messages, name, description, model }) => {
       messages ??= []
       const descriptionCtx = new DescriptionContext()
       if (type.declaration.factory === L.string) {
         return text([
           ...messages ?? [],
-          formatMessage([description, descriptionCtx.format(type)], "system"),
+          formatInput([description, descriptionCtx.format(type)], "system"),
         ])
       }
       if (!name) {
@@ -89,10 +77,10 @@ export function OpenAIAdapter({
     },
   }
 
-  function formatMessage(
+  function formatInput(
     texts: Array<string | Falsy>,
     role?: OpenAIAdapterDescriptor["role"],
-  ): OpenAIAdapterDescriptor["message"] {
+  ): OpenAIAdapterDescriptor["I"] {
     return {
       role: role ?? defaults.role,
       content: texts

@@ -11,7 +11,7 @@ Therefore, an error is produced if you try to create a `ResponseFormat` with an 
 
 ```ts twoslash
 // @errors: 2345
-import { ResponseFormat, T } from "structured-outputs"
+import { ResponseFormat, T } from "liminal"
 // ---cut---
 const Root = T.object({
   value: T.string`Arg: ${"param_key"}.`,
@@ -23,7 +23,7 @@ ResponseFormat("my_format", Root)
 To solve this error, fill in the missing parameter.
 
 ```ts twoslash
-import { ResponseFormat, T } from "structured-outputs"
+import { ResponseFormat, T } from "liminal"
 
 const Root = T.object({
   value: T.string`Arg: ${"param_key"}.`,
@@ -41,7 +41,7 @@ parameterize context with a widened `number`, `string` or `symbol`.
 
 ```ts twoslash
 // @errors: 2345
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 declare const param_key: string
 
@@ -53,7 +53,7 @@ rather than parameterize the context. In cases such as this, utilize a short-liv
 instead.
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 const MyType = T
   .string`Some text we want to interpolate: ${"_"}.`

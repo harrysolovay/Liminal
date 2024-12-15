@@ -49,9 +49,9 @@ testIntrinsics("toJSON", assertTypeSnapshot, {
   ],
 })
 
-async function assertTypeSnapshot(t: Deno.TestContext, value: Type<unknown, never>): Promise<void> {
-  await assertSnapshot(t, toJSON(value))
-  const withContext = value`One.`
-  await assertSnapshot(t, toJSON(withContext))
-  await assertSnapshot(t, toJSON(withContext`Two.`))
+async function assertTypeSnapshot(t: Deno.TestContext, type: Type<unknown, never>): Promise<void> {
+  await assertSnapshot(t, toJSON.call(type))
+  const withContext = type`One.`
+  await assertSnapshot(t, toJSON.call(withContext))
+  await assertSnapshot(t, toJSON.call(withContext`Two.`))
 }

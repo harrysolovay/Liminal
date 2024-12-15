@@ -9,7 +9,6 @@ export {}
 //   message: MessageParam
 //   role: "user"
 //   model: Model
-//   messageParams: [instruction?: string]
 // }
 
 // export interface AnthropicAdapterConfig {

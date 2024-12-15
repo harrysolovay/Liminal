@@ -2,8 +2,6 @@ import type { Annotation, DescriptionTemplatePart, ReduceP } from "./Annotation.
 import type { AssertionContext } from "./AssertionContext.ts"
 import type { JSONType, JSONTypeName } from "./JSONSchema.ts"
 
-export * as Type from "./Type_statics.ts"
-
 export interface Type<T, P extends symbol> {
   <A extends Array<DescriptionTemplatePart>>(
     template: TemplateStringsArray,
@@ -54,6 +52,24 @@ export type DerivedType<
 
 export const TypeKey: unique symbol = Symbol()
 
-export function isType(value: unknown): value is AnyType {
-  return typeof value === "function" && TypeKey in value
+export function isType<T>(
+  value: unknown,
+  ...intrinsics: Array<AnyType<T> | ((...args: any) => AnyType<T>)>
+): value is AnyType<T> {
+  if (typeof value === "function" && TypeKey in value) {
+    if (intrinsics.length) {
+      const { declaration } = value as never as AnyType
+      for (const intrinsic of intrinsics) {
+        const matched = isType(intrinsic)
+          ? declaration.getAtom?.() === intrinsic
+          : declaration.factory === intrinsic
+        if (matched) {
+          return true
+        }
+      }
+    } else {
+      return true
+    }
+  }
+  return false
 }

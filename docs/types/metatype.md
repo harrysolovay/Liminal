@@ -49,7 +49,7 @@ Let's send a subsequent completion requests using this dynamic type as the respo
 
 ```ts twoslash
 // @include: openai
-import { ResponseFormat, Type } from "structured-outputs"
+import { ResponseFormat, Type } from "liminal"
 declare const StoryWorld: Type<unknown, never>
 // ---cut---
 

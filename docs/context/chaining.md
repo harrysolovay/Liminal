@@ -1,11 +1,10 @@
 # Context Chaining
 
 The descriptions contained within your types serve as context for the LLM. It is for this reason
-that the core unit of `structured-outputs`––`Ty`--is an infinitely-chainable tagged template
-function.
+that the core unit of `liminal`––`Ty`--is an infinitely-chainable tagged template function.
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 const A = T.string`A.`
 const B = A`B.`
@@ -28,7 +27,7 @@ Descriptions in schema definitions serve as additional context for the LLM. We m
 context per-type.
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 const Contact = T.object({
   name: T.string`

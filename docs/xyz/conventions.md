@@ -6,7 +6,7 @@ If you are publishing a pattern library of parameterized types, you may want to 
 keys as symbols, which you export from your library's entrypoint.
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 export namespace P {
   export const grade = Symbol()
@@ -27,7 +27,7 @@ In the previous code block––for example––we would need to add an explici
 analysis degradation.
 
 ```ts{2} twoslash
-import { T, Type } from "structured-outputs"
+import { T, Type } from "liminal"
 
 export namespace P {
   export const grade = Symbol()
@@ -42,7 +42,7 @@ If we are creating a functional pattern, we explicitly return or unwrap type arg
 In the following example, the return type is simply the sole parameter type.
 
 ```ts twoslash
-import { T, Type } from "structured-outputs"
+import { T, Type } from "liminal"
 // ---cut---
 export function MostUnlikely<T, P extends keyof any>(
   ty: Type<T, P>,
@@ -55,7 +55,7 @@ However, we may encounter cases which require us to unwrap the `Ty` type paramet
 form a return `Ty` type.
 
 ```ts twoslash
-import { T, Type } from "structured-outputs"
+import { T, Type } from "liminal"
 // ---cut---
 export namespace P {
   export const Tone = Symbol()

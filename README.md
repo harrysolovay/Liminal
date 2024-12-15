@@ -23,4 +23,4 @@ before you dive in.
 
 ## **License**
 
-Structured Outputs TypeScript is [Apache-licensed](LICENSE).
+Liminal is [Apache-licensed](LICENSE).

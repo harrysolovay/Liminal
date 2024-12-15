@@ -1,15 +1,15 @@
 import type { AnyType } from "./Type.ts"
 
-export type TypeMemo<T> = (type: AnyType) => T
+export class TypeMemo<T> {
+  #cache = new WeakMap<AnyType, T>()
+  constructor(private f: (type: AnyType) => T) {}
 
-export function TypeMemo<T>(f: (type: AnyType) => T): TypeMemo<T> {
-  const cache = new WeakMap<AnyType, T>()
-  return (type) => {
-    if (cache.has(type)) {
-      return cache.get(type)!
+  getOrInit = (type: AnyType) => {
+    if (this.#cache.has(type)) {
+      return this.#cache.get(type)!
     }
-    const value = f(type)
-    cache.set(type, value)
+    const value = this.f(type)
+    this.#cache.set(type, value)
     return value
   }
 }

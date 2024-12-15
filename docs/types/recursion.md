@@ -5,7 +5,7 @@ a current limitation of TypeScript). Because of this limitation, we must explici
 types.
 
 ```ts {8,10} twoslash
-import { T, Type } from "structured-outputs"
+import { T, Type } from "liminal"
 
 type Person = {
   name: string

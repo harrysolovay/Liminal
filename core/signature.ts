@@ -3,25 +3,31 @@ import type { AnyType } from "./Type.ts"
 import { TypeMemo } from "./TypeMemo.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
-export const signature: TypeMemo<string> = TypeMemo((type) => {
-  const ctx = new SignatureContext()
+export function signature(this: AnyType): string {
+  return signatureMemo.getOrInit(this)
+}
+const signatureMemo = new TypeMemo<string>((type) => {
+  const ctx = new SignatureVisitorContext()
   visit(ctx, type)
   return `{\n  ${Object.entries(ctx.defs).map(([k, v]) => `${k}: ${v}`).join("\n  ")}\n}`
 })
 
-export const signatureHash: TypeMemo<Promise<string>> = TypeMemo((type) =>
+export function signatureHash(this: AnyType): Promise<string> {
+  return signatureHashMemo.getOrInit(this)
+}
+const signatureHashMemo = new TypeMemo<Promise<string>>((type) =>
   crypto.subtle
-    .digest("SHA-256", new TextEncoder().encode(signature(type)))
+    .digest("SHA-256", new TextEncoder().encode(signature.call(type)))
     .then(encodeBase32)
     .then((v) => v.slice(0, -4))
 )
 
-class SignatureContext {
+class SignatureVisitorContext {
   ids: Map<AnyType, string> = new Map()
   defs: Record<string, undefined | string> = {}
 }
 
-const visit = TypeVisitor<SignatureContext, string>({
+const visit = TypeVisitor<SignatureVisitorContext, string>({
   hook(next, ctx, type): string {
     const { ids, defs } = ctx
     switch (type.declaration.jsonType) {
@@ -34,12 +40,12 @@ const visit = TypeVisitor<SignatureContext, string>({
           ids.set(type, id)
         }
         if (id in defs) {
-          return `id(${id})`
+          return `i(${id})`
         }
         defs[id] = undefined
         const signature = next(ctx, type)
         defs[id] = signature
-        return `id(${id})`
+        return `i(${id})`
       }
     }
     return next(ctx, type)

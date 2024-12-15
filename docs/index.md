@@ -41,7 +41,7 @@ type Animal = typeof Animal["T"]
 // @include: animal
 // @include: openai
 // ---cut---
-import { ResponseFormat } from "structured-outputs"
+import { ResponseFormat } from "liminal"
 
 const response_format = ResponseFormat("generate_animal", Animal)
 
@@ -73,7 +73,7 @@ Context attachment can be chained, enabling us to legibly compose types with ric
 // @include: T
 // @include: assert
 // ---cut---
-import { toSchema } from "structured-outputs"
+import { toSchema } from "liminal"
 
 const song = T.string`A song.`
 
@@ -152,7 +152,7 @@ loop until all values satisfy their corresponding type's assertions.
 // @include: refine-month
 // @include: openai
 // ---cut---
-import { refine, ResponseFormat } from "structured-outputs"
+import { refine, ResponseFormat } from "liminal"
 
 const response_format = ResponseFormat("month", Month)
 
@@ -170,7 +170,7 @@ value adheres to our expectations. This may be useful in cases involving agents 
 certain kinds of data.
 
 ```ts twoslash {2}
-import { type AssertAdherence, T } from "structured-outputs"
+import { type AssertAdherence, T } from "liminal"
 declare const assertAdherence: ReturnType<typeof AssertAdherence>
 // ---cut---
 const UpliftingSummary = T.string`A summary.`

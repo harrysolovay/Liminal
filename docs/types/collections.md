@@ -3,7 +3,7 @@
 ## `T.array`
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 const Mantras = T.array(T.string`A yogi mantra.`)
 
@@ -16,7 +16,7 @@ Mantras
 ## `T.object`
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 const DrinkSuggestion = T.object({
   includeLemonZest: T.boolean,
@@ -38,7 +38,7 @@ DrinkSuggestion
 ## `T.Tuple`
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 const Coords = T.Tuple(
   T.number`Latitude`,
@@ -57,7 +57,7 @@ Coords
 ## `T.Record`
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 const CustomerIdLookup = T.Record(T.number)
 

@@ -1,16 +1,16 @@
 import { DescriptionContext } from "./DescriptionContext.ts"
 import * as I from "./intrinsics/mod.ts"
 import type { JSONType } from "./JSONSchema.ts"
-import { type AnyType, Type } from "./Type.ts"
+import { type AnyType, isType, type Type } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
-export function toJSON(type: Type<unknown, any>): JSONType {
+export function toJSON(this: Type<unknown, any>): JSONType {
   const ctx = new VisitorContext(
     new Map(),
     {},
     new DescriptionContext(new Map(), {}),
   )
-  const root = visit(ctx, type)
+  const root = visit(ctx, this)
   const { "0": _root, ...$defs } = ctx.defs
   return { ...root, $defs } as never
 }
@@ -39,7 +39,7 @@ const visit = TypeVisitor<VisitorContext, JSONType>({
     const descriptionCtx = new DescriptionContext(pins, args)
     const description = descriptionCtx.format(type as never)
     const ctx = new VisitorContext(ids, defs, descriptionCtx)
-    if (Type.extends(type, I.array, I.object, I.union)) {
+    if (isType(type, I.array, I.object, I.union)) {
       const id = ctx.id(type)
       if (id in defs) {
         jsonType = defs[id] ?? {

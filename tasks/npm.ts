@@ -39,9 +39,7 @@ if (false as boolean) {
 await build({
   entryPoints: ["./mod.ts"],
   outDir,
-  shims: {
-    deno: true,
-  },
+  shims: {},
   scriptModule: false,
   declaration: "inline",
   compilerOptions: {
@@ -66,7 +64,6 @@ await build({
 const packageJsonPath = path.join(outDir, "package.json")
 await Deno.readTextFile(packageJsonPath).then(async (v) => {
   const initial = JSON.parse(v)
-
   { // TODO: delete upon resolution of https://github.com/denoland/dnt/issues/433.
     const {
       "@anthropic-ai/sdk": anthropic,

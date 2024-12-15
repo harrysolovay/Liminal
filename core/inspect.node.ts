@@ -2,10 +2,11 @@ import { signature } from "./signature.ts"
 import type { AnyType } from "./Type.ts"
 
 export const inspect = {
-  [Symbol.for("Deno.customInspect")](
+  [Symbol.for("nodejs.util.inspect.custom")](
     this: AnyType,
-    _inspect: (value: unknown, opts: unknown) => string,
-    _opts: unknown,
+    _0: unknown,
+    _1: unknown,
+    _inspect_: (value: unknown) => string,
   ): string {
     return `LiminalType ${signature.call(this)}`
   },

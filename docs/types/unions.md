@@ -3,7 +3,7 @@
 ## `T.enum`
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 const Mood = T.enum("Elated", "Devastated", "Fine")
 
@@ -16,7 +16,7 @@ Mood
 ## `T.taggedUnion`
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 const Organism = T.taggedUnion("type", {
   Dog: T.object({
@@ -52,7 +52,7 @@ Organism
 If all members of your union are object-value-bearing, `T.taggedUnion` is preferred.
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 const Key = T.Union(
   T.string,

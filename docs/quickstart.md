@@ -5,7 +5,7 @@ Let's generate super-powered characters.
 ## 1. Create the `Character` Type
 
 ```ts twoslash include supe
-import { T } from "structured-outputs"
+import { T } from "liminal"
 
 const Character = T.object({
   name: T.string`The character's name.`,
@@ -19,7 +19,7 @@ const Character = T.object({
 ```ts twoslash include supe-rf
 // @include: supe
 // ---cut--
-import { ResponseFormat } from "structured-outputs"
+import { ResponseFormat } from "liminal"
 
 // ---cut---
 const response_format = ResponseFormat("create_characters", T.array(Character))`

@@ -1,7 +1,7 @@
 # Primitive Types
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 T.boolean
 // ^?
@@ -10,7 +10,7 @@ T.boolean
 <br />
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 T.number
 // ^?
@@ -19,7 +19,7 @@ T.number
 <br />
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 T.integer
 // ^?
@@ -28,7 +28,7 @@ T.integer
 <br />
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 T.string
 // ^?

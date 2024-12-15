@@ -28,7 +28,7 @@ A list of all types from which the new derived type is composed.
 ## Example
 
 ```ts twoslash
-import { AnyType, Derived } from "structured-outputs"
+import { AnyType, Derived } from "liminal"
 // ---cut---
 
 function LeastLikely<X extends AnyType>(ty: X): Derived<X["T"], [X]> {

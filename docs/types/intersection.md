@@ -1,7 +1,7 @@
 # `T.Intersection`
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 const First = T.object({
   a: T.boolean,

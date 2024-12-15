@@ -6,7 +6,7 @@ Often times, we may want to reuse the structure of a type, but not the context. 
 can interpolate parameter keys into the template literal of the `Ty` tagged template expression.
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 const Character = T.object({
   name: T.string,
@@ -17,7 +17,7 @@ const Character = T.object({
 Whenever we wish to use this context-parameterized type, we can fill in the missing context.
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 
 const Character = T.object({
   name: T.string,
@@ -39,7 +39,7 @@ Note that the parameter keys are represented within the type system so that we g
 the language server.
 
 ```ts twoslash
-import { T } from "structured-outputs"
+import { T } from "liminal"
 
 const Character = T.object({
   name: T.string,

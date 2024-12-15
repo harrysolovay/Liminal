@@ -8,7 +8,7 @@ Let's say we want to generate colors. The raw schema may look as follows.
 <div style="display: none">
 
 ```ts twoslash include color-rgb
-import { T } from "structured-outputs"
+import { T } from "liminal"
 // ---cut---
 const ColorChannel = T.number`Ranging from 1 to 255.`
 const ColorRgb = T.Tuple(
