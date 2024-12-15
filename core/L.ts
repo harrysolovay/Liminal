@@ -34,7 +34,7 @@ export function assert<T, A extends unknown[]>(
   })
 }
 
-export function metadata(key: symbol, value: unknown): Metadata {
+export function metadata(key: symbol, value?: unknown): Metadata {
   return {
     type: "Metadata",
     key,

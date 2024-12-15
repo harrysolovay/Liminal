@@ -1,6 +1,6 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
-import { L, Liminal, OpenAIAdapter } from "liminal"
+import { DEFAULT_INSTRUCTIONS, L, OpenAIResponseFormat } from "liminal"
 import { dbg } from "../util/mod.ts"
 import { ColorHex } from "./color.eg.ts"
 
@@ -13,9 +13,16 @@ const Character = L.object({
   favoriteColor: ColorHex,
 })
 
-const liminal = new Liminal(OpenAIAdapter({
-  openai: new OpenAI(),
-  defaultModel: "gpt-4o-mini",
-}))
+const response_format = OpenAIResponseFormat("animal", Character)
 
-await liminal.session().value(Character).then(dbg)
+await new OpenAI().chat.completions
+  .create({
+    model: "gpt-4o-mini",
+    messages: [{
+      role: "system",
+      content: DEFAULT_INSTRUCTIONS,
+    }],
+    response_format,
+  })
+  .then(response_format.deserialize)
+  .then(dbg)

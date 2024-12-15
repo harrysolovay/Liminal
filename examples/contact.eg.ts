@@ -1,6 +1,6 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
-import { L, Liminal, OpenAIAdapter } from "liminal"
+import { L, OpenAIResponseFormat } from "liminal"
 import { dbg } from "../util/mod.ts"
 
 const Contact = L.object({
@@ -9,19 +9,19 @@ const Contact = L.object({
   email: L.string,
 })
 
-const liminal = new Liminal(OpenAIAdapter({
-  openai: new OpenAI(),
-}))
+const response_format = OpenAIResponseFormat("contact", Contact)
 
-await liminal.session().value(Contact, {
-  messages: [{
-    role: "user",
-    content: `
-      Extract data from the following message:
-
-      \`\`\`
-      Please call John Doe at 555-123-4567 or email him at john.doe@example.com.
-      \`\`\`
-    `,
-  }],
-}).then(dbg)
+await new OpenAI().chat.completions
+  .create({
+    model: "gpt-4o-mini",
+    messages: [{
+      role: "system",
+      content: "Extract contact data from the supplied message.",
+    }, {
+      role: "user",
+      content: "Please call John Doe at 555-123-4567 or email him at john.doe@example.com.",
+    }],
+    response_format,
+  })
+  .then(response_format.deserialize)
+  .then(dbg)

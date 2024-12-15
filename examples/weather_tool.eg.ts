@@ -1,6 +1,12 @@
+// @egts
+// unstable: `Liminal` and `OpenAIAdapter` are both WIP (and therefore not exposed as root exports).
+// mock: Tool management is not yet implemented within `Session`.
+
 import OpenAI from "openai"
+import { Liminal } from "../client/Liminal.ts"
+import { OpenAIAdapter } from "../client/openai/OpenAIAdapter.ts"
 import "@std/dotenv/load"
-import { L, Liminal, OpenAIAdapter } from "liminal"
+import { L } from "liminal"
 import { dbg } from "../util/mod.ts"
 
 const liminal = new Liminal(OpenAIAdapter({

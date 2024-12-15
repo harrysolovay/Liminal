@@ -1,6 +1,7 @@
 import type { Falsy } from "@std/assert"
 import type { Expand } from "../../util/mod.ts"
 import * as I from "../intrinsics/mod.ts"
+import { metadata } from "../L.ts"
 import type { AnyType, Type } from "../Type.ts"
 import { Tagged } from "./Tagged.ts"
 
@@ -23,5 +24,7 @@ export function TaggedUnion<
     ...Object.keys(members).toSorted().map((tag) =>
       Tagged(tagKey, tag, (members[tag] ? { value: members[tag]! } : {}) as never)
     ),
-  )
+  )(metadata(TaggedUnionKey, tagKey))
 }
+
+export const TaggedUnionKey = Symbol()

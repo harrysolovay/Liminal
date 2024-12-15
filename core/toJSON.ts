@@ -3,6 +3,7 @@ import * as I from "./intrinsics/mod.ts"
 import type { JSONType } from "./JSONSchema.ts"
 import { type AnyType, isType, type Type } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
+import { TaggedUnionKey } from "./utility/mod.ts"
 
 export function toJSON(this: Type<unknown, any>): JSONType {
   const ctx = new VisitorContext(
@@ -42,7 +43,7 @@ const visit = TypeVisitor<VisitorContext, JSONType>({
     if (isType(type, I.array, I.object, I.union)) {
       const id = ctx.id(type)
       if (id in defs) {
-        jsonType = defs[id] ?? {
+        return defs[id] ?? {
           $ref: id === "0" ? "#" : `#/$defs/${id}`,
         }
       } else {
@@ -97,9 +98,13 @@ const visit = TypeVisitor<VisitorContext, JSONType>({
       enum: values,
     }
   },
-  union(ctx, _1, ...members): JSONType {
+  union(ctx, type, ...members): JSONType {
+    const metadata = type.metadata()
     return {
       anyOf: members.map((member) => visit(ctx, member)),
+      ...TaggedUnionKey in metadata
+        ? { discriminator: metadata[TaggedUnionKey] }
+        : {},
     }
   },
   ref(ctx, _1, get): JSONType {
