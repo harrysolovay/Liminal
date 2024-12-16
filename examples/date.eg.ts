@@ -6,11 +6,6 @@ import { L, Liminal, type Type } from "liminal"
 import { dbg } from "testing"
 import * as A from "./assertions.eg.ts"
 
-const ymd = L.assert(
-  "Ensure the day is valid for corresponding year and month.",
-  (ymd: [number, number, number]) => assertValidYMD(...ymd),
-)
-
 const LDate: Type<Date, never> = L.transform(
   L.Tuple(
     L.number`Year.`,
@@ -22,7 +17,10 @@ const LDate: Type<Date, never> = L.transform(
       A.number.min(1),
       A.number.max(31),
     ),
-  )(ymd()),
+  )(L.assert(
+    "Ensure the day is valid for corresponding year and month.",
+    (ymd: [number, number, number]) => assertValidYMD(...ymd),
+  )),
   ([y, m, d]) => new Date(y, m, d),
 )
 

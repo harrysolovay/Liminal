@@ -25,10 +25,39 @@ export function _<K extends symbol, T = string>(
   )
 }
 
+export function assert<T>(
+  description: string,
+  f?: (value: T) => PromiseOr<void>,
+): Assertion<T, []>
 export function assert<T, A extends unknown[]>(
-  description: string | ((...args: A) => string),
+  description: (...args: A) => string,
   f?: (value: T, ...args: A) => PromiseOr<void>,
-): (...args: A) => Assertion<T, A> {
+  ...args: A
+): Assertion<T, A>
+export function assert<T, A extends unknown[]>(
+  description: (...args: A) => string,
+  f?: (value: T, ...args: A) => PromiseOr<void>,
+): (...args: A) => Assertion<T, A>
+export function assert<T>(
+  description: string | ((...args: unknown[]) => string),
+  f?: (value: T, ...args: unknown[]) => PromiseOr<void>,
+  ...args: unknown[]
+): Assertion<T> | ((...args: unknown[]) => Assertion<T>) {
+  if (typeof description === "string") {
+    return {
+      type: "Assertion",
+      description,
+      f,
+    }
+  }
+  if (args.length) {
+    return {
+      type: "Assertion",
+      description,
+      f,
+      args,
+    }
+  }
   return (...args) => ({
     type: "Assertion",
     description,

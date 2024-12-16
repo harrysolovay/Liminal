@@ -37,7 +37,7 @@ export interface Assertion<T = any, A extends Array<unknown> = Array<any>> {
   type: "Assertion"
   description: string | ((...args: A) => string)
   f?: (value: T, ...args: A) => PromiseOr<void>
-  args: A
+  args?: A
 }
 
 export interface Metadata<V = any> {

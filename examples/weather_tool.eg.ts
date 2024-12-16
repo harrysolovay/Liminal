@@ -1,7 +1,3 @@
-// @egts
-// unstable: `Liminal` and `OpenAIAdapter` are both WIP (and therefore not exposed as root exports).
-// mock: Tool management is not yet implemented within `Session`.
-
 import { OpenAIAdapter } from "liminal/openai"
 import OpenAI from "openai"
 import "@std/dotenv/load"

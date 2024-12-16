@@ -1,6 +1,3 @@
-// @egts
-// unstable: `Liminal` and `OpenAIAdapter` are WIP (and therefore not exposed as root exports).
-
 import OpenAI from "openai"
 import "@std/dotenv/load"
 import { L, Liminal } from "liminal"
