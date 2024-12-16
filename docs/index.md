@@ -4,172 +4,123 @@ title: Overview
 
 <!--@include: ./fragments.md-->
 
-# Liminal Overview
+# Liminal <Badge type="warning" text="beta" />
 
-Structured outputs streamline the integration of LLMs into procedural code by ensuring that
-completions adhere to a specified schema. While this feature provides developers with a valuable
-predictability, it also introduces new challenges to managing and utilizing these outputs
-effectively. **Liminal** is a framework for addressing these challenges:
+Liminal is a (WIP) TypeScript library for modeling types for and with LLMs.
 
-## [Model Types &rarr;](./types/index.md)
+The near-term aim of Liminal is to simplify the experience of declaring and refining structured
+outputs. The longer-term aim is to enable LLMs to design and evolve type contexts, from which values
+can be materialized and understood. The foundational layer of this stack is a `Type`, which can be
+used across LLMs that support JSON-schema-based tool calls (such as
+[gpt-4o](https://openai.com/index/hello-gpt-4o/),
+[claude 3.5 Sonnet](https://www.anthropic.com/news/claude-3-5-sonnet),
+[Llama 3.3](https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_3/) and
+[Grok 2 Beta](https://x.ai/blog/grok-2)).
 
-```ts twoslash
-// @include: animal
+## [Model and Materialize Types](./types/index.md)
 
-type Animal = typeof Animal["T"]
-//   ^?
-```
+Model and utilize Liminal types as structured output schemas. Static types are inferred, allowing
+Liminal types to serve as an end-to-end source of truth.
 
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
+```ts {6-9,19,21}
+import { L } from "liminal"
+import { OpenAIResponseFormat } from "liminal/openai"
 
-## [Create and Parse Completions &rarr;](./consumers/response-format.md)
+const response_format = OpenAIResponseFormat(
+  "coordinates",
+  L.Tuple(
+    L.number`Latitude`,
+    L.number`Longitude`,
+  ),
+)
 
-```ts {3,9,11} twoslash
-// @include: animal
-// @include: openai
-// ---cut---
-import { OpenAIResponseFormat } from "liminal"
-
-const response_format = OpenAIResponseFormat("generate_animal", Animal)
-
-const animal = await openai.chat.completions
+const [latitude, longitude] = await openai.chat.completions
   .create({
     model: "gpt-4o-mini",
-    messages: [{ role: "system", content: [] }],
+    messages: [{
+      role: "user",
+      content: ["Somewhere futuristic."],
+    }],
     response_format,
   })
   .then(response_format.deserialize)
 ```
 
-## [Attach Context To Types &rarr;](./context/chaining.md)
+## [Annotate Types](./annotations/index.md)
 
-We can treat any type as a tagged template function to attach descriptions that serve as additional
-context to guide the LLM.
+Compose types with semantic descriptions and assertions, which serve as additional context to
+improve the quality of LLM outputs.
 
-```ts twoslash {2}
-// @include: L
-// ---cut---
-const Dog = L.object({
-  toy: L.enum("Bone", "Shoe", "Homework")`The dog's preferred chew toy.`,
+```ts
+const RGBColorChannel = L.number`A channel of an RGB color triple.`(
+  min(0),
+  max(255),
+)
+```
+
+## [Transform Types](./types/transform.md)
+
+Specify transforms to abstract over complex intermediate states.
+
+```ts
+const HexColor = L.transform(
+  L.Tuple(RGBColorChannel, RGBColorChannel, RGBColorChannel),
+  (rgb) => {
+    return rgb.map((channel) => channel.toString(16).padStart(2, "0")).join("")
+  },
+)
+```
+
+> We could use `L.Tuple.N(RGBColorChannel, 3)` for brevity.
+
+## [Iterative Refinement](./concepts/iterative-refinement.md)
+
+Annotate types with any runtime assertions. Upon receiving a structured output, these assertions can
+be run; any exceptions can be serialized into followup request for corrections. Correction values
+can then be injected into the initial output. This process can loop until all assertions pass.
+
+```ts
+const T = L.object({
+  a: L.string,
+  b: L.string,
+})(L.assert(({ a, b }) => a.length > b.length, "`A` must be longer than `B`"))
+
+const refined = await liminal.value(T, {
+  refine: { max: 4 },
 })
 ```
 
-Context attachment can be chained, enabling us to legibly compose types with richer context.
+> Here we specify a maximum of 4 iterations.
 
-```ts {12}
-// @include: L
-// @include: assert
-// ---cut---
-import { toSchema } from "liminal"
+## [LLM-guided Refinement](./concepts/llm-refinement.md)
 
-const song = L.string`A song.`
+Assertions can take the form of natural language. Under the hood, the iterative refinement loop can
+call out to LLMs to ensure the qualitative, non-procedural constraint is satisfied.
 
-const hiphopSong = song`Genre is hip hop.`
-
-const upliftingHipHopSong = hiphopSong`Ensure it is uplifting.`
-
-const schema = upliftingHipHopSong.toJSON()
-
-assertEquals(schema, {
-  description: "A song. Genre is hip hop. Ensure it is uplifting.",
-  type: "string",
-})
+```ts
+const Contradiction = L.string`A reason to be sad.`(
+  L.assert("Is a reason to be happy."),
+)
 ```
 
-## [Parameterize Context &rarr;](./context/parameters.md)
+## [Type Libraries](./types/libraries.md)
 
-We can parameterize context to enable reuse of common types for different use case.
+Share types for common use cases.
 
-```ts twoslash include nationality-context-param
-// @include: L
-// ---cut---
-// const key = Symbol()
+::: code-group
 
-// const Person = T.object({
-//   hometown: T.string`${key} city.`,
-//   favoriteFood: T.string`A delicious ${key} food.`,
-// })`An ${key}.`
+```ts [liminal-music]
+export const SongTitle = L.string`Title of a song.`
+
+export const HipHopSongTitle = Song`Genre is hip hop.`
 ```
 
-We can then utilize the parameterized type in different parts of our program.
+```ts [main.ts]
+import { HipHopSongTitle } from "liminal-music"
 
-```ts twoslash
-// @include: nationality-context-param
-// ---cut---
-// const AmericanPerson = Person.of({
-//   [key]: "American",
-// })
-
-// const AustralianPerson = Person.of({
-//   [key]: "Australian",
-// })
+const title = await liminal.value(
+  HipHopSongTitle`Subject: developer tools.`,
+)
 ```
 
-## [Iterative Refinement &rarr;](./consumers/refine.md)
-
-OpenAI structured outputs are limited to a narrow subset of JSON schema.[^1] Moreover, developers
-often need to constrain data types in ways that can only be represented at runtime; JSON Schema
-alone is insufficient.
-
-To address this shortcoming, we can attach assertions to types.
-
-```ts twoslash include refine-month
-// @include: L
-// @include: assert
-// ---cut---
-const Month = L.integer`Positive, zero-based month of the gregorian calendar.`() // TODO
-
-function assertMin(value: number, min: number) {
-  assert(value >= min, `Must be gte ${min}; received ${value}.`)
-}
-
-function assertMax(value: number, max: number) {
-  assert(value <= max, `Must be lte ${max}; received ${value}.`)
-}
-```
-
-We can then utilize `refine`, which gets the structured output and runs all type-specific
-assertions. If any of the assertions throw errors, those errors are serialized into subsequent
-requests for corrected values, which are then injected into the original structured output. We can
-loop until all values satisfy their corresponding type's assertions.
-
-```ts {5} include refine-month
-// @include: refine-month
-// @include: openai
-// ---cut---
-import { OpenAIResponseFormat, refine } from "liminal"
-
-const response_format = OpenAIResponseFormat("month", Month)
-
-const month = refine(openai, {
-  model: "gpt-4o-mini",
-  response_format,
-  messages: [{ role: "system", content: [] }],
-})
-```
-
-## [Adherence Assertions &rarr;](./consumers/assert-adherence.md)
-
-Assertions can be asynchronous, which allows us to use natural language to reflect on whether a
-value adheres to our expectations. This may be useful in cases involving agents specialized in
-certain kinds of data.
-
-```ts {2}
-import { type AssertAdherence, T } from "liminal"
-declare const assertAdherence: ReturnType<typeof AssertAdherence>
-// ---cut---
-const UpliftingSummary = T.string`A summary.`
-  .assert(assertAdherence, "The summary is uplifting.")
-```
-
-[^1]: [OpenAI structured output backend limitations](https://platform.openai.com/docs/guides/structured-outputs#supported-schemas).
+:::

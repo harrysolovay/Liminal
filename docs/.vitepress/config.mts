@@ -1,8 +1,9 @@
 import { transformerTwoslash } from "@shikijs/vitepress-twoslash"
 import dedent from "dedent"
 import footnotePlugin from "markdown-it-footnote"
-import { DefaultTheme, defineConfig } from "vitepress"
+import { defineConfig } from "vitepress"
 import denoConfig from "../../deno.json" with { type: "json" }
+import { EXAMPLES_SIDEBAR, MANUAL_SIDEBAR } from "./sidebar.js"
 
 // cspell:disable
 const GOOGLE_ANALYTICS = dedent`
@@ -33,12 +34,6 @@ export default defineConfig({
   head: [
     ["link", { rel: "preconnect", link: "https://fonts.googleapis.com" }],
     ["link", { rel: "preconnect", link: "https://fonts.gstatic.com", crossorigin: "" }],
-    ["link", {
-      rel: "stylesheet",
-      link:
-        "https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap",
-      crossorigin: "",
-    }],
     ["script", { async: "", src: "https://www.googletagmanager.com/gtag/js?id=G-0VS5ZGHX74" }],
     ["script", {}, GOOGLE_ANALYTICS],
   ],
@@ -55,24 +50,19 @@ export default defineConfig({
         text: "Examples",
         link: "/examples",
       },
+      {
+        text: "GitHub",
+        link: "https://github.com/harrysolovay/liminal",
+        target: "new",
+      },
     ],
     search: {
       provider: "local",
     },
     sidebar: {
-      "/": {
-        base: "",
-        items: manualItems(),
-      },
-      "/examples/": {
-        base: "",
-        items: examplesItems(),
-      },
+      "/": MANUAL_SIDEBAR,
+      "/examples/": EXAMPLES_SIDEBAR,
     },
-    socialLinks: [{
-      icon: "github",
-      link: "https://github.com/harrysolovay/liminal",
-    }],
     footer: { // TODO: get this rendering
       message:
         `Released under the <a href="https://github.com/harrysolovay/liminal/blob/main/LICENSE">Apache 2.0 License</a>.`,
@@ -80,75 +70,3 @@ export default defineConfig({
     },
   },
 })
-
-function manualItems(): DefaultTheme.SidebarItem[] {
-  return [
-    {
-      text: "Introduction",
-      items: [
-        { text: "Overview", link: "/" },
-        { text: "Setup", link: "/setup" },
-        { text: "Quickstart", link: "/quickstart" },
-      ],
-    },
-    {
-      text: "Types",
-      base: "/types",
-      collapsed: false,
-      items: [
-        { text: "Types Overview", link: "/" },
-        { text: "Primitives", link: "/primitives" },
-        { text: "Collections", link: "/collections" },
-        { text: "Unions", link: "/unions" },
-        { text: "Utilities", link: "/utilities" },
-        { text: "Recursion", link: "/recursion" },
-        { text: "Libraries", link: "/libraries" },
-      ],
-    },
-    {
-      text: "Annotations",
-      base: "/annotations",
-      collapsed: false,
-      items: [
-        { text: "Annotations Overview", link: "/" },
-        { text: "Descriptions", link: "/descriptions" },
-        { text: "Assertions", link: "/assertions" },
-        { text: "Metadata", link: "/metadata" },
-      ],
-    },
-    {
-      text: "Client",
-      base: "/client",
-      collapsed: false,
-      items: [
-        { text: "<code>ResponseFormats</code>", link: "/sessions" },
-        { text: "<code>Session</code>", link: "/sessions" },
-        { text: "<code>Adapter</code>", link: "/adapters" },
-        { text: "<code>OpenAIAdapter</code>", link: "/adapters" },
-      ],
-    },
-    {
-      text: "XYZ",
-      base: "/xyz",
-      collapsed: false,
-      items: [
-        { text: "<code>TypeVisitor</code>", link: "/type-visitor" },
-        { text: "Conventions", link: "/conventions" },
-        { text: "Troubleshooting", link: "/troubleshooting" },
-        { text: "Contributing", link: "/contributing" },
-      ],
-    },
-  ]
-}
-
-function examplesItems(): DefaultTheme.SidebarItem[] {
-  return [
-    {
-      text: "Example Group A",
-      collapsed: false,
-      items: [
-        { text: "..." },
-      ],
-    },
-  ]
-}

@@ -5,7 +5,6 @@ export function ref<T, P extends symbol>(
   get: () => Type<T, P>,
 ): Type<T, P> {
   return declare({
-    jsonType: "ref",
     factory: ref,
     args: [get],
     assert: (value, ctx) => {

@@ -5,7 +5,6 @@ import type { Type } from "../Type.ts"
 export { enum_ as enum }
 function enum_<V extends Array<string>>(...values: V): Type<V[number], never> {
   return declare({
-    jsonType: "string",
     factory: enum_,
     args: values.toSorted(),
     assert: (value) => {

@@ -4,7 +4,6 @@ import type { Type } from "../Type.ts"
 
 export function array<T, P extends symbol>(element: Type<T, P>): Type<Array<T>, P> {
   return declare({
-    jsonType: "array",
     factory: array,
     args: [element],
     assert: (value, ctx) => {

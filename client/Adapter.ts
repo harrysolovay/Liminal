@@ -20,8 +20,6 @@ export interface Adapter<D extends AdapterDescriptor> {
   transformRootType?: <T>(type: Type<T, never>) => Type<T, never>
   /** Format text into the provider's message type. */
   formatInput: (texts: Array<string>, role?: D["role"]) => D["I"]
-  /** Do something with completions before they're processed (useful for metering). */
-  hook?: (completion: D["completion"]) => void
   /** Request a text completion. */
   text: (messages: Array<D["I" | "O"]>, config?: TextConfig<D>) => Promise<D["completion"]>
   /** Request a structured output completion. */
@@ -50,4 +48,5 @@ export interface ValueConfig<D extends AdapterDescriptor> {
   name?: string
   description?: string
   model?: D["model"]
+  refine?: boolean
 }

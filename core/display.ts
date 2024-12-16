@@ -1,3 +1,4 @@
+import { IntrinsicName } from "./intrinsics.ts"
 import type { AnyType } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
@@ -58,7 +59,7 @@ const visit = TypeVisitor<DisplayContext, string>({
     return `f(${visit(ctx, from)})`
   },
   fallback(_0, type) {
-    return `${type.declaration.jsonType}`
+    return IntrinsicName(type)
   },
 })
 

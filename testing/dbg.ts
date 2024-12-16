@@ -18,10 +18,11 @@ export function dbg<T>(value: T, ...flags: Array<string>): T {
     )
     const [leading, row] = splitLast(path, ":")!
     const [filename, col] = splitLast(leading, ":")!
-    console.debug(yellow(path), value)
-    const destDir = `${TMP_DIR}/${filename}/${col}_${row}`
+    console.debug(yellow(path))
+    console.debug(value)
+    const destDir = `${TMP_DIR}/${filename}/${Date.now()}`
     await ensureDir(destDir)
-    const dest = `${destDir}/${Date.now()}.json`
+    const dest = `${destDir}/${col}_${row}.json`
     await Deno.writeTextFile(dest, JSON.stringify(value, null, 2))
     console.debug(gray(dest))
   }

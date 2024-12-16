@@ -6,9 +6,14 @@ import type {
   ChatCompletionMessage,
   ChatCompletionMessageParam,
 } from "openai/resources/chat/completions"
-import { DescriptionContext, L } from "../../core/mod.ts"
-import type { Adapter, AdapterDefaults, TextConfig } from "../Adapter.ts"
-import { DEFAULT_INSTRUCTIONS } from "../constants.ts"
+import {
+  type Adapter,
+  type AdapterDefaults,
+  DEFAULT_INSTRUCTIONS,
+  DescriptionContext,
+  L,
+  type TextConfig,
+} from "../../mod.ts"
 import { transformRootType, unwrapOutput, unwrapRaw } from "./openai_util.ts"
 
 export interface OpenAIAdapterDescriptor {
@@ -23,27 +28,26 @@ export interface OpenAIAdapterConfig {
   openai: Openai
   defaultModel?: (string & {}) | ChatModel
   defaultInstructions?: string
-  hook?: (completion: ChatCompletion) => void
+  onCompletion?: (completion: ChatCompletion) => void
 }
 
 export function OpenAIAdapter({
   openai,
-  defaultModel,
-  defaultInstructions,
-  hook,
+  defaultModel = "gpt-4o-mini",
+  defaultInstructions = DEFAULT_INSTRUCTIONS,
+  onCompletion,
 }: OpenAIAdapterConfig): Adapter<OpenAIAdapterDescriptor> {
   const defaults: AdapterDefaults<OpenAIAdapterDescriptor> = {
-    model: defaultModel ?? "gpt-4o-mini",
+    model: defaultModel,
     role: "user",
     opening: {
       role: "system",
-      content: defaultInstructions ?? DEFAULT_INSTRUCTIONS,
+      content: defaultInstructions,
     },
   }
   return {
     defaults,
     formatInput,
-    hook,
     unwrapOutput,
     unwrapRaw,
     text,
@@ -60,20 +64,21 @@ export function OpenAIAdapter({
       if (!name) {
         name = await type.signatureHash()
       }
-      return await openai.chat.completions
-        .create({
-          model: model ?? defaults.model,
-          messages,
-          response_format: {
-            type: "json_schema",
-            json_schema: {
-              name,
-              description,
-              schema: type.toJSON(),
-              strict: true,
-            },
+      const completion = await openai.chat.completions.create({
+        model: model ?? defaults.model,
+        messages,
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name,
+            description,
+            schema: type.toJSON(),
+            strict: true,
           },
-        })
+        },
+      })
+      onCompletion?.(completion)
+      return completion
     },
   }
 
@@ -92,13 +97,15 @@ export function OpenAIAdapter({
     }
   }
 
-  function text(
+  async function text(
     messages: Array<ChatCompletionMessageParam>,
     config?: TextConfig<OpenAIAdapterDescriptor>,
   ): Promise<ChatCompletion> {
-    return openai.chat.completions.create({
+    const completion = await openai.chat.completions.create({
       model: config?.model ?? defaults.model,
       messages,
     })
+    onCompletion?.(completion)
+    return completion
   }
 }

@@ -1,12 +1,8 @@
-// @egts
-// unstable: `Liminal` and `OpenAIAdapter` are WIP (and therefore not exposed as root exports).
-
 import OpenAI from "openai"
 import "@std/dotenv/load"
-import { L } from "liminal"
+import { L, Liminal } from "liminal"
+import { OpenAIAdapter } from "liminal/openai"
 import { dbg } from "testing"
-import { Liminal } from "../client/Liminal.ts"
-import { OpenAIAdapter } from "../client/openai/OpenAIAdapter.ts"
 
 const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),

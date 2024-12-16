@@ -58,7 +58,7 @@ export class AssertionContext {
           if (f) {
             annotationDiagnostics.push((async () => {
               try {
-                await f(value, ...args)
+                await f(value, ...args ?? [])
               } catch (exception: unknown) {
                 return { exception, path, value, type }
               }

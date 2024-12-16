@@ -1,6 +1,6 @@
 {
   "name": "@crosshatch/liminal",
-  "description": "Types for LLMs.",
+  "description": "A library for modeling types for and with LLMs",
   "version": "0.0.0-local.0",
   "exports": "./mod.ts",
   "tasks": {
@@ -56,7 +56,11 @@
   },
   "scopes": {
     "./examples/": {
-      "liminal": "./mod.ts"
+      "liminal": "./mod.ts",
+      "liminal/anthropic": "./provider/Anthropic/mod.ts",
+      "liminal/ollama": "./provider/Ollama/mod.ts",
+      "liminal/openai": "./provider/OpenAI/mod.ts",
+      "liminal/xai": "./provider/xAI/mod.ts"
     }
   },
   "lint": {

@@ -1,18 +1,66 @@
+@import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
+
 :root {
-  --vp-font-family-base: "Poppins", sans-serif;
+  --vp-font-family-base: SF Pro Display, sans-serif;
 }
 
 .DocSearch-Button-Container {
   padding-bottom: 2px;
 }
 
-.VPNavBar {
-  .VPNavBarTitle span {
-    position: relative;
-    top: 2px;
+@media (min-width: 768px) {
+  .VPNavBarSearch.search {
+    padding-right: 32px;
   }
+}
 
+.VPBadge {
+  border-radius: 4px;
+  padding-bottom: 2px;
+}
+
+.DocSearch.DocSearch-Button {
+  border-radius: 6px;
+}
+
+.VPNavBarTitle span {
+  position: relative;
+  font-family: Amatic SC, serif;
+  font-size: 32px;
+}
+
+#local-search {
+  width: 100%;
+}
+
+.DocSearch.DocSearch-Button {
+  justify-content: center;
+}
+
+.VPNavBar {
   .content-body {
     padding-top: 2px;
   }
+}
+
+.VPHero.VPHomeHero .text {
+  max-width: initial;
+}
+
+.VPHero.VPHomeHero .name {
+  display: inline;
+  font-size: 68px;
+}
+
+.VPHero.VPHomeHero .text {
+  margin-top: 24px;
+}
+
+.VPHero.VPHomeHero .text code {
+  font-weight: bold;
+}
+
+.VPHero.VPHomeHero .tagline {
+  display: block;
+  margin-top: 16px;
 }

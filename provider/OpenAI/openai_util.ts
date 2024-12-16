@@ -19,8 +19,7 @@ export function unwrapRaw({ content }: ChatCompletionMessage): string {
   return content
 }
 
+// TODO: avoid unnecessary transforms
 export function transformRootType<T>(type: Type<T, never>) {
-  return type.declaration.jsonType === "object"
-    ? type
-    : L.transform(L.object({ value: type }), ({ value }) => value)
+  return L.transform(L.object({ value: type }), ({ value }) => value)
 }
