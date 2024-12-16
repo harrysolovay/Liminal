@@ -1,4 +1,6 @@
-# `ResponseFormat`
+# OpenAI
+
+## `ResponseFormat`
 
 Create `ResponseFormat` for use with OpenAI clients.
 
@@ -22,3 +24,5 @@ const contact = await openai.chat.completions.create({
   messages: [],
 })
 ```
+
+[^1]: [OpenAI structured output backend limitations](https://platform.openai.com/docs/guides/structured-outputs#supported-schemas).

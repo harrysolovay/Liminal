@@ -1,8 +1,6 @@
 import type { Expand } from "../util/mod.ts"
-import * as I from "./intrinsics/mod.ts"
+import { IntrinsicName, type Intrinsics } from "./intrinsics.ts"
 import type { AnyType } from "./Type.ts"
-
-type I = typeof I
 
 export type TypeVisitorArms<C, R> = Expand<
   & {
@@ -22,10 +20,10 @@ export type TypeVisitorArms<C, R> = Expand<
 >
 
 type IntrinsicArms<C, R> = {
-  [K in keyof I]: (
+  [K in IntrinsicName]: (
     ctx: C,
-    ...rest: I[K] extends AnyType ? [type: I[K]]
-      : [type: ReturnType<I[K]>, ...args: Parameters<I[K]>]
+    ...rest: Intrinsics[K] extends AnyType ? [type: Intrinsics[K]]
+      : [type: ReturnType<Intrinsics[K]>, ...args: Parameters<Intrinsics[K]>]
   ) => R
 }
 
@@ -37,24 +35,7 @@ export function TypeVisitor<C, R>(arms: TypeVisitorArms<C, R>): (ctx: C, type: A
   return next
 
   function next(ctx: C, type: AnyType): R {
-    const armKey: keyof I = (() => {
-      switch (type.declaration.factory) {
-        case I.transform: {
-          return "transform"
-        }
-        case I.enum: {
-          return "enum"
-        }
-        case I.const: {
-          return "const"
-        }
-        default: {
-          return type.declaration.jsonType
-        }
-      }
-    })()
-    const arm = arms[armKey] ?? arms.fallback!
-    return arm(
+    return (arms[IntrinsicName(type)] ?? arms.fallback!)(
       ctx,
       type as never,
       ...type.declaration.factory ? type.declaration.args as never : [],

@@ -1,6 +1,6 @@
 import type { Annotation, DescriptionTemplatePart, MetadataHandle, ReduceP } from "./Annotation.ts"
 import type { AssertionContext } from "./AssertionContext.ts"
-import type { JSONType, JSONTypeName } from "./JSONSchema.ts"
+import type { JSONType } from "./JSONSchema.ts"
 
 export interface Type<T, P extends symbol> {
   <A extends Array<DescriptionTemplatePart>>(
@@ -31,7 +31,6 @@ export interface Type<T, P extends symbol> {
 export type TypeDeclaration =
   & {
     assert: (value: unknown, assertionContext: AssertionContext) => void
-    jsonType: JSONTypeName
   }
   & ({
     getAtom: () => AnyType

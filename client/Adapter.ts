@@ -48,4 +48,5 @@ export interface ValueConfig<D extends AdapterDescriptor> {
   name?: string
   description?: string
   model?: D["model"]
+  refine?: boolean
 }

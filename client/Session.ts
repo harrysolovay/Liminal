@@ -45,6 +45,21 @@ export class Session<D extends AdapterDescriptor = AdapterDescriptor> {
     return this.liminal.adapter.unwrapRaw(message)
   }
 
+  type = (
+    _messages: Array<D["I"]>,
+    _config?: TextConfig<D>,
+  ): Promise<Type<unknown, never>> => {
+    throw 0
+  }
+
+  migration = (
+    _type: Type<unknown, never>,
+    _messages: Array<D["I"]>,
+    _config?: TextConfig<D>,
+  ): Promise<L.MetaTypeMigration<never>["T"]> => {
+    throw 0
+  }
+
   // TODO: disallow `O` messages.
   value = async <T>(type: Type<T, never>, config?: ValueConfig<D>): Promise<T> => {
     const { transformRootType } = this.liminal.adapter

@@ -162,3 +162,21 @@ L.taggedUnion({
   B: L.string,
 })
 ```
+
+```ts
+T.display()
+
+T.description()
+
+T.signature()
+
+T.signatureHash()
+
+T.metadata()
+
+T.toJSON()
+
+T.assert(maybeCharacter)
+
+T.deserialize(jsonText)
+```

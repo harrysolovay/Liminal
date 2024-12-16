@@ -3,4 +3,6 @@ import type { Type } from "../Type.ts"
 import { Hydrated } from "./Hydrated.ts"
 import { JSONType } from "./JSONType.ts"
 
-export const MetaType: Type<Type<unknown, never>, never> = I.transform(JSONType, Hydrated)
+export type MetaType<P extends symbol> = Type<Type<unknown, never>, P>
+
+export const MetaType: MetaType<never> = I.transform(JSONType, Hydrated)

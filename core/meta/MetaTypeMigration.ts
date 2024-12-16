@@ -4,7 +4,7 @@ import { TaggedUnion } from "../utility/mod.ts"
 import { MetaType } from "./MetaType.ts"
 import { PathLike } from "./PathLike.ts"
 
-export type MetaTypeMigration = {
+export type MetaTypeMigration<P extends symbol> = Type<{
   id: string
   defId: string
   path: PathLike
@@ -18,9 +18,9 @@ export type MetaTypeMigration = {
     type: "Delete"
   }
   rationale: string
-}
+}, P>
 
-export const MetaTypeMigration: Type<MetaTypeMigration, never> = I.object({
+export const MetaTypeMigration: MetaTypeMigration<never> = I.object({
   id: I.string,
   defId: I.string,
   path: PathLike,

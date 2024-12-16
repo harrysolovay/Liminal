@@ -62,7 +62,7 @@ export class DescriptionContext {
             case "Assertion": {
               const { description, args } = annotation
               assertionDescriptions.push(
-                typeof description === "string" ? description : description(...args),
+                typeof description === "string" ? description : description(...args ?? []),
               )
               break
             }

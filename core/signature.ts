@@ -1,5 +1,6 @@
 import { encodeBase32 } from "@std/encoding"
 import { WeakMemo } from "../util/WeakMemo.ts"
+import { IntrinsicName } from "./intrinsics.ts"
 import type { AnyType } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
@@ -30,7 +31,7 @@ class SignatureVisitorContext {
 const visit = TypeVisitor<SignatureVisitorContext, string>({
   hook(next, ctx, type): string {
     const { ids, defs } = ctx
-    switch (type.declaration.jsonType) {
+    switch (IntrinsicName(type)) {
       case "array":
       case "object":
       case "union": {
@@ -80,7 +81,7 @@ const visit = TypeVisitor<SignatureVisitorContext, string>({
     return visit(ctx, from)
   },
   fallback(_0, type) {
-    return `${type.declaration.jsonType}`
+    return IntrinsicName(type)
   },
 })
 
