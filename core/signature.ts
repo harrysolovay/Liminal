@@ -1,12 +1,12 @@
 import { encodeBase32 } from "@std/encoding"
+import { WeakMemo } from "../util/WeakMemo.ts"
 import type { AnyType } from "./Type.ts"
-import { TypeMemo } from "./TypeMemo.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
 export function signature(this: AnyType): string {
   return signatureMemo.getOrInit(this)
 }
-const signatureMemo = new TypeMemo<string>((type) => {
+const signatureMemo = new WeakMemo<AnyType, string>((type) => {
   const ctx = new SignatureVisitorContext()
   visit(ctx, type)
   return `{\n  ${Object.entries(ctx.defs).map(([k, v]) => `${k}: ${v}`).join("\n  ")}\n}`
@@ -15,9 +15,9 @@ const signatureMemo = new TypeMemo<string>((type) => {
 export function signatureHash(this: AnyType): Promise<string> {
   return signatureHashMemo.getOrInit(this)
 }
-const signatureHashMemo = new TypeMemo<Promise<string>>((type) =>
+const signatureHashMemo = new WeakMemo<AnyType, Promise<string>>((type) =>
   crypto.subtle
-    .digest("SHA-256", new TextEncoder().encode(signature.call(type)))
+    .digest("SHA-256", new TextEncoder().encode(signatureMemo.getOrInit(type)))
     .then(encodeBase32)
     .then((v) => v.slice(0, -4))
 )

@@ -1,4 +1,5 @@
 import type { ChatCompletion } from "openai/resources/chat/completions"
+import type { PromiseOr } from "../../util/mod.ts"
 
 export interface TokenAllowanceOptions {
   /** Number of tokens in the generated completion. */
@@ -10,10 +11,9 @@ export interface TokenAllowanceOptions {
 }
 
 export class TokenAllowance {
-  stop: boolean = false
   constructor(
     readonly allowances: TokenAllowanceOptions,
-    readonly halt?: (self: TokenAllowance) => boolean,
+    readonly onExceeded?: (self: TokenAllowance) => PromiseOr<void>,
   ) {}
 
   ingest = (completion: ChatCompletion): void => {
@@ -21,12 +21,9 @@ export class TokenAllowance {
     if (usage) {
       Object.keys(this.allowances).forEach((key) => {
         if (!(this.allowances[key as keyof TokenAllowanceOptions]! -= usage[key as never])) {
-          this.stop = true
+          this.onExceeded?.(this)
         }
       })
-    }
-    if (this.halt?.(this)) {
-      this.stop = true
     }
   }
 }

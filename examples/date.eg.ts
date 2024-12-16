@@ -1,5 +1,9 @@
 import { assert } from "@std/assert"
-import { L, type Type } from "liminal"
+import { OpenAIAdapter } from "liminal/openai"
+import OpenAI from "openai"
+import "@std/dotenv/load"
+import { L, Liminal, type Type } from "liminal"
+import { dbg } from "testing"
 import * as A from "./assertions.eg.ts"
 
 const ymd = L.assert(
@@ -7,7 +11,7 @@ const ymd = L.assert(
   (ymd: [number, number, number]) => assertValidYMD(...ymd),
 )
 
-export const LDate: Type<Date, never> = L.transform(
+const LDate: Type<Date, never> = L.transform(
   L.Tuple(
     L.number`Year.`,
     L.number`Month.`(
@@ -21,6 +25,14 @@ export const LDate: Type<Date, never> = L.transform(
   )(ymd()),
   ([y, m, d]) => new Date(y, m, d),
 )
+
+const liminal = new Liminal(OpenAIAdapter({
+  openai: new OpenAI(),
+}))
+
+await liminal.session().value(LDate).then(dbg)
+
+// ...
 
 function assertValidYMD(year: number, month: number, day: number) {
   const date = new Date(year, month, day)

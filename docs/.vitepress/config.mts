@@ -84,33 +84,33 @@ export default defineConfig({
 function manualItems(): DefaultTheme.SidebarItem[] {
   return [
     {
-      text: "Introduction",
+      text: "Overview",
+      link: "/",
       items: [
-        { text: "Overview", link: "/" },
         { text: "Setup", link: "/setup" },
         { text: "Quickstart", link: "/quickstart" },
       ],
     },
     {
-      text: "Types",
+      text: "<code>Type</code>s",
       base: "/types",
       collapsed: false,
+      link: "/",
       items: [
-        { text: "Types Overview", link: "/" },
-        { text: "Primitives", link: "/primitives" },
-        { text: "Collections", link: "/collections" },
-        { text: "Unions", link: "/unions" },
-        { text: "Utilities", link: "/utilities" },
+        { text: "Intrinsic Types", link: "/intrinsics" },
+        { text: "Utility Types", link: "/utility" },
+        { text: "Meta Types", link: "/meta" },
         { text: "Recursion", link: "/recursion" },
         { text: "Libraries", link: "/libraries" },
+        { text: "Type Visitors", link: "/visitors" },
       ],
     },
     {
       text: "Annotations",
       base: "/annotations",
       collapsed: false,
+      link: "/",
       items: [
-        { text: "Annotations Overview", link: "/" },
         { text: "Descriptions", link: "/descriptions" },
         { text: "Assertions", link: "/assertions" },
         { text: "Metadata", link: "/metadata" },
@@ -120,6 +120,7 @@ function manualItems(): DefaultTheme.SidebarItem[] {
       text: "Client",
       base: "/client",
       collapsed: false,
+      link: "/",
       items: [
         { text: "<code>ResponseFormats</code>", link: "/sessions" },
         { text: "<code>Session</code>", link: "/sessions" },
@@ -131,11 +132,10 @@ function manualItems(): DefaultTheme.SidebarItem[] {
       text: "XYZ",
       base: "/xyz",
       collapsed: false,
+      link: "/",
       items: [
-        { text: "<code>TypeVisitor</code>", link: "/type-visitor" },
         { text: "Conventions", link: "/conventions" },
         { text: "Troubleshooting", link: "/troubleshooting" },
-        { text: "Contributing", link: "/contributing" },
       ],
     },
   ]

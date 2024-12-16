@@ -1,7 +1,11 @@
-import { L, type Type } from "liminal"
+import { L, Liminal, type Type } from "liminal"
+import "@std/dotenv/load"
+import { OpenAIAdapter } from "liminal/openai"
+import OpenAI from "openai"
+import { dbg } from "testing"
 import * as A from "./assertions.eg.ts"
 
-export const ColorHex: Type<string, never> = L.transform(
+const ColorHex: Type<string, never> = L.transform(
   L.Tuple.N(
     L.number(
       A.number.min(0),
@@ -11,3 +15,9 @@ export const ColorHex: Type<string, never> = L.transform(
   ),
   (rgb) => rgb.map((channel) => channel.toString(16).padStart(2, "0")).join(""),
 )
+
+const liminal = new Liminal(OpenAIAdapter({
+  openai: new OpenAI(),
+}))
+
+await liminal.session().value(ColorHex).then(dbg)

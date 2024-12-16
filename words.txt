@@ -13,6 +13,7 @@ inspectable
 metatype
 miyazaki
 nodenext
+ollama
 openai
 parameterizing
 quasis

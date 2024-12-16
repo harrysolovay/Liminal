@@ -6,12 +6,12 @@ title: Overview
 
 # Liminal Overview
 
-Structured outputs streamline the integration of LLMs into procedural code by ensuring that
-completions adhere to a specified schema. While this feature provides developers with a valuable
-predictability, it also introduces new challenges to managing and utilizing these outputs
-effectively. **Liminal** is a framework for addressing these challenges:
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur.
 
-## [Model Types &rarr;](./types/index.md)
+## [Model Your Types](./types/index.md)
 
 ```ts twoslash
 // @include: animal
@@ -20,6 +20,8 @@ type Animal = typeof Animal["T"]
 //   ^?
 ```
 
+> TODO: list all types (enables JSON-serializable circular type references)
+
 <br />
 <br />
 <br />
@@ -32,7 +34,19 @@ type Animal = typeof Animal["T"]
 <br />
 <br />
 
-## [Create and Parse Completions &rarr;](./consumers/response-format.md)
+## [Attach Descriptions and Assertions](./annotations/assertions.md)
+
+```ts twoslash
+import { L } from "liminal"
+// ---cut---
+const song = L.string`A song.`
+
+const hiphopSong = song`Genre is hip hop.`(
+  L.assert("Max len is 20.", (s) => assert(s.length))(),
+)
+```
+
+## [Request and Deserialize Completions](./clients/OpenAIResponseFormat.ts)
 
 ```ts {3,9,11} twoslash
 // @include: animal
@@ -51,7 +65,7 @@ const animal = await openai.chat.completions
   .then(response_format.deserialize)
 ```
 
-## [Attach Context To Types &rarr;](./context/chaining.md)
+## [Attach Context To Types](./context/chaining.md)
 
 We can treat any type as a tagged template function to attach descriptions that serve as additional
 context to guide the LLM.
@@ -86,7 +100,7 @@ assertEquals(schema, {
 })
 ```
 
-## [Parameterize Context &rarr;](./context/parameters.md)
+## [Parameterize Context](./context/parameters.md)
 
 We can parameterize context to enable reuse of common types for different use case.
 
@@ -115,7 +129,7 @@ We can then utilize the parameterized type in different parts of our program.
 // })
 ```
 
-## [Iterative Refinement &rarr;](./consumers/refine.md)
+## [Iterative Refinement](./consumers/refine.md)
 
 OpenAI structured outputs are limited to a narrow subset of JSON schema.[^1] Moreover, developers
 often need to constrain data types in ways that can only be represented at runtime; JSON Schema
@@ -158,7 +172,7 @@ const month = refine(openai, {
 })
 ```
 
-## [Adherence Assertions &rarr;](./consumers/assert-adherence.md)
+## [Adherence Assertions](./consumers/assert-adherence.md)
 
 Assertions can be asynchronous, which allows us to use natural language to reflect on whether a
 value adheres to our expectations. This may be useful in cases involving agents specialized in

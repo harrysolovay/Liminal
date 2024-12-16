@@ -1,6 +1,7 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
-import { DEFAULT_INSTRUCTIONS, L, OpenAIResponseFormat } from "liminal"
+import { L, Liminal } from "liminal"
+import { OpenAIAdapter } from "liminal/openai"
 import { dbg } from "testing"
 
 const Dog = L.object({
@@ -19,16 +20,8 @@ const Animal = L.TaggedUnion({
   SlowLoris: null,
 })
 
-const response_format = OpenAIResponseFormat("animal", Animal)
+const liminal = new Liminal(OpenAIAdapter({
+  openai: new OpenAI(),
+}))
 
-await new OpenAI().chat.completions
-  .create({
-    model: "gpt-4o-mini",
-    messages: [{
-      role: "system",
-      content: DEFAULT_INSTRUCTIONS,
-    }],
-    response_format,
-  })
-  .then(response_format.deserialize)
-  .then(dbg)
+await liminal.session().value(Animal).then(dbg)

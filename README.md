@@ -1,9 +1,9 @@
 # Liminal
 
-> A framework for integrating with LLM structured outputs.
+> Types for LLMs
 
-- [Documentation &rarr;](https://liminal.land)<br />Expanded introduction and usage guides.
-- [Examples &rarr;](https://liminal.land/examples)<br />Examples that illustrate common use cases.
+- [Documentation &rarr;](https://liminal.land)<br />Introduction and guides.
+- [Examples &rarr;](https://liminal.land/examples)<br />Examples illustrating common use cases.
 
 ---
 

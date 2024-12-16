@@ -16,3 +16,25 @@
     padding-top: 2px;
   }
 }
+
+.VPHero.VPHomeHero .text {
+  max-width: initial;
+}
+
+.VPHero.VPHomeHero .name {
+  display: inline;
+  font-size: 68px;
+}
+
+.VPHero.VPHomeHero .text {
+  margin-top: 24px;
+}
+
+.VPHero.VPHomeHero .text code {
+  font-weight: bold;
+}
+
+.VPHero.VPHomeHero .tagline {
+  display: block;
+  margin-top: 16px;
+}
