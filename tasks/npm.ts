@@ -39,7 +39,7 @@ await build({
     "./mod.ts",
     {
       name: "./openai",
-      path: "./providers/openai/mod.ts",
+      path: "./providers/OpenAI/mod.ts",
     },
   ],
   outDir,
