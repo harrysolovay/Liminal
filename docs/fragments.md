@@ -26,10 +26,6 @@ declare function assert(expr: unknown, msg?: string): void
 declare function assertEquals(actual: unknown, expected: unknown, msg?: string): void
 ```
 
-```ts twoslash include rf
-import { OpenAIResponseFormat } from "liminal"
-```
-
 ```ts twoslash include openai
 import Openai from "openai"
 declare const openai: Openai

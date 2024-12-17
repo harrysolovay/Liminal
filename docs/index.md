@@ -88,7 +88,7 @@ const refined = await liminal.value(T, {
 
 > Here we specify a maximum of 4 iterations.
 
-## [Type Libraries](./types/libraries.md)
+## [Type Libraries](./libraries/index)
 
 Share types for common use cases.
 

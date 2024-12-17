@@ -27,8 +27,6 @@ refine(openai, params, {
 })
 ```
 
-## [LLM-guided Refinement](./concepts/llm-refinement.md)
-
 Assertions can take the form of natural language. Under the hood, the iterative refinement loop can
 call out to LLMs to ensure the qualitative, non-procedural constraint is satisfied.
 
