@@ -1,6 +1,6 @@
-import * as I from "../intrinsics/mod.ts"
-import type { Type } from "../Type.ts"
-import { TaggedUnion } from "../utility/mod.ts"
+import * as I from "../core/intrinsics/mod.ts"
+import type { Type } from "../core/Type.ts"
+import { TaggedUnion } from "../core/utility/mod.ts"
 import { MetaType } from "./MetaType.ts"
 import { PathLike } from "./PathLike.ts"
 

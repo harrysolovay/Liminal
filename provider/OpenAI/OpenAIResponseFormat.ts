@@ -33,7 +33,9 @@ function OpenAIFinalResponseFormat<T>(
   type: Type<T>,
   description?: string,
 ): OpenAIFinalResponseFormat<T> {
-  type = L.transform(L.Tuple(type), ([value]) => value)
+  if (type.declaration.factory !== L.object) {
+    type = L.transform(L.Tuple(type), ([value]) => value)
+  }
   return {
     type: "json_schema",
     json_schema: {

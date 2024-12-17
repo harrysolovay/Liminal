@@ -1,8 +1,7 @@
 import { assertSnapshot } from "@std/testing/snapshot"
 import { testIntrinsics } from "testing"
-import { L } from "./mod.ts"
+import { L, type Type } from "../core/mod.ts"
 import { toJSONSchema } from "./toJSONSchema.ts"
-import type { Type } from "./Type.ts"
 
 testIntrinsics("toJSON", assertTypeSnapshot, {
   null: [

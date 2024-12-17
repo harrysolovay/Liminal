@@ -1,14 +1,15 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
-import { L, Liminal } from "liminal"
+import { Liminal } from "liminal"
 import { OpenAIAdapter } from "liminal/openai"
 import { dbg } from "testing"
+import { MetaType } from "../json_schema/mod.ts"
 
 const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-const World = await liminal.value(L.MetaType, {
+const World = await liminal.value(MetaType, {
   messages: [{
     role: "user",
     content: "What data type might describe the ontology of a magical story world?",

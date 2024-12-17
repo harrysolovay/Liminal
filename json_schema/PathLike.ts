@@ -1,5 +1,5 @@
-import * as I from "../intrinsics/mod.ts"
-import type { Type } from "../Type.ts"
+import * as I from "../core/intrinsics/mod.ts"
+import type { Type } from "../core/Type.ts"
 
 export type PathLike = [number | string | Array<number | string>][0]
 

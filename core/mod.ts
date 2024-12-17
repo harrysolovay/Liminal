@@ -1,11 +1,11 @@
 export * as L from "./L.ts"
 
+export * from "../json_schema/JSONSchema.ts"
+export * from "../json_schema/toJSONSchema.ts"
 export * from "./Annotation.ts"
 export * from "./AssertionContext.ts"
 export * from "./DescriptionContext.ts"
 export * from "./deserialize.ts"
-export * from "./JSONSchema.ts"
 export * from "./signature.ts"
-export * from "./toJSONSchema.ts"
 export * from "./Type.ts"
 export * from "./TypeVisitor.ts"

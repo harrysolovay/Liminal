@@ -1,5 +1,6 @@
 import { AssertionError } from "@std/assert"
 import { deserialize, L, type Type } from "../core/mod.ts"
+import type { MetaTypeMigration } from "../json_schema/mod.ts"
 import type { Adapter, AdapterDescriptor, TextConfig, ValueConfig } from "./Adapter.ts"
 import { Tool, type ToolConfig } from "./Tool.ts"
 
@@ -62,7 +63,7 @@ export class Liminal<D extends AdapterDescriptor = AdapterDescriptor> {
     _type: Type<unknown>,
     _messages: Array<D["I"]>,
     _config?: TextConfig<D>,
-  ): Promise<L.MetaTypeMigration<never>["T"]> => {
+  ): Promise<MetaTypeMigration<never>["T"]> => {
     throw 0
   }
 

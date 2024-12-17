@@ -11,9 +11,9 @@ import {
   DescriptionContext,
   L,
   signatureHash,
+  toJSONSchema,
 } from "../../mod.ts"
 import { unwrapOutput, unwrapRaw } from "./openai_util.ts"
-import { OpenAIResponseFormat } from "./OpenAIResponseFormat.ts"
 
 export type OpenAIAdapter = Adapter<{
   role: "system" | "user"
@@ -71,7 +71,15 @@ export function OpenAIAdapter({
       return openai.chat.completions.create({
         model: model ?? defaultModel,
         messages,
-        response_format: OpenAIResponseFormat(name, type),
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name,
+            description,
+            schema: toJSONSchema(type),
+            strict: true,
+          },
+        },
       })
     },
   }

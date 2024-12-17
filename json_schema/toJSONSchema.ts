@@ -1,8 +1,8 @@
-import { DescriptionContext } from "./DescriptionContext.ts"
-import * as I from "./intrinsics/mod.ts"
+import { DescriptionContext } from "../core/DescriptionContext.ts"
+import * as I from "../core/intrinsics/mod.ts"
+import { type AnyType, isType, type Type } from "../core/Type.ts"
+import { TypeVisitor } from "../core/TypeVisitor.ts"
 import type { JSONType } from "./JSONSchema.ts"
-import { type AnyType, isType, type Type } from "./Type.ts"
-import { TypeVisitor } from "./TypeVisitor.ts"
 
 export function toJSONSchema(type: Type<unknown, any>): JSONType {
   const ctx = new VisitorContext(

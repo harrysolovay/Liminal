@@ -1,6 +1,6 @@
-import * as I from "../intrinsics/mod.ts"
-import type { JSONType } from "../JSONSchema.ts"
-import type { Type } from "../Type.ts"
+import * as I from "../core/intrinsics/mod.ts"
+import type { Type } from "../core/Type.ts"
+import type { JSONType } from "./JSONSchema.ts"
 
 // TODO: handle nested `$defs`?
 export function Hydrated(type: JSONType): Type<unknown> {
