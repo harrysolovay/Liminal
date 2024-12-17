@@ -6,15 +6,18 @@ title: Overview
 
 # Liminal <Badge type="warning" text="beta" />
 
-The near-term aim of Liminal is to simplify declaring and refining structured outputs. The
-longer-term aim is to enable LLMs to declare and evolve type contexts, from which values can be
-materialized and understood. The foundational unit of this stack is a `Type`, which can be used
-across LLMs that support tool-calling (such as [gpt-4o](https://openai.com/index/hello-gpt-4o/),
+Liminal is a library for modeling types for and with LLMs.
+
+The initial aim is to simplify declaring and refining structured outputs. A possible aim of Liminal
+is to enable LLMs to take part in the declaration and evolution of type contexts, from which values
+can be generated and better-understood. The unit of composition in Liminal is a
+[`Type`](./types/index.md), which can be used with any model that support JSON-schema-based
+tool-calling (such as [gpt-4o](https://openai.com/index/hello-gpt-4o/),
 [claude 3.5 Sonnet](https://www.anthropic.com/news/claude-3-5-sonnet),
 [Llama 3.3](https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_3/) and
 [Grok 2 Beta](https://x.ai/blog/grok-2)).
 
-## [Model and Materialize Types](./types/index.md)
+## [Model Types and Generate Values](./types/index.md)
 
 Use Liminal types as structured output schemas. Static types are inferred.
 
@@ -42,17 +45,44 @@ const [latitude, longitude] = await openai.chat.completions
   .then(response_format.deserialize)
 ```
 
+> Note: must configure `tsconfig` such that module resolution mode supports package export subpaths
+> (such as `Node16` or `NodeNext`).
+
 ## [Annotate Types](./annotations/index.md)
 
-Compose types with descriptions and assertions, which serve as additional context to improve the
-quality of outputs.
+Compose types with annotations––such as [descriptions](./annotations/descriptions.md),
+[assertions](./annotations/assertions.md) and [pins](./annotations/pins.md)––which serve as
+additional context to improve the quality of outputs.
 
 ```ts
-const RGBColorChannel = L.number`A channel of an RGB color triple.`(
+const RGBColorChannel = L.number(
   min(0),
   max(255),
-)
+)`A channel of an RGB color triple.`
 ```
+
+## [Iterative Refinement](./concepts/iterative-refinement.md)
+
+Assertion annotations can contain runtime assertion functions. Upon receiving structured outputs,
+clients can run these assertion functions and collect exceptions into diagnostic lists, to be sent
+along with followup requests for corrections. This process can loop until all assertions pass,
+iteratively piecing in valid data.
+
+```ts
+import { L, Liminal } from "liminal"
+import { refine } from "liminal/openai"
+
+const T = L.object({
+  a: L.string,
+  b: L.string,
+})(L.assert(({ a, b }) => a.length > b.length, "`a` must be longer than `b`."))
+
+const refined = await refine(openai, T, {
+  max: 4,
+})
+```
+
+> Here we specify a maximum of 4 iterations.
 
 ## [Transform Types](./types/transform.md)
 
@@ -68,25 +98,6 @@ const HexColor = L.transform(
 ```
 
 > We could use `L.Tuple.N(RGBColorChannel, 3)` for brevity.
-
-## [Iterative Refinement](./concepts/iterative-refinement.md)
-
-Annotate types with any runtime assertions. Upon receiving a structured output, these assertions can
-be run; any exceptions can be serialized into followup requests for corrections. This process can
-loop until all assertions pass, iteratively piecing in valid data.
-
-```ts
-const T = L.object({
-  a: L.string,
-  b: L.string,
-})(L.assert(({ a, b }) => a.length > b.length, "`A` must be longer than `B`"))
-
-const refined = await liminal.value(T, {
-  refine: { max: 4 },
-})
-```
-
-> Here we specify a maximum of 4 iterations.
 
 ## [Type Libraries](./libraries/index)
 

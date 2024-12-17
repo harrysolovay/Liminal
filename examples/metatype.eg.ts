@@ -1,9 +1,9 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
 import { Liminal } from "liminal"
+import { OpenAIAdapter } from "liminal/openai"
 import { dbg } from "testing"
 import { MetaType } from "../json_schema/mod.ts"
-import { OpenAIAdapter } from "../providers/OpenAI/mod.ts"
 
 const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),

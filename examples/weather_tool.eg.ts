@@ -1,5 +1,5 @@
+import { OpenAIAdapter } from "liminal/openai"
 import OpenAI from "openai"
-import { OpenAIAdapter } from "../providers/OpenAI/mod.ts"
 import "@std/dotenv/load"
 import { L, Liminal } from "liminal"
 import { dbg } from "testing"

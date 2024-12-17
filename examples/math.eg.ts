@@ -3,7 +3,7 @@ import "@std/dotenv/load"
 import { dbg } from "testing"
 import "@std/dotenv/load"
 import { L, Liminal } from "liminal"
-import { OpenAIAdapter } from "../providers/OpenAI/mod.ts"
+import { OpenAIAdapter } from "liminal/openai"
 
 const MathReasoning = L.object({
   steps: L.array(L.object({

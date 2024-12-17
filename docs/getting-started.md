@@ -78,9 +78,9 @@ The value of `characters` should look similar to the following.
 
 ## Next Steps
 
-**For app developers**: explore core types, starting with [intrinsic types](./types/intrinsics).
-
-**For library developers**: read [the library guide](./libraries/index).
-
-**For integration developers**: learn how to use [`TypeVisitor`](./libraries/visitor) to both
-analyze types and transform them into other representations.
+- [**For App Developers &rarr;**](./types/intrinsics)<br />Explore core types, starting with
+  intrinsic types.
+- [**For Library Developers &rarr;**](./libraries/index)<br />Learn about utilities and conventions
+  for creating Liminal libraries.
+- [**For Integration Developers &rarr;**](./libraries/visitor)<br /> learn how to operate on types
+  and use `TypeVisitor` to analyze and transform types.

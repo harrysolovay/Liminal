@@ -1,13 +1,13 @@
 # Recursion
 
-Recursive types are supported using `T.deferred`. Recursive type inference, however, is not (due to
-a current limitation of TypeScript). Because of this limitation, we must explicitly type recursive
-types.
+Recursive types are supported using `L.ref`. Recursive type inference, however, is not; this is due
+to a limitation of the TypeScript language itself. This means we must be explicit when declaring
+recursive types.
 
 ```ts {8,10} twoslash
 import { L, Type } from "liminal"
 
-type Person = {
+interface Person {
   name: string
   friends: Person[]
 }

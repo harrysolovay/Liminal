@@ -1,4 +1,4 @@
-import { type AnyType, L, type Type } from "../core/mod.ts"
+import { L, type PartialType, type Type } from "../core/mod.ts"
 import { Hydrated } from "./Hydrated.ts"
 import type { JSONType } from "./JSONSchema.ts"
 
@@ -10,9 +10,9 @@ const JSONType_: Type<JSONType> = L.transform(
     number: null,
     string: null,
     array: L.object({
-      items: L.ref((): AnyType => JSONType_),
+      items: L.ref((): PartialType => JSONType_),
     }),
-    object: L.transform(L.Record(L.ref((): AnyType => JSONType_)), (properties) => ({
+    object: L.transform(L.Record(L.ref((): PartialType => JSONType_)), (properties) => ({
       properties,
       required: Object.keys(properties),
       additionalProperties: false,

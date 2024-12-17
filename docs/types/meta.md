@@ -1,37 +1,32 @@
-<!--@include: ../fragments.md-->
+# Meta Types
 
-# MetaType
-
-`MetaType` is a `Type<Type<unknown, never>, never>`.
-
-It enables us to ask completions for new structured output schemas. We can use these subsequent
-schemas for subsequent completions. The aim of `MetaType` is to enable the LLM to tell you what
-structured output to ask for.
+`MetaType` enables us to generate types which can be used for subsequent structured output requests.
+The aim of meta types is to enable use of models for defining and evolving type contexts.
 
 ```ts
-// @include: openai
-// @include: T
-// @include: rf
+import { L, MetaType } from "liminal"
 // ---cut---
-const response_format = ResponseFormat("story_world_schema", T.MetaType)`
-  Type definition of an object that contains information about a fictional story world.
-`
+import { OpenAIResponseFormat } from "liminal/openai"
 
-const StoryWorld = await openai.chat.completions
-  .create({
-    model: "gpt-4o-mini",
-    messages: [{ role: "system", content: [] }],
-    response_format,
-  })
-  .then(response_format.into)
+const World = await (() => {
+  const response_format = OpenAIResponseFormat("world_type", MetaType)
+  return openai.chat.completions
+    .create({
+      model: "gpt-4o-mini",
+      messages: [{
+        role: "system",
+        content: ["Declare a type representing a fictional story world."],
+      }],
+      response_format,
+    })
+    .then(response_format.into)
+})()
 
-StoryWorld
+World
 // ^?
 ```
 
-<br />
-
-If we inspect this type, we may see something like the following.
+If we inspect the `StoryWorld` type, we may see a type similar to the following.
 
 ```ts
 T.object({
@@ -52,16 +47,18 @@ Let's send a subsequent completion requests using this dynamic type as the respo
 import { ResponseFormat, Type } from "liminal"
 declare const StoryWorld: Type<unknown>
 // ---cut---
+const response_format = OpenAIResponseFormat("world", World)
 
-const dynResponseFormat = ResponseFormat("story_world", StoryWorld)
-
-const world = await openai.chat.completions
+const world = openai.chat.completions
   .create({
     model: "gpt-4o-mini",
-    messages: [{ role: "system", content: [] }],
-    response_format: dynResponseFormat,
+    messages: [{
+      role: "system",
+      content: ["Generate data about a fictional story world."],
+    }],
+    response_format,
   })
-  .then(dynResponseFormat.into)
+  .then(response_format.into)
 ```
 
 Let's now inspect `world`.

@@ -16,10 +16,10 @@ export const MANUAL_SIDEBAR: DefaultTheme.SidebarMulti[string] = {
       collapsed: false,
       link: "/",
       items: [
-        { text: "Intrinsic Types", link: "/intrinsics" },
-        { text: "Utility Types", link: "/utility" },
+        { text: "Intrinsics", link: "/intrinsics" },
+        { text: "Utilities", link: "/utilities" },
         { text: "Recursion", link: "/recursion" },
-        { text: "MetaType", link: "/meta" },
+        { text: "Meta", link: "/meta" },
       ],
     },
     {
@@ -30,7 +30,7 @@ export const MANUAL_SIDEBAR: DefaultTheme.SidebarMulti[string] = {
       items: [
         { text: "Descriptions", link: "/descriptions" },
         { text: "Assertions", link: "/assertions" },
-        { text: "Pinning", link: "/pinning" },
+        { text: "Pins", link: "/pins" },
         { text: "Metadata", link: "/metadata" },
       ],
     },

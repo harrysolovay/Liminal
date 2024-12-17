@@ -1,7 +1,6 @@
 import { L, type Type } from "../core/mod.ts"
 import type { JSONType } from "./JSONSchema.ts"
 
-// TODO: handle nested `$defs`?
 export function Hydrated(type: JSONType): Type<unknown> {
   const types: Record<string, undefined | Type<unknown>> = {}
   return visit(type) as never

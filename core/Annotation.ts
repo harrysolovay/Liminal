@@ -3,13 +3,13 @@ import type { DescriptionArg, DescriptionParam } from "./annotations/Description
 import type { DescriptionTemplate } from "./annotations/DescriptionTemplate.ts"
 import type { Metadata } from "./annotations/Metadata.ts"
 import type { Assert } from "./annotations/mod.ts"
-import type { AnyType } from "./Type.ts"
+import type { PartialType } from "./Type.ts"
 
 export type Annotation<T = any> =
   | Falsy
   | string
   | DescriptionTemplate
-  | AnyType
+  | PartialType
   | DescriptionParam
   | DescriptionArg
   | Assert<T>

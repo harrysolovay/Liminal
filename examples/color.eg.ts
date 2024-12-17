@@ -1,8 +1,8 @@
 import { L, Liminal, type Type } from "liminal"
 import "@std/dotenv/load"
+import { OpenAIAdapter } from "liminal/openai"
 import OpenAI from "openai"
 import { dbg } from "testing"
-import { OpenAIAdapter } from "../providers/OpenAI/mod.ts"
 import * as A from "./assertions.eg.ts"
 
 const ColorHex: Type<string> = L.transform(

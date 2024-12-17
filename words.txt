@@ -25,6 +25,7 @@ subpaths
 subschema
 subschemas
 subvalue
+tsconfigure
 twoslash
 unapplieds
 vitepress

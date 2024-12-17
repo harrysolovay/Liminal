@@ -46,10 +46,10 @@ export default defineConfig({
         text: "Manual",
         link: "/",
       },
-      {
-        text: "Examples",
-        link: "/examples",
-      },
+      // {
+      //   text: "Examples",
+      //   link: "/examples",
+      // },
       {
         text: "GitHub",
         link: "https://github.com/harrysolovay/liminal",

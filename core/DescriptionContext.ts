@@ -1,5 +1,5 @@
 import { recombine } from "../util/mod.ts"
-import type { AnyType } from "./mod.ts"
+import type { PartialType } from "./mod.ts"
 import type { Type } from "./Type.ts"
 
 export function description(type: Type<unknown>): string | undefined {
@@ -8,11 +8,11 @@ export function description(type: Type<unknown>): string | undefined {
 
 export class DescriptionContext {
   constructor(
-    readonly pins: Map<AnyType, string> = new Map(),
+    readonly pins: Map<PartialType, string> = new Map(),
     readonly args: Record<symbol, string> = {},
   ) {}
 
-  pin = (type: AnyType): string => {
+  pin = (type: PartialType): string => {
     let pin = this.pins.get(type)
     if (!pin) {
       pin = this.pins.size.toString()
