@@ -1,6 +1,5 @@
 import { unreachable } from "@std/assert"
-import * as I from "../core/intrinsics/mod.ts"
-import type { AnyType } from "../core/Type.ts"
+import { type AnyType, L } from "../core/mod.ts"
 import type { Expand } from "../util/mod.ts"
 
 export type JSONType = JSONTypes[JSONTypeName]
@@ -53,42 +52,42 @@ namespace JSONTypes {
 
 export function jsonTypeName(type: AnyType): JSONTypeName {
   switch (type.declaration.getAtom?.()) {
-    case I.null: {
+    case L.null: {
       return "null"
     }
-    case I.boolean: {
+    case L.boolean: {
       return "boolean"
     }
-    case I.number: {
+    case L.number: {
       return "number"
     }
-    case I.integer: {
+    case L.integer: {
       return "integer"
     }
-    case I.string: {
+    case L.string: {
       return "string"
     }
   }
   switch (type.declaration.factory) {
-    case I.const: {
+    case L.const: {
       return jsonTypeName(type.declaration.args[0] as AnyType)
     }
-    case I.array: {
+    case L.array: {
       return "array"
     }
-    case I.object: {
+    case L.object: {
       return "object"
     }
-    case I.enum: {
+    case L.enum: {
       return "string"
     }
-    case I.union: {
+    case L.union: {
       return "union"
     }
-    case I.ref: {
+    case L.ref: {
       return "ref"
     }
-    case I.transform: {
+    case L.transform: {
       return jsonTypeName(type.declaration.args[0] as AnyType)
     }
   }

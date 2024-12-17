@@ -1,6 +1,5 @@
 import type { Annotation, ReduceP } from "./Annotation.ts"
 import type { DescriptionTemplatePart } from "./annotations/mod.ts"
-import type { AssertContext } from "./AssertionContext.ts"
 
 export interface Type<T, P extends symbol = never> {
   <A extends Array<DescriptionTemplatePart>>(
@@ -19,19 +18,15 @@ export interface Type<T, P extends symbol = never> {
   annotations: Array<Annotation>
 }
 
-export type TypeDeclaration =
-  & {
-    assert: (value: unknown, assertionContext: AssertContext) => void
-  }
-  & ({
-    getAtom: () => AnyType
-    factory?: never
-    args?: never
-  } | {
-    getAtom?: never
-    factory: (...args: any) => AnyType
-    args: unknown[]
-  })
+export type TypeDeclaration = {
+  getAtom: () => AnyType
+  factory?: never
+  args?: never
+} | {
+  getAtom?: never
+  factory: (...args: any) => AnyType
+  args: unknown[]
+}
 
 export type AnyType<T = any> = Type<T, symbol>
 

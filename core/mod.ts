@@ -1,11 +1,14 @@
 export * as L from "./L.ts"
 
-export * from "../json_schema/JSONSchema.ts"
-export * from "../json_schema/toJSONSchema.ts"
+// moderate --exclude annotations declareIntrinsic.ts inspect.ts L.ts utility
+
 export * from "./Annotation.ts"
-export * from "./AssertionContext.ts"
+export * from "./assert.ts"
 export * from "./DescriptionContext.ts"
 export * from "./deserialize.ts"
+export * from "./display.ts"
+export * from "./intrinsics.ts"
+export * from "./intrinsics_util.ts"
 export * from "./signature.ts"
 export * from "./Type.ts"
 export * from "./TypeVisitor.ts"

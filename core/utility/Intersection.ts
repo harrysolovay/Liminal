@@ -1,5 +1,5 @@
 import type { Expand, U2I } from "../../util/mod.ts"
-import * as I from "../intrinsics/mod.ts"
+import * as I from "../intrinsics.ts"
 import type { AnyType, Type } from "../Type.ts"
 
 export function Intersection<S extends Array<AnyType>>(

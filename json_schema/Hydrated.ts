@@ -1,5 +1,4 @@
-import * as I from "../core/intrinsics/mod.ts"
-import type { Type } from "../core/Type.ts"
+import { L, type Type } from "../core/mod.ts"
 import type { JSONType } from "./JSONSchema.ts"
 
 // TODO: handle nested `$defs`?
@@ -19,27 +18,36 @@ export function Hydrated(type: JSONType): Type<unknown> {
       }
       if ("$ref" in type) {
         const id = type.$ref.split("#/$defs/").pop()!
-        return I.ref(() => types[id]!)
+        return L.ref(() => types[id]!)
       } else if ("anyOf" in type) {
-        return I.union(...type.anyOf.map(visit))
+        return L.union(...type.anyOf.map(visit))
       }
       switch (type.type) {
+        case "null": {
+          return L.null
+        }
+        case "boolean": {
+          return L.boolean
+        }
+        case "integer": {
+          return L.integer
+        }
+        case "number": {
+          return L.number
+        }
         case "string": {
-          return type.enum ? I.enum(...type.enum) : I.string
+          return type.enum ? L.enum(...type.enum) : L.string
         }
         case "array": {
-          return I.array(visit(type.items))
+          return L.array(visit(type.items))
         }
         case "object": {
-          return I.object(
+          return L.object(
             Object.fromEntries(Object.entries(type.properties).map(([k, v]) => [k, visit(v)])),
           )
         }
-        default: {
-          return I[type.type]
-        }
       }
     })()(type.description)
-    return type.const ? I.const(initial, type.const) : initial
+    return type.const ? L.const(initial, type.const) : initial
   }
 }

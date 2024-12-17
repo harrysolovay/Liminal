@@ -1,6 +1,6 @@
 import { encodeBase32 } from "@std/encoding"
 import { WeakMemo } from "../util/WeakMemo.ts"
-import { IntrinsicName } from "./intrinsics.ts"
+import { IntrinsicName } from "./intrinsics_util.ts"
 import type { AnyType } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 

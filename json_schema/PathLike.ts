@@ -1,10 +1,9 @@
-import * as I from "../core/intrinsics/mod.ts"
-import type { Type } from "../core/Type.ts"
+import { L, type Type } from "../core/mod.ts"
 
 export type PathLike = [number | string | Array<number | string>][0]
 
-export const PathLike: Type<PathLike> = I.union(
-  I.integer,
-  I.string,
-  I.array(I.union(I.integer, I.string)),
+export const PathLike: Type<PathLike> = L.union(
+  L.integer,
+  L.string,
+  L.array(L.union(L.integer, L.string)),
 )

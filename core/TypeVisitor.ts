@@ -1,5 +1,5 @@
 import type { Expand } from "../util/mod.ts"
-import { IntrinsicName, type Intrinsics } from "./intrinsics.ts"
+import { IntrinsicName, type Intrinsics } from "./intrinsics_util.ts"
 import type { AnyType } from "./Type.ts"
 
 export type TypeVisitorArms<C, R> = Expand<

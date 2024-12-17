@@ -1,4 +1,5 @@
-import * as I from "./intrinsics/mod.ts"
+import { assert } from "@std/assert"
+import { matchUnionMember } from "./assert.ts"
 import type { Type } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
@@ -19,7 +20,8 @@ const visit = TypeVisitor<unknown, unknown>({
     )
   },
   union(value, _1, ...members): unknown {
-    const matched = I.union.match(members, value)!
+    const matched = matchUnionMember(members, value)!
+    assert(matched)
     return visit(value, matched)
   },
   ref(ctx, _1, get): unknown {

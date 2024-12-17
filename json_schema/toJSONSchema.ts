@@ -1,7 +1,4 @@
-import { DescriptionContext } from "../core/DescriptionContext.ts"
-import * as I from "../core/intrinsics/mod.ts"
-import { type AnyType, isType, type Type } from "../core/Type.ts"
-import { TypeVisitor } from "../core/TypeVisitor.ts"
+import { type AnyType, DescriptionContext, isType, L, type Type, TypeVisitor } from "../core/mod.ts"
 import type { JSONType } from "./JSONSchema.ts"
 
 export function toJSONSchema(type: Type<unknown, any>): JSONType {
@@ -39,7 +36,7 @@ const visit = TypeVisitor<VisitorContext, JSONType>({
     const descriptionCtx = new DescriptionContext(pins, args)
     const description = descriptionCtx.format(type as never)
     const ctx = new VisitorContext(ids, defs, descriptionCtx)
-    if (isType(type, I.array, I.object, I.union)) {
+    if (isType(type, L.array, L.object, L.union)) {
       const id = ctx.id(type)
       if (id in defs) {
         return defs[id] ?? {

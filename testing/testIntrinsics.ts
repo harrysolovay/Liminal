@@ -1,4 +1,4 @@
-import type { IntrinsicName } from "../core/intrinsics.ts"
+import type { IntrinsicName } from "../core/intrinsics_util.ts"
 import type { PromiseOr } from "../util/mod.ts"
 
 export function testIntrinsics<A extends unknown[]>(

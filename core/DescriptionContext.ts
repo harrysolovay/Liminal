@@ -2,8 +2,8 @@ import { recombine } from "../util/mod.ts"
 import type { AnyType } from "./mod.ts"
 import type { Type } from "./Type.ts"
 
-export function description(this: Type<unknown>): string | undefined {
-  return new DescriptionContext(new Map(), {}).format(this)
+export function description(type: Type<unknown>): string | undefined {
+  return new DescriptionContext(new Map(), {}).format(type)
 }
 
 export class DescriptionContext {

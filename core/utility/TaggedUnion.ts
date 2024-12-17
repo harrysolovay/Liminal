@@ -1,6 +1,6 @@
 import type { Falsy } from "@std/assert"
 import type { Expand } from "../../util/mod.ts"
-import * as I from "../intrinsics/mod.ts"
+import * as I from "../intrinsics.ts"
 import type { AnyType, Type } from "../Type.ts"
 
 export function TaggedUnion<M extends Record<string, Falsy | AnyType>>(members: M): Type<

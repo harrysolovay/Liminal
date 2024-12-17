@@ -1,6 +1,4 @@
-import * as I from "../core/intrinsics/mod.ts"
-import type { Type } from "../core/Type.ts"
-import { TaggedUnion } from "../core/utility/mod.ts"
+import { L, type Type } from "../core/mod.ts"
 import { MetaType } from "./MetaType.ts"
 import { PathLike } from "./PathLike.ts"
 
@@ -20,14 +18,14 @@ export type MetaTypeMigration<P extends symbol> = Type<{
   rationale: string
 }, P>
 
-export const MetaTypeMigration: MetaTypeMigration<never> = I.object({
-  id: I.string,
-  defId: I.string,
+export const MetaTypeMigration: MetaTypeMigration<never> = L.object({
+  id: L.string,
+  defId: L.string,
   path: PathLike,
-  change: TaggedUnion({
+  change: L.TaggedUnion({
     Create: MetaType,
     Update: MetaType,
     Delete: null,
   }),
-  rationale: I.string,
+  rationale: L.string,
 })

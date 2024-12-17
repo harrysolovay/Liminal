@@ -1,8 +1,8 @@
-import { isTemplateStringsArray } from "../../util/mod.ts"
-import type { Annotation, ReduceP } from "../Annotation.ts"
-import type { DescriptionTemplatePart } from "../annotations/mod.ts"
-import { inspect } from "../inspect.ts"
-import { type Type, type TypeDeclaration, TypeKey } from "../Type.ts"
+import { isTemplateStringsArray } from "../util/mod.ts"
+import type { Annotation, ReduceP } from "./Annotation.ts"
+import type { DescriptionTemplatePart } from "./annotations/mod.ts"
+import { inspect } from "./inspect.ts"
+import { type Type, type TypeDeclaration, TypeKey } from "./Type.ts"
 
 export function declare<T, P extends symbol>(
   declaration: TypeDeclaration,

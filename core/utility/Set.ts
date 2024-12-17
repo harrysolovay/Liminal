@@ -1,4 +1,4 @@
-import * as I from "../intrinsics/mod.ts"
+import * as I from "../intrinsics.ts"
 import type { Type } from "../Type.ts"
 
 export { Set_ as Set }
