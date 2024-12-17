@@ -5,7 +5,7 @@ import { OpenAIAdapter } from "liminal/openai"
 import { dbg } from "testing"
 
 const Contradiction = L.string`A reason to be sad.`(
-  L.Assert("Is a reason to be happy."),
+  L.Assertion("Is a reason to be happy."),
 )
 
 const liminal = new Liminal(OpenAIAdapter({

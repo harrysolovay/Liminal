@@ -1,6 +1,8 @@
 // moderate
 
-export * from "./Assert.ts"
-export * from "./DescriptionParam.ts"
-export * from "./DescriptionTemplate.ts"
+export * from "./Annotation.ts"
+export * from "./Assertion.ts"
+export * from "./Description.ts"
 export * from "./Metadata.ts"
+export * from "./Param.ts"
+export * from "./Template.ts"

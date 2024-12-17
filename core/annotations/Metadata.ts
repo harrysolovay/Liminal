@@ -1,32 +1,8 @@
-import type { Type } from "../Type.ts"
+import { Param } from "./Param.ts"
 
-export interface Metadata<V = any> {
-  type: "Metadata"
-  key: symbol
-  value: V
-}
+export type Metadata = typeof Metadata
+export const Metadata: unique symbol = Symbol()
 
-export interface MetadataHandle<V> {
-  (value: V): Metadata<V>
-  key: symbol
-}
-
-export function Metadata<V>(key: symbol): MetadataHandle<V> {
-  return Object.assign(
-    (value: V) => ({
-      type: "Metadata",
-      key,
-      value,
-    }),
-    { key },
-  ) as never
-}
-
-export function reduceMetadata<V>(type: Type<unknown>, handle: MetadataHandle<V>): Array<V> {
-  return type.annotations.reduce<Array<V>>((acc, cur) => [
-    ...acc,
-    ...typeof cur === "object" && cur?.type === "Metadata" && cur.key === handle.key
-      ? [cur.value]
-      : [],
-  ], [])
+export function MetadataParam<K extends symbol>(key: K): <T>() => Param<typeof Metadata, K, T> {
+  return () => Param(Metadata, key)
 }

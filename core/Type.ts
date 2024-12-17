@@ -1,13 +1,13 @@
-import type { Annotation, ReduceP } from "./Annotation.ts"
-import type { DescriptionTemplatePart } from "./annotations/mod.ts"
+import type { Annotation } from "./annotations/Annotation.ts"
+import type { ReduceParam, TemplatePart } from "./annotations/mod.ts"
 
 export interface Type<T, P extends symbol = never> {
-  <A extends Array<DescriptionTemplatePart>>(
+  <A extends Array<TemplatePart>>(
     template: TemplateStringsArray,
     ...descriptionParts: A
-  ): Type<T, ReduceP<P, A>>
+  ): Type<T, ReduceParam<P, A>>
 
-  <A extends Array<Annotation<T>>>(...annotations: A): Type<T, ReduceP<P, A>>
+  <A extends Array<Annotation<T>>>(...annotations: A): Type<T, ReduceParam<P, A>>
 
   T: T
   P: P

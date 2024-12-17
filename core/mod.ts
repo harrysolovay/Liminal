@@ -2,7 +2,6 @@ export * as L from "./L.ts"
 
 // moderate --exclude annotations declareIntrinsic.ts inspect.ts L.ts utility
 
-export * from "./Annotation.ts"
 export * from "./assert.ts"
 export * from "./DescriptionContext.ts"
 export * from "./deserialize.ts"

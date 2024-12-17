@@ -17,7 +17,7 @@ const LDate: Type<Date> = L.transform(
       A.number.min(1),
       A.number.max(31),
     ),
-  )(L.Assert(
+  )(L.Assertion(
     "Ensure the day is valid for corresponding year and month.",
     (ymd: [number, number, number]) => assertValidYMD(...ymd),
   )),
