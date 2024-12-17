@@ -38,10 +38,6 @@ await build({
   entryPoints: [
     "./mod.ts",
     {
-      name: "./anthropic",
-      path: "./providers/anthropic/mod.ts",
-    },
-    {
       name: "./openai",
       path: "./providers/openai/mod.ts",
     },

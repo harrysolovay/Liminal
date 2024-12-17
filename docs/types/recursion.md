@@ -12,7 +12,7 @@ type Person = {
   friends: Person[]
 }
 
-const Person: Type<Person, never> = L.object({
+const Person: Type<Person> = L.object({
   name: L.string,
   friends: L.array(L.ref(() => Person)),
 })

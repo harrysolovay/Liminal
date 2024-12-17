@@ -1,12 +1,12 @@
 import { assert } from "@std/assert"
-import { OpenAIAdapter } from "liminal/openai"
 import OpenAI from "openai"
+import { OpenAIAdapter } from "../providers/OpenAI/mod.ts"
 import "@std/dotenv/load"
 import { L, Liminal, type Type } from "liminal"
 import { dbg } from "testing"
 import * as A from "./assertions.eg.ts"
 
-const LDate: Type<Date, never> = L.transform(
+const LDate: Type<Date> = L.transform(
   L.Tuple(
     L.number`Year.`,
     L.number`Month.`(
@@ -17,7 +17,7 @@ const LDate: Type<Date, never> = L.transform(
       A.number.min(1),
       A.number.max(31),
     ),
-  )(L.assert(
+  )(L.Assert(
     "Ensure the day is valid for corresponding year and month.",
     (ymd: [number, number, number]) => assertValidYMD(...ymd),
   )),
@@ -28,7 +28,7 @@ const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-await liminal.session().value(LDate).then(dbg)
+await liminal.value(LDate).then(dbg)
 
 // ...
 

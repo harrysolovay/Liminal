@@ -1,3 +1,4 @@
+import { display } from "./display.ts"
 import type { AnyType } from "./Type.ts"
 
 export const inspect = {
@@ -6,6 +7,6 @@ export const inspect = {
     _inspect: (value: unknown, opts: unknown) => string,
     _opts: unknown,
   ): string {
-    return this.display()
+    return display(this)
   },
 }

@@ -1,8 +1,8 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
 import { L, Liminal } from "liminal"
-import { OpenAIAdapter } from "liminal/openai"
 import { dbg } from "testing"
+import { OpenAIAdapter } from "../providers/OpenAI/mod.ts"
 
 const Dog = L.object({
   bark: L.string,
@@ -24,4 +24,4 @@ const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-await liminal.session().value(Animal).then(dbg)
+await liminal.value(Animal).then(dbg)

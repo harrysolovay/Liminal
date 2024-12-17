@@ -1,5 +1,5 @@
 import type { ArrayOfLength } from "../../util/mod.ts"
-import * as I from "../intrinsics/mod.ts"
+import * as I from "../intrinsics.ts"
 import type { AnyType, Type } from "../Type.ts"
 
 export function Tuple<M extends Array<AnyType>>(

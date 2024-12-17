@@ -1,8 +1,7 @@
-import type { Annotation, DescriptionTemplatePart, MetadataHandle, ReduceP } from "./Annotation.ts"
-import type { AssertionContext } from "./AssertionContext.ts"
-import type { JSONType } from "./JSONSchema.ts"
+import type { Annotation, ReduceP } from "./Annotation.ts"
+import type { DescriptionTemplatePart } from "./annotations/mod.ts"
 
-export interface Type<T, P extends symbol> {
+export interface Type<T, P extends symbol = never> {
   <A extends Array<DescriptionTemplatePart>>(
     template: TemplateStringsArray,
     ...descriptionParts: A
@@ -17,30 +16,17 @@ export interface Type<T, P extends symbol> {
   trace: string
   declaration: TypeDeclaration
   annotations: Array<Annotation>
-
-  display(): string
-  description(): undefined | string
-  signature(): string
-  signatureHash(): Promise<string>
-  metadata<V>(handle: MetadataHandle<V>): Array<V>
-  toJSON(): JSONType
-  assert(value: unknown): Promise<void>
-  deserialize: (jsonText: string) => T
 }
 
-export type TypeDeclaration =
-  & {
-    assert: (value: unknown, assertionContext: AssertionContext) => void
-  }
-  & ({
-    getAtom: () => AnyType
-    factory?: never
-    args?: never
-  } | {
-    getAtom?: never
-    factory: (...args: any) => AnyType
-    args: unknown[]
-  })
+export type TypeDeclaration = {
+  getAtom: () => AnyType
+  factory?: never
+  args?: never
+} | {
+  getAtom?: never
+  factory: (...args: any) => AnyType
+  args: unknown[]
+}
 
 export type AnyType<T = any> = Type<T, symbol>
 

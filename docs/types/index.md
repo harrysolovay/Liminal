@@ -65,8 +65,6 @@ const Reply = L.string`Reply to: "Hello ${"subject"}."`
 
 `P` defaults to `never` (the state in which there are no unfilled parameters).
 
-> See [context parameters](../context/parameters.md)
-
 ## `TypeInfo`
 
 Each type has a corresponding JSON-compatible representation called `TypeInfo`. This representation

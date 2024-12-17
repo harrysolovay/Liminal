@@ -1,11 +1,11 @@
 import { encodeBase32 } from "@std/encoding"
 import { WeakMemo } from "../util/WeakMemo.ts"
-import { IntrinsicName } from "./intrinsics.ts"
+import { IntrinsicName } from "./intrinsics_util.ts"
 import type { AnyType } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
-export function signature(this: AnyType): string {
-  return signatureMemo.getOrInit(this)
+export function signature(type: AnyType): string {
+  return signatureMemo.getOrInit(type)
 }
 const signatureMemo = new WeakMemo<AnyType, string>((type) => {
   const ctx = new SignatureVisitorContext()
@@ -13,8 +13,8 @@ const signatureMemo = new WeakMemo<AnyType, string>((type) => {
   return `{\n  ${Object.entries(ctx.defs).map(([k, v]) => `${k}: ${v}`).join("\n  ")}\n}`
 })
 
-export function signatureHash(this: AnyType): Promise<string> {
-  return signatureHashMemo.getOrInit(this)
+export function signatureHash(type: AnyType): Promise<string> {
+  return signatureHashMemo.getOrInit(type)
 }
 const signatureHashMemo = new WeakMemo<AnyType, Promise<string>>((type) =>
   crypto.subtle

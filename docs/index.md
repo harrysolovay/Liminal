@@ -6,21 +6,17 @@ title: Overview
 
 # Liminal <Badge type="warning" text="beta" />
 
-Liminal is a (WIP) TypeScript library for modeling types for and with LLMs.
-
-The near-term aim of Liminal is to simplify the experience of declaring and refining structured
-outputs. The longer-term aim is to enable LLMs to design and evolve type contexts, from which values
-can be materialized and understood. The foundational layer of this stack is a `Type`, which can be
-used across LLMs that support JSON-schema-based tool calls (such as
-[gpt-4o](https://openai.com/index/hello-gpt-4o/),
+The near-term aim of Liminal is to simplify declaring and refining structured outputs. The
+longer-term aim is to enable LLMs to declare and evolve type contexts, from which values can be
+materialized and understood. The foundational unit of this stack is a `Type`, which can be used
+across LLMs that support tool-calling (such as [gpt-4o](https://openai.com/index/hello-gpt-4o/),
 [claude 3.5 Sonnet](https://www.anthropic.com/news/claude-3-5-sonnet),
 [Llama 3.3](https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_3/) and
 [Grok 2 Beta](https://x.ai/blog/grok-2)).
 
 ## [Model and Materialize Types](./types/index.md)
 
-Model and utilize Liminal types as structured output schemas. Static types are inferred, allowing
-Liminal types to serve as an end-to-end source of truth.
+Use Liminal types as structured output schemas. Static types are inferred.
 
 ```ts {6-9,19,21}
 import { L } from "liminal"
@@ -48,8 +44,8 @@ const [latitude, longitude] = await openai.chat.completions
 
 ## [Annotate Types](./annotations/index.md)
 
-Compose types with semantic descriptions and assertions, which serve as additional context to
-improve the quality of LLM outputs.
+Compose types with descriptions and assertions, which serve as additional context to improve the
+quality of outputs.
 
 ```ts
 const RGBColorChannel = L.number`A channel of an RGB color triple.`(
@@ -60,7 +56,7 @@ const RGBColorChannel = L.number`A channel of an RGB color triple.`(
 
 ## [Transform Types](./types/transform.md)
 
-Specify transforms to abstract over complex intermediate states.
+Abstract over complex intermediate states.
 
 ```ts
 const HexColor = L.transform(
@@ -76,8 +72,8 @@ const HexColor = L.transform(
 ## [Iterative Refinement](./concepts/iterative-refinement.md)
 
 Annotate types with any runtime assertions. Upon receiving a structured output, these assertions can
-be run; any exceptions can be serialized into followup request for corrections. Correction values
-can then be injected into the initial output. This process can loop until all assertions pass.
+be run; any exceptions can be serialized into followup requests for corrections. This process can
+loop until all assertions pass, iteratively piecing in valid data.
 
 ```ts
 const T = L.object({
@@ -92,18 +88,7 @@ const refined = await liminal.value(T, {
 
 > Here we specify a maximum of 4 iterations.
 
-## [LLM-guided Refinement](./concepts/llm-refinement.md)
-
-Assertions can take the form of natural language. Under the hood, the iterative refinement loop can
-call out to LLMs to ensure the qualitative, non-procedural constraint is satisfied.
-
-```ts
-const Contradiction = L.string`A reason to be sad.`(
-  L.assert("Is a reason to be happy."),
-)
-```
-
-## [Type Libraries](./types/libraries.md)
+## [Type Libraries](./libraries/index)
 
 Share types for common use cases.
 

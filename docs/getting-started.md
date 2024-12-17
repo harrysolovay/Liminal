@@ -16,8 +16,6 @@ deno add jsr:@crosshatch/liminal
 
 ## Declare Types
 
-Let's generate super-powered characters.
-
 ```ts twoslash include supe
 import { L } from "liminal"
 
@@ -28,10 +26,7 @@ const Character = L.object({
 })
 ```
 
-## Utilize Types
-
-`Type`s contain [methods](./types/index.md) geared towards enabling a wide range of integrations.
-One such integration is `OpenAIResponseFormat` from the `openai` subpath.
+## `ResponseFormat`
 
 ```ts
 import { OpenAIResponseFormat } from "liminal/openai"
@@ -85,7 +80,7 @@ The value of `characters` should look similar to the following.
 
 **For app developers**: explore core types, starting with [intrinsic types](./types/intrinsics).
 
-**For library developers**: read [the library guide](./types/libraries).
+**For library developers**: read [the library guide](./libraries/index).
 
-**For integration developers**: learn how to use [`TypeVisitor`](./types/visitor) to both analyze
-types and transform them into other representations.
+**For integration developers**: learn how to use [`TypeVisitor`](./libraries/visitor) to both
+analyze types and transform them into other representations.

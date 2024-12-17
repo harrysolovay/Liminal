@@ -1,5 +1,5 @@
 import type { Expand } from "../util/mod.ts"
-import { IntrinsicName, type Intrinsics } from "./intrinsics.ts"
+import { IntrinsicName, type Intrinsics } from "./intrinsics_util.ts"
 import type { AnyType } from "./Type.ts"
 
 export type TypeVisitorArms<C, R> = Expand<
@@ -11,15 +11,15 @@ export type TypeVisitorArms<C, R> = Expand<
     ) => R
   }
   & (
-    | ({ fallback?: never } & IntrinsicArms<C, R>)
+    | ({ fallback?: never } & TypeVisitorIntrinsicArms<C, R>)
     | (
       & { fallback: (ctx: C, type: AnyType, ...args: unknown[]) => R }
-      & Partial<IntrinsicArms<C, R>>
+      & Partial<TypeVisitorIntrinsicArms<C, R>>
     )
   )
 >
 
-type IntrinsicArms<C, R> = {
+export type TypeVisitorIntrinsicArms<C, R> = {
   [K in IntrinsicName]: (
     ctx: C,
     ...rest: Intrinsics[K] extends AnyType ? [type: Intrinsics[K]]

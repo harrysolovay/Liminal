@@ -2,6 +2,10 @@ import { recombine } from "../util/mod.ts"
 import type { AnyType } from "./mod.ts"
 import type { Type } from "./Type.ts"
 
+export function description(type: Type<unknown>): string | undefined {
+  return new DescriptionContext(new Map(), {}).format(type)
+}
+
 export class DescriptionContext {
   constructor(
     readonly pins: Map<AnyType, string> = new Map(),
@@ -17,7 +21,7 @@ export class DescriptionContext {
     return pin
   }
 
-  format = (type: Type<any, never>): undefined | string => {
+  format = (type: Type<unknown>): undefined | string => {
     const assertionDescriptions: Array<string> = []
     let segments: Array<string> = []
     type.annotations.forEach((annotation) => {

@@ -1,5 +1,5 @@
-import { OpenAIAdapter } from "liminal/openai"
 import OpenAI from "openai"
+import { OpenAIAdapter } from "../providers/OpenAI/mod.ts"
 import "@std/dotenv/load"
 import { L, Liminal } from "liminal"
 import { dbg } from "testing"
@@ -8,9 +8,7 @@ const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-const session = liminal.session()
-
-session.tool(
+liminal.tool(
   L.object({
     latitude: L.number,
     longitude: L.number,
@@ -21,7 +19,7 @@ session.tool(
   },
 )
 
-await session.value(L.number, {
+await liminal.value(L.number, {
   messages: [{
     role: "user",
     content: "What is the weather like in New York City?",

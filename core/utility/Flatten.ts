@@ -1,4 +1,4 @@
-import * as I from "../intrinsics/mod.ts"
+import * as I from "../intrinsics.ts"
 import type { AnyType, Type } from "../Type.ts"
 import { Tuple } from "./Tuple.ts"
 
