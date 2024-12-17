@@ -1,11 +1,11 @@
 import { unreachable } from "@std/assert"
 import * as I from "./intrinsics.ts"
-import type { AnyType } from "./Type.ts"
+import type { PartialType } from "./Type.ts"
 
 export type Intrinsics = typeof I
 export type IntrinsicName = keyof Intrinsics
 
-export function IntrinsicName(type: AnyType): IntrinsicName {
+export function IntrinsicName(type: PartialType): IntrinsicName {
   switch (type.declaration.getAtom?.()) {
     case I.null: {
       return "null"

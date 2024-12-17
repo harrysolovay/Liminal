@@ -1,4 +1,4 @@
-import type { AnyType } from "../Type.ts"
+import type { PartialType } from "../Type.ts"
 import type { DescriptionParam } from "./DescriptionParam.ts"
 
 export interface DescriptionTemplate {
@@ -7,4 +7,4 @@ export interface DescriptionTemplate {
   parts: Array<DescriptionTemplatePart>
 }
 
-export type DescriptionTemplatePart = string | AnyType | DescriptionParam
+export type DescriptionTemplatePart = string | PartialType | DescriptionParam

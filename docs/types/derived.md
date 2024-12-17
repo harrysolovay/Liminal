@@ -10,7 +10,7 @@ functions that accept and return types (somewhat of a requirement for [JSR](http
 ```ts
 export type DerivedType<
   T,
-  X extends Array<AnyType>,
+  X extends Array<PartialType>,
   P extends symbol = never,
 >
 ```
@@ -28,10 +28,10 @@ A list of all types from which the new derived type is composed.
 ## Example
 
 ```ts twoslash
-import { AnyType, DerivedType } from "liminal"
+import { DerivedType, PartialType } from "liminal"
 // ---cut---
 
-function LeastLikely<X extends AnyType>(type: X): DerivedType<X["T"], [X]> {
+function LeastLikely<X extends PartialType>(type: X): DerivedType<X["T"], [X]> {
   return type`Ensure that this value is the least likely version of itself.`
 }
 ```

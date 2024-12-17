@@ -1,4 +1,10 @@
-import { type AnyType, DescriptionContext, isType, L, type Type, TypeVisitor } from "../core/mod.ts"
+import {
+  DescriptionContext,
+  isType,
+  type PartialType,
+  type Type,
+  TypeVisitor,
+} from "../core/mod.ts"
 import type { JSONType } from "./JSONSchema.ts"
 
 export function toJSONSchema(type: Type<unknown, any>): JSONType {
@@ -14,12 +20,12 @@ export function toJSONSchema(type: Type<unknown, any>): JSONType {
 
 class VisitorContext {
   constructor(
-    readonly ids: Map<AnyType, string>,
+    readonly ids: Map<PartialType, string>,
     readonly defs: Record<string, undefined | JSONType>,
     readonly descriptionCtx: DescriptionContext,
   ) {}
 
-  id(type: AnyType): string {
+  id(type: PartialType): string {
     let id = this.ids.get(type)
     if (id === undefined) {
       id = this.ids.size.toString()
@@ -36,7 +42,7 @@ const visit = TypeVisitor<VisitorContext, JSONType>({
     const descriptionCtx = new DescriptionContext(pins, args)
     const description = descriptionCtx.format(type as never)
     const ctx = new VisitorContext(ids, defs, descriptionCtx)
-    if (isType(type, L.array, L.object, L.union)) {
+    if (isType(type, "array", "object", "union")) {
       const id = ctx.id(type)
       if (id in defs) {
         return defs[id] ?? {

@@ -1,5 +1,5 @@
 import { declare } from "./declareIntrinsic.ts"
-import type { AnyType, Type } from "./Type.ts"
+import type { PartialType, Type } from "./Type.ts"
 
 export { null_ as null }
 const null_: Type<null> = declare({
@@ -41,7 +41,7 @@ export function array<T, P extends symbol>(element: Type<T, P>): Type<Array<T>, 
   })
 }
 
-export function object<F extends Record<string, AnyType>>(
+export function object<F extends Record<string, PartialType>>(
   fields: F,
 ): Type<{ [K in keyof F]: F[K]["T"] }, F[keyof F]["P"]> {
   return declare({
@@ -59,7 +59,7 @@ function enum_<V extends Array<string>>(...values: V): Type<V[number]> {
 }
 Object.defineProperty(enum_, "name", { value: "enum" })
 
-export function union<M extends Array<AnyType>>(
+export function union<M extends Array<PartialType>>(
   ...members: M
 ): Type<M[number]["T"], M[number]["P"]> {
   return declare({

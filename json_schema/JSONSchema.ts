@@ -1,5 +1,5 @@
 import { unreachable } from "@std/assert"
-import { type AnyType, L } from "../core/mod.ts"
+import { L, type PartialType } from "../core/mod.ts"
 import type { Expand } from "../util/mod.ts"
 
 export type JSONType = JSONTypes[JSONTypeName]
@@ -50,7 +50,7 @@ namespace JSONTypes {
   }
 }
 
-export function jsonTypeName(type: AnyType): JSONTypeName {
+export function jsonTypeName(type: PartialType): JSONTypeName {
   switch (type.declaration.getAtom?.()) {
     case L.null: {
       return "null"
@@ -70,7 +70,7 @@ export function jsonTypeName(type: AnyType): JSONTypeName {
   }
   switch (type.declaration.factory) {
     case L.const: {
-      return jsonTypeName(type.declaration.args[0] as AnyType)
+      return jsonTypeName(type.declaration.args[0] as PartialType)
     }
     case L.array: {
       return "array"
@@ -88,7 +88,7 @@ export function jsonTypeName(type: AnyType): JSONTypeName {
       return "ref"
     }
     case L.transform: {
-      return jsonTypeName(type.declaration.args[0] as AnyType)
+      return jsonTypeName(type.declaration.args[0] as PartialType)
     }
   }
   unreachable()

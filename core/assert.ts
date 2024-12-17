@@ -1,9 +1,9 @@
 import * as A from "@std/assert"
-import type { AnyType, Type } from "./Type.ts"
+import type { PartialType, Type } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
 export interface Diagnostic {
-  type: AnyType
+  type: PartialType
   path: string
   exception: unknown
   value: unknown
@@ -31,7 +31,7 @@ export async function assert(type: Type<any>, value: unknown): Promise<void> {
   }
 }
 
-export function matchUnionMember(members: Array<AnyType>, value: unknown): AnyType | void {
+export function matchUnionMember(members: Array<PartialType>, value: unknown): PartialType | void {
   const queue = [...members]
   while (queue.length) {
     const current = queue.pop()!

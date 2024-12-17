@@ -1,9 +1,9 @@
 import { display } from "./display.ts"
-import type { AnyType } from "./Type.ts"
+import type { PartialType } from "./Type.ts"
 
 export const inspect = {
   [Symbol.for("nodejs.util.inspect.custom")](
-    this: AnyType,
+    this: PartialType,
     _0: unknown,
     _1: unknown,
     _inspect_: (value: unknown) => string,

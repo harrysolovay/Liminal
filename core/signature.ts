@@ -1,22 +1,22 @@
 import { encodeBase32 } from "@std/encoding"
 import { WeakMemo } from "../util/WeakMemo.ts"
 import { IntrinsicName } from "./intrinsics_util.ts"
-import type { AnyType } from "./Type.ts"
+import type { PartialType } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
-export function signature(type: AnyType): string {
+export function signature(type: PartialType): string {
   return signatureMemo.getOrInit(type)
 }
-const signatureMemo = new WeakMemo<AnyType, string>((type) => {
+const signatureMemo = new WeakMemo<PartialType, string>((type) => {
   const ctx = new SignatureVisitorContext()
   visit(ctx, type)
   return `{\n  ${Object.entries(ctx.defs).map(([k, v]) => `${k}: ${v}`).join("\n  ")}\n}`
 })
 
-export function signatureHash(type: AnyType): Promise<string> {
+export function signatureHash(type: PartialType): Promise<string> {
   return signatureHashMemo.getOrInit(type)
 }
-const signatureHashMemo = new WeakMemo<AnyType, Promise<string>>((type) =>
+const signatureHashMemo = new WeakMemo<PartialType, Promise<string>>((type) =>
   crypto.subtle
     .digest("SHA-256", new TextEncoder().encode(signatureMemo.getOrInit(type)))
     .then(encodeBase32)
@@ -24,7 +24,7 @@ const signatureHashMemo = new WeakMemo<AnyType, Promise<string>>((type) =>
 )
 
 class SignatureVisitorContext {
-  ids: Map<AnyType, string> = new Map()
+  ids: Map<PartialType, string> = new Map()
   defs: Record<string, undefined | string> = {}
 }
 

@@ -34,7 +34,10 @@ export function OpenAIAdapter({
 }): OpenAIAdapter {
   const formatInput: OpenAIAdapter["formatInput"] = (texts, role) => ({
     role: role ?? "system",
-    content: texts.filter((v): v is string => !!v).map((text) => ({ type: "text", text })),
+    content: texts.filter((v): v is string => !!v).map((text) => ({
+      type: "text",
+      text,
+    })),
   })
 
   const text: OpenAIAdapter["text"] = (messages, config) =>

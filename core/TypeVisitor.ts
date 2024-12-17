@@ -1,19 +1,19 @@
 import type { Expand } from "../util/mod.ts"
 import { IntrinsicName, type Intrinsics } from "./intrinsics_util.ts"
-import type { AnyType } from "./Type.ts"
+import type { PartialType } from "./Type.ts"
 
 export type TypeVisitorArms<C, R> = Expand<
   & {
     hook?: (
-      next: (ctx: C, type: AnyType) => R,
+      next: (ctx: C, type: PartialType) => R,
       ctx: C,
-      type: AnyType,
+      type: PartialType,
     ) => R
   }
   & (
     | ({ fallback?: never } & TypeVisitorIntrinsicArms<C, R>)
     | (
-      & { fallback: (ctx: C, type: AnyType, ...args: unknown[]) => R }
+      & { fallback: (ctx: C, type: PartialType, ...args: unknown[]) => R }
       & Partial<TypeVisitorIntrinsicArms<C, R>>
     )
   )
@@ -22,19 +22,19 @@ export type TypeVisitorArms<C, R> = Expand<
 export type TypeVisitorIntrinsicArms<C, R> = {
   [K in IntrinsicName]: (
     ctx: C,
-    ...rest: Intrinsics[K] extends AnyType ? [type: Intrinsics[K]]
+    ...rest: Intrinsics[K] extends PartialType ? [type: Intrinsics[K]]
       : [type: ReturnType<Intrinsics[K]>, ...args: Parameters<Intrinsics[K]>]
   ) => R
 }
 
-export function TypeVisitor<C, R>(arms: TypeVisitorArms<C, R>): (ctx: C, type: AnyType) => R {
+export function TypeVisitor<C, R>(arms: TypeVisitorArms<C, R>): (ctx: C, type: PartialType) => R {
   const { hook } = arms
   if (hook) {
     return (ctx, type) => hook(next, ctx, type)
   }
   return next
 
-  function next(ctx: C, type: AnyType): R {
+  function next(ctx: C, type: PartialType): R {
     return (arms[IntrinsicName(type)] ?? arms.fallback!)(
       ctx,
       type as never,

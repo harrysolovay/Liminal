@@ -19,43 +19,21 @@ export interface Type<T, P extends symbol = never> {
 }
 
 export type TypeDeclaration = {
-  getAtom: () => AnyType
+  getAtom: () => PartialType
   factory?: never
   args?: never
 } | {
   getAtom?: never
-  factory: (...args: any) => AnyType
+  factory: (...args: any) => PartialType
   args: unknown[]
 }
 
-export type AnyType<T = any> = Type<T, symbol>
+export type PartialType<T = any> = Type<T, symbol>
 
 export type DerivedType<
   T,
-  X extends Array<AnyType>,
+  X extends Array<PartialType>,
   P extends symbol = never,
 > = [Type<T, P | X[number]["P"]>][0]
 
 export const TypeKey: unique symbol = Symbol()
-
-export function isType<T>(
-  value: unknown,
-  ...intrinsics: Array<AnyType<T> | ((...args: any) => AnyType<T>)>
-): value is AnyType<T> {
-  if (typeof value === "function" && TypeKey in value) {
-    if (intrinsics.length) {
-      const { declaration } = value as never as AnyType
-      for (const intrinsic of intrinsics) {
-        const matched = isType(intrinsic)
-          ? declaration.getAtom?.() === intrinsic
-          : declaration.factory === intrinsic
-        if (matched) {
-          return true
-        }
-      }
-    } else {
-      return true
-    }
-  }
-  return false
-}
