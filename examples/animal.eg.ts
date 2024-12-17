@@ -24,4 +24,4 @@ const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-await liminal.session().value(Animal).then(dbg)
+await liminal.value(Animal).then(dbg)

@@ -3,7 +3,7 @@ import type { JSONType as JSONType_ } from "../JSONSchema.ts"
 import type { AnyType, Type } from "../Type.ts"
 import { Record, TaggedUnion } from "../utility/mod.ts"
 
-export const JSONType: Type<JSONType_, never> = I.transform(
+export const JSONType: Type<JSONType_> = I.transform(
   TaggedUnion({
     null: null,
     boolean: null,

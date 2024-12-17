@@ -1,6 +1,6 @@
 import { assert, assertEquals } from "@std/assert"
-import { declare } from "../declare.ts"
 import type { AnyType, Type } from "../Type.ts"
+import { declare } from "./declare.ts"
 
 export function object<F extends Record<string, AnyType>>(
   fields: F,

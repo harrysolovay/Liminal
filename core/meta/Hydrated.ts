@@ -3,12 +3,12 @@ import type { JSONType } from "../JSONSchema.ts"
 import type { Type } from "../Type.ts"
 
 // TODO: handle nested `$defs`?
-export function Hydrated(type: JSONType): Type<unknown, never> {
-  const types: Record<string, undefined | Type<unknown, never>> = {}
+export function Hydrated(type: JSONType): Type<unknown> {
+  const types: Record<string, undefined | Type<unknown>> = {}
   return visit(type) as never
 
   function visit(type: JSONType) {
-    const initial = ((): Type<unknown, never> => {
+    const initial = ((): Type<unknown> => {
       if ("$defs" in type && type.$defs) {
         Object.entries(type.$defs).forEach(([id, jsonType]) => {
           if (!(id in types)) {

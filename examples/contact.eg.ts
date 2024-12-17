@@ -14,7 +14,7 @@ const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-await liminal.session().value(Contact, {
+await liminal.value(Contact, {
   messages: [
     {
       role: "system",

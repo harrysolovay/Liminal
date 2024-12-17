@@ -17,8 +17,8 @@ export namespace Diagnostic {
   }
 }
 
-export async function assert(this: Type<any, never>, value: unknown): Promise<void> {
-  const ctx = new AssertionContext("root", [], [])
+export async function assert(this: Type<any>, value: unknown): Promise<void> {
+  const ctx = new AssertContext("root", [], [])
   ctx.visit(this, value)
   const diagnostics = [
     ...ctx.structuralDiagnostics,
@@ -29,7 +29,7 @@ export async function assert(this: Type<any, never>, value: unknown): Promise<vo
   }
 }
 
-export class AssertionContext {
+export class AssertContext {
   constructor(
     readonly path: string,
     readonly structuralDiagnostics: Array<Diagnostic>,
@@ -45,7 +45,7 @@ export class AssertionContext {
     try {
       type.declaration.assert(
         value,
-        new AssertionContext(path, this.structuralDiagnostics, this.annotationDiagnostics),
+        new AssertContext(path, this.structuralDiagnostics, this.annotationDiagnostics),
       )
     } catch (exception: unknown) {
       this.structuralDiagnostics.push({ type, exception, value, path })

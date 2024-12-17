@@ -4,13 +4,13 @@ import type { JSONType } from "./JSONSchema.ts"
 import { type AnyType, isType, type Type } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
-export function toJSON(this: Type<unknown, any>): JSONType {
+export function toJSONSchema(type: Type<unknown, any>): JSONType {
   const ctx = new VisitorContext(
     new Map(),
     {},
     new DescriptionContext(new Map(), {}),
   )
-  const root = visit(ctx, this)
+  const root = visit(ctx, type)
   const { "0": _root, ...$defs } = ctx.defs
   return { ...root, $defs } as never
 }

@@ -1,6 +1,6 @@
 import type { Type } from "../core/mod.ts"
 import type { AdapterDescriptor } from "./Adapter.ts"
-import type { Session } from "./Session.ts"
+import type { Liminal } from "./Liminal.ts"
 
 export interface ToolConfig<T = any> {
   description: string
@@ -10,8 +10,8 @@ export interface ToolConfig<T = any> {
 
 export class Tool<D extends AdapterDescriptor, T> {
   constructor(
-    readonly session: Session<D>,
-    readonly type: Type<T, never>,
+    readonly liminal: Liminal<D>,
+    readonly type: Type<T>,
     readonly config: ToolConfig,
   ) {}
 }

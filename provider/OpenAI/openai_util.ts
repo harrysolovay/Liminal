@@ -1,6 +1,5 @@
 import { assert } from "@std/assert"
 import type { ChatCompletion, ChatCompletionMessage } from "openai/resources/chat/completions"
-import { L, type Type } from "../../core/mod.ts"
 
 export function unwrapOutput({ choices: [choice] }: ChatCompletion): ChatCompletionMessage {
   assert(choice, "No choices contained within the completion response.")
@@ -17,9 +16,4 @@ export function unwrapOutput({ choices: [choice] }: ChatCompletion): ChatComplet
 export function unwrapRaw({ content }: ChatCompletionMessage): string {
   assert(typeof content === "string")
   return content
-}
-
-// TODO: avoid unnecessary transforms
-export function transformRootType<T>(type: Type<T, never>) {
-  return L.transform(L.object({ value: type }), ({ value }) => value)
 }

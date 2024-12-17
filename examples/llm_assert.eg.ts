@@ -5,11 +5,11 @@ import { OpenAIAdapter } from "liminal/openai"
 import { dbg } from "testing"
 
 const Contradiction = L.string`A reason to be sad.`(
-  L.assert("Is a reason to be happy."),
+  L.Assert("Is a reason to be happy."),
 )
 
 const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-await liminal.session().value(Contradiction).then(dbg)
+await liminal.value(Contradiction).then(dbg)

@@ -1,7 +1,7 @@
 import { assert } from "@std/assert"
-import { AssertionContext, type Diagnostic } from "../AssertionContext.ts"
-import { declare } from "../declare.ts"
+import { AssertContext, type Diagnostic } from "../AssertionContext.ts"
 import type { AnyType, Type } from "../Type.ts"
+import { declare } from "./declare.ts"
 
 export function union<M extends Array<AnyType>>(
   ...members: M
@@ -26,7 +26,7 @@ export namespace union {
     while (queue.length) {
       const current = queue.pop()!
       const exceptions: Array<Diagnostic> = []
-      new AssertionContext("", exceptions).visit(current, value)
+      new AssertContext("", exceptions).visit(current, value)
       if (exceptions.length) {
         continue
       }

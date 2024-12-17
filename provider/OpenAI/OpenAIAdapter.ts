@@ -1,4 +1,3 @@
-import type { Falsy } from "@std/assert"
 import type Openai from "openai"
 import type { ChatModel } from "openai/resources/chat/chat"
 import type {
@@ -8,50 +7,55 @@ import type {
 } from "openai/resources/chat/completions"
 import {
   type Adapter,
-  type AdapterDefaults,
   DEFAULT_INSTRUCTIONS,
   DescriptionContext,
   L,
-  type TextConfig,
+  signatureHash,
 } from "../../mod.ts"
-import { transformRootType, unwrapOutput, unwrapRaw } from "./openai_util.ts"
+import { unwrapOutput, unwrapRaw } from "./openai_util.ts"
+import { OpenAIResponseFormat } from "./OpenAIResponseFormat.ts"
 
-export interface OpenAIAdapterDescriptor {
+export type OpenAIAdapter = Adapter<{
   role: "system" | "user"
   model: (string & {}) | ChatModel
   completion: ChatCompletion
   I: ChatCompletionMessageParam
   O: ChatCompletionMessage
-}
-
-export interface OpenAIAdapterConfig {
-  openai: Openai
-  defaultModel?: (string & {}) | ChatModel
-  defaultInstructions?: string
-  onCompletion?: (completion: ChatCompletion) => void
-}
+}>
 
 export function OpenAIAdapter({
   openai,
   defaultModel = "gpt-4o-mini",
   defaultInstructions = DEFAULT_INSTRUCTIONS,
-  onCompletion,
-}: OpenAIAdapterConfig): Adapter<OpenAIAdapterDescriptor> {
-  const defaults: AdapterDefaults<OpenAIAdapterDescriptor> = {
-    model: defaultModel,
-    role: "user",
-    opening: {
-      role: "system",
-      content: defaultInstructions,
-    },
-  }
+}: {
+  openai: Openai
+  defaultModel?: (string & {}) | ChatModel
+  defaultInstructions?: string
+}): OpenAIAdapter {
+  const formatInput: OpenAIAdapter["formatInput"] = (texts, role) => ({
+    role: role ?? "system",
+    content: texts.filter((v): v is string => !!v).map((text) => ({ type: "text", text })),
+  })
+
+  const text: OpenAIAdapter["text"] = (messages, config) =>
+    openai.chat.completions.create({
+      model: config?.model ?? defaultModel,
+      messages,
+    })
+
   return {
-    defaults,
+    defaults: {
+      model: defaultModel,
+      role: "user",
+      opening: {
+        role: "system",
+        content: defaultInstructions,
+      },
+    },
     formatInput,
     unwrapOutput,
     unwrapRaw,
     text,
-    transformRootType,
     value: async (type, { messages, name, description, model }) => {
       messages ??= []
       const descriptionCtx = new DescriptionContext()
@@ -62,50 +66,13 @@ export function OpenAIAdapter({
         ])
       }
       if (!name) {
-        name = await type.signatureHash()
+        name = await signatureHash(type)
       }
-      const completion = await openai.chat.completions.create({
-        model: model ?? defaults.model,
+      return openai.chat.completions.create({
+        model: model ?? defaultModel,
         messages,
-        response_format: {
-          type: "json_schema",
-          json_schema: {
-            name,
-            description,
-            schema: type.toJSON(),
-            strict: true,
-          },
-        },
+        response_format: OpenAIResponseFormat(name, type),
       })
-      onCompletion?.(completion)
-      return completion
     },
-  }
-
-  function formatInput(
-    texts: Array<string | Falsy>,
-    role?: OpenAIAdapterDescriptor["role"],
-  ): OpenAIAdapterDescriptor["I"] {
-    return {
-      role: role ?? defaults.role,
-      content: texts
-        .filter((v): v is string => !!v)
-        .map((text) => ({
-          type: "text",
-          text,
-        })),
-    }
-  }
-
-  async function text(
-    messages: Array<ChatCompletionMessageParam>,
-    config?: TextConfig<OpenAIAdapterDescriptor>,
-  ): Promise<ChatCompletion> {
-    const completion = await openai.chat.completions.create({
-      model: config?.model ?? defaults.model,
-      messages,
-    })
-    onCompletion?.(completion)
-    return completion
   }
 }

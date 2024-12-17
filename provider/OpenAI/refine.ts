@@ -101,7 +101,7 @@ export {}
 //   return root
 // }
 
-// function Corrections(diagnostics: Array<Diagnostic>): Type<any, never> {
+// function Corrections(diagnostics: Array<Diagnostic>): Type<any> {
 //   return T.object(
 //     Object.fromEntries(
 //       diagnostics.map(({ valuePath, type }) => [valuePath, type]),

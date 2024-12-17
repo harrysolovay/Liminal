@@ -5,7 +5,7 @@ import OpenAI from "openai"
 import { dbg } from "testing"
 import * as A from "./assertions.eg.ts"
 
-const ColorHex: Type<string, never> = L.transform(
+const ColorHex: Type<string> = L.transform(
   L.Tuple.N(
     L.number(
       A.number.min(0),
@@ -20,4 +20,4 @@ const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-await liminal.session().value(ColorHex).then(dbg)
+await liminal.value(ColorHex).then(dbg)

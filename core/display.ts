@@ -2,8 +2,8 @@ import { IntrinsicName } from "./intrinsics.ts"
 import type { AnyType } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
-export function display(this: AnyType): string {
-  return visit(new DisplayContext(this, false, 0), this)
+export function display(type: AnyType): string {
+  return visit(new DisplayContext(type, false, 0), type)
 }
 
 class DisplayContext {

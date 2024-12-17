@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert"
-import { declare } from "../declare.ts"
 import type { Type } from "../Type.ts"
+import { declare } from "./declare.ts"
 
 export { const_ as const }
 function const_<T, P extends symbol, const A extends T>(

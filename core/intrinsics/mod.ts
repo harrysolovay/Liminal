@@ -1,4 +1,4 @@
-// moderate
+// moderate --exclude declare.ts
 
 export * from "./array.ts"
 export * from "./const.ts"

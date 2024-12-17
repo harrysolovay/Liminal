@@ -17,7 +17,7 @@ const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-await liminal.session().value(MathReasoning, {
+await liminal.value(MathReasoning, {
   messages: [
     {
       role: "system",

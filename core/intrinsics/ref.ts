@@ -1,5 +1,5 @@
-import { declare } from "../declare.ts"
 import type { Type } from "../Type.ts"
+import { declare } from "./declare.ts"
 
 export function ref<T, P extends symbol>(
   get: () => Type<T, P>,

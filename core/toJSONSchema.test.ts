@@ -1,7 +1,7 @@
 import { assertSnapshot } from "@std/testing/snapshot"
 import { testIntrinsics } from "testing"
 import { L } from "./mod.ts"
-import { toJSON } from "./toJSON.ts"
+import { toJSONSchema } from "./toJSONSchema.ts"
 import type { Type } from "./Type.ts"
 
 testIntrinsics("toJSON", assertTypeSnapshot, {
@@ -49,9 +49,9 @@ testIntrinsics("toJSON", assertTypeSnapshot, {
   ],
 })
 
-async function assertTypeSnapshot(t: Deno.TestContext, type: Type<unknown, never>): Promise<void> {
-  await assertSnapshot(t, toJSON.call(type))
+async function assertTypeSnapshot(t: Deno.TestContext, type: Type<unknown>): Promise<void> {
+  await assertSnapshot(t, toJSONSchema(type))
   const withContext = type`One.`
-  await assertSnapshot(t, toJSON.call(withContext))
-  await assertSnapshot(t, toJSON.call(withContext`Two.`))
+  await assertSnapshot(t, toJSONSchema(withContext))
+  await assertSnapshot(t, toJSONSchema(withContext`Two.`))
 }

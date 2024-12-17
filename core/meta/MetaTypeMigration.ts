@@ -10,10 +10,10 @@ export type MetaTypeMigration<P extends symbol> = Type<{
   path: PathLike
   change: {
     type: "Create"
-    value: Type<unknown, never>
+    value: Type<unknown>
   } | {
     type: "Update"
-    value: Type<unknown, never>
+    value: Type<unknown>
   } | {
     type: "Delete"
   }

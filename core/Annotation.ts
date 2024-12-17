@@ -1,5 +1,8 @@
 import type { Falsy } from "@std/assert"
-import type { PromiseOr } from "../util/mod.ts"
+import type { DescriptionArg, DescriptionParam } from "./annotations/DescriptionParam.ts"
+import type { DescriptionTemplate } from "./annotations/DescriptionTemplate.ts"
+import type { Metadata } from "./annotations/Metadata.ts"
+import type { Assert } from "./annotations/mod.ts"
 import type { AnyType } from "./Type.ts"
 
 export type Annotation<T = any> =
@@ -9,47 +12,8 @@ export type Annotation<T = any> =
   | AnyType
   | DescriptionParam
   | DescriptionArg
-  | Assertion<T>
+  | Assert<T>
   | Metadata
-
-export interface DescriptionTemplate {
-  type: "DescriptionTemplate"
-  template: TemplateStringsArray
-  parts: Array<DescriptionTemplatePart>
-}
-
-export type DescriptionTemplatePart = string | AnyType | DescriptionParam
-
-export interface DescriptionParam<K extends symbol = symbol, T = any> {
-  (arg: T): DescriptionArg<K, T>
-  type: "DescriptionParam"
-  key: K
-}
-
-export interface DescriptionArg<K extends symbol = symbol, T = any> {
-  type: "DescriptionArg"
-  key: K
-  value: T
-  serializer?: (value: T) => string
-}
-
-export interface Assertion<T = any, A extends Array<unknown> = Array<any>> {
-  type: "Assertion"
-  description: string | ((...args: A) => string)
-  f?: (value: T, ...args: A) => PromiseOr<void>
-  args?: A
-}
-
-export interface Metadata<V = any> {
-  type: "Metadata"
-  key: symbol
-  value: V
-}
-
-export interface MetadataHandle<V> {
-  (value: V): Metadata<V>
-  key: symbol
-}
 
 export type ReduceP<D extends symbol, A extends Array<Annotation>> = A extends
   [infer Part0, ...infer PartRest extends Array<Annotation>] ? ReduceP<

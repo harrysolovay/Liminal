@@ -3,7 +3,7 @@ import type { Type } from "../Type.ts"
 
 export type PathLike = [number | string | Array<number | string>][0]
 
-export const PathLike: Type<PathLike, never> = I.union(
+export const PathLike: Type<PathLike> = I.union(
   I.integer,
   I.string,
   I.array(I.union(I.integer, I.string)),

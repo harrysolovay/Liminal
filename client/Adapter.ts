@@ -1,3 +1,4 @@
+import type { Falsy } from "@std/assert"
 import type { Type } from "../core/mod.ts"
 
 export interface AdapterDescriptor {
@@ -16,14 +17,12 @@ export interface AdapterDescriptor {
 export interface Adapter<D extends AdapterDescriptor> {
   /** Default configuration for the provider. */
   defaults: AdapterDefaults<D>
-  /** Type transform to apply. Useful in cases where certain types are not allowed to be root types. */
-  transformRootType?: <T>(type: Type<T, never>) => Type<T, never>
   /** Format text into the provider's message type. */
-  formatInput: (texts: Array<string>, role?: D["role"]) => D["I"]
+  formatInput: (texts: Array<Falsy | string>, role?: D["role"]) => D["I"]
   /** Request a text completion. */
   text: (messages: Array<D["I" | "O"]>, config?: TextConfig<D>) => Promise<D["completion"]>
   /** Request a structured output completion. */
-  value: <T>(type: Type<T, never>, params: ValueConfig<D>) => Promise<D["completion"]>
+  value: <T>(type: Type<T>, params: ValueConfig<D>) => Promise<D["completion"]>
   /** Unwrap the message from the completion. */
   unwrapOutput: (message: D["completion"]) => D["O"]
   /** Unwrap the content from within the completion message. */
@@ -43,10 +42,9 @@ export interface TextConfig<D extends AdapterDescriptor> {
   model?: D["model"]
 }
 
-export interface ValueConfig<D extends AdapterDescriptor> {
+export interface ValueConfig<D extends AdapterDescriptor> extends TextConfig<D> {
   messages?: Array<D["I" | "O"]>
   name?: string
   description?: string
-  model?: D["model"]
   refine?: boolean
 }

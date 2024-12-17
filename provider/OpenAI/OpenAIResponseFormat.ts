@@ -1,7 +1,8 @@
 import type { ChatCompletion } from "openai/resources/chat/completions"
 import type { Type } from "../../core/mod.ts"
+import { deserialize, L, toJSONSchema } from "../../mod.ts"
 import { recombine } from "../../util/mod.ts"
-import { transformRootType, unwrapOutput, unwrapRaw } from "./openai_util.ts"
+import { unwrapOutput, unwrapRaw } from "./openai_util.ts"
 
 export interface OpenAIResponseFormat<T> extends OpenAIFinalResponseFormat<T> {
   (template: TemplateStringsArray, ...values: Array<number | string>): OpenAIFinalResponseFormat<T>
@@ -19,10 +20,7 @@ export interface OpenAIFinalResponseFormat<T> {
   toJSON(): Pick<OpenAIFinalResponseFormat<T>, "type" | "json_schema">
 }
 
-export function OpenAIResponseFormat<T>(
-  name: string,
-  type: Type<T, never>,
-): OpenAIResponseFormat<T> {
+export function OpenAIResponseFormat<T>(name: string, type: Type<T>): OpenAIResponseFormat<T> {
   return Object.assign(
     (template: TemplateStringsArray, ...values: Array<number | string>) =>
       OpenAIFinalResponseFormat(name, type, recombine(template, values)),
@@ -32,20 +30,20 @@ export function OpenAIResponseFormat<T>(
 
 function OpenAIFinalResponseFormat<T>(
   name: string,
-  type: Type<T, never>,
+  type: Type<T>,
   description?: string,
 ): OpenAIFinalResponseFormat<T> {
-  type = transformRootType(type)
+  type = L.transform(L.Tuple(type), ([value]) => value)
   return {
     type: "json_schema",
     json_schema: {
       name,
       description,
-      schema: type.toJSON(),
+      schema: toJSONSchema(type),
       strict: true,
     },
     deserialize: (completion: ChatCompletion): T =>
-      type.deserialize(unwrapRaw(unwrapOutput(completion))),
+      deserialize(type, unwrapRaw(unwrapOutput(completion))),
     toJSON() {
       const { type, json_schema } = this
       return { type, json_schema }

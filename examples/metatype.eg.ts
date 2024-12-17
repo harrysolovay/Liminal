@@ -8,13 +8,11 @@ const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-const session = liminal.session()
-
-const World = await session.value(L.MetaType, {
+const World = await liminal.value(L.MetaType, {
   messages: [{
     role: "user",
     content: "What data type might describe the ontology of a magical story world?",
   }],
 }).then(dbg)
 
-await session.value(World).then(dbg)
+await liminal.value(World).then(dbg)
