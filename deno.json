@@ -10,8 +10,7 @@
     },
     "check": {
       "description": "Ensure all TypeScript files pass typechecking and linting.",
-      "command": "deno check . && deno lint",
-      "dependencies": ["mod"]
+      "command": "deno check . && deno lint"
     },
     "test": {
       "description": "Run all tests.",
