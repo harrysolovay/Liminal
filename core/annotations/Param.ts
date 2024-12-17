@@ -5,7 +5,7 @@ export interface Param<B extends symbol = symbol, K extends symbol = symbol, T =
   type: "Param"
   brand: B
   key: K
-  unwrap: (type: PartialType) => Array<T>
+  from: (type: PartialType) => Array<T>
 }
 
 export interface Arg<B extends symbol = symbol, K extends symbol = symbol> {
@@ -15,31 +15,25 @@ export interface Arg<B extends symbol = symbol, K extends symbol = symbol> {
   value: unknown
 }
 
-export function Param<B extends symbol, K extends symbol, T>(
+export function Param<B extends symbol, K extends symbol, T, U = T>(
   brand: B,
   key: K,
+  f?: (value: T) => U,
 ): Param<B, K, T> {
   return Object.assign(
     (value: T): Arg<B, K> => ({
       type: "Arg",
       brand,
       key,
-      value,
+      value: f?.(value) ?? value,
     }),
     {
       type: "Param" as const,
       brand,
       key,
-      unwrap: () => {
+      from: () => {
         throw 0
       },
     },
   )
 }
-
-export type ReduceParam<D extends symbol, A extends Array<unknown>> = A extends
-  [infer Part0, ...infer PartRest] ? ReduceParam<
-    Part0 extends Param<infer K> ? D | K : Part0 extends Arg<infer K> ? Exclude<D, K> : D,
-    PartRest
-  >
-  : D

@@ -10,7 +10,7 @@ export function TaggedUnion<M extends Record<string, Falsy | PartialType>>(membe
       & (M[K] extends PartialType ? { value: M[K]["T"] } : { value?: never })
     >
   }[keyof M],
-  Extract<M[keyof M], PartialType>["P"]
+  Extract<M[keyof M], PartialType>["D"]
 > {
   return I.union(
     ...Object.keys(members).toSorted().map((tag) =>

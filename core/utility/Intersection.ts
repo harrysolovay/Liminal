@@ -4,7 +4,7 @@ import type { PartialType, Type } from "../Type.ts"
 
 export function Intersection<S extends Array<PartialType>>(
   ...sources: Ensure<S>
-): Type<Expand<U2I<S[number]["T"]>>, S[number]["P"]> {
+): Type<Expand<U2I<S[number]["T"]>>, S[number]["D"]> {
   return I.object(
     Object.fromEntries(
       sources.flatMap((source) => Object.entries(source.declaration.args![0]!)),
