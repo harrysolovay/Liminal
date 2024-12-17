@@ -12,8 +12,9 @@ export function isType<T>(
           return true
         }
       }
+    } else {
+      return true
     }
-    return true
   }
   return false
 }
