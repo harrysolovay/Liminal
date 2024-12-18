@@ -1,11 +1,16 @@
 import { Param } from "./Param.ts"
 
-export type Description = typeof Description
-export const Description: unique symbol = Symbol()
+export const DescriptionParamKey: unique symbol = Symbol()
 
-export function DescriptionParam<K extends symbol, T = string>(
+export interface DescriptionArg {
+  [DescriptionParamKey]: string
+}
+
+export function DescriptionParam<K extends symbol, A = string>(
   key: K,
-  serialize?: (value: T) => string,
-): Param<typeof Description, K, T> {
-  return Param(Description, key, serialize)
+  serialize?: (value: A) => string,
+): Param<K, A, DescriptionArg> {
+  return Param(key, (value) => ({
+    [DescriptionParamKey]: (serialize?.(value) ?? value) as string,
+  }))
 }

@@ -1,5 +1,5 @@
 import type { Annotation } from "./annotations/Annotation.ts"
-import type { TemplatePart } from "./annotations/mod.ts"
+import type { Param, TemplatePart } from "./annotations/mod.ts"
 import type { ReduceDependencies } from "./ReduceDependencies.ts"
 
 export interface Type<T, D extends symbol = never> {
@@ -13,10 +13,13 @@ export interface Type<T, D extends symbol = never> {
   T: T
   D: D
 
+  [TypeKey]: true
   type: "Type"
   trace: string
   declaration: TypeDeclaration
   annotations: Array<Annotation>
+
+  extract: <K extends symbol, V>(param: Param<K, V>) => Array<V>
 }
 
 export type TypeDeclaration = {

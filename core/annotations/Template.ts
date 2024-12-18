@@ -1,6 +1,6 @@
 import type { PartialType } from "../Type.ts"
-import type { Description } from "./Description.ts"
-import type { Param } from "./Param.ts"
+import type { DescriptionArg } from "./Description.ts"
+import type { AnyParam } from "./Param.ts"
 
 export interface Template {
   type: "Template"
@@ -8,4 +8,4 @@ export interface Template {
   parts: Array<TemplatePart>
 }
 
-export type TemplatePart = string | PartialType | Param<Description>
+export type TemplatePart = string | PartialType | AnyParam<string | DescriptionArg>

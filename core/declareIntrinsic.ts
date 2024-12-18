@@ -13,11 +13,14 @@ export function declare<T, D extends symbol>(
     Type,
     inspect,
     {
-      [TypeKey as never]: true,
+      [TypeKey]: true,
       type: "Type",
       trace: new Error().stack!,
       declaration,
       annotations,
+      extract: () => {
+        throw 0
+      },
     } satisfies Omit<Type<T, D>, "T" | "D"> as never,
   )
 

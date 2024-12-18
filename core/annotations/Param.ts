@@ -1,39 +1,30 @@
-import type { PartialType } from "../Type.ts"
-
-export interface Param<B extends symbol = symbol, K extends symbol = symbol, T = any> {
-  (arg: T): Arg<B, K>
+export interface Param<K extends symbol = symbol, A = any, T = any> {
+  (arg: A): Arg<K, T>
   type: "Param"
-  brand: B
   key: K
-  from: (type: PartialType) => Array<T>
 }
 
-export interface Arg<B extends symbol = symbol, K extends symbol = symbol> {
+export type AnyParam<T> = Param<symbol, any, T>
+
+export interface Arg<K extends symbol = symbol, T = any> {
   type: "Arg"
-  brand: B
   key: K
-  value: unknown
+  value: T
 }
 
-export function Param<B extends symbol, K extends symbol, T, U = T>(
-  brand: B,
+export function Param<K extends symbol, A, T>(
   key: K,
-  f?: (value: T) => U,
-): Param<B, K, T> {
+  f: (value: A) => T,
+): Param<K, A, T> {
   return Object.assign(
-    (value: T): Arg<B, K> => ({
+    (value: A): Arg<K> => ({
       type: "Arg",
-      brand,
       key,
-      value: f?.(value) ?? value,
+      value: f(value),
     }),
     {
       type: "Param" as const,
-      brand,
       key,
-      from: () => {
-        throw 0
-      },
     },
   )
 }
