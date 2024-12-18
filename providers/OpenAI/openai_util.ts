@@ -1,7 +1,7 @@
 import { assert } from "@std/assert"
 import type { ChatCompletion, ChatCompletionMessage } from "openai/resources/chat/completions"
 
-export function unwrapOutput({ choices: [choice] }: ChatCompletion): ChatCompletionMessage {
+export function unwrapCompletion({ choices: [choice] }: ChatCompletion): ChatCompletionMessage {
   assert(choice, "No choices contained within the completion response.")
   const { finish_reason, message } = choice
   assert(
@@ -13,7 +13,7 @@ export function unwrapOutput({ choices: [choice] }: ChatCompletion): ChatComplet
   return message
 }
 
-export function unwrapRaw({ content }: ChatCompletionMessage): string {
+export function unwrapOutput({ content }: ChatCompletionMessage): string {
   assert(typeof content === "string")
   return content
 }

@@ -12,4 +12,4 @@ const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-await liminal.value(Contradiction).then(dbg)
+await liminal.thread().enqueue({ type: Contradiction }).then(dbg)

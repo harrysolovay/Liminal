@@ -14,8 +14,9 @@ const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-await liminal.value(Contact, {
-  messages: [
+await liminal.thread().enqueue({
+  type: Contact,
+  inputs: [
     {
       role: "system",
       content: "Extract contact data from the supplied message.",

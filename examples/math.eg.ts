@@ -17,8 +17,9 @@ const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-await liminal.value(MathReasoning, {
-  messages: [
+await liminal.thread().enqueue({
+  type: MathReasoning,
+  inputs: [
     {
       role: "system",
       content: "You are a helpful math tutor. Guide the user through the solution step by step.",

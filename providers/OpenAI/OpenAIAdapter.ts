@@ -1,89 +1,66 @@
 import type Openai from "openai"
 import type { ChatModel } from "openai/resources/chat/chat"
 import type {
-  ChatCompletion,
   ChatCompletionMessage,
   ChatCompletionMessageParam,
 } from "openai/resources/chat/completions"
-import {
-  type Adapter,
-  DEFAULT_INSTRUCTIONS,
-  DescriptionContext,
-  L,
-  signatureHash,
-  toJSONSchema,
-} from "../../mod.ts"
-import { unwrapOutput, unwrapRaw } from "./openai_util.ts"
+import { JSONTypeName } from "../../json_schema/mod.ts"
+import { type Adapter, DEFAULT_INSTRUCTIONS, L, signatureHash } from "../../mod.ts"
+import { unwrapCompletion, unwrapOutput } from "./openai_util.ts"
+import { OpenAIResponseFormat } from "./OpenAIResponseFormat.ts"
 
-export type OpenAIAdapter = Adapter<{
-  role: "system" | "user"
-  model: (string & {}) | ChatModel
-  completion: ChatCompletion
+export type OpenAIModel = (string & {}) | ChatModel
+
+export interface OpenAIConfig {
+  M: OpenAIModel
   I: ChatCompletionMessageParam
   O: ChatCompletionMessage
-}>
+}
 
 export function OpenAIAdapter({
   openai,
   defaultModel = "gpt-4o-mini",
-  defaultInstructions = DEFAULT_INSTRUCTIONS,
+  defaultInstruction = DEFAULT_INSTRUCTIONS,
 }: {
   openai: Openai
-  defaultModel?: (string & {}) | ChatModel
-  defaultInstructions?: string
-}): OpenAIAdapter {
-  const formatInput: OpenAIAdapter["formatInput"] = (texts, role) => ({
-    role: role ?? "system",
-    content: texts.filter((v): v is string => !!v).map((text) => ({
-      type: "text",
-      text,
-    })),
-  })
-
-  const text: OpenAIAdapter["text"] = (messages, config) =>
-    openai.chat.completions.create({
-      model: config?.model ?? defaultModel,
-      messages,
-    })
-
+  defaultModel?: OpenAIModel
+  defaultInstruction?: string
+}): Adapter<OpenAIConfig> {
   return {
-    defaults: {
-      model: defaultModel,
-      role: "user",
-      opening: {
-        role: "system",
-        content: defaultInstructions,
-      },
+    transform: (type) => {
+      const jsonTypeName = JSONTypeName(type)
+      return jsonTypeName !== "object" && jsonTypeName !== "string"
+        ? L.transform(L.Tuple(type), ([value]) => value)
+        : type
     },
-    formatInput,
+    formatInput: (content) => ({
+      role: "user",
+      content,
+    }),
     unwrapOutput,
-    unwrapRaw,
-    text,
-    value: async (type, { messages, name, description, model }) => {
-      messages ??= []
-      const descriptionCtx = new DescriptionContext()
-      if (type.declaration.factory === L.string) {
-        return text([
-          ...messages ?? [],
-          formatInput([description, descriptionCtx.format(type)], "system"),
-        ])
+    complete: async ({ type, messages, model }) => {
+      if (!messages || !messages.length) {
+        messages = [{
+          role: "system",
+          content: defaultInstruction,
+        }]
       }
-      if (!name) {
-        name = await signatureHash(type)
+      model ??= defaultModel
+      if (JSONTypeName(type) === "string") {
+        return openai.chat.completions.create({
+          messages,
+          model: model ?? defaultModel,
+        }).then(unwrapCompletion)
       }
-      return openai.chat.completions.create({
-        model: model ?? defaultModel,
-        messages,
-        response_format: {
-          type: "json_schema",
-          json_schema: {
-            name,
-            description,
-            schema: toJSONSchema(type),
-            strict: true,
-          },
-        },
-      })
+      const name = await signatureHash(type)
+      const response_format = OpenAIResponseFormat(name, type)
+      return openai.chat.completions
+        .create({
+          model,
+          messages,
+          response_format,
+        })
+        .then(unwrapCompletion)
     },
   }
 }

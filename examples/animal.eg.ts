@@ -24,4 +24,4 @@ const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-await liminal.value(Animal).then(dbg)
+await liminal.thread().enqueue({ type: Animal }).then(dbg)
