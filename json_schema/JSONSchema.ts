@@ -50,7 +50,7 @@ namespace JSONTypes {
   }
 }
 
-export function jsonTypeName(type: PartialType): JSONTypeName {
+export function JSONTypeName(type: PartialType): JSONTypeName {
   switch (type.declaration.getAtom?.()) {
     case L.null: {
       return "null"
@@ -70,7 +70,7 @@ export function jsonTypeName(type: PartialType): JSONTypeName {
   }
   switch (type.declaration.factory) {
     case L.const: {
-      return jsonTypeName(type.declaration.args[0] as PartialType)
+      return JSONTypeName(type.declaration.args[0] as PartialType)
     }
     case L.array: {
       return "array"
@@ -88,7 +88,7 @@ export function jsonTypeName(type: PartialType): JSONTypeName {
       return "ref"
     }
     case L.transform: {
-      return jsonTypeName(type.declaration.args[0] as PartialType)
+      return JSONTypeName(type.declaration.args[0] as PartialType)
     }
   }
   unreachable()

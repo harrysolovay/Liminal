@@ -30,7 +30,7 @@ const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-await liminal.value(LDate).then(dbg)
+await liminal.thread().next({ type: LDate }).then(dbg)
 
 // ...
 

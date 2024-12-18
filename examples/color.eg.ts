@@ -20,4 +20,4 @@ const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-await liminal.value(ColorHex).then(dbg)
+await liminal.thread().next({ type: ColorHex }).then(dbg)

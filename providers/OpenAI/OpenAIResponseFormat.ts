@@ -1,8 +1,8 @@
 import type { ChatCompletion } from "openai/resources/chat/completions"
 import type { Type } from "../../core/mod.ts"
-import { deserialize, L, toJSONSchema } from "../../mod.ts"
+import { deserialize, toJSONSchema } from "../../mod.ts"
 import { recombine } from "../../util/mod.ts"
-import { unwrapOutput, unwrapRaw } from "./openai_util.ts"
+import { unwrapCompletion, unwrapOutput } from "./openai_util.ts"
 
 export interface OpenAIResponseFormat<T> extends OpenAIFinalResponseFormat<T> {
   (template: TemplateStringsArray, ...values: Array<number | string>): OpenAIFinalResponseFormat<T>
@@ -33,9 +33,6 @@ function OpenAIFinalResponseFormat<T>(
   type: Type<T>,
   description?: string,
 ): OpenAIFinalResponseFormat<T> {
-  if (type.declaration.factory !== L.object) {
-    type = L.transform(L.Tuple(type), ([value]) => value)
-  }
   return {
     type: "json_schema",
     json_schema: {
@@ -45,7 +42,7 @@ function OpenAIFinalResponseFormat<T>(
       strict: true,
     },
     deserialize: (completion: ChatCompletion): T =>
-      deserialize(type, unwrapRaw(unwrapOutput(completion))),
+      deserialize(type, unwrapOutput(unwrapCompletion(completion))),
     toJSON() {
       const { type, json_schema } = this
       return { type, json_schema }

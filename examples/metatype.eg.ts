@@ -9,11 +9,14 @@ const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-const World = await liminal.value(MetaType, {
-  messages: [{
+const thread = liminal.thread()
+
+const World = await thread.next({
+  type: MetaType,
+  inputs: [{
     role: "user",
     content: "What data type might describe the ontology of a magical story world?",
   }],
 }).then(dbg)
 
-await liminal.value(World).then(dbg)
+await thread.next({ type: World }).then(dbg)
