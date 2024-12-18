@@ -30,7 +30,7 @@ export class DescriptionContext {
           segments.push(annotation)
         } else {
           switch (annotation.type) {
-            case "DescriptionTemplate": {
+            case "Template": {
               segments.push(recombine(
                 annotation.template,
                 annotation.parts.map((part) => {
@@ -38,7 +38,7 @@ export class DescriptionContext {
                     return part
                   }
                   switch (part.type) {
-                    case "DescriptionParam": {
+                    case "Param": {
                       return this.args[part.key]
                     }
                     case "Type": {
@@ -53,14 +53,13 @@ export class DescriptionContext {
               segments.push(this.pin(annotation))
               break
             }
-            case "DescriptionParam": {
+            case "Param": {
               const arg = this.args[annotation.key]!
               segments.push(arg)
               break
             }
-            case "DescriptionArg": {
-              this.args[annotation.key] = annotation.serializer?.(annotation.value)
-                ?? annotation.value
+            case "Arg": {
+              this.args[annotation.key] = annotation.value as string
               break
             }
             case "Assertion": {

@@ -1,21 +1,25 @@
-import type { Annotation, ReduceP } from "./Annotation.ts"
-import type { DescriptionTemplatePart } from "./annotations/mod.ts"
+import type { Annotation } from "./annotations/Annotation.ts"
+import type { Param, TemplatePart } from "./annotations/mod.ts"
+import type { ReduceDependencies } from "./ReduceDependencies.ts"
 
-export interface Type<T, P extends symbol = never> {
-  <A extends Array<DescriptionTemplatePart>>(
+export interface Type<T, D extends symbol = never> {
+  <A extends Array<TemplatePart>>(
     template: TemplateStringsArray,
     ...descriptionParts: A
-  ): Type<T, ReduceP<P, A>>
+  ): Type<T, ReduceDependencies<D, A>>
 
-  <A extends Array<Annotation<T>>>(...annotations: A): Type<T, ReduceP<P, A>>
+  <A extends Array<Annotation<T>>>(...annotations: A): Type<T, ReduceDependencies<D, A>>
 
   T: T
-  P: P
+  D: D
 
+  [TypeKey]: true
   type: "Type"
   trace: string
   declaration: TypeDeclaration
   annotations: Array<Annotation>
+
+  extract: <K extends symbol, V>(param: Param<K, V>) => Array<V>
 }
 
 export type TypeDeclaration = {
@@ -34,6 +38,6 @@ export type DerivedType<
   T,
   X extends Array<PartialType>,
   P extends symbol = never,
-> = [Type<T, P | X[number]["P"]>][0]
+> = [Type<T, P | X[number]["D"]>][0]
 
 export const TypeKey: unique symbol = Symbol()

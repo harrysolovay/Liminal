@@ -2,8 +2,8 @@ import { assert } from "@std/assert"
 import { L } from "liminal"
 
 export namespace number {
-  export const min = L.Assert(minDescription, assertMin)
-  export const max = L.Assert(maxDescription, assertMax)
+  export const min = L.Assertion(minDescription, assertMin)
+  export const max = L.Assertion(maxDescription, assertMax)
 
   function minDescription(min: number): string {
     return `Must be gte ${min}.`
@@ -20,8 +20,8 @@ export namespace number {
 }
 
 export namespace array {
-  export const minLength = L.Assert(minLengthDescription, assertMinLength)
-  export const maxLength = L.Assert(maxLengthDescription, assertMaxLength)
+  export const minLength = L.Assertion(minLengthDescription, assertMinLength)
+  export const maxLength = L.Assertion(maxLengthDescription, assertMaxLength)
 
   function minLengthDescription(minLength: number) {
     return `Length must be gte ${minLength} elements.`

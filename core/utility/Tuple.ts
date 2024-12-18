@@ -4,7 +4,7 @@ import type { PartialType, Type } from "../Type.ts"
 
 export function Tuple<M extends Array<PartialType>>(
   ...members: M
-): Type<{ [I in keyof M]: M[I]["T"] }, M[number]["P"]> {
+): Type<{ [I in keyof M]: M[I]["T"] }, M[number]["D"]> {
   return I.transform(
     I.object(Object.fromEntries(members.map((type, i) => [i, type]))),
     (value) => Object.values(value) as never,

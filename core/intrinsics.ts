@@ -43,7 +43,7 @@ export function array<T, P extends symbol>(element: Type<T, P>): Type<Array<T>, 
 
 export function object<F extends Record<string, PartialType>>(
   fields: F,
-): Type<{ [K in keyof F]: F[K]["T"] }, F[keyof F]["P"]> {
+): Type<{ [K in keyof F]: F[K]["T"] }, F[keyof F]["D"]> {
   return declare({
     factory: object,
     args: [Object.fromEntries(Object.keys(fields).toSorted().map((key) => [key, fields[key]]))],
@@ -61,7 +61,7 @@ Object.defineProperty(enum_, "name", { value: "enum" })
 
 export function union<M extends Array<PartialType>>(
   ...members: M
-): Type<M[number]["T"], M[number]["P"]> {
+): Type<M[number]["T"], M[number]["D"]> {
   return declare({
     factory: union,
     args: members,

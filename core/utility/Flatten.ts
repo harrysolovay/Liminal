@@ -4,7 +4,7 @@ import { Tuple } from "./Tuple.ts"
 
 export function Flattened<A extends Array<PartialType<Array<unknown>>>>(
   ...sources: A
-): Type<NativeFlattened<A>, A[number]["P"]> {
+): Type<NativeFlattened<A>, A[number]["D"]> {
   return I.transform(Tuple(...sources), (value) => value.flat()) as never
 }
 
