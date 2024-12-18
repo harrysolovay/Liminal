@@ -14,10 +14,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           cache: npm
-          cache-dependency-path: target/npm/package-lock.json
+          cache-dependency-path: .liminal/npm/package-lock.json
           node-version: 21.x
           registry-url: "https://registry.npmjs.org"
-      - run: cd target/npm && npm version ${{ github.event.release.tag_name }} --no-git-tag-version --allow-same-version && npm publish
+      - run: cd .liminal/npm && npm version ${{ github.event.release.tag_name }} --no-git-tag-version --allow-same-version && npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   jsr:

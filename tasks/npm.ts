@@ -6,7 +6,7 @@ import * as path from "@std/path"
 import denoConfig from "../deno.json" with { type: "json" }
 import { collect, splitLast } from "../util/mod.ts"
 
-const outDir = "target/npm"
+const outDir = ".liminal/npm"
 await fs.emptyDir(outDir)
 
 const { version } = parseArgs(Deno.args, { string: ["version"] })
