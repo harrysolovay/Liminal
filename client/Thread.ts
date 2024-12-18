@@ -1,21 +1,17 @@
 import { deserialize, type Type } from "../core/mod.ts"
-import type { Adapter, AdapterDescriptor } from "./Adapter.ts"
+import type { Adapter, AdapterConfig } from "./Adapter.ts"
 
-export class Thread<D extends AdapterDescriptor> {
-  #messages: Array<D["I" | "O"]>
+export class Thread<C extends AdapterConfig> {
+  #messages: Array<C["I" | "O"]>
   constructor(
-    readonly adapter: Adapter<D>,
-    readonly initialMessages: Array<D["I" | "O"]>,
+    readonly adapter: Adapter<C>,
+    readonly initialMessages: Array<C["I" | "O"]>,
   ) {
     this.#messages = [...initialMessages]
   }
 
   #queue: Promise<unknown> = Promise.resolve()
-
-  next = <T>({ type, inputs }: {
-    type: Type<T, never>
-    inputs?: Array<D["I"]>
-  }): Promise<T> => {
+  enqueue = <T>({ type, inputs, model }: QueueConfig<T, C>): Promise<T> => {
     return this.#queue = this.#queue.then(async () => {
       const { transform } = this.adapter
       if (transform) {
@@ -24,9 +20,16 @@ export class Thread<D extends AdapterDescriptor> {
       const output = await this.adapter.complete({
         type,
         messages: [...this.#messages, ...inputs ?? []],
+        model,
       })
       this.#messages.push(...inputs ?? [], output)
       return deserialize(type, this.adapter.unwrapOutput(output))
     }) as never
   }
+}
+
+export interface QueueConfig<T, C extends AdapterConfig> {
+  type: Type<T, never>
+  inputs?: Array<C["I"]>
+  model?: C["M"]
 }

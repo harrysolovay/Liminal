@@ -17,7 +17,7 @@ const liminal = new Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-await liminal.thread().next({
+await liminal.thread().enqueue({
   type: MathReasoning,
   inputs: [
     {

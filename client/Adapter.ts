@@ -1,20 +1,20 @@
 import type { Type } from "../core/mod.ts"
 
-export interface AdapterDescriptor {
+export interface AdapterConfig {
   M: string
   I: unknown
   O: unknown
 }
 
-export interface Adapter<D extends AdapterDescriptor> {
-  formatInput: (raw: string) => D["I"]
-  unwrapOutput: (message: D["O"]) => string
-  complete: <T>(config: AdapterCompleteConfig<T, D>) => Promise<D["O"]>
+export interface Adapter<C extends AdapterConfig> {
+  formatInput: (raw: string) => C["I"]
+  unwrapOutput: (message: C["O"]) => string
+  complete: <T>(config: AdapterCompleteConfig<T, C>) => Promise<C["O"]>
   transform?: <T>(type: Type<T, never>) => Type<T>
 }
 
-export interface AdapterCompleteConfig<T, D extends AdapterDescriptor> {
+export interface AdapterCompleteConfig<T, C extends AdapterConfig> {
   type: Type<T, never>
-  messages?: Array<D["I" | "O"]>
-  model?: D["M"]
+  messages?: Array<C["I" | "O"]>
+  model?: C["M"]
 }

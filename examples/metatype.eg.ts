@@ -11,7 +11,7 @@ const liminal = new Liminal(OpenAIAdapter({
 
 const thread = liminal.thread()
 
-const World = await thread.next({
+const World = await thread.enqueue({
   type: MetaType,
   inputs: [{
     role: "user",
@@ -19,4 +19,4 @@ const World = await thread.next({
   }],
 }).then(dbg)
 
-await thread.next({ type: World }).then(dbg)
+await thread.enqueue({ type: World }).then(dbg)

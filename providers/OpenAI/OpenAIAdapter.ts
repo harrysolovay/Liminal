@@ -11,11 +11,11 @@ import { OpenAIResponseFormat } from "./OpenAIResponseFormat.ts"
 
 export type OpenAIModel = (string & {}) | ChatModel
 
-export type OpenAIAdapter = Adapter<{
+export interface OpenAIConfig {
   M: OpenAIModel
   I: ChatCompletionMessageParam
   O: ChatCompletionMessage
-}>
+}
 
 export function OpenAIAdapter({
   openai,
@@ -25,7 +25,7 @@ export function OpenAIAdapter({
   openai: Openai
   defaultModel?: OpenAIModel
   defaultInstruction?: string
-}): OpenAIAdapter {
+}): Adapter<OpenAIConfig> {
   return {
     transform: (type) => {
       const jsonTypeName = JSONTypeName(type)
