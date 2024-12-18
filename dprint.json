@@ -17,5 +17,5 @@
     "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.5.0.wasm",
     "https://plugins.dprint.dev/g-plane/malva-v0.11.0.wasm"
   ],
-  "excludes": ["target"]
+  "excludes": [".liminal"]
 }
