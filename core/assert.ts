@@ -80,11 +80,11 @@ const visit = TypeVisitor<AssertContext, void>({
     if (annotationDiagnostics) {
       type.annotations
         .filter((annotation) => typeof annotation === "object" && annotation?.type === "Assertion")
-        .forEach(({ f, args }) => {
+        .forEach(({ f }) => {
           if (f) {
             annotationDiagnostics.push((async () => {
               try {
-                await f(ctx.value, ...args ?? [])
+                await f(ctx.value)
               } catch (exception: unknown) {
                 return {
                   type,

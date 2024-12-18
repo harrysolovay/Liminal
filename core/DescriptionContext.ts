@@ -1,4 +1,5 @@
 import { recombine } from "../util/mod.ts"
+import { DescriptionParamKey } from "./annotations/mod.ts"
 import type { PartialType } from "./mod.ts"
 import type { Type } from "./Type.ts"
 
@@ -9,7 +10,7 @@ export function description(type: Type<unknown>): string | undefined {
 export class DescriptionContext {
   constructor(
     readonly pins: Map<PartialType, string> = new Map(),
-    readonly args: Record<symbol, string> = {},
+    readonly args: Record<symbol, unknown> = {},
   ) {}
 
   pin = (type: PartialType): string => {
@@ -54,19 +55,20 @@ export class DescriptionContext {
               break
             }
             case "Param": {
-              const arg = this.args[annotation.key]!
-              segments.push(arg)
+              const arg = this.args[annotation.key]
+              if (typeof arg === "string") {
+                segments.push(arg)
+              } else if (typeof arg === "object" && arg !== null && DescriptionParamKey in arg) {
+                segments.push(arg[DescriptionParamKey] as string)
+              }
               break
             }
             case "Arg": {
-              this.args[annotation.key] = annotation.value as string
+              this.args[annotation.key] = annotation.value
               break
             }
             case "Assertion": {
-              const { description, args } = annotation
-              assertionDescriptions.push(
-                typeof description === "string" ? description : description(...args ?? []),
-              )
+              assertionDescriptions.push(annotation.description)
               break
             }
           }

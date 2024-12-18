@@ -3,12 +3,14 @@ import type { Param, TemplatePart } from "./annotations/mod.ts"
 import type { ReduceDependencies } from "./ReduceDependencies.ts"
 
 export interface Type<T, D extends symbol = never> {
+  <A extends Array<Annotation<T>>>(
+    ...annotations: A | Array<Annotation<T>> & { length: never }
+  ): Type<T, ReduceDependencies<D, A>>
+
   <A extends Array<TemplatePart>>(
     template: TemplateStringsArray,
     ...descriptionParts: A
   ): Type<T, ReduceDependencies<D, A>>
-
-  <A extends Array<Annotation<T>>>(...annotations: A): Type<T, ReduceDependencies<D, A>>
 
   T: T
   D: D
