@@ -1,11 +1,10 @@
-import OpenAI from "openai"
 import "@std/dotenv/load"
 import { L, Liminal } from "liminal"
-import { OpenAIAdapter } from "liminal/openai"
+import { OllamaAdapter } from "liminal/ollama"
 import { dbg } from "testing"
 
-const $ = Liminal(OpenAIAdapter({
-  openai: new OpenAI(),
+const $ = Liminal(OllamaAdapter({
+  defaultModel: "llama3.2",
 }))
 
 const Dog = L.object({
