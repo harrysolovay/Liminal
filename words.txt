@@ -10,7 +10,9 @@ egts
 esbenp
 harrysolovay
 inspectable
+liminals
 metatype
+mirostat
 miyazaki
 nodenext
 ollama

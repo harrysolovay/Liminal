@@ -17,3 +17,9 @@ export interface Liminal<C extends AdapterConfig> {
 export function Liminal<C extends AdapterConfig>(_adapter: Adapter<C>): Liminal<C> {
   throw 0
 }
+
+export namespace Liminal {
+  export function merge<C extends AdapterConfig>(...liminals: Array<Liminal<C>>): Liminal<C> {
+    throw 0
+  }
+}

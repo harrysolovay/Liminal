@@ -4,15 +4,15 @@ import type {
   ChatCompletionMessage,
   ChatCompletionMessageParam,
 } from "openai/resources/chat/completions"
-import { JSONTypeName } from "../../json_schema/mod.ts"
-import { type Adapter, DEFAULT_INSTRUCTIONS, L, signatureHash } from "../../mod.ts"
+import { type Adapter, DEFAULT_INSTRUCTIONS, JSONTypeName, L, signatureHash } from "../../mod.ts"
+import { transform } from "../provider_common.ts"
 import { unwrapCompletion, unwrapOutput } from "./openai_util.ts"
 import { OpenAIResponseFormat } from "./OpenAIResponseFormat.ts"
 
 export type OpenAIModel = (string & {}) | ChatModel
 
 export interface OpenAIConfig {
-  M: OpenAIModel
+  M: (string & {}) | ChatModel
   I: ChatCompletionMessageParam
   O: ChatCompletionMessage
 }
@@ -27,12 +27,7 @@ export function OpenAIAdapter({
   defaultInstruction?: string
 }): Adapter<OpenAIConfig> {
   return {
-    transform: (type) => {
-      const jsonTypeName = JSONTypeName(type)
-      return jsonTypeName !== "object" && jsonTypeName !== "string"
-        ? L.transform(L.Tuple(type), ([value]) => value)
-        : type
-    },
+    transform,
     formatInput: (content) => ({
       role: "user",
       content,
