@@ -6,6 +6,7 @@ import type { Template } from "./Template.ts"
 
 export type Annotation<T = any> =
   | Falsy
+  | number
   | string
   | Template
   | PartialType

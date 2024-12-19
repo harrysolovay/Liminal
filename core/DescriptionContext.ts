@@ -10,7 +10,7 @@ export function description(type: Type<unknown>): string | undefined {
 export class DescriptionContext {
   constructor(
     readonly pins: Map<PartialType, string> = new Map(),
-    readonly args: Record<symbol, unknown> = {},
+    readonly args: Record<keyof any, unknown> = {},
   ) {}
 
   pin = (type: PartialType): string => {
@@ -24,10 +24,10 @@ export class DescriptionContext {
 
   format = (type: Type<unknown>): undefined | string => {
     const assertionDescriptions: Array<string> = []
-    let segments: Array<string> = []
+    let segments: Array<number | string> = []
     type.annotations.forEach((annotation) => {
       if (annotation) {
-        if (typeof annotation === "string") {
+        if (typeof annotation === "number" || typeof annotation === "string") {
           segments.push(annotation)
         } else {
           switch (annotation.type) {
@@ -35,7 +35,7 @@ export class DescriptionContext {
               segments.push(recombine(
                 annotation.template,
                 annotation.parts.map((part) => {
-                  if (typeof part === "string") {
+                  if (typeof part === "number" || typeof part === "string") {
                     return part
                   }
                   switch (part.type) {
