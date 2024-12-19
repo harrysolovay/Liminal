@@ -7,13 +7,13 @@ import type {
   ChatResponseBody,
 } from "./ollama_types.ts"
 
-export interface OpenAIConfig {
+export interface OllamaConfig {
   M: string
   I: ChatInputMessage
   O: ChatOutputMessage
 }
 
-export function OpenAIAdapter({
+export function OllamaConfig({
   endpoint,
   defaultModel,
   defaultInstruction = DEFAULT_INSTRUCTIONS,
@@ -21,21 +21,21 @@ export function OpenAIAdapter({
   endpoint: string
   defaultModel: string
   defaultInstruction?: string
-}): Adapter<OpenAIConfig> {
+}): Adapter<OllamaConfig> {
   return {
     transform,
     formatInput: (content) => ({
       role: "user",
       content,
     }),
-    unwrapOutput: (message) => message as never as string,
-    complete: async ({ name, type, messages, model }) => {
+    unwrapOutput: (message) => message.content,
+    complete: async ({ type, messages, model }) => {
       model ??= defaultModel
       messages ??= [{
         role: "system",
         content: defaultInstruction,
       }]
-      const response = await fetch(endpoint, {
+      const response: ChatResponseBody = await fetch(endpoint, {
         method: "POST",
         body: JSON.stringify(
           {
@@ -43,41 +43,10 @@ export function OpenAIAdapter({
             messages,
             format: toJSONSchema(type),
             stream: false,
-            options: {
-              temperature: 0,
-            },
           } satisfies ChatRequestBody,
         ),
-      }).then((v) => v.json() as Promise<ChatResponseBody>)
+      }).then((v) => v.json())
       return response.message
     },
   }
-}
-
-const x = {
-  model: "llama3.2",
-  messages: [{
-    role: "user",
-    content:
-      "Ollama is 22 years old and busy saving the world. Return a JSON object with the age and availability.",
-  }],
-  stream: false,
-  format: {
-    type: "object",
-    properties: {
-      age: {
-        type: "integer",
-      },
-      available: {
-        type: "boolean",
-      },
-    },
-    required: [
-      "age",
-      "available",
-    ],
-  },
-  options: {
-    temperature: 0,
-  },
 }

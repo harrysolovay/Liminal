@@ -1,7 +1,7 @@
 import { L } from "../../mod.ts"
-import { OpenAIAdapter } from "./OllamaAdapter.ts"
+import { OllamaConfig } from "./OllamaAdapter.ts"
 
-const adapter = OpenAIAdapter({
+const adapter = OllamaConfig({
   endpoint: "http://localhost:11434/api/chat",
   defaultModel: "llama3.2",
 })
