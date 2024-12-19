@@ -7,7 +7,7 @@ export interface ChatRequestBody {
   /** The messages of the chat, this can be used to keep a chat memory. */
   messages: Array<ChatInputMessage | ChatOutputMessage>
   /** Tools for the model to use if supported. Requires `stream` to be set to `false`. */
-  tools: unknown
+  tools?: unknown
   /** The format to return a response in. Format can be json or a JSON schema. */
   format: "json" | JSONType
   /** additional model parameters listed in the documentation for the Modelfile such as temperature. */
@@ -15,7 +15,7 @@ export interface ChatRequestBody {
   /** If `false` the response will be returned as a single response object, rather than a stream of objects. */
   stream: boolean
   /** Controls how long the model will stay loaded into memory following the request (default: `5m`). */
-  keep_alive: string
+  keep_alive?: string
 }
 
 export interface ChatResponseBody {
