@@ -1,34 +1,37 @@
-import { AssertionError } from "@std/assert"
-import { L } from "../core/mod.ts"
-import type { Adapter, AdapterConfig } from "./Adapter.ts"
-import { Thread } from "./Thread.ts"
+export {}
 
-export class Liminal<C extends AdapterConfig> {
-  constructor(readonly adapter: Adapter<C>) {}
+// import { AssertionError } from "@std/assert"
+// import { L } from "../core/mod.ts"
+// import type { Adapter, AdapterConfig } from "./Adapter.ts"
+// import { Thread } from "./Thread.ts"
 
-  thread = (...initialMessages: Array<C["I" | "O"]>): Thread<C> =>
-    new Thread(this.adapter, initialMessages)
+// export class Liminal<C extends AdapterConfig> {
+//   constructor(readonly adapter: Adapter<C>) {}
 
-  assert = async (value: unknown, statement: string, model?: C["M"]): Promise<void> => {
-    const reason = await this.thread().enqueue({
-      type: AssertionResult,
-      inputs: [this.adapter.formatInput(`
-        Does the value satisfy the assertion?
+//   thread = (...initialMessages: Array<C["I" | "O"]>): Thread<C> =>
+//     new Thread(this.adapter, initialMessages)
 
-        ## The value:
+//   assert = async (value: unknown, statement: string, model?: C["M"]): Promise<void> => {
+//     const reason = await this.thread().enqueue({
+//       type: AssertionResult,
+//       inputs: [this.adapter.formatInput(`
+//         Does the value satisfy the assertion?
 
-        \`\`\`json
-        ${JSON.stringify(value, null, 2)}
-        \`\`\
+//         ## The value:
 
-        ## The assertion: ${statement}
-      `)],
-      model,
-    })
-    if (reason) {
-      throw new AssertionError(reason)
-    }
-  }
-}
+//         \`\`\`json
+//         ${JSON.stringify(value, null, 2)}
+//         \`\`\
 
-const AssertionResult = L.Option(L.string`Reason behind assertion failure.`)
+//         ## The assertion: ${statement}
+//       `)],
+//       model,
+//       name: "liminal_assert",
+//     })
+//     if (reason) {
+//       throw new AssertionError(reason)
+//     }
+//   }
+// }
+
+// const AssertionResult = L.Option(L.string`Reason behind assertion failure.`)

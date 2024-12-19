@@ -17,4 +17,5 @@ export interface AdapterCompleteConfig<T, C extends AdapterConfig> {
   type: Type<T, never>
   messages?: Array<C["I" | "O"]>
   model?: C["M"]
+  name?: string
 }

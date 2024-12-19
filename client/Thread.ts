@@ -11,7 +11,7 @@ export class Thread<C extends AdapterConfig> {
   }
 
   #queue: Promise<unknown> = Promise.resolve()
-  enqueue = <T>({ type, inputs, model }: QueueConfig<T, C>): Promise<T> => {
+  enqueue = <T>({ type, inputs, model, name }: QueueConfig<T, C>): Promise<T> => {
     return this.#queue = this.#queue.then(async () => {
       const { transform } = this.adapter
       if (transform) {
@@ -21,6 +21,7 @@ export class Thread<C extends AdapterConfig> {
         type,
         messages: [...this.#messages, ...inputs ?? []],
         model,
+        name,
       })
       this.#messages.push(...inputs ?? [], output)
       return deserialize(type, this.adapter.unwrapOutput(output))
@@ -32,4 +33,5 @@ export interface QueueConfig<T, C extends AdapterConfig> {
   type: Type<T, never>
   inputs?: Array<C["I"]>
   model?: C["M"]
+  name?: string
 }

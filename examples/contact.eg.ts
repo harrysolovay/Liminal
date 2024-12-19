@@ -4,26 +4,19 @@ import "@std/dotenv/load"
 import { L, Liminal } from "liminal"
 import { dbg } from "testing"
 
+const $ = Liminal(OpenAIAdapter({
+  openai: new OpenAI(),
+}))
+
 const Contact = L.object({
   name: L.string,
   phone: L.number,
   email: L.string,
 })
 
-const liminal = new Liminal(OpenAIAdapter({
-  openai: new OpenAI(),
-}))
+$({
+  role: "system",
+  content: "Extract contact data from the supplied message.",
+}, "Please call John Doe at 555-123-4567 or email him at john.doe@example.com.")
 
-await liminal.thread().enqueue({
-  type: Contact,
-  inputs: [
-    {
-      role: "system",
-      content: "Extract contact data from the supplied message.",
-    },
-    {
-      role: "user",
-      content: "Please call John Doe at 555-123-4567 or email him at john.doe@example.com.",
-    },
-  ],
-}).then(dbg)
+await $(Contact).then(dbg)

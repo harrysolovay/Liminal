@@ -5,6 +5,10 @@ import OpenAI from "openai"
 import { dbg } from "testing"
 import * as A from "./assertions.eg.ts"
 
+const $ = Liminal(OpenAIAdapter({
+  openai: new OpenAI(),
+}))
+
 const ColorHex: Type<string> = L.transform(
   L.Tuple.N(
     L.number(
@@ -16,8 +20,4 @@ const ColorHex: Type<string> = L.transform(
   (rgb) => rgb.map((channel) => channel.toString(16).padStart(2, "0")).join(""),
 )
 
-const liminal = new Liminal(OpenAIAdapter({
-  openai: new OpenAI(),
-}))
-
-await liminal.thread().enqueue({ type: ColorHex }).then(dbg)
+await $(ColorHex).then(dbg)

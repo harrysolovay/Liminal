@@ -38,7 +38,7 @@ export function OpenAIAdapter({
       content,
     }),
     unwrapOutput,
-    complete: async ({ type, messages, model }) => {
+    complete: async ({ name, type, messages, model }) => {
       if (!messages || !messages.length) {
         messages = [{
           role: "system",
@@ -52,8 +52,7 @@ export function OpenAIAdapter({
           model: model ?? defaultModel,
         }).then(unwrapCompletion)
       }
-      const name = await signatureHash(type)
-      const response_format = OpenAIResponseFormat(name, type)
+      const response_format = OpenAIResponseFormat(name ?? await signatureHash(type), type)
       return openai.chat.completions
         .create({
           model,
