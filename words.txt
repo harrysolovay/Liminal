@@ -10,8 +10,13 @@ egts
 esbenp
 harrysolovay
 inspectable
+liminals
+llava
+logits
 metatype
+mirostat
 miyazaki
+modelfile
 nodenext
 ollama
 openai

@@ -4,17 +4,18 @@ import type {
   ChatCompletionMessage,
   ChatCompletionMessageParam,
 } from "openai/resources/chat/completions"
-import { JSONTypeName } from "../../json_schema/mod.ts"
-import { type Adapter, DEFAULT_INSTRUCTIONS, L, signatureHash } from "../../mod.ts"
+import { type Adapter, DEFAULT_INSTRUCTIONS, JSONTypeName, signatureHash } from "../../mod.ts"
+import { transform } from "../provider_common.ts"
 import { unwrapCompletion, unwrapOutput } from "./openai_util.ts"
 import { OpenAIResponseFormat } from "./OpenAIResponseFormat.ts"
 
 export type OpenAIModel = (string & {}) | ChatModel
 
 export interface OpenAIConfig {
-  M: OpenAIModel
+  M: (string & {}) | ChatModel
   I: ChatCompletionMessageParam
   O: ChatCompletionMessage
+  E: never
 }
 
 export function OpenAIAdapter({
@@ -27,18 +28,13 @@ export function OpenAIAdapter({
   defaultInstruction?: string
 }): Adapter<OpenAIConfig> {
   return {
-    transform: (type) => {
-      const jsonTypeName = JSONTypeName(type)
-      return jsonTypeName !== "object" && jsonTypeName !== "string"
-        ? L.transform(L.Tuple(type), ([value]) => value)
-        : type
-    },
+    transform,
     formatInput: (content) => ({
       role: "user",
       content,
     }),
     unwrapOutput,
-    complete: async ({ type, messages, model }) => {
+    complete: async ({ name, type, messages, model }) => {
       if (!messages || !messages.length) {
         messages = [{
           role: "system",
@@ -52,8 +48,7 @@ export function OpenAIAdapter({
           model: model ?? defaultModel,
         }).then(unwrapCompletion)
       }
-      const name = await signatureHash(type)
-      const response_format = OpenAIResponseFormat(name, type)
+      const response_format = OpenAIResponseFormat(name ?? await signatureHash(type), type)
       return openai.chat.completions
         .create({
           model,

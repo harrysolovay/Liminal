@@ -1,8 +1,11 @@
-import OpenAI from "openai"
 import "@std/dotenv/load"
 import { L, Liminal } from "liminal"
-import { OpenAIAdapter } from "liminal/openai"
+import { OllamaAdapter } from "liminal/ollama"
 import { dbg } from "testing"
+
+const $ = Liminal(OllamaAdapter({
+  defaultModel: "llama3.2",
+}))
 
 const Dog = L.object({
   bark: L.string,
@@ -20,8 +23,4 @@ const Animal = L.TaggedUnion({
   SlowLoris: null,
 })
 
-const liminal = new Liminal(OpenAIAdapter({
-  openai: new OpenAI(),
-}))
-
-await liminal.thread().enqueue({ type: Animal }).then(dbg)
+await $(Animal).then(dbg)

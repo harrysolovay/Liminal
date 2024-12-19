@@ -6,6 +6,10 @@ import { L, Liminal, type Type } from "liminal"
 import { dbg } from "testing"
 import * as A from "./assertions.eg.ts"
 
+const $ = Liminal(OpenAIAdapter({
+  openai: new OpenAI(),
+}))
+
 const LDate: Type<Date> = L.transform(
   L.Tuple(
     L.number`Year.`,
@@ -26,11 +30,7 @@ const LDate: Type<Date> = L.transform(
   ([y, m, d]) => new Date(y, m, d),
 )
 
-const liminal = new Liminal(OpenAIAdapter({
-  openai: new OpenAI(),
-}))
-
-await liminal.thread().enqueue({ type: LDate }).then(dbg)
+await $(LDate).then(dbg)
 
 // ...
 

@@ -38,6 +38,10 @@ await build({
   entryPoints: [
     "./mod.ts",
     {
+      name: "./ollama",
+      path: "./providers/Ollama/mod.ts",
+    },
+    {
       name: "./openai",
       path: "./providers/OpenAI/mod.ts",
     },

@@ -4,6 +4,10 @@ import { L, Liminal } from "liminal"
 import { OpenAIAdapter } from "liminal/openai"
 import { dbg } from "testing"
 
+const $ = Liminal(OpenAIAdapter({
+  openai: new OpenAI(),
+}))
+
 const Character = L.object({
   name: L.string,
   home: L.string`The name of a fictional realm of magic and wonder.`,
@@ -12,8 +16,4 @@ const Character = L.object({
   friends: L.array(L.string)`Names of the character's friends.`,
 })
 
-const liminal = new Liminal(OpenAIAdapter({
-  openai: new OpenAI(),
-}))
-
-await liminal.thread().enqueue({ type: Character }).then(dbg)
+await $(Character).then(dbg)

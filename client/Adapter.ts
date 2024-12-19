@@ -4,6 +4,7 @@ export interface AdapterConfig {
   M: string
   I: unknown
   O: unknown
+  E: unknown
 }
 
 export interface Adapter<C extends AdapterConfig> {
@@ -13,8 +14,13 @@ export interface Adapter<C extends AdapterConfig> {
   transform?: <T>(type: Type<T, never>) => Type<T>
 }
 
-export interface AdapterCompleteConfig<T, C extends AdapterConfig> {
-  type: Type<T, never>
-  messages?: Array<C["I" | "O"]>
-  model?: C["M"]
-}
+export type AdapterCompleteConfig<T, C extends AdapterConfig> =
+  & {
+    type: Type<T, never>
+    messages?: Array<C["I" | "O"]>
+    model?: C["M"]
+    name?: string
+  }
+  & ([C["E"]] extends [never] ? {} : {
+    options?: C["E"]
+  })

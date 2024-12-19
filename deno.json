@@ -56,6 +56,7 @@
   "scopes": {
     "./examples/": {
       "liminal": "./mod.ts",
+      "liminal/ollama": "./providers/Ollama/mod.ts",
       "liminal/openai": "./providers/OpenAI/mod.ts"
     }
   },

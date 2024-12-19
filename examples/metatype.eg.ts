@@ -1,22 +1,15 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
-import { Liminal } from "liminal"
+import { Liminal, MetaType } from "liminal"
 import { OpenAIAdapter } from "liminal/openai"
 import { dbg } from "testing"
-import { MetaType } from "../json_schema/mod.ts"
 
-const liminal = new Liminal(OpenAIAdapter({
+const $ = Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-const thread = liminal.thread()
+$`What data type might describe the ontology of a magical story world?`
+const World = await $(MetaType).then(dbg)
 
-const World = await thread.enqueue({
-  type: MetaType,
-  inputs: [{
-    role: "user",
-    content: "What data type might describe the ontology of a magical story world?",
-  }],
-}).then(dbg)
-
-await thread.enqueue({ type: World }).then(dbg)
+$`Generate the story world's data.`
+await $(World).then(dbg)
