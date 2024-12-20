@@ -1,6 +1,6 @@
 import { assert, assertEquals } from "@std/assert"
 import { assertSnapshot } from "@std/testing/snapshot"
-import { AssertTrue, IsExact, IsNever } from "conditional-type-checks"
+import type { AssertTrue, IsExact, IsNever } from "conditional-type-checks"
 import { testIntrinsics } from "testing"
 import { DescriptionParam } from "../annotations/mod.ts"
 import * as I from "../intrinsics.ts"
