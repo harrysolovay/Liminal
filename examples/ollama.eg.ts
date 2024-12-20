@@ -1,7 +1,5 @@
 import "@std/dotenv/load"
-import { L, Liminal } from "liminal"
-import { OllamaAdapter } from "liminal/ollama"
-import { dbg } from "testing"
+import { assert, L, Liminal, OllamaAdapter } from "liminal"
 
 const $ = Liminal(OllamaAdapter({
   defaultModel: "llama3.2",
@@ -9,7 +7,10 @@ const $ = Liminal(OllamaAdapter({
 
 $`Ollama is 22 years old and busy saving the world. Return a JSON object with the age and availability.`
 
-await $(L.object({
+const T = L.object({
   age: L.number,
   available: L.boolean,
-})).then(dbg)
+})
+
+const t = await $(T)
+await assert(T, t)

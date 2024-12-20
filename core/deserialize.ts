@@ -12,7 +12,7 @@ const visit = TypeVisitor<unknown, unknown>({
     return next(value, type)
   },
   array(value, _1, element): unknown {
-    return (value as unknown[]).map((e) => visit(e, element))
+    return (value as Array<unknown>).map((e) => visit(e, element))
   },
   object(value, _1, fields): unknown {
     return Object.fromEntries(

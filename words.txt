@@ -30,6 +30,7 @@ subpaths
 subschema
 subschemas
 subvalue
+supervillain
 tsconfigure
 twoslash
 unapplieds

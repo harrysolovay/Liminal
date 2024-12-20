@@ -1,18 +1,18 @@
-export interface Param<K extends keyof any = keyof any, A = any, T = any> {
+export interface Param<K extends symbol = symbol, A = any, T = any> {
   (arg: A): Arg<K, T>
   type: "Param"
   key: K
 }
 
-export type AnyParam<T> = Param<keyof any, any, T>
+export type AnyParam<T> = Param<symbol, any, T>
 
-export interface Arg<K extends keyof any = keyof any, T = any> {
+export interface Arg<K extends symbol = symbol, T = any> {
   type: "Arg"
   key: K
   value: T
 }
 
-export function Param<K extends keyof any, A, T>(
+export function Param<K extends symbol, A, T>(
   key: K,
   f: (value: A) => T,
 ): Param<K, A, T> {

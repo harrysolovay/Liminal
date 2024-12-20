@@ -1,7 +1,5 @@
 import "@std/dotenv/load"
-import { L, Liminal } from "liminal"
-import { OllamaAdapter } from "liminal/ollama"
-import { dbg } from "testing"
+import { assert, L, Liminal, OllamaAdapter } from "liminal"
 
 const $ = Liminal(OllamaAdapter({
   defaultModel: "llama3.2",
@@ -23,4 +21,6 @@ const Animal = L.TaggedUnion({
   SlowLoris: null,
 })
 
-await $(Animal).then(dbg)
+const animal = await $(Animal)
+
+await assert(Animal, animal)

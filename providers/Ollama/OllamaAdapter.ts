@@ -9,7 +9,7 @@ import type {
   ModelOptions,
 } from "./ollama_types.ts"
 
-export interface OllamaConfig {
+export interface OllamaProvider {
   M: string
   I: ChatInputMessage
   O: ChatOutputMessage
@@ -24,7 +24,7 @@ export function OllamaAdapter({
   endpoint?: string
   defaultModel: string
   defaultInstruction?: string
-}): Adapter<OllamaConfig> {
+}): Adapter<OllamaProvider> {
   return {
     transform,
     formatInput: (content) => ({

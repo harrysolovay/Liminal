@@ -1,19 +1,22 @@
-import * as A from "@std/assert"
+import { assert as assert_, assertArrayIncludes, assertEquals } from "@std/assert"
 import type { PartialType, Type } from "./Type.ts"
 import { TypeVisitor } from "./TypeVisitor.ts"
 
 export interface Diagnostic {
   type: PartialType
+  description?: string
   path: string
-  exception: unknown
   value: unknown
+  exception?: unknown
 }
 
 export namespace Diagnostic {
-  export function toString({ exception, path, value }: Diagnostic): string {
-    return `${
-      exception instanceof Error ? `Error "${exception.name}"` : "Exception"
-    } from value \`${JSON.stringify(value)}\` at \`root${path}\`: ${
+  export function toString({ description, exception, path, value }: Diagnostic): string {
+    return `Assertion${description ? ` "${description}"` : ""} failed ${
+      exception
+        ? exception instanceof Error ? `with Error "${exception.name}"` : "with exception"
+        : ""
+    } on value \`${JSON.stringify(value)}\` at \`root${path}\`: ${
       exception instanceof Error ? exception.message : JSON.stringify(exception)
     }`
   }
@@ -80,16 +83,25 @@ const visit = TypeVisitor<AssertContext, void>({
     if (annotationDiagnostics) {
       type.annotations
         .filter((annotation) => typeof annotation === "object" && annotation?.type === "Assertion")
-        .forEach(({ f }) => {
+        .forEach(({ f, description }) => {
           if (f) {
             annotationDiagnostics.push((async () => {
               try {
-                await f(ctx.value)
+                const passed = await f(ctx.value)
+                if (!passed) {
+                  return {
+                    type,
+                    path,
+                    description,
+                    value: ctx.value,
+                  }
+                }
               } catch (exception: unknown) {
                 return {
                   type,
                   path,
                   exception,
+                  description,
                   value: ctx.value,
                 }
               }
@@ -99,36 +111,36 @@ const visit = TypeVisitor<AssertContext, void>({
     }
   },
   null({ value }) {
-    A.assert(value === null)
+    assert_(value === null)
   },
   boolean({ value }) {
-    A.assert(typeof value === "boolean")
+    assert_(typeof value === "boolean")
   },
   integer({ value }) {
-    A.assert(Number.isInteger(value))
+    assert_(Number.isInteger(value))
   },
   number({ value }) {
-    A.assert(typeof value === "number")
+    assert_(typeof value === "number")
   },
   string({ value }) {
-    A.assert(typeof value === "string")
+    assert_(typeof value === "string")
   },
   const({ value }, _1, _2, cmpValue) {
-    A.assertEquals(value, cmpValue)
+    assertEquals(value, cmpValue)
   },
   enum({ value }, _1, ...values) {
-    A.assert(typeof value === "string")
-    A.assertArrayIncludes(values, [value])
+    assert_(typeof value === "string")
+    assertArrayIncludes(values, [value])
   },
   array(ctx, _1, element) {
-    A.assert(Array.isArray(ctx.value))
+    assert_(Array.isArray(ctx.value))
     ctx.value.forEach((value, i) => visit(ctx.descend(value, i), element))
   },
   object(ctx, _1, fields) {
     const keys = Object.keys(fields).toSorted()
     const { value } = ctx
-    A.assert(typeof value === "object" && value !== null)
-    A.assertEquals(keys, Object.keys(value).toSorted())
+    assert_(typeof value === "object" && value !== null)
+    assertEquals(keys, Object.keys(value).toSorted())
     keys.forEach((key) => visit(ctx.descend(value[key as never], key), fields[key]!))
   },
   transform(ctx, _1, from) {
@@ -136,7 +148,7 @@ const visit = TypeVisitor<AssertContext, void>({
   },
   union(ctx, _1, ...members) {
     const match = matchUnionMember(members, ctx.value)
-    A.assert(match)
+    assert_(match)
     visit(ctx, match)
   },
   ref(ctx, _1, get) {

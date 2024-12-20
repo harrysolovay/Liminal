@@ -35,17 +35,7 @@ if (false as boolean) {
 }
 
 await build({
-  entryPoints: [
-    "./mod.ts",
-    {
-      name: "./ollama",
-      path: "./providers/Ollama/mod.ts",
-    },
-    {
-      name: "./openai",
-      path: "./providers/OpenAI/mod.ts",
-    },
-  ],
+  entryPoints: ["./mod.ts"],
   outDir,
   shims: {},
   scriptModule: false,

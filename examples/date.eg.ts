@@ -1,45 +1,25 @@
-import { assert } from "@std/assert"
-import { OpenAIAdapter } from "liminal/openai"
-import OpenAI from "openai"
 import "@std/dotenv/load"
-import { L, Liminal, type Type } from "liminal"
-import { dbg } from "testing"
-import * as A from "./assertions.eg.ts"
+import { assert, L, Liminal, OllamaAdapter, type Type } from "liminal"
+import { max, min } from "./asserts.ts"
 
-const $ = Liminal(OpenAIAdapter({
-  openai: new OpenAI(),
+const $ = Liminal(OllamaAdapter({
+  defaultModel: "llama3.2",
 }))
 
 const LDate: Type<Date> = L.transform(
   L.Tuple(
     L.number`Year.`,
-    L.number`Month.`(
-      A.number.min(0),
-      A.number.max(11),
-    ),
-    L.number`Day.`(
-      A.number.min(1),
-      A.number.max(31),
-    ),
+    L.number`Month.`(min(0), max(11)),
+    L.number`Day.`(min(1), max(31)),
   )(
-    L.Assertion(
-      "Ensure the day is valid for corresponding year and month.",
-      (ymd) => assertValidYMD(...ymd),
-    ),
+    L.assert("Ensure the day is valid for corresponding year and month.", ([y, m, d]) => {
+      const date = new Date(y, m, d)
+      return date.getFullYear() === y && date.getMonth() === m && date.getDate() === d
+    }),
   ),
   ([y, m, d]) => new Date(y, m, d),
 )
 
-await $(LDate).then(dbg)
+const date = await $(LDate)
 
-// ...
-
-function assertValidYMD(year: number, month: number, day: number) {
-  const date = new Date(year, month, day)
-  assert(
-    date.getFullYear() === year && date.getMonth() === month && date.getDate() === day,
-    `Day ${day} is invalid for month ${month} (${MONTHS[month]}).`,
-  )
-}
-// dprint-ignore-next-line
-const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+await assert(LDate, date)

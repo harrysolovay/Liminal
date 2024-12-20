@@ -1,12 +1,12 @@
 export * as L from "./L.ts"
 
-// moderate --exclude annotations declareIntrinsic.ts inspect.ts L.ts utility
+// moderate --exclude annotations declareIntrinsic.ts inspect.ts intrinsics.ts L.ts utility
 
 export * from "./assert.ts"
-export * from "./DescriptionContext.ts"
+export * from "./description.ts"
 export * from "./deserialize.ts"
 export * from "./display.ts"
-export * from "./intrinsics.ts"
+export * from "./equals.ts"
 export * from "./intrinsics_util.ts"
 export * from "./isType.ts"
 export * from "./ReduceDependencies.ts"

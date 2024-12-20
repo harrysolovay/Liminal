@@ -3,10 +3,6 @@ import { DescriptionParamKey } from "./annotations/mod.ts"
 import type { PartialType } from "./mod.ts"
 import type { Type } from "./Type.ts"
 
-export function description(type: Type<unknown>): string | undefined {
-  return new DescriptionContext(new Map(), {}).format(type)
-}
-
 export class DescriptionContext {
   constructor(
     readonly pins: Map<PartialType, string> = new Map(),

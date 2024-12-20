@@ -9,7 +9,7 @@ import { L, Type } from "liminal"
 
 interface Person {
   name: string
-  friends: Person[]
+  friends: Array<Person>
 }
 
 const Person: Type<Person> = L.object({

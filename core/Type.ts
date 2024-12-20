@@ -21,6 +21,9 @@ export interface Type<T, D extends symbol = never> {
   declaration: TypeDeclaration
   annotations: Array<Annotation>
 
+  description: () => string | undefined
+  signature: () => string
+  signatureHash: () => Promise<string>
   extract: <K extends symbol, V>(param: Param<K, V>) => Array<V>
 }
 
@@ -31,7 +34,7 @@ export type TypeDeclaration = {
 } | {
   getAtom?: never
   factory: (...args: any) => PartialType
-  args: unknown[]
+  args: Array<unknown>
 }
 
 export type PartialType<T = any> = Type<T, symbol>

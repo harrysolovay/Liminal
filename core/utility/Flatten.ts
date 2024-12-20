@@ -9,6 +9,6 @@ export function Flattened<A extends Array<PartialType<Array<unknown>>>>(
 }
 
 type NativeFlattened<A extends Array<PartialType<Array<unknown>>>> = A extends
-  [infer E0 extends PartialType, ...infer ERest extends PartialType[]]
+  [infer E0 extends PartialType, ...infer ERest extends Array<PartialType>]
   ? [...E0["T"], ...NativeFlattened<ERest>]
   : []
