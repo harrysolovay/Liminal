@@ -16,7 +16,7 @@ snapshot[`toJSON > null 2`] = `
 
 snapshot[`toJSON > null 3`] = `
 {
-  description: "One. Two.",
+  description: "Two. One.",
   type: "null",
 }
 `;
@@ -61,7 +61,7 @@ snapshot[`toJSON > boolean 2`] = `
 
 snapshot[`toJSON > boolean 3`] = `
 {
-  description: "One. Two.",
+  description: "Two. One.",
   type: "boolean",
 }
 `;
@@ -82,7 +82,7 @@ snapshot[`toJSON > number 2`] = `
 
 snapshot[`toJSON > number 3`] = `
 {
-  description: "One. Two.",
+  description: "Two. One.",
   type: "number",
 }
 `;
@@ -103,7 +103,7 @@ snapshot[`toJSON > integer 2`] = `
 
 snapshot[`toJSON > integer 3`] = `
 {
-  description: "One. Two.",
+  description: "Two. One.",
   type: "integer",
 }
 `;
@@ -124,7 +124,7 @@ snapshot[`toJSON > string 2`] = `
 
 snapshot[`toJSON > string 3`] = `
 {
-  description: "One. Two.",
+  description: "Two. One.",
   type: "string",
 }
 `;
@@ -153,7 +153,7 @@ snapshot[`toJSON > array 2`] = `
 
 snapshot[`toJSON > array 3`] = `
 {
-  description: "One. Two.",
+  description: "Two. One.",
   items: {
     description: undefined,
     type: "string",
@@ -219,7 +219,7 @@ snapshot[`toJSON > object 2`] = `
 snapshot[`toJSON > object 3`] = `
 {
   additionalProperties: false,
-  description: "One. Two.",
+  description: "Two. One.",
   properties: {
     a: {
       description: undefined,
@@ -269,7 +269,7 @@ snapshot[`toJSON > enum 2`] = `
 
 snapshot[`toJSON > enum 3`] = `
 {
-  description: "One. Two.",
+  description: "Two. One.",
   enum: [
     "A",
     "B",
@@ -323,7 +323,7 @@ snapshot[`toJSON > union 3`] = `
       type: "string",
     },
   ],
-  description: "One. Two.",
+  description: "Two. One.",
 }
 `;
 

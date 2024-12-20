@@ -9,13 +9,13 @@ Deno.test("AnnotationContext", async (t) => {
     assertEquals(aCtx.descriptions, ["A."])
     const B = A`B.`
     const bCtx = new AnnotationContext(B)
-    assertEquals(bCtx.descriptions, ["A.", "B."])
+    assertEquals(bCtx.descriptions, ["B.", "A."])
     const C = B("C.")
     const cCtx = new AnnotationContext(C)
-    assertEquals(cCtx.descriptions, ["A.", "B.", "C."])
+    assertEquals(cCtx.descriptions, ["C.", "B.", "A."])
     const D = C`D ${2} ${"E"}`
     const dCtx = new AnnotationContext(D)
-    assertEquals(dCtx.descriptions, ["A.", "B.", "C.", "D 2 E"])
+    assertEquals(dCtx.descriptions, ["D 2 E", "C.", "B.", "A."])
   })
 
   await t.step("assertions", () => {
@@ -24,6 +24,21 @@ Deno.test("AnnotationContext", async (t) => {
     assertEquals(aCtx.assertionDescriptions(), ["A"])
     const B = A(L.assert("B"))
     const bCtx = new AnnotationContext(B)
-    assertEquals(bCtx.assertionDescriptions(), ["A", "B"])
+    assertEquals(bCtx.assertionDescriptions(), ["B", "A"])
+  })
+
+  await t.step("params", () => {
+    const AKey = Symbol()
+    const AParam = L.Param(AKey, (value: string) => value)
+    const A = L.string(AParam)(AParam("AValue"))
+    const aCtx = new AnnotationContext(A)
+    assertEquals(aCtx.args, {
+      [AKey]: ["AValue"],
+    })
+    const B = A(AParam)(AParam("BValue"))
+    const bCtx = new AnnotationContext(B)
+    assertEquals(bCtx.args, {
+      [AKey]: ["BValue", "AValue"],
+    })
   })
 })

@@ -10,10 +10,10 @@ export class AnnotationContext {
     readonly type: PartialType,
     readonly descriptions: Array<string> = [],
     readonly pins: Map<PartialType, string> = new Map(),
-    readonly args: Record<symbol, unknown> = {},
+    readonly args: Record<symbol, Array<unknown>> = {},
     readonly assertions: Array<Assertion> = [],
   ) {
-    type.annotations.forEach((annotation) => {
+    type.annotations.toReversed().forEach((annotation) => {
       if (typeof annotation === "string") {
         descriptions.push(annotation)
       } else if (typeof annotation === "number") {
@@ -29,12 +29,14 @@ export class AnnotationContext {
                 } else if (part.type === "Type") {
                   return this.pin(part)
                 } else if (part.type === "Param") {
-                  const value = args[part.key]
-                  if (isDescriptionParamValue(value)) {
-                    return value[DescriptionParamKey]
+                  const values = args[part.key]
+                  assert(values && values.length)
+                  const eL = values[0]!
+                  if (isDescriptionParamValue(eL)) {
+                    return eL[DescriptionParamKey]
                   }
-                  assert(typeof value === "string")
-                  return value
+                  assert(typeof values === "string")
+                  return values
                 }
                 type _ = AssertTrue<IsNever<typeof part>>
               }),
@@ -50,14 +52,21 @@ export class AnnotationContext {
             break
           }
           case "Param": {
-            const value = args[annotation.key]
-            if (isDescriptionParamValue(value)) {
-              return value[DescriptionParamKey]
+            const values = args[annotation.key]
+            assert(values && values.length)
+            const eL = values[0]!
+            if (isDescriptionParamValue(eL)) {
+              this.descriptions.push(eL[DescriptionParamKey])
             }
             break
           }
           case "Arg": {
-            args[annotation.key] = annotation.value
+            let values = args[annotation.key]
+            if (!values) {
+              values = []
+              args[annotation.key] = values
+            }
+            values.push(annotation.value)
             break
           }
           default: {
