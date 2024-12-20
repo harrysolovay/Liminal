@@ -31,7 +31,7 @@ export class AnnotationContext {
                 } else if (part.type === "Param") {
                   const values = args[part.key]
                   assert(values && values.length)
-                  const eL = values[0]!
+                  const eL = values[values.length - 1]!
                   if (isDescriptionParamValue(eL)) {
                     return eL[DescriptionParamKey]
                   }
@@ -54,7 +54,7 @@ export class AnnotationContext {
           case "Param": {
             const values = args[annotation.key]
             assert(values && values.length)
-            const eL = values[0]!
+            const eL = values[values.length - 1]!
             if (isDescriptionParamValue(eL)) {
               this.descriptions.push(eL[DescriptionParamKey])
             }
