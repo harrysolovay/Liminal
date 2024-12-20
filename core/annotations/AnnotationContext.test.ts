@@ -1,4 +1,5 @@
 import { assertEquals } from "@std/assert"
+import type { AssertTrue, IsExact, IsNever } from "conditional-type-checks"
 import * as L from "../L.ts"
 import { AnnotationContext } from "./AnnotationContext.ts"
 
@@ -28,17 +29,37 @@ Deno.test("AnnotationContext", async (t) => {
   })
 
   await t.step("params", () => {
-    const AKey = Symbol()
+    const AKey = Symbol("AKey")
     const AParam = L.Param(AKey, (value: string) => value)
     const A = L.string(AParam)(AParam("AValue"))
     const aCtx = new AnnotationContext(A)
     assertEquals(aCtx.args, {
       [AKey]: ["AValue"],
     })
-    const B = A(AParam)(AParam("BValue"))
-    const bCtx = new AnnotationContext(B)
-    assertEquals(bCtx.args, {
+    const B = A(AParam)
+    type _0 = AssertTrue<IsExact<typeof B["D"], typeof AKey>>
+    const BB = B(AParam("BValue"))
+    type _1 = AssertTrue<IsNever<typeof BB["D"]>>
+    const bbCtx = new AnnotationContext(BB)
+    assertEquals(bbCtx.args, {
       [AKey]: ["BValue", "AValue"],
     })
+    const C = BB(AParam("CValue"))
+    type _2 = AssertTrue<IsNever<typeof C["D"]>>
+    const cCtx = new AnnotationContext(C)
+    assertEquals(cCtx.args, {
+      [AKey]: ["CValue", "BValue", "AValue"],
+    })
+  })
+
+  await t.step("description params", () => {
+    const AKey = Symbol("AKey")
+    const ADescriptionParam = L.DescriptionParam(AKey, (value: number) => value.toString())
+    const A = L.string`A: ${ADescriptionParam}`
+    type _0 = AssertTrue<IsExact<typeof A["D"], typeof AKey>>
+    const AA = A(ADescriptionParam(1))
+    type _1 = AssertTrue<IsNever<typeof AA["D"]>>
+    const AAContext = new AnnotationContext(AA)
+    assertEquals(AAContext.format(false), "A: 1")
   })
 })

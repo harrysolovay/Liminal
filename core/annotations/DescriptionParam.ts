@@ -1,6 +1,6 @@
 import { Param } from "./Param.ts"
 
-export const DescriptionParamKey: unique symbol = Symbol()
+export const DescriptionParamKey: unique symbol = Symbol("DescriptionParamKey")
 
 export interface DescriptionParamValue {
   [DescriptionParamKey]: string
