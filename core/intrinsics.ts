@@ -138,6 +138,6 @@ function declare<T, D extends symbol>(
         parts: eRest as Array<TemplatePart>,
       }])
     }
-    return declare(declaration, [e0, ...annotations, ...eRest])
+    return declare(declaration, [...annotations, e0, ...eRest])
   }
 }

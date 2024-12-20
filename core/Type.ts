@@ -22,7 +22,7 @@ export interface Type<T, D extends symbol = never> {
   declaration: TypeDeclaration
   annotations: Array<Annotation>
 
-  display: () => string
+  display: (depth?: number) => string
   extract: <K extends symbol, V>(param: Param<K, V>) => Array<V>
   description: () => string | undefined
   signature: () => string

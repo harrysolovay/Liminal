@@ -1,11 +1,12 @@
 // @egts:skip
 
 import "@std/dotenv/load"
-import { L, Liminal, OllamaAdapter } from "liminal"
+import { L, Liminal, OpenAIAdapter } from "liminal"
+import OpenAI from "openai"
 import { dbg } from "testing"
 
-const $ = Liminal(OllamaAdapter({
-  defaultModel: "llama3.2",
+const $ = Liminal(OpenAIAdapter({
+  openai: new OpenAI(),
 }))
 
 const Character = L.MetaType`A character of a superhero story.`
