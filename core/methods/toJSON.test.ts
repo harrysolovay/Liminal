@@ -2,52 +2,51 @@ import { assert, assertEquals } from "@std/assert"
 import { assertSnapshot } from "@std/testing/snapshot"
 import type { AssertTrue, IsExact, IsNever } from "conditional-type-checks"
 import { testIntrinsics } from "testing"
-import { DescriptionParam } from "../annotations/mod.ts"
-import * as I from "../intrinsics.ts"
+import * as L from "../L.ts"
 import type { Type } from "../Type.ts"
 
 testIntrinsics("toJSON", assertTypeSnapshot, {
   null: [
-    [I.null],
+    [L.null],
   ],
   const: [
-    [I.const(I.string, "Hello Liminal!")],
+    [L.const(L.string, "Hello Liminal!")],
   ],
   boolean: [
-    [I.boolean],
+    [L.boolean],
   ],
   number: [
-    [I.number],
+    [L.number],
   ],
   integer: [
-    [I.integer],
+    [L.integer],
   ],
   string: [
-    [I.string],
+    [L.string],
   ],
   array: [
-    [I.array(I.string)],
+    [L.array(L.string)],
   ],
   object: [
     [
-      I.object({
-        a: I.boolean,
-        b: I.number,
-        c: I.string,
+      L.object({
+        a: L.boolean,
+        b: L.number,
+        c: L.string,
       }),
     ],
   ],
   enum: [
-    [I.enum("A", "B", "C")],
+    [L.enum("A", "B", "C")],
   ],
   union: [
-    [I.union(I.null, I.string)],
+    [L.union(L.null, L.string)],
   ],
   ref: [
-    [I.ref(() => I.string)],
+    [L.ref(() => L.string)],
   ],
   transform: [
-    [I.transform(I.string, (value) => ({ value }))],
+    [L.transform(L.string, (value) => ({ value }))],
   ],
 })
 
@@ -61,10 +60,10 @@ async function assertTypeSnapshot(t: Deno.TestContext, type: Type<unknown>): Pro
 Deno.test("toJSON Descriptions", async (t) => {
   await t.step("Params", () => {
     const P_ = Symbol()
-    const P = DescriptionParam(P_)
-    const E = I.string`P: ${P}`
+    const P = L.DescriptionParam(P_)
+    const E = L.string`P: ${P}`
     type _0 = AssertTrue<IsExact<typeof E["D"], typeof P_>>
-    const R = I.array(E)`Root.`
+    const R = L.array(E)`Root.`
     type _1 = AssertTrue<IsExact<typeof R["D"], typeof P_>>
     const RR = R(P("V"))
     type _2 = AssertTrue<IsNever<typeof RR["D"]>>

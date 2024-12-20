@@ -80,7 +80,7 @@ export class AnnotationContext {
   pin = (type: PartialType): string => {
     let pin = this.pins.get(type)
     if (!pin) {
-      pin = this.pins.size.toString()
+      pin = `T${this.pins.size}`
       this.pins.set(type, pin)
     }
     return pin

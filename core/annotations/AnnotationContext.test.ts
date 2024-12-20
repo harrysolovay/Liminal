@@ -62,4 +62,12 @@ Deno.test("AnnotationContext", async (t) => {
     const AAContext = new AnnotationContext(AA)
     assertEquals(AAContext.format(false), "A: 1")
   })
+
+  await t.step("pins", () => {
+    const A = L.string()
+    const B = L.string(A)
+    const C = L.string`Some relationship to ${B}`
+    const ctx = new AnnotationContext(C)
+    assertEquals(ctx.pins.get(B), "T0")
+  })
 })
