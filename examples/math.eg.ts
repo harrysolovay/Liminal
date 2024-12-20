@@ -1,13 +1,13 @@
-import OpenAI from "openai"
 import "@std/dotenv/load"
+import "@std/dotenv/load"
+import { L, Liminal, OllamaAdapter } from "liminal"
 import { dbg } from "testing"
-import "@std/dotenv/load"
-import { L, Liminal } from "liminal"
-import { OpenAIAdapter } from "liminal/openai"
 
-const $ = Liminal(OpenAIAdapter({
-  openai: new OpenAI(),
-}))
+const $ = Liminal(
+  OllamaAdapter({
+    defaultModel: "llama3.2",
+  }),
+)
 
 const MathReasoning = L.object({
   steps: L.array(L.object({
@@ -17,10 +17,14 @@ const MathReasoning = L.object({
   final_answer: L.string,
 })
 
-await $(
+$(
   {
     role: "system",
     content: "You are a helpful math tutor. Guide the user through the solution step by step.",
   },
   "How can I solve 8x + 7 = -23?",
-)(MathReasoning).then(dbg)
+)
+
+const reasoning = await $(MathReasoning).then(dbg)
+
+await MathReasoning.assert(reasoning)

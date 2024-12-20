@@ -1,6 +1,5 @@
 import "@std/dotenv/load"
-import { L, Liminal } from "liminal"
-import { OllamaAdapter } from "liminal/ollama"
+import { L, Liminal, OllamaAdapter } from "liminal"
 import { dbg } from "testing"
 
 const $ = Liminal(OllamaAdapter({
@@ -9,7 +8,12 @@ const $ = Liminal(OllamaAdapter({
 
 $`Ollama is 22 years old and busy saving the world. Return a JSON object with the age and availability.`
 
-await $(L.object({
+const T = L.object({
   age: L.number,
   available: L.boolean,
-})).then(dbg)
+})
+
+const t = await $(T).then(dbg)
+
+// @egts:cut
+await T.assert(t)

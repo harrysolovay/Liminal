@@ -1,5 +1,18 @@
-import { declare } from "./declareIntrinsic.ts"
-import type { PartialType, Type } from "./Type.ts"
+import { isTemplateStringsArray } from "../util/mod.ts"
+import type { Annotation, TemplatePart } from "./annotations/mod.ts"
+import {
+  assert,
+  description,
+  deserialize,
+  display,
+  extract,
+  inspect,
+  signature,
+  signatureHash,
+  toJSON,
+} from "./methods/mod.ts"
+import type { ReduceDependencies } from "./ReduceDependencies.ts"
+import { type PartialType, type Type, type TypeDeclaration, TypeKey } from "./Type.ts"
 
 export { null_ as null }
 const null_: Type<null> = declare({
@@ -83,4 +96,48 @@ export function transform<T, P extends symbol, R>(
     factory: transform,
     args: [from, f],
   })
+}
+
+function declare<T, D extends symbol>(
+  declaration: TypeDeclaration,
+  annotations: Array<Annotation> = [],
+): Type<T, D> {
+  return Object.assign(
+    Type,
+    inspect,
+    {
+      [TypeKey]: true,
+      type: "Type",
+      trace: new Error().stack!,
+      declaration,
+      annotations,
+      display,
+      extract,
+      description,
+      signature,
+      signatureHash,
+      toJSON,
+      deserialize,
+      assert,
+    } satisfies Omit<Type<T, D>, "T" | "D"> as never,
+  )
+
+  function Type<A extends Array<TemplatePart>>(
+    template: TemplateStringsArray,
+    ...descriptionParts: A
+  ): Type<T, ReduceDependencies<D, A>>
+  function Type<A extends Array<Annotation>>(...annotations: A): Type<T, ReduceDependencies<D, A>>
+  function Type(
+    e0: Annotation | TemplateStringsArray,
+    ...eRest: Array<Annotation>
+  ): Type<T, symbol> {
+    if (isTemplateStringsArray(e0)) {
+      return declare(declaration, [...annotations, {
+        type: "Template",
+        template: e0,
+        parts: eRest as Array<TemplatePart>,
+      }])
+    }
+    return declare(declaration, [e0, ...annotations, ...eRest])
+  }
 }

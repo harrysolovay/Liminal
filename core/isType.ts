@@ -1,10 +1,10 @@
 import { IntrinsicName } from "./intrinsics_util.ts"
 import { type PartialType, TypeKey } from "./Type.ts"
 
-export function isType<T>(
+export function isType(
   inQuestion: unknown,
   ...intrinsicNames: Array<IntrinsicName>
-): inQuestion is PartialType<T> {
+): inQuestion is PartialType {
   if (typeof inQuestion === "function" && TypeKey in inQuestion) {
     if (intrinsicNames.length) {
       for (const intrinsicName of intrinsicNames) {

@@ -1,19 +1,16 @@
-import {
-  DescriptionContext,
-  isType,
-  type PartialType,
-  type Type,
-  TypeVisitor,
-} from "../core/mod.ts"
-import type { JSONType } from "./JSONSchema.ts"
+import { isType } from "../isType.ts"
+import type { JSONType } from "../JSONSchema.ts"
+import type { PartialType, Type } from "../Type.ts"
+import { TypeVisitor } from "../TypeVisitor.ts"
+import { DescriptionContext } from "./description.ts"
 
-export function toJSONSchema(type: Type<unknown, any>): JSONType {
+export function toJSON(this: Type<unknown, any>): JSONType {
   const ctx = new VisitorContext(
     new Map(),
     {},
     new DescriptionContext(new Map(), {}),
   )
-  const root = visit(ctx, type)
+  const root = visit(ctx, this)
   const { "0": _root, ...$defs } = ctx.defs
   return { ...root, $defs } as never
 }

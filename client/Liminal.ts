@@ -1,63 +1,39 @@
-import { AssertionError } from "@std/assert"
-import { deserialize, isType, L, type Type } from "../core/mod.ts"
+import { isType, type Type } from "../core/mod.ts"
 import { isTemplateStringsArray } from "../util/isTemplateStringsArray.ts"
 import { recombine } from "../util/mod.ts"
-import type { Adapter, AdapterConfig } from "./Adapter.ts"
+import type { Adapter, Provider } from "./Adapter.ts"
+import type { Tool } from "./Tool.ts"
 
-export interface Liminal<C extends AdapterConfig> {
-  <T>(type: Type<T, never>, config?: SendConfig<C>): Promise<T>
-  (...texts: Array<number | string | C["I" | "O"]>): Liminal<C>
-  (template: TemplateStringsArray, ...values: Array<number | string>): Liminal<C>
+export interface Liminal<P extends Provider> {
+  <T>(type: Type<T, never>, config?: CompleteConfig<P>): Promise<T>
+  (...texts: Array<number | string | P["I" | "O"]>): Liminal<P>
+  (template: TemplateStringsArray, ...values: Array<number | string>): Liminal<P>
 
-  adapter: Adapter<C>
-  // parent?: Liminal<C>
-  messages: Array<C["I" | "O"]>
-
-  // branch: () => Liminal<C>
-  // serialize: () => Array<C["I" | "O"]>
-
-  assert: (value: unknown, statement: string) => Promise<void>
+  adapter: Adapter<P>
+  messages: Array<P["I" | "O"]>
 }
 
-export type SendConfig<C extends AdapterConfig> =
-  & {
-    model?: C["M"]
-    name?: string
-  }
-  & ([C["E"]] extends [never] ? {} : {
-    options?: C["E"]
-  })
+export interface CompleteConfig<P extends Provider> {
+  model?: P["M"]
+  name?: string
+  options?: P["E"]
+  tools?: Record<string, Tool>
+}
 
-export function Liminal<C extends AdapterConfig>(adapter: Adapter<C>): Liminal<C> {
-  const messages: Array<C["I" | "O"]> = []
-  return Object.assign(send, {
+export function Liminal<P extends Provider>(adapter: Adapter<P>): Liminal<P> {
+  const messages: Array<P["I" | "O"]> = []
+  const self = Object.assign($, {
     adapter,
     messages,
-    assert: async (value: unknown, statement: string) => {
-      messages.push(adapter.formatInput(`
-        Does the value satisfy the assertion?
+  })
+  return self
 
-        ## The value:
-
-        \`\`\`json
-        ${JSON.stringify(value, null, 2)}
-        \`\`\
-
-        ## The assertion: ${statement}
-      `))
-      const maybeReason = await send(AssertionResult)
-      if (maybeReason) {
-        throw new AssertionError(maybeReason as string)
-      }
-    },
-  } as never)
-
-  async function send(...args: unknown[]) {
+  function $(...args: Array<unknown>) {
     const [e0, ...rest] = args
     if (isType(e0)) {
       const type = (adapter.transform?.(e0 as never) ?? e0) as Type<unknown, never>
       const [maybeConfig] = rest
-      const message = await adapter.complete({
+      return adapter.complete({
         type,
         messages,
         ...(typeof maybeConfig === "object" && maybeConfig !== null)
@@ -66,31 +42,30 @@ export function Liminal<C extends AdapterConfig>(adapter: Adapter<C>): Liminal<C
             name: "name" in maybeConfig ? maybeConfig.name as string : undefined,
           }
           : {},
+      }).then((message) => {
+        messages.push(message)
+        return type.deserialize(adapter.unwrapOutput(message))
       })
-      messages.push(message)
-      const raw = adapter.unwrapOutput(message)
-      return deserialize(type, raw)
-    }
-    if (isTemplateStringsArray(e0)) {
+    } else if (typeof e0 === "function") {
+      return e0(self)
+    } else if (isTemplateStringsArray(e0)) {
       messages.push(adapter.formatInput(recombine(e0, rest)))
     } else {
       args.forEach((arg) => {
-        if (typeof arg === "string") {
-          messages.push(adapter.formatInput(arg))
-        } else if (typeof arg === "number") {
-          messages.push(adapter.formatInput(arg.toString()))
-        } else {
-          messages.push(arg)
-        }
+        messages.push(
+          typeof arg === "string"
+            ? adapter.formatInput(arg)
+            : typeof arg === "number"
+            ? adapter.formatInput(arg.toString())
+            : arg,
+        )
       })
     }
+    return self
   }
 }
 
-export namespace Liminal {
-  export function merge<C extends AdapterConfig>(...liminals: Array<Liminal<C>>): Liminal<C> {
-    throw 0
-  }
-}
-
-const AssertionResult = L.Option(L.string`Reason behind assertion failure.`)
+// parent?: Liminal<C>
+// branch: () => Liminal<C>
+// serialize: () => Array<C["I" | "O"]>
+// merge

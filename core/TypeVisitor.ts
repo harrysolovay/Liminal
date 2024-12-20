@@ -13,7 +13,7 @@ export type TypeVisitorArms<C, R> = Expand<
   & (
     | ({ fallback?: never } & TypeVisitorIntrinsicArms<C, R>)
     | (
-      & { fallback: (ctx: C, type: PartialType, ...args: unknown[]) => R }
+      & { fallback: (ctx: C, type: PartialType, ...args: Array<unknown>) => R }
       & Partial<TypeVisitorIntrinsicArms<C, R>>
     )
   )

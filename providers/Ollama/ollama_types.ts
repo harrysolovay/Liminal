@@ -1,5 +1,5 @@
 // TODO: tools
-import type { JSONType } from "../../mod.ts"
+import type { JSONType } from "../../core/mod.ts"
 
 export interface ChatRequestBody {
   /** The model name. */

@@ -1,7 +1,6 @@
-import { OpenAIAdapter } from "liminal/openai"
 import OpenAI from "openai"
 import "@std/dotenv/load"
-import { L, Liminal } from "liminal"
+import { L, Liminal, OpenAIAdapter } from "liminal"
 import { dbg } from "testing"
 
 const $ = Liminal(OpenAIAdapter({
@@ -19,4 +18,6 @@ $({
   content: "Extract contact data from the supplied message.",
 }, "Please call John Doe at 555-123-4567 or email him at john.doe@example.com.")
 
-await $(Contact).then(dbg)
+const contact = await $(Contact).then(dbg)
+
+await Contact.assert(contact)

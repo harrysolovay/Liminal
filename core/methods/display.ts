@@ -1,9 +1,9 @@
-import { IntrinsicName } from "./intrinsics_util.ts"
-import type { PartialType } from "./Type.ts"
-import { TypeVisitor } from "./TypeVisitor.ts"
+import { IntrinsicName } from "../intrinsics_util.ts"
+import type { PartialType } from "../Type.ts"
+import { TypeVisitor } from "../TypeVisitor.ts"
 
-export function display(type: PartialType): string {
-  return visit(new DisplayContext(type, false, 0), type)
+export function display(this: PartialType): string {
+  return visit(new DisplayContext(this, false, 0), this)
 }
 
 class DisplayContext {

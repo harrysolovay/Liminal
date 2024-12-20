@@ -14,10 +14,6 @@
   }
 }
 
-.VPLocalNav.has-sidebar .container {
-  display: none;
-}
-
 .VPBadge {
   border-radius: 4px;
   padding-bottom: 2px;

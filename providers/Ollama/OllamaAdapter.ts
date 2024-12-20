@@ -1,5 +1,5 @@
 import { assert } from "@std/assert"
-import { type Adapter, DEFAULT_INSTRUCTIONS, toJSONSchema } from "../../mod.ts"
+import { type Adapter, DEFAULT_INSTRUCTIONS } from "../../client/mod.ts"
 import { transform } from "../provider_common.ts"
 import type {
   ChatInputMessage,
@@ -9,7 +9,7 @@ import type {
   ModelOptions,
 } from "./ollama_types.ts"
 
-export interface OllamaConfig {
+export interface OllamaProvider {
   M: string
   I: ChatInputMessage
   O: ChatOutputMessage
@@ -24,7 +24,7 @@ export function OllamaAdapter({
   endpoint?: string
   defaultModel: string
   defaultInstruction?: string
-}): Adapter<OllamaConfig> {
+}): Adapter<OllamaProvider> {
   return {
     transform,
     formatInput: (content) => ({
@@ -49,7 +49,7 @@ export function OllamaAdapter({
           {
             model,
             messages,
-            format: toJSONSchema(type),
+            format: type.toJSON(),
             stream: false,
             options,
           } satisfies ChatRequestBody,

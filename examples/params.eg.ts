@@ -1,3 +1,4 @@
+// @egts:skip
 import { L } from "liminal"
 
 const EasterEggKey = Symbol()

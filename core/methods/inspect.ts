@@ -1,5 +1,4 @@
-import { display } from "./display.ts"
-import type { PartialType } from "./Type.ts"
+import type { PartialType } from "../Type.ts"
 
 export const inspect = {
   [Symbol.for("Deno.customInspect")](
@@ -7,6 +6,6 @@ export const inspect = {
     _inspect: (value: unknown, opts: unknown) => string,
     _opts: unknown,
   ): string {
-    return display(this)
+    return this.display()
   },
 }

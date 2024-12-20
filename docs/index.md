@@ -21,32 +21,23 @@ tool-calling (such as [gpt-4o](https://openai.com/index/hello-gpt-4o/),
 
 Use Liminal types as structured output schemas. Static types are inferred.
 
-```ts {6-9,19,21}
-import { L } from "liminal"
-import { OpenAIResponseFormat } from "liminal/openai"
+```ts
+import { L, OpenAIAdapter } from "liminal"
 
-const response_format = OpenAIResponseFormat(
-  "coordinates",
-  L.Tuple(
-    L.number`Latitude`,
-    L.number`Longitude`,
-  ),
+const $ = L(OpenAIAdapter({
+  openai: new OpenAI(),
+}))
+
+const Coordinates = L.Tuple(
+  L.number`Latitude`,
+  L.number`Longitude`,
 )
 
-const [latitude, longitude] = await openai.chat.completions
-  .create({
-    model: "gpt-4o-mini",
-    messages: [{
-      role: "user",
-      content: ["Somewhere futuristic."],
-    }],
-    response_format,
-  })
-  .then(response_format.deserialize)
+const [
+  latitude,
+  longitude,
+] = await $`Somewhere futuristic.`(Coordinates)
 ```
-
-> Note: must configure `tsconfig` such that module resolution mode supports package export subpaths
-> (such as `Node16` or `NodeNext`).
 
 ## [Annotate Types](./annotations/index.md)
 
