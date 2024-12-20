@@ -2,8 +2,8 @@ import { IntrinsicName } from "../intrinsics_util.ts"
 import type { PartialType } from "../Type.ts"
 import { TypeVisitor } from "../TypeVisitor.ts"
 
-export function display(this: PartialType): string {
-  return visit(new DisplayContext(this, false, 0), this)
+export function display(this: PartialType, depth: number = 0): string {
+  return visit(new DisplayContext(this, false, depth), this)
 }
 
 class DisplayContext {

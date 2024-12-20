@@ -2,7 +2,6 @@ export const snapshot = {};
 
 snapshot[`toJSON > null 1`] = `
 {
-  "\$defs": {},
   description: undefined,
   type: "null",
 }
@@ -10,7 +9,6 @@ snapshot[`toJSON > null 1`] = `
 
 snapshot[`toJSON > null 2`] = `
 {
-  "\$defs": {},
   description: "One.",
   type: "null",
 }
@@ -18,15 +16,13 @@ snapshot[`toJSON > null 2`] = `
 
 snapshot[`toJSON > null 3`] = `
 {
-  "\$defs": {},
-  description: "One. Two.",
+  description: "Two. One.",
   type: "null",
 }
 `;
 
 snapshot[`toJSON > const 1`] = `
 {
-  "\$defs": {},
   const: "Hello Liminal!",
   description: undefined,
   type: "string",
@@ -35,7 +31,6 @@ snapshot[`toJSON > const 1`] = `
 
 snapshot[`toJSON > const 2`] = `
 {
-  "\$defs": {},
   const: "Hello Liminal!",
   description: undefined,
   type: "string",
@@ -44,7 +39,6 @@ snapshot[`toJSON > const 2`] = `
 
 snapshot[`toJSON > const 3`] = `
 {
-  "\$defs": {},
   const: "Hello Liminal!",
   description: undefined,
   type: "string",
@@ -53,7 +47,6 @@ snapshot[`toJSON > const 3`] = `
 
 snapshot[`toJSON > boolean 1`] = `
 {
-  "\$defs": {},
   description: undefined,
   type: "boolean",
 }
@@ -61,7 +54,6 @@ snapshot[`toJSON > boolean 1`] = `
 
 snapshot[`toJSON > boolean 2`] = `
 {
-  "\$defs": {},
   description: "One.",
   type: "boolean",
 }
@@ -69,15 +61,13 @@ snapshot[`toJSON > boolean 2`] = `
 
 snapshot[`toJSON > boolean 3`] = `
 {
-  "\$defs": {},
-  description: "One. Two.",
+  description: "Two. One.",
   type: "boolean",
 }
 `;
 
 snapshot[`toJSON > number 1`] = `
 {
-  "\$defs": {},
   description: undefined,
   type: "number",
 }
@@ -85,7 +75,6 @@ snapshot[`toJSON > number 1`] = `
 
 snapshot[`toJSON > number 2`] = `
 {
-  "\$defs": {},
   description: "One.",
   type: "number",
 }
@@ -93,15 +82,13 @@ snapshot[`toJSON > number 2`] = `
 
 snapshot[`toJSON > number 3`] = `
 {
-  "\$defs": {},
-  description: "One. Two.",
+  description: "Two. One.",
   type: "number",
 }
 `;
 
 snapshot[`toJSON > integer 1`] = `
 {
-  "\$defs": {},
   description: undefined,
   type: "integer",
 }
@@ -109,7 +96,6 @@ snapshot[`toJSON > integer 1`] = `
 
 snapshot[`toJSON > integer 2`] = `
 {
-  "\$defs": {},
   description: "One.",
   type: "integer",
 }
@@ -117,15 +103,13 @@ snapshot[`toJSON > integer 2`] = `
 
 snapshot[`toJSON > integer 3`] = `
 {
-  "\$defs": {},
-  description: "One. Two.",
+  description: "Two. One.",
   type: "integer",
 }
 `;
 
 snapshot[`toJSON > string 1`] = `
 {
-  "\$defs": {},
   description: undefined,
   type: "string",
 }
@@ -133,7 +117,6 @@ snapshot[`toJSON > string 1`] = `
 
 snapshot[`toJSON > string 2`] = `
 {
-  "\$defs": {},
   description: "One.",
   type: "string",
 }
@@ -141,15 +124,13 @@ snapshot[`toJSON > string 2`] = `
 
 snapshot[`toJSON > string 3`] = `
 {
-  "\$defs": {},
-  description: "One. Two.",
+  description: "Two. One.",
   type: "string",
 }
 `;
 
 snapshot[`toJSON > array 1`] = `
 {
-  "\$defs": {},
   description: undefined,
   items: {
     description: undefined,
@@ -161,7 +142,6 @@ snapshot[`toJSON > array 1`] = `
 
 snapshot[`toJSON > array 2`] = `
 {
-  "\$defs": {},
   description: "One.",
   items: {
     description: undefined,
@@ -173,8 +153,7 @@ snapshot[`toJSON > array 2`] = `
 
 snapshot[`toJSON > array 3`] = `
 {
-  "\$defs": {},
-  description: "One. Two.",
+  description: "Two. One.",
   items: {
     description: undefined,
     type: "string",
@@ -185,7 +164,6 @@ snapshot[`toJSON > array 3`] = `
 
 snapshot[`toJSON > object 1`] = `
 {
-  "\$defs": {},
   additionalProperties: false,
   description: undefined,
   properties: {
@@ -213,7 +191,6 @@ snapshot[`toJSON > object 1`] = `
 
 snapshot[`toJSON > object 2`] = `
 {
-  "\$defs": {},
   additionalProperties: false,
   description: "One.",
   properties: {
@@ -241,9 +218,8 @@ snapshot[`toJSON > object 2`] = `
 
 snapshot[`toJSON > object 3`] = `
 {
-  "\$defs": {},
   additionalProperties: false,
-  description: "One. Two.",
+  description: "Two. One.",
   properties: {
     a: {
       description: undefined,
@@ -269,7 +245,6 @@ snapshot[`toJSON > object 3`] = `
 
 snapshot[`toJSON > enum 1`] = `
 {
-  "\$defs": {},
   description: undefined,
   enum: [
     "A",
@@ -282,7 +257,6 @@ snapshot[`toJSON > enum 1`] = `
 
 snapshot[`toJSON > enum 2`] = `
 {
-  "\$defs": {},
   description: "One.",
   enum: [
     "A",
@@ -295,8 +269,7 @@ snapshot[`toJSON > enum 2`] = `
 
 snapshot[`toJSON > enum 3`] = `
 {
-  "\$defs": {},
-  description: "One. Two.",
+  description: "Two. One.",
   enum: [
     "A",
     "B",
@@ -308,7 +281,6 @@ snapshot[`toJSON > enum 3`] = `
 
 snapshot[`toJSON > union 1`] = `
 {
-  "\$defs": {},
   anyOf: [
     {
       description: undefined,
@@ -325,7 +297,6 @@ snapshot[`toJSON > union 1`] = `
 
 snapshot[`toJSON > union 2`] = `
 {
-  "\$defs": {},
   anyOf: [
     {
       description: undefined,
@@ -342,7 +313,6 @@ snapshot[`toJSON > union 2`] = `
 
 snapshot[`toJSON > union 3`] = `
 {
-  "\$defs": {},
   anyOf: [
     {
       description: undefined,
@@ -353,13 +323,12 @@ snapshot[`toJSON > union 3`] = `
       type: "string",
     },
   ],
-  description: "One. Two.",
+  description: "Two. One.",
 }
 `;
 
 snapshot[`toJSON > ref 1`] = `
 {
-  "\$defs": {},
   description: undefined,
   type: "string",
 }
@@ -367,7 +336,6 @@ snapshot[`toJSON > ref 1`] = `
 
 snapshot[`toJSON > ref 2`] = `
 {
-  "\$defs": {},
   description: undefined,
   type: "string",
 }
@@ -375,7 +343,6 @@ snapshot[`toJSON > ref 2`] = `
 
 snapshot[`toJSON > ref 3`] = `
 {
-  "\$defs": {},
   description: undefined,
   type: "string",
 }
@@ -383,7 +350,6 @@ snapshot[`toJSON > ref 3`] = `
 
 snapshot[`toJSON > transform 1`] = `
 {
-  "\$defs": {},
   description: undefined,
   type: "string",
 }
@@ -391,7 +357,6 @@ snapshot[`toJSON > transform 1`] = `
 
 snapshot[`toJSON > transform 2`] = `
 {
-  "\$defs": {},
   description: undefined,
   type: "string",
 }
@@ -399,7 +364,6 @@ snapshot[`toJSON > transform 2`] = `
 
 snapshot[`toJSON > transform 3`] = `
 {
-  "\$defs": {},
   description: undefined,
   type: "string",
 }

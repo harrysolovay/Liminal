@@ -1,25 +1,20 @@
+import { AnnotationContext } from "../annotations/mod.ts"
 import { isType } from "../isType.ts"
 import type { JSONType } from "../JSONSchema.ts"
 import type { PartialType, Type } from "../Type.ts"
 import { TypeVisitor } from "../TypeVisitor.ts"
-import { DescriptionContext } from "./description.ts"
 
 export function toJSON(this: Type<unknown, any>): JSONType {
-  const ctx = new VisitorContext(
-    new Map(),
-    {},
-    new DescriptionContext(new Map(), {}),
-  )
-  const root = visit(ctx, this)
+  const ctx = new ToJSONContext(new Map(), {})
+  const root = visit([ctx, new AnnotationContext(this)], this)
   const { "0": _root, ...$defs } = ctx.defs
-  return { ...root, $defs } as never
+  return { ...root, ...Object.keys($defs).length ? { $defs } : {} } as never
 }
 
-class VisitorContext {
+class ToJSONContext {
   constructor(
     readonly ids: Map<PartialType, string>,
     readonly defs: Record<string, undefined | JSONType>,
-    readonly descriptionCtx: DescriptionContext,
   ) {}
 
   id(type: PartialType): string {
@@ -32,28 +27,25 @@ class VisitorContext {
   }
 }
 
-const visit = TypeVisitor<VisitorContext, JSONType>({
-  hook(next, { descriptionCtx: { args, pins }, ids, defs }, type) {
+const visit = TypeVisitor<[ToJSONContext, AnnotationContext, root?: boolean], JSONType>({
+  hook(next, [toJSONCtx, annotationCtx, root], type) {
     let jsonType: JSONType
-    args = { ...args }
-    const descriptionCtx = new DescriptionContext(pins, args)
-    const description = descriptionCtx.format(type as never)
-    const ctx = new VisitorContext(ids, defs, descriptionCtx)
+    annotationCtx = annotationCtx.child(type)
     if (isType(type, "array", "object", "union")) {
-      const id = ctx.id(type)
-      if (id in defs) {
-        return defs[id] ?? {
+      const id = toJSONCtx.id(type)
+      if (id in toJSONCtx.defs) {
+        return toJSONCtx.defs[id] ?? {
           $ref: id === "0" ? "#" : `#/$defs/${id}`,
         }
       } else {
-        defs[id] = undefined
-        jsonType = next(ctx, type)
-        defs[id] = jsonType
+        toJSONCtx.defs[id] = undefined
+        jsonType = next([toJSONCtx, annotationCtx], type)
+        toJSONCtx.defs[id] = jsonType
       }
     } else {
-      jsonType = next(ctx, type)
+      jsonType = next([toJSONCtx, annotationCtx], type)
     }
-    return { description, ...jsonType }
+    return { description: annotationCtx.format(root), ...jsonType }
   },
   null() {
     return { type: "null" }
