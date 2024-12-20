@@ -1,6 +1,18 @@
 import { assert as assert_, assertArrayIncludes, assertEquals } from "@std/assert"
-import type { PartialType, Type } from "./Type.ts"
-import { TypeVisitor } from "./TypeVisitor.ts"
+import type { PartialType } from "../Type.ts"
+import { TypeVisitor } from "../TypeVisitor.ts"
+
+export async function assert(this: PartialType, value: unknown): Promise<void> {
+  const ctx = new AssertContext([], [], "root", value)
+  visit(ctx, this)
+  const diagnostics = [
+    ...ctx.structuralDiagnostics,
+    ...await Promise.all(ctx.annotationDiagnostics ?? []).then((v) => v.filter((e) => !!e)),
+  ]
+  if (diagnostics.length) {
+    throw new AggregateError(diagnostics.map(({ exception }) => exception))
+  }
+}
 
 export interface Diagnostic {
   type: PartialType
@@ -19,18 +31,6 @@ export namespace Diagnostic {
     } on value \`${JSON.stringify(value)}\` at \`root${path}\`: ${
       exception instanceof Error ? exception.message : JSON.stringify(exception)
     }`
-  }
-}
-
-export async function assert(type: Type<any>, value: unknown): Promise<void> {
-  const ctx = new AssertContext([], [], "root", value)
-  visit(ctx, type)
-  const diagnostics = [
-    ...ctx.structuralDiagnostics,
-    ...await Promise.all(ctx.annotationDiagnostics ?? []).then((v) => v.filter((e) => !!e)),
-  ]
-  if (diagnostics.length) {
-    throw new AggregateError(diagnostics.map(({ exception }) => exception))
   }
 }
 

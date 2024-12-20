@@ -1,14 +1,22 @@
 import { encodeBase32 } from "@std/encoding"
-import { WeakMemo } from "../util/WeakMemo.ts"
-import { IntrinsicName } from "./intrinsics_util.ts"
-import type { PartialType } from "./Type.ts"
-import { TypeVisitor } from "./TypeVisitor.ts"
+import { WeakMemo } from "../../util/WeakMemo.ts"
+import { IntrinsicName } from "../intrinsics_util.ts"
+import type { PartialType } from "../Type.ts"
+import { TypeVisitor } from "../TypeVisitor.ts"
+
+export function signature(this: PartialType): string {
+  return signatureMemo.getOrInit(this)
+}
 
 export const signatureMemo: WeakMemo<PartialType, string> = new WeakMemo((type) => {
   const ctx = new SignatureContext()
   visit(ctx, type)
   return `{\n  ${Object.entries(ctx.defs).map(([k, v]) => `${k}: ${v}`).join("\n  ")}\n}`
 })
+
+export function signatureHash(this: PartialType): Promise<string> {
+  return signatureHashMemo.getOrInit(this)
+}
 
 export const signatureHashMemo: WeakMemo<PartialType, Promise<string>> = new WeakMemo((type) =>
   crypto.subtle

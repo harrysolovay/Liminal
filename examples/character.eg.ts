@@ -1,6 +1,7 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
-import { assert, L, Liminal, OpenAIAdapter } from "liminal"
+import { L, Liminal, OpenAIAdapter } from "liminal"
+import { dbg } from "testing"
 
 const $ = Liminal(OpenAIAdapter({
   openai: new OpenAI(),
@@ -14,6 +15,6 @@ const Character = L.object({
   friends: L.array(L.string)`Names of the character's friends.`,
 })
 
-const character = await $(Character)
+const character = await $(Character).then(dbg)
 
-await assert(Character, character)
+await Character.assert(character)

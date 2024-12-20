@@ -1,6 +1,6 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
-import { assert, L, Liminal, OpenAIAdapter } from "liminal"
+import { L, Liminal, OpenAIAdapter } from "liminal"
 
 const $ = Liminal(OpenAIAdapter({
   openai: new OpenAI({
@@ -9,6 +9,8 @@ const $ = Liminal(OpenAIAdapter({
   }),
 }))
 
-const how = await $("How are you today?")(L.string)
+$`How are you today?`
 
-await assert(L.string, how)
+const how = await $(L.string)
+
+await L.string.assert(how)

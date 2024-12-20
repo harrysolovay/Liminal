@@ -1,12 +1,14 @@
+// @egts:skip
+
 import "@std/dotenv/load"
-import { L, Liminal, MetaType, OllamaAdapter } from "liminal"
+import { L, Liminal, OllamaAdapter } from "liminal"
 import { dbg } from "testing"
 
 const $ = Liminal(OllamaAdapter({
   defaultModel: "llama3.2",
 }))
 
-const Character = MetaType`A character of a superhero story.`
+const Character = L.MetaType`A character of a superhero story.`
 
 const Hero = await $(Character`The superhero.`)
 const Villain = $(Character`The supervillain.`)

@@ -1,10 +1,13 @@
 import "@std/dotenv/load"
 import "@std/dotenv/load"
-import { assert, L, Liminal, OllamaAdapter } from "liminal"
+import { L, Liminal, OllamaAdapter } from "liminal"
+import { dbg } from "testing"
 
-const $ = Liminal(OllamaAdapter({
-  defaultModel: "llama3.2",
-}))
+const $ = Liminal(
+  OllamaAdapter({
+    defaultModel: "llama3.2",
+  }),
+)
 
 const MathReasoning = L.object({
   steps: L.array(L.object({
@@ -14,9 +17,14 @@ const MathReasoning = L.object({
   final_answer: L.string,
 })
 
-const reasoning = await $({
-  role: "system",
-  content: "You are a helpful math tutor. Guide the user through the solution step by step.",
-}, "How can I solve 8x + 7 = -23?")(MathReasoning)
+$(
+  {
+    role: "system",
+    content: "You are a helpful math tutor. Guide the user through the solution step by step.",
+  },
+  "How can I solve 8x + 7 = -23?",
+)
 
-await assert(MathReasoning, reasoning)
+const reasoning = await $(MathReasoning).then(dbg)
+
+await MathReasoning.assert(reasoning)

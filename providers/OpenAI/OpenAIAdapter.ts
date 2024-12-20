@@ -5,7 +5,8 @@ import type {
   ChatCompletionMessage,
   ChatCompletionMessageParam,
 } from "openai/resources/chat/completions"
-import { type Adapter, DEFAULT_INSTRUCTIONS, JSONTypeName } from "../../mod.ts"
+import { type Adapter, DEFAULT_INSTRUCTIONS } from "../../client/mod.ts"
+import { JSONTypeName } from "../../core/mod.ts"
 import { transform } from "../provider_common.ts"
 import { unwrapCompletion, unwrapOutput } from "./openai_util.ts"
 import { OpenAIResponseFormat } from "./OpenAIResponseFormat.ts"

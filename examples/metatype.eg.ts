@@ -1,18 +1,19 @@
 import OpenAI from "openai"
 import "@std/dotenv/load"
-import { assert, Liminal, MetaType, OpenAIAdapter } from "liminal"
+import { L, Liminal, OpenAIAdapter } from "liminal"
+import { dbg } from "testing"
 
 const $ = Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
 $`Declare a type that describes the ontology of a magical story world.`
-const World = await $(MetaType)
+const World = await $(L.MetaType).then(dbg)
 
 $`Generate the story world's data.`
-const world = await $(World)
+const world = await $(World).then(dbg)
 
 // @egts:cut-start
-await assert(MetaType, World)
-await assert(World, world)
+await L.MetaType.assert(World)
+await World.assert(world)
 // @egts:cut-end

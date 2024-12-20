@@ -1,4 +1,4 @@
-import { deserialize, isType, type Type } from "../core/mod.ts"
+import { isType, type Type } from "../core/mod.ts"
 import { isTemplateStringsArray } from "../util/isTemplateStringsArray.ts"
 import { recombine } from "../util/mod.ts"
 import type { Adapter, Provider } from "./Adapter.ts"
@@ -20,15 +20,12 @@ export interface CompleteConfig<P extends Provider> {
   tools?: Record<string, Tool>
 }
 
-export function Liminal<P extends Provider>(
-  adapter: Adapter<P>,
-  _config?: LiminalOptions<P>,
-): Liminal<P> {
+export function Liminal<P extends Provider>(adapter: Adapter<P>): Liminal<P> {
   const messages: Array<P["I" | "O"]> = []
   const self = Object.assign($, {
     adapter,
     messages,
-  } as never)
+  })
   return self
 
   function $(...args: Array<unknown>) {
@@ -47,7 +44,7 @@ export function Liminal<P extends Provider>(
           : {},
       }).then((message) => {
         messages.push(message)
-        return deserialize(type, adapter.unwrapOutput(message))
+        return type.deserialize(adapter.unwrapOutput(message))
       })
     } else if (typeof e0 === "function") {
       return e0(self)
@@ -66,13 +63,6 @@ export function Liminal<P extends Provider>(
     }
     return self
   }
-}
-
-export type ToolArgs = Record<string, Array<unknown>>
-
-export interface LiminalOptions<P extends Provider> {
-  messages?: Array<P["I" | "O"]>
-  persistence?: unknown
 }
 
 // parent?: Liminal<C>

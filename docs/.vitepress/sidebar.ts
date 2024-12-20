@@ -17,7 +17,7 @@ export const MANUAL_SIDEBAR: DefaultTheme.SidebarMulti[string] = {
       collapsed: false,
       link: "/",
       items: [
-        { text: "Intrinsic", link: "/intrinsic" },
+        { text: "Intrinsic", link: "/intrinsics" },
         { text: "Utility", link: "/utility" },
         { text: "Recursion", link: "/recursion" },
         { text: "Meta", link: "/meta" },

@@ -1,5 +1,5 @@
 import { assert } from "@std/assert"
-import { type Adapter, DEFAULT_INSTRUCTIONS, toJSONSchema } from "../../mod.ts"
+import { type Adapter, DEFAULT_INSTRUCTIONS } from "../../client/mod.ts"
 import { transform } from "../provider_common.ts"
 import type {
   ChatInputMessage,
@@ -49,7 +49,7 @@ export function OllamaAdapter({
           {
             model,
             messages,
-            format: toJSONSchema(type),
+            format: type.toJSON(),
             stream: false,
             options,
           } satisfies ChatRequestBody,

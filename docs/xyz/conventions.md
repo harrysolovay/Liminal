@@ -67,3 +67,5 @@ export function WithTone<T, P extends keyof any>(
   return ty`Generate with a tone of ${P.Tone}.`
 }
 ```
+
+## $-prefixing Liminal-Consuming Functions

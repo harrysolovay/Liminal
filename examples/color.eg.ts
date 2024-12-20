@@ -1,6 +1,7 @@
-import { assert, L, Liminal, OpenAIAdapter, type Type } from "liminal"
+import { L, Liminal, OpenAIAdapter, type Type } from "liminal"
 import "@std/dotenv/load"
 import OpenAI from "openai"
+import { dbg } from "testing"
 import { max, min } from "./asserts.ts"
 
 const $ = Liminal(OpenAIAdapter({
@@ -15,6 +16,6 @@ const ColorHex: Type<string> = L.transform(
   (rgb) => rgb.map((channel) => channel.toString(16).padStart(2, "0")).join(""),
 )
 
-const colorHex = await $(ColorHex)
+const colorHex = await $(ColorHex).then(dbg)
 
-await assert(ColorHex, colorHex)
+await ColorHex.assert(colorHex)

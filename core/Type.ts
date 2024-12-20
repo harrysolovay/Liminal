@@ -1,5 +1,5 @@
-import type { Annotation } from "./annotations/Annotation.ts"
-import type { Param, TemplatePart } from "./annotations/mod.ts"
+import type { Annotation, Param, TemplatePart } from "./annotations/mod.ts"
+import type { JSONType } from "./JSONSchema.ts"
 import type { ReduceDependencies } from "./ReduceDependencies.ts"
 
 export interface Type<T, D extends symbol = never> {
@@ -17,14 +17,19 @@ export interface Type<T, D extends symbol = never> {
 
   [TypeKey]: true
   type: "Type"
+
   trace: string
   declaration: TypeDeclaration
   annotations: Array<Annotation>
 
+  display: () => string
+  extract: <K extends symbol, V>(param: Param<K, V>) => Array<V>
   description: () => string | undefined
   signature: () => string
   signatureHash: () => Promise<string>
-  extract: <K extends symbol, V>(param: Param<K, V>) => Array<V>
+  toJSON: () => JSONType
+  deserialize: (jsonText: string) => T
+  assert: (value: unknown) => Promise<void>
 }
 
 export type TypeDeclaration = {

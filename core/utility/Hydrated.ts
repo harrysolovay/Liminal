@@ -1,5 +1,6 @@
-import { L, type Type } from "../core/mod.ts"
-import type { JSONType } from "./JSONSchema.ts"
+import * as I from "../intrinsics.ts"
+import type { JSONType } from "../JSONSchema.ts"
+import type { Type } from "../Type.ts"
 
 export function Hydrated(type: JSONType): Type<unknown> {
   const types: Record<string, undefined | Type<unknown>> = {}
@@ -17,36 +18,36 @@ export function Hydrated(type: JSONType): Type<unknown> {
       }
       if ("$ref" in type) {
         const id = type.$ref.split("#/$defs/").pop()!
-        return L.ref(() => types[id]!)
+        return I.ref(() => types[id]!)
       } else if ("anyOf" in type) {
-        return L.union(...type.anyOf.map(visit))
+        return I.union(...type.anyOf.map(visit))
       }
       switch (type.type) {
         case "null": {
-          return L.null
+          return I.null
         }
         case "boolean": {
-          return L.boolean
+          return I.boolean
         }
         case "integer": {
-          return L.integer
+          return I.integer
         }
         case "number": {
-          return L.number
+          return I.number
         }
         case "string": {
-          return type.enum ? L.enum(...type.enum) : L.string
+          return type.enum ? I.enum(...type.enum) : I.string
         }
         case "array": {
-          return L.array(visit(type.items))
+          return I.array(visit(type.items))
         }
         case "object": {
-          return L.object(
+          return I.object(
             Object.fromEntries(Object.entries(type.properties).map(([k, v]) => [k, visit(v)])),
           )
         }
       }
     })()(type.description)
-    return type.const ? L.const(initial, type.const) : initial
+    return type.const ? I.const(initial, type.const) : initial
   }
 }

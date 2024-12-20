@@ -1,7 +1,11 @@
-import { recombine } from "../util/mod.ts"
-import { DescriptionParamKey } from "./annotations/mod.ts"
-import type { PartialType } from "./mod.ts"
-import type { Type } from "./Type.ts"
+import { recombine } from "../../util/mod.ts"
+import { DescriptionParamKey } from "../annotations/mod.ts"
+import type { PartialType } from "../mod.ts"
+import type { Type } from "../Type.ts"
+
+export function description(this: Type<unknown, never>): string | undefined {
+  return new DescriptionContext(new Map(), {}).format(this)
+}
 
 export class DescriptionContext {
   constructor(
