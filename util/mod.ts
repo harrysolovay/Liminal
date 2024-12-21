@@ -1,6 +1,7 @@
 // moderate
 
 export * from "./ArrayOfLength.ts"
+export * from "./chunkText.ts"
 export * from "./collect.ts"
 export * from "./isPromise.ts"
 export * from "./isTemplateStringsArray.ts"
