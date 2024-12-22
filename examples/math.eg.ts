@@ -1,10 +1,12 @@
 import "@std/dotenv/load"
 import "@std/dotenv/load"
 import { L, Liminal, OllamaAdapter } from "liminal"
+import { Ollama } from "ollama"
 import { dbg } from "testing"
 
 const $ = Liminal(
   OllamaAdapter({
+    ollama: new Ollama(),
     defaultModel: "llama3.2",
   }),
 )
@@ -25,6 +27,6 @@ $(
   "How can I solve 8x + 7 = -23?",
 )
 
-const reasoning = await $(MathReasoning).then(dbg)
+const reasoning = await $.send(MathReasoning).then(dbg)
 
 await MathReasoning.assert(reasoning)

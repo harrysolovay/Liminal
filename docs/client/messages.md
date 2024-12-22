@@ -1,3 +1,5 @@
 # Messages
 
-## Branching
+## Managing Message History
+
+### Branching

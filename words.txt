@@ -3,6 +3,7 @@ assertable
 assertables
 codegen
 combinators
+cspotcode
 deno
 denoland
 dprint

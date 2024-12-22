@@ -1,16 +1,19 @@
-import { isType, type Type } from "../core/mod.ts"
+import type { Type } from "../core/mod.ts"
 import { isTemplateStringsArray } from "../util/isTemplateStringsArray.ts"
 import { recombine } from "../util/mod.ts"
 import type { Adapter, Provider } from "./Adapter.ts"
 import type { Tool } from "./Tool.ts"
 
 export interface Liminal<P extends Provider> {
-  <T>(type: Type<T, never>, config?: CompleteConfig<P>): Promise<T>
   (...texts: Array<number | string | P["I" | "O"]>): Liminal<P>
   (template: TemplateStringsArray, ...values: Array<number | string>): Liminal<P>
 
   adapter: Adapter<P>
   messages: Array<P["I" | "O"]>
+
+  send: <T>(type: Type<T, never>, config?: CompleteConfig<P>) => Promise<T>
+  // TODO: better name
+  next: (f: (messages: Array<P["I" | "O"]>) => Array<P["I" | "O"]>) => Liminal<P>
 }
 
 export interface CompleteConfig<P extends Provider> {
@@ -20,35 +23,24 @@ export interface CompleteConfig<P extends Provider> {
   tools?: Record<string, Tool>
 }
 
-export function Liminal<P extends Provider>(adapter: Adapter<P>): Liminal<P> {
-  const messages: Array<P["I" | "O"]> = []
+export function Liminal<P extends Provider>(
+  adapter: Adapter<P>,
+  messages_?: Array<P["I" | "O"]>,
+): Liminal<P> {
+  const messages = messages_ ? [...messages_] : []
   const self = Object.assign($, {
     adapter,
     messages,
+    send,
+    next,
   })
   return self
 
+  function $(...texts: Array<number | string | P["I" | "O"]>): Liminal<P>
+  function $(template: TemplateStringsArray, ...values: Array<number | string>): Liminal<P>
   function $(...args: Array<unknown>) {
     const [e0, ...rest] = args
-    if (isType(e0)) {
-      const type = (adapter.transform?.(e0 as never) ?? e0) as Type<unknown, never>
-      const [maybeConfig] = rest
-      return adapter.complete({
-        type,
-        messages,
-        ...(typeof maybeConfig === "object" && maybeConfig !== null)
-          ? {
-            model: "model" in maybeConfig ? maybeConfig.model as string : undefined,
-            name: "name" in maybeConfig ? maybeConfig.name as string : undefined,
-          }
-          : {},
-      }).then((message) => {
-        messages.push(message)
-        return type.deserialize(adapter.unwrapOutput(message))
-      })
-    } else if (typeof e0 === "function") {
-      return e0(self)
-    } else if (isTemplateStringsArray(e0)) {
+    if (isTemplateStringsArray(e0)) {
       messages.push(adapter.formatInput(recombine(e0, rest)))
     } else {
       args.forEach((arg) => {
@@ -62,6 +54,23 @@ export function Liminal<P extends Provider>(adapter: Adapter<P>): Liminal<P> {
       })
     }
     return self
+  }
+
+  function send<T>(type: Type<T, never>, config?: CompleteConfig<P>): Promise<T> {
+    type = adapter.transform?.(type) ?? type
+    return adapter.complete({
+      type,
+      messages,
+      model: config?.model,
+      name: config?.name,
+    }).then((message) => {
+      messages.push(message)
+      return type.deserialize(adapter.unwrapOutput(message))
+    })
+  }
+
+  function next(f: (messages: Array<P["I" | "O"]>) => Array<P["I" | "O"]>): Liminal<P> {
+    return Liminal(adapter, f(messages))
   }
 }
 
