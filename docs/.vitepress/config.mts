@@ -78,7 +78,7 @@ export default defineConfig({
     const head: Array<HeadConfig> = []
     const title = `${fm.title || siteData.title} | ${fm.titleTemplate || "Liminal"}`
     const description = fm.description || siteData.description
-    const image = `https://liminal.land${fm.image || "/img/ogp.png"}`
+    const image = `https://liminal.land${fm.image || "/ogp.png"}`
     head.push(["meta", { name: "twitter:card", content: "summary_large_image" }])
     head.push(["meta", { name: "twitter:image", content: image }])
     head.push(["meta", { property: "og:title", content: title }])
