@@ -1,8 +1,10 @@
 import "@std/dotenv/load"
 import { L, Liminal, OllamaAdapter } from "liminal"
+import { Ollama } from "ollama"
 import { dbg } from "testing"
 
 const $ = Liminal(OllamaAdapter({
+  ollama: new Ollama(),
   defaultModel: "llama3.2",
 }))
 
@@ -13,7 +15,7 @@ const T = L.object({
   available: L.boolean,
 })
 
-const t = await $(T).then(dbg)
+const t = await $.send(T).then(dbg)
 
 // @egts:cut
 await T.assert(t)

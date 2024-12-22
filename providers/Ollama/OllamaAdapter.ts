@@ -1,27 +1,21 @@
 import { assert } from "@std/assert"
+import type { Message, Ollama, Options } from "ollama"
 import { type Adapter, DEFAULT_INSTRUCTIONS } from "../../client/mod.ts"
 import { transform } from "../provider_common.ts"
-import type {
-  ChatInputMessage,
-  ChatOutputMessage,
-  ChatRequestBody,
-  ChatResponseBody,
-  ModelOptions,
-} from "./ollama_types.ts"
 
 export interface OllamaProvider {
   M: string
-  I: ChatInputMessage
-  O: ChatOutputMessage
-  E: ModelOptions
+  I: Message
+  O: Message
+  E: Options
 }
 
 export function OllamaAdapter({
-  endpoint = "http://localhost:11434/api/chat",
+  ollama,
   defaultModel,
   defaultInstruction = DEFAULT_INSTRUCTIONS,
 }: {
-  endpoint?: string
+  ollama: Ollama
   defaultModel: string
   defaultInstruction?: string
 }): Adapter<OllamaProvider> {
@@ -35,7 +29,7 @@ export function OllamaAdapter({
       assert(message.role === "assistant")
       return message.content
     },
-    complete: async ({ type, messages, model, options }) => {
+    complete: ({ type, messages, model, options }) => {
       model ??= defaultModel
       if (!messages || !messages.length) {
         messages = [{
@@ -43,19 +37,13 @@ export function OllamaAdapter({
           content: defaultInstruction,
         }]
       }
-      const response: ChatResponseBody = await fetch(endpoint, {
-        method: "POST",
-        body: JSON.stringify(
-          {
-            model,
-            messages,
-            format: type.toJSON(),
-            stream: false,
-            options,
-          } satisfies ChatRequestBody,
-        ),
-      }).then((v) => v.json())
-      return response.message
+      return ollama.chat({
+        model,
+        messages,
+        format: type.toJSON(),
+        stream: false,
+        options,
+      }).then((v) => v.message)
     },
   }
 }

@@ -1,9 +1,11 @@
 import "@std/dotenv/load"
 import { L, Liminal, OllamaAdapter, type Type } from "liminal"
+import { Ollama } from "ollama"
 import { dbg } from "testing"
 import { max, min } from "./asserts.ts"
 
 const $ = Liminal(OllamaAdapter({
+  ollama: new Ollama(),
   defaultModel: "llama3.2",
 }))
 
@@ -21,6 +23,6 @@ const LDate: Type<Date> = L.transform(
   ([y, m, d]) => new Date(y, m, d),
 )
 
-const date = await $(LDate).then(dbg)
+const date = await $.send(LDate).then(dbg)
 
 await LDate.assert(date)

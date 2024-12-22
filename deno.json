@@ -53,6 +53,7 @@
     "@std/path": "jsr:@std/path@^1.0.6",
     "@std/testing": "jsr:@std/testing@^1.0.3",
     "conditional-type-checks": "npm:conditional-type-checks@^1.0.6",
+    "ollama": "npm:ollama@^0.5.11",
     "openai": "npm:openai@^4.76.0",
     "testing": "./testing/mod.ts"
   },

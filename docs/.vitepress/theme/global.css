@@ -1,4 +1,9 @@
-@import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
+@font-face {
+  font-family: Amatic SC;
+  font-style: normal;
+  font-weight: 400;
+  src: url("./fonts/AmaticSC-Regular.ttf") format("ttf");
+}
 
 :root {
   --vp-font-family-base: SF Pro Display, sans-serif;
@@ -16,7 +21,6 @@
 
 .VPBadge {
   border-radius: 4px;
-  padding-bottom: 2px;
 }
 
 .DocSearch.DocSearch-Button {
