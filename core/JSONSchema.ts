@@ -1,4 +1,3 @@
-import { unreachable } from "@std/assert"
 import type { Expand } from "../util/mod.ts"
 import * as I from "./intrinsics.ts"
 import type { AnyType } from "./Type.ts"
@@ -90,7 +89,7 @@ export function JSONTypeName(type: AnyType): JSONTypeName {
       return JSONTypeName(type.args?.[0] as AnyType)
     }
     default: {
-      unreachable()
+      throw 0
     }
   }
 }
