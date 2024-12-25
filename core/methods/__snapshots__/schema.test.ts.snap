@@ -327,21 +327,21 @@ snapshot[`toJSON > union 3`] = `
 }
 `;
 
-snapshot[`toJSON > ref 1`] = `
+snapshot[`toJSON > f 1`] = `
 {
   description: undefined,
   type: "string",
 }
 `;
 
-snapshot[`toJSON > ref 2`] = `
+snapshot[`toJSON > f 2`] = `
 {
   description: undefined,
   type: "string",
 }
 `;
 
-snapshot[`toJSON > ref 3`] = `
+snapshot[`toJSON > f 3`] = `
 {
   description: undefined,
   type: "string",
