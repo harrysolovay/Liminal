@@ -1,29 +1,18 @@
 import { assert as assert_, assertArrayIncludes, assertEquals } from "@std/assert"
+import { AssertContext } from "../AssertContext.ts"
 import type { Diagnostic } from "../Diagnostic.ts"
 import type { AnyType } from "../Type.ts"
 import { TypeVisitor } from "../TypeVisitor.ts"
 
 export function assert<T>(this: AnyType<T>, value: unknown): asserts value is T {
   const diagnostics: Array<Diagnostic> = []
-  visit(new AssertContext(diagnostics, "root", value), this)
+  visit(new AssertContext(undefined, diagnostics, "root", value), this)
   if (diagnostics.length) {
     throw new AggregateError(diagnostics.map(({ exception }) => exception))
   }
 }
 
-export class AssertContext {
-  constructor(
-    readonly diagnostics: Array<Diagnostic>,
-    readonly path: string,
-    readonly value: unknown,
-    readonly junction?: number | string,
-  ) {}
-
-  descend = (value: unknown, junction?: number | string): AssertContext =>
-    new AssertContext(this.diagnostics, this.path, value, junction)
-}
-
-const visit = TypeVisitor<AssertContext, void>({
+const visit = TypeVisitor<AssertContext<undefined, Diagnostic>, void>({
   hook(next, ctx, type) {
     const path = ctx.junction ? ctx.path : `${ctx.path}["${ctx.junction}"]`
     try {
@@ -64,7 +53,7 @@ const visit = TypeVisitor<AssertContext, void>({
     ctx.value.forEach((value, i) => visit(ctx.descend(value, i), element))
   },
   object(ctx, _1, fields) {
-    const keys = Object.keys(fields).toSorted()
+    const keys = Object.keys(fields)
     const { value } = ctx
     assert_(typeof value === "object" && value !== null)
     assertEquals(keys, Object.keys(value).toSorted())
@@ -88,7 +77,7 @@ export function matchUnionMember(members: Array<AnyType>, value: unknown): AnyTy
   while (queue.length) {
     const current = queue.pop()!
     const diagnostics: Array<Diagnostic> = []
-    visit(new AssertContext(diagnostics, "", value), current)
+    visit(new AssertContext(undefined, diagnostics, "", value), current)
     if (diagnostics.length) {
       continue
     }
