@@ -51,10 +51,10 @@ const visit = TypeVisitor<DisplayContext, string>({
       )
     }\n)`
   },
-  f(ctx, _1, get): string {
+  deferred(ctx, _1, get): string {
     return visit(ctx, get())
   },
-  transform(ctx, _1, from): string {
+  f(ctx, _1, _2, from): string {
     return `f(${visit(ctx, from)})`
   },
   fallback(_0, type) {

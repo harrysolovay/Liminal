@@ -42,11 +42,11 @@ testIntrinsics("toJSON", assertTypeSnapshot, {
   union: [
     [L.union(L.null, L.string)],
   ],
-  f: [
-    [L.f(() => L.string)],
+  deferred: [
+    [L.deferred(() => L.string)],
   ],
-  transform: [
-    [L.transform(L.string, (value) => ({ value }))],
+  f: [
+    [L.f("N", L.string, (value) => ({ value }))],
   ],
 })
 

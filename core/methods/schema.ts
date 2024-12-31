@@ -93,10 +93,13 @@ const visit = TypeVisitor<[ToJSONContext, AnnotationContext, root?: boolean], JS
       anyOf: members.map((member) => visit(ctx, member)),
     }
   },
-  f(ctx, _1, get): JSONType {
+  deferred(ctx, _1, get): JSONType {
     return visit(ctx, get())
   },
-  transform(ctx, _1, from): JSONType {
+  f(ctx, _1, _2, from): JSONType {
+    return visit(ctx, from)
+  },
+  gen(ctx, _1, _2, from): JSONType {
     return visit(ctx, from)
   },
 })

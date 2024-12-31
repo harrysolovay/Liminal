@@ -82,10 +82,10 @@ export function JSONTypeName(type: AnyType): JSONTypeName {
     case I.union: {
       return "union"
     }
-    case I.f: {
+    case I.deferred: {
       return "ref"
     }
-    case I.transform: {
+    case I.f: {
       return JSONTypeName(type.args?.[0] as AnyType)
     }
     default: {

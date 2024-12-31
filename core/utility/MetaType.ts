@@ -5,7 +5,8 @@ import { Hydrated } from "./Hydrated.ts"
 import { Record } from "./Record.ts"
 import { TaggedUnion } from "./TaggedUnion.ts"
 
-const JSONType_: Type<JSONType> = I.transform(
+const JSONType_: Type<JSONType> = I.f(
+  "JSONType",
   TaggedUnion({
     null: null,
     boolean: null,
@@ -13,15 +14,19 @@ const JSONType_: Type<JSONType> = I.transform(
     number: null,
     string: null,
     array: I.object({
-      items: I.f((): AnyType => JSONType_),
+      items: I.deferred((): AnyType => JSONType_),
     }),
-    object: I.transform(Record(I.f((): AnyType => JSONType_)), (properties) => ({
-      properties,
-      required: Object.keys(properties),
-      additionalProperties: false,
-    })),
+    object: I.f(
+      "JSONObjectType",
+      Record(I.deferred((): AnyType => JSONType_)),
+      (properties) => ({
+        properties,
+        required: Object.keys(properties),
+        additionalProperties: false,
+      }),
+    ),
     union: I.object({
-      anyOf: I.f(() => JSONType_),
+      anyOf: I.deferred(() => JSONType_),
     }),
   }),
   ({ type, value }) => ({
@@ -30,6 +35,10 @@ const JSONType_: Type<JSONType> = I.transform(
   }),
 ) as never
 
-export type MetaType<P extends symbol> = Type<Type<unknown>, P>
+export type MetaType<P extends symbol = symbol> = Type<Type<unknown>, never, P>
 
-export const MetaType: MetaType<never> = I.transform(JSONType_, Hydrated)
+export const MetaType: MetaType<never> = I.f(
+  "MetaType",
+  JSONType_,
+  (jsonType) => Hydrated(jsonType),
+)

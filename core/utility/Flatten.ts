@@ -4,8 +4,8 @@ import { Tuple } from "./Tuple.ts"
 
 export function Flattened<A extends Array<AnyType<Array<unknown>>>>(
   ...sources: A
-): Type<NativeFlattened<A>, A[number]["D"]> {
-  return I.transform(Tuple(...sources), (value) => value.flat()) as never
+): Type<NativeFlattened<A>, A[number]["E"], A[number]["D"]> {
+  return I.f("Flattened", Tuple(...sources), (value) => value.flat()) as never
 }
 
 type NativeFlattened<A extends Array<AnyType<Array<unknown>>>> = A extends

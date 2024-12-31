@@ -8,7 +8,8 @@ const $ = Liminal(OpenAIAdapter({
   openai: new OpenAI(),
 }))
 
-const ColorHex: Type<string> = L.transform(
+const ColorHex: Type<string> = L.f(
+  "ColorHex",
   L.Tuple.N(
     L.number(min(0), max(255)),
     3,

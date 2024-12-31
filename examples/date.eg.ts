@@ -9,7 +9,8 @@ const $ = Liminal(OllamaAdapter({
   defaultModel: "llama3.2",
 }))
 
-const LDate: Type<Date> = L.transform(
+const LDate: Type<Date> = L.f(
+  "Date",
   L.Tuple(
     L.number`Year.`,
     L.number`Month.`(min(0), max(11)),

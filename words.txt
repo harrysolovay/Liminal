@@ -10,6 +10,7 @@ dprint
 egts
 esbenp
 harrysolovay
+hstore
 inspectable
 liminals
 llava
@@ -21,7 +22,9 @@ modelfile
 nodenext
 ollama
 openai
+ossp
 parameterizing
+pglite
 quasis
 shiki
 shikijs
@@ -30,6 +33,7 @@ subassert
 subpaths
 subschema
 subschemas
+subthread
 subvalue
 supervillain
 tsconfigure

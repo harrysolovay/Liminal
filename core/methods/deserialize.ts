@@ -21,11 +21,12 @@ const visit = TypeVisitor<unknown, unknown>({
     assert(matched)
     return visit(value, matched)
   },
-  f(ctx, _1, get): unknown {
+  deferred(ctx, _1, get): unknown {
     return visit(ctx, get())
   },
-  transform(ctx, _1, from, f): unknown {
-    return f(visit(ctx, from))
+  f(ctx, _1, _2, from, f): unknown {
+    // TODO
+    return f.call(null!, visit(ctx, from))
   },
   fallback(value) {
     return value

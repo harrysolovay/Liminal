@@ -4,7 +4,7 @@ import type { AnyType, Type } from "../Type.ts"
 
 export function Intersection<S extends Array<AnyType>>(
   ...sources: Ensure<S>
-): Type<Expand<U2I<S[number]["T"]>>, S[number]["D"]> {
+): Type<Expand<U2I<S[number]["T"]>>, S[number]["E"], S[number]["D"]> {
   return I.object(
     Object.fromEntries(
       sources.flatMap((source) => Object.entries(source.args?.[0]!)),

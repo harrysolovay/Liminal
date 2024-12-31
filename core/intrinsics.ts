@@ -1,4 +1,5 @@
 import { isTemplateStringsArray } from "../util/mod.ts"
+import type { Action, ReduceAction } from "./actions.ts"
 import type { Annotation, TemplatePart } from "./annotations/mod.ts"
 import {
   assert,
@@ -11,7 +12,7 @@ import {
   signature,
 } from "./methods/mod.ts"
 import type { ReduceDependencies } from "./ReduceDependencies.ts"
-import type { AnyType, Type, TypeDeclaration } from "./Type.ts"
+import { type AnyType, type Type, type TypeDeclaration, TypeKey } from "./Type.ts"
 
 export { null_ as null }
 const null_: Type<null> = declare({
@@ -50,10 +51,10 @@ export const string: Type<string> = declare({
 })
 
 export { const_ as const }
-function const_<T, P extends symbol, const A extends T>(
-  type: Type<T, P>,
+function const_<T, E, D extends symbol, const A extends T>(
+  type: Type<T, E, D>,
   value: A,
-): Type<A, P> {
+): Type<A, E, D> {
   return declare({
     type: "const",
     self() {
@@ -64,7 +65,7 @@ function const_<T, P extends symbol, const A extends T>(
 }
 Object.defineProperty(const_, "name", { value: "const" })
 
-export function array<T, P extends symbol>(element: Type<T, P>): Type<Array<T>, P> {
+export function array<T, E, D extends symbol>(element: Type<T, E, D>): Type<Array<T>, E, D> {
   return declare({
     type: "array",
     self() {
@@ -76,7 +77,11 @@ export function array<T, P extends symbol>(element: Type<T, P>): Type<Array<T>, 
 
 export function object<F extends Record<string, AnyType>>(
   fields: F,
-): Type<{ [K in keyof F]: F[K]["T"] }, F[keyof F]["D"]> {
+): Type<
+  { [K in keyof F]: F[K]["T"] },
+  F[keyof F]["E"],
+  F[keyof F]["D"]
+> {
   return declare({
     type: "object",
     self() {
@@ -100,7 +105,7 @@ Object.defineProperty(enum_, "name", { value: "enum" })
 
 export function union<M extends Array<AnyType>>(
   ...members: M
-): Type<M[number]["T"], M[number]["D"]> {
+): Type<M[number]["T"], M[number]["E"], M[number]["D"]> {
   return declare({
     type: "union",
     self() {
@@ -110,38 +115,54 @@ export function union<M extends Array<AnyType>>(
   })
 }
 
-export function f<T, P extends symbol>(get: () => Type<T, P>): Type<T, P> {
+export function deferred<T, E, D extends symbol>(get: () => Type<T, E, D>): Type<T, E, D> {
   return declare({
-    type: "f",
+    type: "deferred",
     self() {
-      return f
+      return deferred
     },
     args: [get],
   }) as never
 }
 
-export function transform<T, P extends symbol, R>(
-  from: Type<T, P>,
-  f: (value: T) => R,
-): Type<R, P> {
+export function gen<F, E, Y extends Action, D extends symbol, T>(
+  _name: string,
+  _from: Type<F, E, D>,
+  _run: (this: Thread, value: F) => Generator<Y, T> | AsyncGenerator<Y, T>,
+): Type<T, ReduceAction<E, Y>, D> {
+  throw 0
+}
+
+export function f<T, E, D extends symbol, R>(
+  name: string,
+  from: Type<T, E, D>,
+  run: (this: Thread, value: T) => R,
+): Type<Awaited<R>, E, D> {
   return declare({
     type: "transform",
     self() {
-      return transform
+      return f
     },
-    args: [from, f],
+    args: [name, from, run],
   })
 }
 
-function declare<T, D extends symbol>(
+// TODO: allow `D` to be specified at root?
+export interface Thread {
+  <T, E>(type: Type<T, E>): Type<T, E>
+}
+
+function declare<T, E, D extends symbol>(
   declaration: TypeDeclaration,
   annotations: Array<Annotation> = [],
-): Type<T, D> {
+): Type<T, E, D> {
   return Object.assign(
     Type,
     inspect,
     declaration,
     {
+      ...{} as Generator<never, T>,
+      [TypeKey]: true,
       node: "Type",
       trace: new Error().stack!,
       annotations,
@@ -154,24 +175,32 @@ function declare<T, D extends symbol>(
       assert,
       is(value): value is T {
         try {
-          assert.call(this as Type<T, D>, value)
+          assert.call(this as Type<T, E, D>, value)
           return true
         } catch (_e: unknown) {
           return false
         }
       },
-    } satisfies Omit<Type<T, D>, keyof TypeDeclaration | "T" | "D"> as never,
+      serialize() {
+        throw 0
+      },
+      handle() {
+        throw 0
+      },
+    } satisfies Omit<Type<T, E, D>, keyof TypeDeclaration | "T" | "E" | "D"> as never,
   )
 
   function Type<A extends Array<TemplatePart>>(
     template: TemplateStringsArray,
     ...descriptionParts: A
-  ): Type<T, ReduceDependencies<D, A>>
-  function Type<A extends Array<Annotation>>(...annotations: A): Type<T, ReduceDependencies<D, A>>
+  ): Type<T, E, ReduceDependencies<D, A>>
+  function Type<A extends Array<Annotation>>(
+    ...annotations: A
+  ): Type<T, E, ReduceDependencies<D, A>>
   function Type(
     e0: Annotation | TemplateStringsArray,
     ...eRest: Array<Annotation>
-  ): Type<T, symbol> {
+  ): Type<T, E, symbol> {
     if (isTemplateStringsArray(e0)) {
       return declare(declaration, [...annotations, {
         node: "Template",

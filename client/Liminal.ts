@@ -19,7 +19,7 @@ export interface Liminal<P extends Provider> {
 export interface ValueConfig<P extends Provider> {
   model?: P["M"]
   options?: P["E"]
-  tools?: Record<string, Tool>
+  tools?: Record<string, Tool<P>>
 }
 
 export function Liminal<P extends Provider>(
@@ -86,5 +86,4 @@ export function Liminal<P extends Provider>(
 export interface LiminalOptions<P extends Provider> extends ValueConfig<P> {
   messages?: Array<P["I" | "O"]>
   onMessage?: (message: P["I" | "O"]) => PromiseOr<void>
-  tools?: Record<string, Tool>
 }

@@ -79,7 +79,7 @@ const visit = TypeVisitor<AssertContext<Liminal<Provider>, Promise<Diagnostic | 
       .entries(ctx.value as Record<string, unknown>)
       .forEach(([k, v]) => visit(ctx.descend(v, k), fields[k]!))
   },
-  transform(ctx, _1, from) {
+  f(ctx, _1, _2, from) {
     visit(ctx, from)
   },
   union(ctx, _1, ...members) {
@@ -87,7 +87,7 @@ const visit = TypeVisitor<AssertContext<Liminal<Provider>, Promise<Diagnostic | 
     assert(match)
     visit(ctx, match)
   },
-  f(ctx, _1, get) {
+  deferred(ctx, _1, get) {
     visit(ctx, get())
   },
   fallback() {},

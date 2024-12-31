@@ -59,7 +59,10 @@ const visit = TypeVisitor<AssertContext<undefined, Diagnostic>, void>({
     assertEquals(keys, Object.keys(value).toSorted())
     keys.forEach((key) => visit(ctx.descend(value[key as never], key), fields[key]!))
   },
-  transform(ctx, _1, from) {
+  f(ctx, _1, _2, from) {
+    visit(ctx, from)
+  },
+  gen(ctx, _1, _2, from) {
     visit(ctx, from)
   },
   union(ctx, _1, ...members) {
@@ -67,7 +70,7 @@ const visit = TypeVisitor<AssertContext<undefined, Diagnostic>, void>({
     assert_(match)
     visit(ctx, match)
   },
-  f(ctx, _1, get) {
+  deferred(ctx, _1, get) {
     visit(ctx, get())
   },
 })

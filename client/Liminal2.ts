@@ -2,12 +2,14 @@ import type { Falsy } from "@std/assert"
 import type { AnyType } from "../core/mod.ts"
 import type { Provider } from "./Adapter.ts"
 
-export interface Timeline<P extends Provider> {
-  parent?: Timeline<P>
-  value: Array<P["I" | "O"]>
+export interface Thread<P extends Provider> {
+  parentHash: string
   hash: string
-  next: (...texts: Array<MessageLike<P>>) => Timeline<P>
-  lookup: Record<string, Timeline<P>> // for ranges
+  messages: Array<MessageLike<P>>
+  append: (...texts: Array<MessageLike<P>>) => Thread<P>
+  history: Record<string, Thread<P>>
+  ancestor(n: number): Thread<P>
+  range(to: Thread<P>): ThreadRange<P>
 }
 
 export type MessageLike<P extends Provider = Provider> =
@@ -16,3 +18,7 @@ export type MessageLike<P extends Provider = Provider> =
   | string
   | P["I" | "O"]
   | AnyType
+
+export interface ThreadRange<P extends Provider> {
+  summary(): Promise<string>
+}
