@@ -1,6 +1,8 @@
 # Liminal
 
-> Types for LLMs
+Liminal is an experimental framework for modeling interactions with and between LLMs.
+
+Liminal is heavily WIP; many things will change.
 
 - [Documentation &rarr;](https://liminal.land)<br />Introduction and guides.
 - [Examples &rarr;](https://liminal.land/examples)<br />Examples illustrating common use cases.

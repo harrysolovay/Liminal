@@ -29,7 +29,7 @@
       "command": "cd docs && npm i && ./node_modules/.bin/vitepress"
     }
   },
-  "exclude": [".liminal", "docs"],
+  "exclude": [".liminal", "docs", "prev"],
   "compilerOptions": {
     "lib": ["deno.window", "dom", "dom.iterable"],
     "noFallthroughCasesInSwitch": true,
