@@ -34,6 +34,7 @@ subpaths
 subschema
 subschemas
 subthread
+subthreads
 subvalue
 supervillain
 tsconfigure

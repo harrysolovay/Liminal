@@ -7,5 +7,5 @@ export function Router<R extends Record<string, AnyType>>(
   return I.thread(function*() {
     const key = yield* I.enum(...Object.keys(routes) as Array<Extract<keyof R, string>>)
     return yield* routes[key]!
-  }, I.union(...Object.values(routes)))
+  }, I.union(...Object.values(routes)))`Match the appropriate route.`
 }

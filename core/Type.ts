@@ -52,6 +52,8 @@ export interface Type<T, E = never> extends TypeDeclaration, Iterable<Complete, 
   traces: Array<string>
   annotations: Array<Annotation<T> | Template>
   handlers: Array<(event: unknown) => unknown>
+
+  signature(descriptions?: boolean): string
 }
 
 export interface TypeDeclaration {
