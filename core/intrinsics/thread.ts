@@ -4,7 +4,7 @@ import type { ExtractEvent } from "../Event.ts"
 import type { Type } from "../Type.ts"
 
 export function thread<Y extends Action, T = never, E = never>(
-  f: () => Generator<Y, NoInfer<T> | void, never> | AsyncGenerator<Y, NoInfer<T> | void, never>,
+  f: () => Generator<Y, NoInfer<T> | void, void> | AsyncGenerator<Y, NoInfer<T> | void, void>,
   output?: Type<T, E>,
 ): Type<T, E | ExtractEvent<Y>> {
   return declareType({
