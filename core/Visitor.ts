@@ -1,6 +1,6 @@
 import type { AnyType } from "../core/Type.ts"
 import type { Expand } from "../util/mod.ts"
-import type * as I from "./types/mod.ts"
+import type * as I from "./intrinsics/mod.ts"
 
 type I = typeof I
 

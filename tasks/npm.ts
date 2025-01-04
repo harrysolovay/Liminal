@@ -4,14 +4,14 @@ import { parseArgs } from "@std/cli"
 import * as fs from "@std/fs"
 import * as path from "@std/path"
 import denoConfig from "../deno.json" with { type: "json" }
-import { collect, splitLast } from "../util/mod.ts"
+import { splitLast } from "../util/mod.ts"
 
 const outDir = ".liminal/npm"
 await fs.emptyDir(outDir)
 
 const { version } = parseArgs(Deno.args, { string: ["version"] })
 
-const mappingTargets = await collect(fs.walk(".", {
+const mappingTargets = await Array.fromAsync(fs.walk(".", {
   exts: [".node.ts"],
   includeDirs: false,
 }))

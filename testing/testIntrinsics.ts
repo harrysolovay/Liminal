@@ -1,4 +1,4 @@
-import type * as I from "../core/intrinsics.ts"
+import type * as I from "../core/intrinsics/mod.ts"
 import type { PromiseOr } from "../util/mod.ts"
 
 export function testIntrinsics<A extends Array<unknown>>(
