@@ -1,12 +1,12 @@
 import type { Action } from "../Action.ts"
 import type { ExtractEvent } from "../Event.ts"
 import type { Type } from "../Type.ts"
-import { declare } from "./declare.ts"
+import { declare } from "../Type/mod.ts"
 
 export function thread<Y extends Action, T = never, E = never>(
   f: () =>
-    | Iterable<Y, NoInfer<T> | void, void>
-    | AsyncIterable<Y, NoInfer<T> | void, void>,
+    | Iterator<Y, NoInfer<T> | void, void>
+    | AsyncIterator<Y, NoInfer<T> | void, void>,
   output?: Type<T, E>,
 ): Type<T, E | ExtractEvent<Y>> {
   return declare({

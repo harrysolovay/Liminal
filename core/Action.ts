@@ -6,11 +6,11 @@ import type { Relay } from "./Relay.ts"
 import type { Complete } from "./Type.ts"
 
 export type Action =
-  | Complete
-  | MessageLike
   | Model
-  | Reduce
   | Relay
+  | MessageLike
+  | Complete
+  | Reduce
   | Event
 
 //  | (() => Iterable<Action, void, void>)

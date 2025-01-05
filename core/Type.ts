@@ -1,4 +1,5 @@
 import type { Falsy } from "@std/assert"
+import type { Model } from "./Model.ts"
 
 export interface Type<T, E> extends TypeDeclaration, Iterable<Complete, T> {
   (
@@ -13,6 +14,8 @@ export interface Type<T, E> extends TypeDeclaration, Iterable<Complete, T> {
   trace: string
   descriptionParts: Array<DescriptionPart>
   eventHandlers: Array<(event: unknown) => unknown>
+
+  run(model: Model): Promise<T>
 }
 
 export type AnyType<T = any> = Type<T, any>

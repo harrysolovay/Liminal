@@ -6,6 +6,7 @@ import type {
   Type,
   TypeDeclaration,
 } from "../Type.ts"
+import { run } from "./run.ts"
 
 export function declare<T, E>(
   declaration: TypeDeclaration,
@@ -20,10 +21,10 @@ export function declare<T, E>(
       trace,
       descriptionParts,
       eventHandlers,
+      run,
       *[Symbol.iterator]() {
         return yield {
           type: "Complete",
-          // TODO: ensure `this` is the merged callable object and not just this arg of the `Object.assign` call
           value: this as never,
         }
       },

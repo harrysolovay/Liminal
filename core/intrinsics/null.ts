@@ -1,5 +1,5 @@
 import type { Type } from "../Type.ts"
-import { declare } from "./declare.ts"
+import { declare } from "../Type/mod.ts"
 
 export { null_ as null }
 const null_: Type<null, never> = declare({

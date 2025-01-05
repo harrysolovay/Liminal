@@ -1,4 +1,4 @@
-// moderate --exclude declare.ts
+// moderate
 
 export * from "./null.ts"
 export * from "./object.ts"

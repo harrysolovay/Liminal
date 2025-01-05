@@ -1,5 +1,5 @@
 import type { AnyType, Type } from "../Type.ts"
-import { declare } from "./declare.ts"
+import { declare } from "../Type/mod.ts"
 
 export function union<M extends Array<AnyType>>(
   ...members: M

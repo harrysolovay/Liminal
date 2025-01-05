@@ -61,7 +61,8 @@
   },
   "scopes": {
     "./examples/": {
-      "liminal": "./mod.ts"
+      "liminal": "./mod.ts",
+      "liminal/openai": "./providers/openai/mod.ts"
     }
   },
   "lint": {

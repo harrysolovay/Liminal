@@ -6,7 +6,6 @@ export type Message =
     role: Role
     body: string
     created: number
-    metadata?: Record<string, string>
   }
   & ({
     mime: keyof DB
@@ -23,13 +22,11 @@ export function content(
   body: string,
   mime: keyof DB,
   alt: string,
-  metadata?: Record<string, string>,
 ): Message {
   return {
     role: "user",
     body,
     created: Math.floor(new Date().getTime() / 1000),
-    metadata,
     mime,
     alt,
   }
