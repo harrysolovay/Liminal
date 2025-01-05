@@ -1,5 +1,6 @@
 // moderate
 
+export * from "./const.ts"
 export * from "./null.ts"
 export * from "./object.ts"
 export * from "./string.ts"

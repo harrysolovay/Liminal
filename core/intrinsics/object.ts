@@ -9,6 +9,6 @@ export function object<F extends Record<string, AnyType>>(
     self() {
       return object
     },
-    args: [Object.fromEntries(Object.keys(fields).toSorted().map((key) => [key, fields[key]]))],
+    args: [fields],
   })
 }

@@ -1,4 +1,5 @@
 import type { Action } from "../Action.ts"
+import { schema } from "../JSON.ts"
 import type { Message, MessageLike } from "../Message.ts"
 import type { Model } from "../Model.ts"
 import type { Relay } from "../Relay.ts"
@@ -11,11 +12,14 @@ export function run<T>(this: Type<T, any>, model: Model): Promise<T> {
 
 class RunContext {
   relays: Array<Relay> = []
+  model: Model
 
   constructor(
     readonly models: Array<Model>,
     public messages: Array<Message>,
-  ) {}
+  ) {
+    this.model = models[models.length - 1]!
+  }
 
   onMessage = async (message: Message): Promise<void> => {
     this.messages.push(message)
@@ -24,10 +28,10 @@ class RunContext {
 }
 
 const visit = Visitor<RunContext, unknown>({
-  async thread(parentCtx, type, f, output) {
+  async thread(ctx, type, f, output) {
+    ctx = new RunContext([...ctx.models], [...ctx.messages])
+
     const iter = f()
-    const ctx = new RunContext([...parentCtx.models], [...parentCtx.messages])
-    let model = ctx.models[ctx.models.length - 1]!
     let value: unknown
     while (true) {
       const current = await iter.next(value as never)
@@ -35,9 +39,9 @@ const visit = Visitor<RunContext, unknown>({
       if (current.done) {
         if (output) {
           if (current.value === undefined) {
-            const completion = await model.complete(ctx.messages)
-            ctx.messages.push(completion)
-            return completion.body
+            const message = await ctx.model.complete(ctx.messages)
+            ctx.messages.push(message)
+            return message.body
           }
           return current.value
         }
@@ -63,7 +67,7 @@ const visit = Visitor<RunContext, unknown>({
       switch (action.type) {
         case "Model": {
           ctx.models.push(action)
-          model = action
+          ctx.model = action
           break
         }
         case "Relay": {
@@ -71,9 +75,9 @@ const visit = Visitor<RunContext, unknown>({
           break
         }
         case "Complete": {
-          const completion = await model.complete(ctx.messages)
-          ctx.messages.push(completion)
-          value = completion.body
+          const message = await ctx.model.complete(ctx.messages)
+          ctx.messages.push(message)
+          value = message.body
           break
         }
         case "Reduce": {
@@ -81,15 +85,19 @@ const visit = Visitor<RunContext, unknown>({
           break
         }
         case "Event": {
-          await type.eventHandlers.reduce(
-            (acc, cur) => acc.then(cur),
-            Promise.resolve<unknown>(action.data),
-          )
+          await type.eventHandlers
+            .reduce((acc, cur) => acc.then(cur), Promise.resolve<unknown>(action.data))
           break
         }
       }
     }
   },
+  async object(ctx, type, fields) {
+    const message = await ctx.model.complete(ctx.messages, schema(type))
+    ctx.onMessage(message)
+    return message.body
+  },
+  async union(ctx, type, ...members) {},
   fallback() {
     return null!
   },

@@ -1,4 +1,6 @@
 import { isTemplateStringsArray } from "../../util/mod.ts"
+import type { Action } from "../Action.ts"
+import type { ExtractEvent } from "../Event.ts"
 import type {
   DescriptionPart,
   DescriptionSubstitution,
@@ -21,6 +23,7 @@ export function declare<T, E>(
       trace,
       descriptionParts,
       eventHandlers,
+      handle,
       run,
       *[Symbol.iterator]() {
         return yield {
@@ -49,5 +52,13 @@ export function declare<T, E>(
         }]
         : rest as Array<DescriptionValue>,
     ], eventHandlers)
+  }
+
+  function handle<Y extends Action>(
+    f: (event: E) => Iterable<Y, void> | AsyncIterable<Y, void>,
+  ): Type<T, ExtractEvent<Y>>
+  function handle<R>(f: (event: E) => R): Type<T, Exclude<Awaited<R>, void>>
+  function handle(f: (event: E) => unknown): Type<T, unknown> {
+    return declare(declaration, trace, descriptionParts, [...eventHandlers, f as never])
   }
 }
