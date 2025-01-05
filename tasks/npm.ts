@@ -4,14 +4,14 @@ import { parseArgs } from "@std/cli"
 import * as fs from "@std/fs"
 import * as path from "@std/path"
 import denoConfig from "../deno.json" with { type: "json" }
-import { collect, splitLast } from "../util/mod.ts"
+import { splitLast } from "../util/mod.ts"
 
 const outDir = ".liminal/npm"
 await fs.emptyDir(outDir)
 
 const { version } = parseArgs(Deno.args, { string: ["version"] })
 
-const mappingTargets = await collect(fs.walk(".", {
+const mappingTargets = await Array.fromAsync(fs.walk(".", {
   exts: [".node.ts"],
   includeDirs: false,
 }))
@@ -24,6 +24,11 @@ if (false as boolean) {
     "npm:@anthropic-ai/sdk@^0.32.1": {
       name: "@anthropic-ai",
       version: "^0.32.1",
+      peerDependency: true,
+    },
+    "npm:ollama@^0.5.11": {
+      name: "ollama",
+      version: "^0.5.11",
       peerDependency: true,
     },
     "npm:openai@^4.76.0": {
@@ -63,9 +68,9 @@ const packageJsonPath = path.join(outDir, "package.json")
 await Deno.readTextFile(packageJsonPath).then(async (v) => {
   const initial = JSON.parse(v)
   { // TODO: delete upon resolution of https://github.com/denoland/dnt/issues/433.
-    const { "@anthropic-ai/sdk": anthropic, openai } = initial.dependencies
+    const { "@anthropic-ai/sdk": anthropic, ollama, openai } = initial.dependencies
     delete initial.dependencies
-    initial.peerDependencies = { "@anthropic-ai/sdk": anthropic, openai }
+    initial.peerDependencies = { "@anthropic-ai/sdk": anthropic, openai, ollama }
   }
   if (version === undefined) {
     initial.private = true
