@@ -4,9 +4,7 @@ import type { Type } from "./Type.ts"
 
 type I = typeof I
 
-export type Visitor<V, R> = (value: V, type: Type) => R
-
-export function Visitor<V, R>(arms: NoInfer<VisitorArms<V, R>>): Visitor<V, R> {
+export function Visitor<V, R>(arms: VisitorArms<V, R>): (value: V, type: Type) => R {
   const { hook } = arms
   if (hook) {
     return (value, type) => hook(next, value, type)
@@ -23,7 +21,7 @@ export function Visitor<V, R>(arms: NoInfer<VisitorArms<V, R>>): Visitor<V, R> {
 }
 
 export type VisitorArms<V, R> = Expand<
-  & { hook?: (next: Visitor<V, R>, value: V, type: Type) => R }
+  & { hook?: (next: (value: V, type: Type) => R, value: V, type: Type) => R }
   & (
     | ({ fallback?: never } & IntrinsicVisitorArms<V, R>)
     | (
