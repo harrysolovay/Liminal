@@ -7,13 +7,11 @@ const dracula = await Deno.readTextFile(new URL("dracula.txt", import.meta.url))
 const SAMPLE_LENGTH = 1000
 
 const PassagePoem = Thread(function*() {
-  yield relay(console.log)
+  yield* relay(console.log)
 
   yield "Summarize the following passage from Bram Stoker's Dracula."
 
-  yield* ChildThread.handle((event) => {
-    console.log({ event })
-  })
+  yield* ChildThread.handle(event)
 
   const start = Math.floor(Math.random() * (dracula.length - SAMPLE_LENGTH + 1))
   yield dracula.slice(start, start + SAMPLE_LENGTH)
@@ -22,7 +20,7 @@ const PassagePoem = Thread(function*() {
 
   yield "Use the summary to create a poem."
 
-  return yield* T.string
+  yield* T.string
 })
 
 const ChildThread = Thread(function*() {
@@ -31,6 +29,4 @@ const ChildThread = Thread(function*() {
   yield event({ C: "Decent I hope?" })
 })
 
-await PassagePoem
-  .run(model(new OpenAI(), "gpt-4o-mini"))
-  .then(console.log)
+await PassagePoem.run(model(new OpenAI(), "gpt-4o-mini")).then(console.log)

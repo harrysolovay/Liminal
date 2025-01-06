@@ -15,7 +15,7 @@ export interface Thread<T = any, E = any> extends Node<"Thread", T> {
     f: (event: E) => R,
   ): Thread<T, Exclude<Awaited<R>, void>>
 
-  run(model: Model, ctx: RunContext): Promise<T>
+  run(model: Model, ctx?: RunContext): Promise<T>
 }
 
 export type Handlers = Array<(event: unknown) => unknown>

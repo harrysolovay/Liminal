@@ -2,7 +2,7 @@ import { type Message, type Model, normalizeMessageLike, type Relay } from "../A
 import type { Thread } from "./Thread.ts"
 
 export class RunContext {
-  relays: Array<Relay> = []
+  relays: Set<Relay> = new Set()
   constructor(
     public model: Model,
     public messages: Array<Message> = [],
@@ -10,7 +10,7 @@ export class RunContext {
 
   onMessage = async (message: Message): Promise<void> => {
     this.messages.push(message)
-    await Promise.all(this.relays.map((relay) => relay.handler(message)))
+    await Promise.all(this.relays.values().map((relay) => relay.handler(message)))
   }
 }
 
@@ -54,7 +54,10 @@ export async function run<T>(
         break
       }
       case "Relay": {
-        ctx.relays.push(value)
+        ctx.relays.add(value)
+        next = () => {
+          ctx.relays.delete(value)
+        }
         break
       }
       case "Task": {

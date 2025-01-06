@@ -8,8 +8,8 @@ export interface Relay {
 
 export type Relayer = (message: Message) => PromiseOr<void>
 
-export function relay(handler: Relayer): Relay {
-  return {
+export function* relay(handler: Relayer): Generator<Relay, () => void> {
+  return yield {
     type: "Relay",
     handler,
   }
