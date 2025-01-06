@@ -2,18 +2,15 @@ import type { JSONPath, JSONType } from "./JSONType.ts"
 import type { Type } from "./Type.ts"
 import { Visitor } from "./Visitor.ts"
 
-export function schema(this: Type): JSONType {
-  const ctx = new SchemaContext()
-  const root = visit(ctx, this)
-  const { $defs } = ctx
-  throw 0
+export function schema(type: Type, ctx: SchemaContext): JSONType {
+  return visit(ctx, type)!
 }
 
-class SchemaContext {
+export class SchemaContext {
   constructor(
     readonly path: JSONPath = [],
     readonly ids: Map<Type, string> = new Map(),
-    readonly $defs: Record<string, JSONType> = {},
+    readonly $defs: Record<string, undefined | JSONType> = {},
     readonly phantoms: Array<[type: Type, metadata: unknown]> = [],
   ) {}
 
@@ -37,6 +34,26 @@ class SchemaContext {
 }
 
 const visit = Visitor<SchemaContext, void | JSONType>({
+  hook(next, ctx, type) {
+    let jsonType: JSONType
+    if (["array", "object", "union"].includes(type.kind)) {
+      const id = ctx.id(type)
+      if (id in ctx.$defs) {
+        return ctx.$defs[id] ?? {
+          $ref: id === "0" ? "#" : "#/$defs/${id}",
+        }
+      } else {
+        ctx.$defs[id] = undefined
+        jsonType = next(ctx, type)!
+        if (ctx.path.length) {
+          ctx.$defs[id] = jsonType
+        }
+      }
+    } else {
+      jsonType = next(ctx, type)!
+    }
+    return jsonType
+  },
   phantom(ctx, _1, type, metadata) {
     ctx.phantoms.push([type, metadata])
   },
@@ -47,12 +64,19 @@ const visit = Visitor<SchemaContext, void | JSONType>({
     return { type: "string" }
   },
   object(ctx, _1, fields): JSONType {
-    const required = Object.keys(fields)
+    const properties = Object.fromEntries(
+      Object.entries(fields).reduce<Array<[string, JSONType]>>((acc, [k, type]) => {
+        const v = visit(ctx.next(k), type)
+        return v ? [...acc, [k, v]] : acc
+      }, []),
+    )
+    const { "0": _0, ...$defs } = ctx.$defs
     return {
       type: "object",
-      properties: Object.fromEntries(required.map((k) => [k, visit(ctx.next(k), fields[k]!)])),
-      required,
+      properties,
+      required: Object.keys(properties),
       additionalProperties: false,
+      ...(ctx.path.length || !Object.keys($defs).length) ? {} : { $defs },
     }
   },
   union(ctx, _0, ...members): JSONType {

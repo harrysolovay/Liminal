@@ -27,10 +27,10 @@ export type JSONTypes = JSONTypes.Make<{
   }
   object: {
     type: "object"
-    properties: Record<string, void | JSONType>
+    properties: Record<string, undefined | JSONType>
     additionalProperties: false
     required: Array<string>
-    $defs?: Record<string, JSONType>
+    $defs?: Record<string, undefined | JSONType>
   }
   union: {
     anyOf: Array<JSONType>

@@ -12,7 +12,7 @@ export function Visitor<V, R>(arms: VisitorArms<V, R>): (value: V, type: Type) =
   return next
 
   function next(value: V, type: Type): R {
-    return (arms[type.type as keyof I] ?? arms.fallback!)(
+    return (arms[type.kind as keyof I] ?? arms.fallback!)(
       value,
       type as never,
       ...(type.args ?? []) as Array<never>,
