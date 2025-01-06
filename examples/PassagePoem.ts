@@ -11,7 +11,7 @@ const PassagePoem = Thread(function*() {
 
   yield "Summarize the following passage from Bram Stoker's Dracula."
 
-  yield* ChildThread.handle(event)
+  yield* ChildThread.handle(console.log)
 
   const start = Math.floor(Math.random() * (dracula.length - SAMPLE_LENGTH + 1))
   yield dracula.slice(start, start + SAMPLE_LENGTH)
@@ -20,7 +20,7 @@ const PassagePoem = Thread(function*() {
 
   yield "Use the summary to create a poem."
 
-  yield* T.string
+  return yield* T.string
 })
 
 const ChildThread = Thread(function*() {

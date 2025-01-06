@@ -12,6 +12,10 @@ export class RunContext {
     this.messages.push(message)
     await Promise.all(this.relays.values().map((relay) => relay.handler(message)))
   }
+
+  clone(): RunContext {
+    return new RunContext(this.model, [...this.messages])
+  }
 }
 
 export async function run<T>(
@@ -19,7 +23,20 @@ export async function run<T>(
   model: Model,
   ctx: RunContext = new RunContext(model),
 ): Promise<T> {
-  const iter = this.f()
+  const { source } = this
+  if (Array.isArray(source)) {
+    return Promise.all(
+      source.map((thread) => {
+        const handlers = [...this.handlers]
+        while (handlers.length) {
+          const handler = handlers.shift()!
+          thread = thread.handle(handler)
+        }
+        return thread.run(model, ctx.clone())
+      }),
+    ) as never
+  }
+  const iter = source()
   let next: unknown
   while (true) {
     const { done, value } = await iter.next(next as never)
@@ -70,7 +87,7 @@ export async function run<T>(
             break
           }
           case "Thread": {
-            next = await node.run(ctx.model, new RunContext(ctx.model, [...ctx.messages]))
+            next = await node.run(ctx.model, ctx.clone())
             break
           }
         }
