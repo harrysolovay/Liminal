@@ -31,6 +31,7 @@ subassert
 subpaths
 subschema
 subschemas
+subthread
 subvalue
 supervillain
 tsconfigure

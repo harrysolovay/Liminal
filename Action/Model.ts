@@ -1,4 +1,4 @@
-import type { JSONType } from "./JSON.ts"
+import type { JSONType } from "../Type/JSONType.ts"
 import type { Message } from "./Message.ts"
 
 export interface Model {
