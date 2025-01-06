@@ -16,6 +16,30 @@ export type Message =
 
 export type Role = "system" | "user" | "assistant"
 
+export function* messages(): Generator<Messages, Array<Message>> {
+  return yield {
+    type: "Messages",
+  }
+}
+
+export interface Messages {
+  type: "Messages"
+}
+
+export function content(
+  body: string,
+  mime: keyof DB,
+  alt: string,
+): Message {
+  return {
+    role: "user",
+    body,
+    created: Math.floor(new Date().getTime() / 1000),
+    mime,
+    alt,
+  }
+}
+
 export type MessageLike = Falsy | string | Message | Array<MessageLike>
 
 export function normalizeMessageLike(messageLike: MessageLike): Array<Message> {
@@ -36,18 +60,4 @@ export function normalizeMessageLike(messageLike: MessageLike): Array<Message> {
       ]
   }
   return []
-}
-
-export function content(
-  body: string,
-  mime: keyof DB,
-  alt: string,
-): Message {
-  return {
-    role: "user",
-    body,
-    created: Math.floor(new Date().getTime() / 1000),
-    mime,
-    alt,
-  }
 }

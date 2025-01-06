@@ -1,6 +1,5 @@
 import type { MessageLike, Model } from "../Action/mod.ts"
 import { Node } from "../Node.ts"
-import { schema } from "./schema.ts"
 import { value } from "./value.ts"
 
 export interface Type<T = any> extends TypeDeclaration, Node<"Type", T> {
@@ -14,5 +13,5 @@ export interface TypeDeclaration {
 }
 
 export function Type<T>(declaration: TypeDeclaration): Type<T> {
-  return Node("Type", Object.assign(declaration, { value, schema }))
+  return Node("Type", Object.assign(declaration, { value }))
 }

@@ -13,11 +13,11 @@ export interface Node<K extends string = string, T = any> {
 
   clone(): this
 
-  [Symbol.iterator](): Iterator<Task<this>, T, void>
+  [Symbol.iterator](): Iterator<NodeAction<this>, T, void>
 }
 
-export interface Task<N extends Node = Node> {
-  type: "Task"
+export interface NodeAction<N extends Node = Node> {
+  type: "Node"
   node: N
 }
 
@@ -41,20 +41,19 @@ export function Node<N extends Node>(
     describe,
     members,
     {
-      ...{} as { T: N["T"] },
       type,
       trace,
       annotations,
       clone() {
         return Node(type, members, trace, annotations)
       },
-      *[Symbol.iterator](): Generator<Task<N>, unknown, void> {
+      *[Symbol.iterator](): Generator<NodeAction<N>, unknown, void> {
         return yield {
-          type: "Task",
+          type: "Node",
           node: this as never,
         }
       },
-    } satisfies Pick<N, keyof Node>,
+    } satisfies Pick<N, Exclude<keyof Node, "T">>,
   ) as never
 
   function describe(template: TemplateStringsArray, ...substitutions: Array<string>): N
