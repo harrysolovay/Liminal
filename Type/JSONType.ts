@@ -1,4 +1,4 @@
-import type { Expand } from "../../util/mod.ts"
+import type { Expand } from "../util/mod.ts"
 
 export type JSONType = JSONTypes[JSONTypeName]
 export type JSONTypeName = keyof JSONTypes

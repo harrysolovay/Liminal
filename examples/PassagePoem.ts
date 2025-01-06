@@ -1,4 +1,4 @@
-import { relay, T, Thread } from "liminal"
+import { event, relay, T, Thread } from "liminal"
 import { model } from "liminal/openai"
 import "@std/dotenv/load"
 import OpenAI from "openai"
@@ -11,6 +11,10 @@ const PassagePoem = Thread(function*() {
 
   yield "Summarize the following passage from Bram Stoker's Dracula."
 
+  yield* ChildThread.handle((event) => {
+    console.log({ event })
+  })
+
   const start = Math.floor(Math.random() * (dracula.length - SAMPLE_LENGTH + 1))
   yield dracula.slice(start, start + SAMPLE_LENGTH)
 
@@ -19,6 +23,12 @@ const PassagePoem = Thread(function*() {
   yield "Use the summary to create a poem."
 
   return yield* T.string
+})
+
+const ChildThread = Thread(function*() {
+  yield event({ A: "Hello" })
+  yield event({ B: "How are you?" })
+  yield event({ C: "Decent I hope?" })
 })
 
 await PassagePoem

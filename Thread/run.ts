@@ -1,4 +1,4 @@
-import type { Message, MessageLike, Model, Relay } from "../Action/mod.ts"
+import { type Message, type Model, normalizeMessageLike, type Relay } from "../Action/mod.ts"
 import type { Thread } from "./Thread.ts"
 
 export class RunContext {
@@ -67,6 +67,7 @@ export async function run<T>(
             break
           }
           case "Thread": {
+            next = await node.run(ctx.model, new RunContext(ctx.model, [...ctx.messages]))
             break
           }
         }
@@ -85,24 +86,4 @@ export async function run<T>(
       }
     }
   }
-}
-
-function normalizeMessageLike(messageLike: MessageLike): Array<Message> {
-  if (messageLike) {
-    return Array.isArray(messageLike)
-      ? messageLike.reduce<Array<Message>>(
-        (acc, cur) => cur ? [...acc, ...normalizeMessageLike(cur)!] : acc,
-        [],
-      )
-      : [
-        typeof messageLike === "string"
-          ? {
-            role: "user",
-            body: messageLike,
-            created: Math.floor(new Date().getTime() / 1000),
-          }
-          : messageLike,
-      ]
-  }
-  return []
 }

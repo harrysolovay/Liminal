@@ -1,4 +1,4 @@
-import type { Expand } from "../../util/mod.ts"
+import type { Expand } from "../util/mod.ts"
 import type * as I from "./intrinsics/mod.ts"
 import type { Type } from "./Type.ts"
 

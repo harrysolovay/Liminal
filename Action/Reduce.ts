@@ -1,4 +1,4 @@
-import type { PromiseOr } from "../../util/mod.ts"
+import type { PromiseOr } from "../util/mod.ts"
 import type { Message, MessageLike } from "./Message.ts"
 
 export interface Reduce {

@@ -1,20 +1,18 @@
 import type { Falsy } from "@std/assert"
 import { isTemplateStringsArray } from "./util/mod.ts"
 
-export interface Node<
-  K extends string = string,
-  Self extends Node = any,
-  T = any,
-> extends Iterable<Task<Self>, T> {
+export interface Node<K extends string = string, T = any> {
   (template: TemplateStringsArray, ...substitutions: Array<string>): this
   (...values: Array<DescriptionValue>): this
 
-  Self: Self
   T: T
 
   type: K
   trace: string
   descriptionParts: Array<DescriptionPart>
+  clone(): this
+
+  [Symbol.iterator](): Iterator<Task<this>, T, void>
 }
 
 export interface Task<N extends Node = any> {
@@ -38,7 +36,10 @@ export function Node<N extends Node>(
     type,
     trace,
     descriptionParts,
-    *[Symbol.iterator](): Generator<Task<N["Self"]>, unknown, void> {
+    clone() {
+      return Node(type, members, trace, descriptionParts)
+    },
+    *[Symbol.iterator](): Generator<Task<N>, unknown, void> {
       return yield {
         type: "Task",
         node: this as never,
@@ -52,17 +53,14 @@ export function Node<N extends Node>(
     e0: TemplateStringsArray | DescriptionValue,
     ...rest: Array<DescriptionValue>
   ): N {
-    return Object.assign(
-      describe,
-      Node(type, members, trace, [
-        ...descriptionParts,
-        ...isTemplateStringsArray(e0)
-          ? [{
-            template: e0,
-            substitutions: rest as Array<string>,
-          }]
-          : rest,
-      ]),
-    )
+    return Node(type, members, trace, [
+      ...descriptionParts,
+      ...isTemplateStringsArray(e0)
+        ? [{
+          template: e0,
+          substitutions: rest as Array<string>,
+        }]
+        : rest,
+    ])
   }
 }
