@@ -44,6 +44,6 @@ export type IntrinsicVisitorArms<V, R> = {
 export class Path {
   constructor(readonly inner: string) {}
 
-  next = (junction?: number | string) =>
+  next = (junction?: number | string): Path =>
     new Path(junction ? `${this.inner}.${junction}` : this.inner)
 }

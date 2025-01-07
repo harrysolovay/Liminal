@@ -1,6 +1,5 @@
 import { type Message, type Model, normalizeMessageLike, type Relay } from "../Action/mod.ts"
-import { T } from "../Type/mod.ts"
-import { Schema } from "../Type/Schema.ts"
+import { deserialize } from "../Type/deserialize.ts"
 import type { Thread } from "./Thread.ts"
 
 export class RunContext {
@@ -84,18 +83,21 @@ export async function run<T>(
         break
       }
       case "Node": {
-        let { node } = value
+        const { node } = value
         switch (node.type) {
           case "Type": {
-            const {} = Schema(node)
-            if (!(node.kind === "string" || node.kind === "object")) {
-              node = T.object({ root: node })
+            if (node.kind === "string") {
+              const message = await model.complete(
+                normalizeMessageLike([ctx.messages, node.description()]),
+              )
+              ctx.onMessage(message)
+              next = message.body
+              break
             }
-            const schema_ = node.kind !== "string" ? schema(node, schemaCtx) : undefined
-            console.log(schema_)
-            const message = await ctx.model.complete(ctx.messages, schema_)
+            const schema = await node.schema()
+            const message = await model.complete(normalizeMessageLike(ctx.messages), schema)
             ctx.onMessage(message)
-            next = message.body
+            next = deserialize(schema, JSON.parse(message.body)) as never
             break
           }
           case "Thread": {

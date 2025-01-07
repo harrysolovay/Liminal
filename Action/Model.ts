@@ -1,4 +1,4 @@
-import type { JSONType } from "../Type/JSONType.ts"
+import type { Schema } from "../Type/Schema.ts"
 import type { Message } from "./Message.ts"
 
 export interface Model {
@@ -8,17 +8,5 @@ export interface Model {
 
 export type RequestCompletion = (
   messages: Array<Message>,
-  options?: RequestCompletionOptions,
+  schema?: Schema,
 ) => Promise<Message>
-
-export type RequestCompletionOptions =
-  & {
-    signal?: AbortSignal
-  }
-  & ({
-    schema: JSONType
-    signature: string
-  } | {
-    schema?: never
-    signature?: never
-  })

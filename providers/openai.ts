@@ -1,12 +1,15 @@
 import { assert } from "@std/assert"
 import type OpenAI from "openai"
 import type { ChatModel } from "openai/resources/chat/chat"
-import type { Model } from "../../mod.ts"
+import { type Model, normalizeMessageLike } from "../mod.ts"
 
 export function model(client: OpenAI, model: (string & {}) | ChatModel): Model {
   return {
     type: "Model",
     complete: async (messages, options) => {
+      if (options && !messages.length) {
+        messages = normalizeMessageLike("Provide a value of the specified type.")
+      }
       const { choices, created } = await client.chat.completions.create({
         model,
         messages: messages.map(({ role, body }) => ({
@@ -20,7 +23,7 @@ export function model(client: OpenAI, model: (string & {}) | ChatModel): Model {
           ? {
             type: "json_schema",
             json_schema: {
-              name: `lmnl_${options.signature}`,
+              name: `lmnl_${options.name}`,
               schema: options.schema,
               strict: true,
             },

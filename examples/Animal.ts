@@ -1,5 +1,5 @@
 import { T } from "liminal"
-import { model } from "liminal/openai"
+import { model } from "../providers/openai.ts"
 import "@std/dotenv/load"
 import OpenAI from "openai"
 

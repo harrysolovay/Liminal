@@ -1,16 +1,26 @@
+import { encodeBase32 } from "@std/encoding"
+import { WeakMemo } from "../util/mod.ts"
+import { object } from "./intrinsics/mod.ts"
 import type { JSONType } from "./JSONType.ts"
 import type { Type } from "./Type.ts"
 import { Path, Visitor } from "./Visitor.ts"
 
 export interface Schema {
-  jsonType: JSONType
+  name: string
+  type: Type
+  normalizedType: Type
+  schema: JSONType
   phantoms: Record<string, unknown>
 }
 
-export function Schema(root: Type): Schema {
+export async function schema(this: Type): Promise<Schema> {
   const state = new VisitState(new Path(""), new Map(), {}, {})
+  const normalizedType = this.kind === "object" ? this : object({ _lmnl: this })
   return {
-    jsonType: visit(state, root)!,
+    type: this,
+    normalizedType,
+    name: await nameMemo.getOrInit(this),
+    schema: visit(state, normalizedType)!,
     phantoms: state.phantoms,
   }
 }
@@ -94,3 +104,10 @@ const visit = Visitor<VisitState, void | JSONType>({
     }
   },
 })
+
+const nameMemo: WeakMemo<Type, Promise<string>> = new WeakMemo((type) =>
+  crypto.subtle
+    .digest("SHA-256", new TextEncoder().encode(type.signature()))
+    .then(encodeBase32)
+    .then((v) => v.slice(0, -4))
+)

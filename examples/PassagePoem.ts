@@ -20,7 +20,15 @@ const PassagePoem = Thread(function*() {
 
   yield "Use the summary to create a poem."
 
-  return yield* T.string
+  yield* T.string
+
+  yield "Turn it into a structured output."
+
+  yield* T.object({
+    start: T.string,
+    middle: T.string,
+    end: T.string,
+  })
 })
 
 const ChildThread = Thread(function*() {

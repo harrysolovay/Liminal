@@ -34,7 +34,7 @@ export type Annotation = AnnotationValue | {
 export function Node<N extends Node>(
   type: N["type"],
   members: Omit<N, keyof Node>,
-  trace = new Error().stack!,
+  trace: string = new Error().stack!,
   annotations: Array<Annotation> = [],
 ): N {
   return Object.assign(

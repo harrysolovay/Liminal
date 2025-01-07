@@ -3,29 +3,20 @@ import { Type } from "./Type.ts"
 import { ConstKey } from "./utility/mod.ts"
 import { Path, Visitor } from "./Visitor.ts"
 
-export interface Deserialization {
-  deserialized: unknown
-}
-
-export function Deserialization(
-  schemaCtx: Schema,
-  type: Type,
-  value: unknown,
-): Deserialization {
-  const state = new VisitState(schemaCtx, value, new Path(""))
-  const deserialized = visit(state, type)
-  return { deserialized }
+export function deserialize(schema: Schema, value: unknown): unknown {
+  const deserialized = visit(new VisitState(schema, value, new Path("")), schema.type)
+  return schema.type.kind === "object" ? deserialized : (deserialized as any)._lmnl
 }
 
 export class VisitState {
   constructor(
-    readonly schemaCtx: Schema,
+    readonly schema: Schema,
     readonly value: unknown,
     readonly path: Path,
   ) {}
 
   next = (value: unknown, junction?: number | string): VisitState => {
-    return new VisitState(this.schemaCtx, value, this.path.next(junction))
+    return new VisitState(this.schema, value, this.path.next(junction))
   }
 }
 
