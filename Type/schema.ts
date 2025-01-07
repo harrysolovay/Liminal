@@ -1,17 +1,26 @@
-import type { JSONPath, JSONType } from "./JSONType.ts"
+import type { JSONType } from "./JSONType.ts"
 import type { Type } from "./Type.ts"
-import { Visitor } from "./Visitor.ts"
+import { Path, Visitor } from "./Visitor.ts"
 
-export function schema(type: Type, ctx: SchemaContext): JSONType {
-  return visit(ctx, type)!
+export interface Schema {
+  jsonType: JSONType
+  phantoms: Record<string, unknown>
 }
 
-export class SchemaContext {
+export function Schema(root: Type): Schema {
+  const state = new VisitState(new Path(""), new Map(), {}, {})
+  return {
+    jsonType: visit(state, root)!,
+    phantoms: state.phantoms,
+  }
+}
+
+class VisitState {
   constructor(
-    readonly path: JSONPath = [],
-    readonly ids: Map<Type, string> = new Map(),
-    readonly $defs: Record<string, undefined | JSONType> = {},
-    readonly phantoms: Array<[type: Type, metadata: unknown]> = [],
+    readonly path: Path,
+    readonly ids: Map<Type, string>,
+    readonly $defs: Record<string, undefined | JSONType>,
+    readonly phantoms: Record<string, unknown>,
   ) {}
 
   id(type: Type): string {
@@ -23,17 +32,12 @@ export class SchemaContext {
     return id
   }
 
-  next = (junction?: number | string): SchemaContext => {
-    return new SchemaContext(
-      junction ? [...this.path, junction] : this.path,
-      this.ids,
-      this.$defs,
-      this.phantoms,
-    )
+  next = (junction?: number | string): VisitState => {
+    return new VisitState(this.path.next(junction), this.ids, this.$defs, this.phantoms)
   }
 }
 
-const visit = Visitor<SchemaContext, void | JSONType>({
+const visit = Visitor<VisitState, void | JSONType>({
   hook(next, ctx, type) {
     let jsonType: JSONType
     if (["array", "object", "union"].includes(type.kind)) {
@@ -45,7 +49,7 @@ const visit = Visitor<SchemaContext, void | JSONType>({
       } else {
         ctx.$defs[id] = undefined
         jsonType = next(ctx, type)!
-        if (ctx.path.length) {
+        if (ctx.path.inner.length) {
           ctx.$defs[id] = jsonType
         }
       }
@@ -54,8 +58,8 @@ const visit = Visitor<SchemaContext, void | JSONType>({
     }
     return jsonType
   },
-  phantom(ctx, _1, type, metadata) {
-    ctx.phantoms.push([type, metadata])
+  phantom(ctx, _1, _2, metadata) {
+    ctx.phantoms[ctx.path.inner] = metadata
   },
   null() {
     return { type: "null" }
@@ -76,7 +80,7 @@ const visit = Visitor<SchemaContext, void | JSONType>({
       properties,
       required: Object.keys(properties),
       additionalProperties: false,
-      ...(ctx.path.length || !Object.keys($defs).length) ? {} : { $defs },
+      ...(ctx.path.inner.length || !Object.keys($defs).length) ? {} : { $defs },
     }
   },
   union(ctx, _0, ...members): JSONType {

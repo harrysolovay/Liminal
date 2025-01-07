@@ -40,3 +40,10 @@ export type IntrinsicVisitorArms<V, R> = {
       : [type: ReturnType<I[K]>, ...args: Parameters<I[K]>]
   ) => R
 }
+
+export class Path {
+  constructor(readonly inner: string) {}
+
+  next = (junction?: number | string) =>
+    new Path(junction ? `${this.inner}.${junction}` : this.inner)
+}

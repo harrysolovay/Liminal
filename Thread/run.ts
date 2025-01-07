@@ -1,7 +1,6 @@
 import { type Message, type Model, normalizeMessageLike, type Relay } from "../Action/mod.ts"
 import { T } from "../Type/mod.ts"
-import { SchemaContext } from "../Type/schema.ts"
-import { schema } from "../Type/schema.ts"
+import { Schema } from "../Type/Schema.ts"
 import type { Thread } from "./Thread.ts"
 
 export class RunContext {
@@ -88,7 +87,7 @@ export async function run<T>(
         let { node } = value
         switch (node.type) {
           case "Type": {
-            const schemaCtx = new SchemaContext()
+            const {} = Schema(node)
             if (!(node.kind === "string" || node.kind === "object")) {
               node = T.object({ root: node })
             }

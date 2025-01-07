@@ -6,7 +6,7 @@ import type { Model } from "../../mod.ts"
 export function model(client: OpenAI, model: (string & {}) | ChatModel): Model {
   return {
     type: "Model",
-    complete: async (messages, schema) => {
+    complete: async (messages, options) => {
       const { choices, created } = await client.chat.completions.create({
         model,
         messages: messages.map(({ role, body }) => ({
@@ -16,12 +16,12 @@ export function model(client: OpenAI, model: (string & {}) | ChatModel): Model {
             text: body,
           }],
         })),
-        response_format: schema
+        response_format: options?.schema
           ? {
             type: "json_schema",
             json_schema: {
-              name: "TODO",
-              schema,
+              name: `lmnl_${options.signature}`,
+              schema: options.schema,
               strict: true,
             },
           }

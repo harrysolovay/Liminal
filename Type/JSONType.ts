@@ -1,7 +1,5 @@
 import type { Expand } from "../util/mod.ts"
 
-export type JSONPath = Array<number | string>
-
 export type JSONType = JSONTypes[JSONTypeName]
 export type JSONTypeName = keyof JSONTypes
 export type JSONTypes = JSONTypes.Make<{

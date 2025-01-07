@@ -13,7 +13,5 @@ export function handle(
   this: Thread,
   f: (event: unknown) => unknown,
 ): Thread {
-  return Object.assign(this.clone(), {
-    handlers: [...this.handlers, f],
-  })
+  return this.clone({ handlers: [...this.handlers, f] })
 }

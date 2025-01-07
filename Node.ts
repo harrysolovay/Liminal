@@ -11,7 +11,7 @@ export interface Node<K extends string = string, T = any> {
   trace: string
   annotations: Array<Annotation>
 
-  clone(): this
+  clone(overwrite?: Partial<Omit<this, keyof Node>>): this
 
   [Symbol.iterator](): Iterator<NodeAction<this>, T, void>
 }
@@ -44,8 +44,8 @@ export function Node<N extends Node>(
       type,
       trace,
       annotations,
-      clone() {
-        return Node(type, members, trace, annotations)
+      clone(overwrite: Partial<Omit<N, keyof Node>> = {}) {
+        return Node(type, { ...members, ...overwrite }, trace, annotations)
       },
       *[Symbol.iterator](): Generator<NodeAction<N>, unknown, void> {
         return yield {

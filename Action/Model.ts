@@ -6,4 +6,19 @@ export interface Model {
   complete: RequestCompletion
 }
 
-export type RequestCompletion = (messages: Array<Message>, schema?: JSONType) => Promise<Message>
+export type RequestCompletion = (
+  messages: Array<Message>,
+  options?: RequestCompletionOptions,
+) => Promise<Message>
+
+export type RequestCompletionOptions =
+  & {
+    signal?: AbortSignal
+  }
+  & ({
+    schema: JSONType
+    signature: string
+  } | {
+    schema?: never
+    signature?: never
+  })
