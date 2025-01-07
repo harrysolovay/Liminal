@@ -1,40 +1,28 @@
-import { event, relay, T, Thread } from "liminal"
+import { relay, T, Thread } from "liminal"
 import { model } from "liminal/openai"
 import "@std/dotenv/load"
 import OpenAI from "openai"
 
-const dracula = await Deno.readTextFile(new URL("dracula.txt", import.meta.url))
-const SAMPLE_LENGTH = 1000
-
-const PassagePoem = Thread(function*() {
+Thread(function*() {
   yield* relay(console.log)
 
   yield "Summarize the following passage from Bram Stoker's Dracula."
 
-  yield* ChildThread.handle(console.log)
-
-  const start = Math.floor(Math.random() * (dracula.length - SAMPLE_LENGTH + 1))
-  yield dracula.slice(start, start + SAMPLE_LENGTH)
+  yield sample()
 
   yield* T.string
 
   yield "Use the summary to create a poem."
 
-  yield* T.string
-
-  yield "Turn it into a structured output."
-
-  yield* T.object({
-    start: T.string,
-    middle: T.string,
-    end: T.string,
-  })
+  return yield* T.string
 })
+  .run(model(new OpenAI(), "gpt-4o-mini"))
+  .then(console.log)
 
-const ChildThread = Thread(function*() {
-  yield event({ A: "Hello" })
-  yield event({ B: "How are you?" })
-  yield event({ C: "Decent I hope?" })
-})
+function sample(): string {
+  const start = Math.floor(Math.random() * (text.length - SAMPLE_LENGTH + 1))
+  return text.slice(start, start + SAMPLE_LENGTH)
+}
 
-await PassagePoem.run(model(new OpenAI(), "gpt-4o-mini")).then(console.log)
+const text = await Deno.readTextFile(new URL("dracula.txt", import.meta.url))
+const SAMPLE_LENGTH = 1000
