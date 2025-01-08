@@ -1,24 +1,32 @@
 import type { Falsy } from "@std/assert"
+import type { Action, ExtractEvent } from "./Action/mod.ts"
+import { run } from "./run.ts"
 import { isTemplateStringsArray } from "./util/mod.ts"
 
-export interface Node<K extends string = string, T = any> {
+export interface Rune<K extends string = string, T = any, E = any> {
   (template: TemplateStringsArray, ...substitutions: Array<string>): this
   (...annotations: Array<AnnotationValue>): this
 
   T: T
+  E: E
 
   type: K
   trace: string
   annotations: Array<Annotation>
+  using: Array<Action>
 
-  clone(overwrite?: Partial<Omit<this, keyof Node>>): this
+  use<Y extends Array<Action>>(...actions: Y): Rune<K, T, E | ExtractEvent<Y[number]>>
 
-  [Symbol.iterator](): Iterator<NodeAction<this>, T, void>
+  clone(overwrite?: Partial<Omit<this, keyof Rune>>): this
+
+  run(): Promise<T>
+
+  [Symbol.iterator](): Iterator<RuneAction<this>, T, void>
 }
 
-export interface NodeAction<N extends Node = Node> {
-  type: "Node"
-  node: N
+export interface RuneAction<N extends Rune = Rune> {
+  type: "Rune"
+  rune: N
 }
 
 export type AnnotationValue = Falsy | string | Metadata
@@ -31,11 +39,12 @@ export type Annotation = AnnotationValue | {
   substitutions: Array<string>
 }
 
-export function Node<N extends Node>(
+export function Rune<N extends Rune>(
   type: N["type"],
-  members: Omit<N, keyof Node>,
+  members: Omit<N, keyof Rune>,
   trace: string = new Error().stack!,
   annotations: Array<Annotation> = [],
+  using: Array<Action> = [],
 ): N {
   return Object.assign(
     describe,
@@ -44,16 +53,21 @@ export function Node<N extends Node>(
       type,
       trace,
       annotations,
-      clone(overwrite: Partial<Omit<N, keyof Node>> = {}) {
-        return Node(type, { ...members, ...overwrite }, trace, annotations)
+      using,
+      use: (...actions: Array<Action>) => {
+        return Rune(type, members, trace, annotations, [...using, ...actions])
       },
-      *[Symbol.iterator](): Generator<NodeAction<N>, unknown, void> {
+      clone(overwrite: Partial<Omit<N, keyof Rune>> = {}) {
+        return Rune(type, { ...members, ...overwrite }, trace, annotations)
+      },
+      run,
+      *[Symbol.iterator](): Generator<RuneAction<N>, unknown, void> {
         return yield {
-          type: "Node",
-          node: this as never,
+          type: "Rune",
+          rune: this as never,
         }
       },
-    } satisfies Pick<N, Exclude<keyof Node, "T">>,
+    } satisfies Pick<N, Exclude<keyof Rune, "T" | "E">>,
   ) as never
 
   function describe(template: TemplateStringsArray, ...substitutions: Array<string>): N
@@ -62,7 +76,7 @@ export function Node<N extends Node>(
     e0: TemplateStringsArray | AnnotationValue,
     ...rest: Array<AnnotationValue>
   ): N {
-    return Node(type, members, trace, [
+    return Rune(type, members, trace, [
       ...annotations,
       ...isTemplateStringsArray(e0)
         ? [{

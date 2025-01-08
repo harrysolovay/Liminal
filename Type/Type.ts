@@ -1,16 +1,13 @@
-import type { MessageLike, Model } from "../Action/mod.ts"
-import { Node } from "../Node.ts"
+import { Rune } from "../Rune.ts"
 import { description } from "./description.ts"
 import { Diagnostics } from "./Diagnostics.ts"
 import { type Schema, schema } from "./Schema.ts"
 import { signature } from "./signature.ts"
-import { value } from "./value.ts"
 
-export interface Type<T = any> extends TypeDeclaration, Node<"Type", T> {
+export interface Type<T = any, E = any> extends TypeDeclaration, Rune<"Type", T, E> {
   description(): undefined | string
   schema(): Promise<Schema>
   signature(): string
-  value(model: Model, messages?: Array<MessageLike>): Promise<T>
 }
 
 export interface TypeDeclaration {
@@ -19,16 +16,8 @@ export interface TypeDeclaration {
   args?: Array<unknown>
 }
 
-export function Type<T>(declaration: TypeDeclaration): Type<T> {
-  return Node(
-    "Type",
-    Object.assign(declaration, {
-      schema,
-      description,
-      signature,
-      value,
-    }),
-  )
+export function Type<T, E>(declaration: TypeDeclaration): Type<T, E> {
+  return Rune("Type", Object.assign(declaration, { schema, description, signature }))
 }
 
 export namespace Type {

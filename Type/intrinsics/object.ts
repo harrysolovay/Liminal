@@ -2,7 +2,7 @@ import { Type } from "../Type.ts"
 
 export function object<F extends Record<string, Type>>(
   fields: F,
-): Type<{ [K in keyof F]: F[K]["T"] }> {
+): Type<{ [K in keyof F]: F[K]["T"] }, F[keyof F]["E"]> {
   return Type({
     kind: "object",
     self() {

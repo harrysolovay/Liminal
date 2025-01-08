@@ -1,15 +1,15 @@
-import { T } from "liminal"
-import { model } from "../providers/openai.ts"
+import { L } from "liminal"
+import { model } from "liminal/ollama"
+import { Ollama } from "ollama"
 import "@std/dotenv/load"
-import OpenAI from "openai"
 
-const Dog = T.object({
-  name: T.string,
-  ownerName: T.string,
-  favoriteToy: T.string,
-  something: T.const(T.string, "HI!"),
-})
-
-await Dog
-  .value(model(new OpenAI(), "gpt-4o-mini"))
+L
+  .object({
+    name: L.string,
+    ownerName: L.string,
+    favoriteToy: L.string,
+    something: L.const(L.string, "HI!"),
+  })
+  .use(model(new Ollama(), "qwen2"))
+  .run()
   .then(console.log)

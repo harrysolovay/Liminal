@@ -3,10 +3,7 @@ import type { Message } from "./Message.ts"
 
 export interface Model {
   type: "Model"
-  complete: RequestCompletion
+  complete: Complete
 }
 
-export type RequestCompletion = (
-  messages: Array<Message>,
-  schema?: Schema,
-) => Promise<Message>
+export type Complete = (messages: Array<Message>, schema?: Schema) => Promise<Message>

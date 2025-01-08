@@ -25,6 +25,7 @@ ollama
 openai
 parameterizing
 quasis
+qwen
 shiki
 shikijs
 solovay

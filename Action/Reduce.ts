@@ -1,16 +1,16 @@
 import type { PromiseOr } from "../util/mod.ts"
 import type { Message, MessageLike } from "./Message.ts"
 
-export interface Reduce {
-  type: "Reduce"
-  reducer: Reducer
+export interface Reducer {
+  type: "Reducer"
+  reduce: Reduce
 }
 
-export type Reducer = (messages: Array<Message>) => PromiseOr<MessageLike>
+export type Reduce = (messages: Array<Message>) => PromiseOr<MessageLike>
 
-export function Reduce(reducer: Reducer): Reduce {
+export function Reducer(reduce: Reduce): Reducer {
   return {
-    type: "Reduce",
-    reducer,
+    type: "Reducer",
+    reduce,
   }
 }

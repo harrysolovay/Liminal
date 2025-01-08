@@ -1,5 +1,6 @@
 import type { Falsy } from "@std/assert"
 import type { DB } from "@std/media-types"
+import type { Action } from "./Action.ts"
 
 export type Message =
   & {
@@ -16,17 +17,7 @@ export type Message =
 
 export type Role = "system" | "user" | "assistant"
 
-export function* messages(): Generator<Messages, Array<Message>> {
-  return yield {
-    type: "Messages",
-  }
-}
-
-export interface Messages {
-  type: "Messages"
-}
-
-export function content(
+export function Content(
   body: string,
   mime: keyof DB,
   alt: string,
@@ -40,7 +31,21 @@ export function content(
   }
 }
 
+export interface Messages {
+  type: "Messages"
+}
+
+export function* Messages(): Generator<Messages, Array<Message>> {
+  return yield {
+    type: "Messages",
+  }
+}
+
 export type MessageLike = Falsy | string | Message | Array<MessageLike>
+
+export function isMessageLike(action: Action): action is MessageLike {
+  return (!action || typeof action === "string" || Array.isArray(action) || !("type" in action))
+}
 
 export function normalizeMessageLike(messageLike: MessageLike): Array<Message> {
   if (messageLike) {
