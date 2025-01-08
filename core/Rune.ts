@@ -2,10 +2,9 @@ import type { Falsy } from "@std/assert"
 import { isTemplateStringsArray } from "../util/isTemplateStringsArray.ts"
 import { recombine } from "../util/recombine.ts"
 import type { Action } from "./Action/Action.ts"
-import type { Declaration } from "./Declaration.ts"
 import { State } from "./State.ts"
 
-export interface Rune<T = any, E = any> {
+export interface Rune<T = any, E = any> extends Declaration {
   (template: TemplateStringsArray, ...substitutions: Array<string>): this
   (...annotations: Array<AnnotationValue>): this
 
@@ -15,7 +14,6 @@ export interface Rune<T = any, E = any> {
   action: "Rune"
   trace: string
 
-  declaration: Declaration
   annotations: Array<Annotation>
   prelude: Array<Action>
 
@@ -24,6 +22,13 @@ export interface Rune<T = any, E = any> {
   run(): Promise<T>
 
   [Symbol.iterator](): Iterator<this, T, void>
+}
+
+export interface Declaration {
+  kind: string
+  self: () => Rune | ((...args: any) => Rune)
+  args?: Array<unknown>
+  consume(this: Rune, state: State): Promise<unknown>
 }
 
 export type AnnotationValue = Falsy | string | Metadata
@@ -39,15 +44,14 @@ export interface Metadata {
 
 export function Rune<T, E>(
   declaration: Declaration,
-  annotations: Array<Annotation>,
-  prelude: Array<Action>,
+  annotations: Array<Annotation> = [],
+  prelude: Array<Action> = [],
 ): Rune<T, E> {
   return Object.assign(
     annotate,
     declaration,
     {
       action: "Rune",
-      declaration,
       trace: new Error().stack!,
       annotations,
       prelude,
@@ -68,12 +72,12 @@ export function Rune<T, E>(
         return segments.length ? segments.join(" ") : undefined
       },
       run() {
-        return declaration.consume(new State(this as never)) as never
+        return (this as Rune).consume(new State(this as never)) as never
       },
       *[Symbol.iterator](): Generator<Rune<T, E>, T> {
         return yield this as never
       },
-    } satisfies Omit<Rune<T, E>, "T" | "E">,
+    } satisfies Omit<Rune<T, E>, keyof Declaration | "T" | "E">,
   ) as never
 
   function annotate(template: TemplateStringsArray, ...substitutions: Array<string>): Rune<T, E>

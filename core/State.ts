@@ -6,6 +6,7 @@ import type { Relayer } from "./Action/Relayer.ts"
 import type { Rune } from "./Rune.ts"
 
 export class State {
+  initialized: boolean = false
   constructor(
     public rune: Rune,
     public model?: Model,
@@ -14,13 +15,19 @@ export class State {
     public next?: unknown,
   ) {}
 
+  applyPrelude = async (): Promise<void> => {
+    for (const action of this.rune.prelude) {
+      await this.apply(action)
+    }
+  }
+
   onMessage = async (messageLike: MessageLike): Promise<void> => {
     const messages = normalizeMessageLike(messageLike)
     this.messages.push(...messages)
     await Promise.all(this.relayers.values().flatMap((relayer) => messages.map(relayer.relay)))
   }
 
-  tick = async (action: Action): Promise<void> => {
+  apply = async (action: Action): Promise<void> => {
     if (isMessageLike(action)) {
       this.onMessage(action)
       return
@@ -51,7 +58,7 @@ export class State {
         break
       }
       case "Rune": {
-        this.next = await action.declaration.consume(this)
+        this.next = await action.consume(this)
         break
       }
     }

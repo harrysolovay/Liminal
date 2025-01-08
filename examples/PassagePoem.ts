@@ -1,4 +1,4 @@
-import { L, Thread } from "liminal"
+import { L, Relayer } from "liminal"
 import { model } from "liminal/openai"
 import "@std/dotenv/load"
 import OpenAI from "openai"
@@ -6,8 +6,9 @@ import OpenAI from "openai"
 const text = await Deno.readTextFile(new URL("dracula.txt", import.meta.url))
 const SAMPLE_LENGTH = 1000
 
-const PassagePoem = Thread(async function*() {
+const PassagePoem = L.thread(function*() {
   yield model(new OpenAI(), "gpt-4o-mini")
+  yield* Relayer((message) => console.log(message))
 
   yield "Summarize the following passage from Bram Stoker's Dracula."
 
