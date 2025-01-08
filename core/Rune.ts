@@ -2,8 +2,8 @@ import type { Falsy } from "@std/assert"
 import { isTemplateStringsArray } from "../util/isTemplateStringsArray.ts"
 import { recombine } from "../util/recombine.ts"
 import type { Action } from "./Action/Action.ts"
-import type { RuneDeclaration } from "./RuneDeclaration.ts"
-import { RuneState } from "./RuneState.ts"
+import type { Declaration } from "./Declaration.ts"
+import { State } from "./State.ts"
 
 export interface Rune<T = any, E = any> {
   (template: TemplateStringsArray, ...substitutions: Array<string>): this
@@ -15,7 +15,7 @@ export interface Rune<T = any, E = any> {
   action: "Rune"
   trace: string
 
-  declaration: RuneDeclaration
+  declaration: Declaration
   annotations: Array<Annotation>
   prelude: Array<Action>
 
@@ -38,7 +38,7 @@ export interface Metadata {
 }
 
 export function Rune<T, E>(
-  declaration: RuneDeclaration,
+  declaration: Declaration,
   annotations: Array<Annotation>,
   prelude: Array<Action>,
 ): Rune<T, E> {
@@ -68,7 +68,7 @@ export function Rune<T, E>(
         return segments.length ? segments.join(" ") : undefined
       },
       run() {
-        return declaration.consume(new RuneState(this as never)) as never
+        return declaration.consume(new State(this as never)) as never
       },
       *[Symbol.iterator](): Generator<Rune<T, E>, T> {
         return yield this as never

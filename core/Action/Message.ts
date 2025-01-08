@@ -17,3 +17,17 @@ export type Content =
   })
 
 export type Role = "system" | "user" | "assistant" | "reducer"
+
+export function Content(
+  body: string,
+  mime: keyof DB,
+  alt: string,
+): Message {
+  return {
+    role: "user",
+    created: new Date(),
+    body,
+    mime,
+    alt,
+  }
+}

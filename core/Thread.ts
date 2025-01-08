@@ -1,8 +1,8 @@
 import type { Action } from "./Action/Action.ts"
+import type { DeclarationBase } from "./Declaration.ts"
 import { Rune } from "./Rune.ts"
-import type { RuneDeclarationBase } from "./RuneDeclaration.ts"
 
-export interface ThreadDeclaration extends RuneDeclarationBase<"Thread"> {
+export interface ThreadDeclaration extends DeclarationBase<"Thread"> {
   f: () => Iterator<Action, unknown, void> | AsyncIterator<Action, unknown, void>
 }
 

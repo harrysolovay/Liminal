@@ -1,8 +1,8 @@
+import type { DeclarationBase } from "./Declaration.ts"
 import { ModelNotFoundError } from "./errors.ts"
 import { Rune } from "./Rune.ts"
-import type { RuneDeclarationBase } from "./RuneDeclaration.ts"
 
-export interface TypeDeclaration extends RuneDeclarationBase<"Type"> {
+export interface TypeDeclaration extends DeclarationBase<"Type"> {
   kind: string
   self: () => Rune | ((...args: any) => Rune)
   args?: Array<unknown>

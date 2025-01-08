@@ -5,7 +5,7 @@ import type { Model } from "./Action/Model.ts"
 import type { Relayer } from "./Action/Relayer.ts"
 import type { Rune } from "./Rune.ts"
 
-export class RuneState {
+export class State {
   constructor(
     public rune: Rune,
     public model?: Model,
