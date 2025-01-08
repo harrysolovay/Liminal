@@ -10,6 +10,6 @@ L
     favoriteToy: L.string,
     something: L.const(L.string, "HI!"),
   })
-  .use(model(new Ollama(), "qwen2"))
+  .prepend(model(new Ollama(), "qwen2"))
   .run()
   .then(console.log)

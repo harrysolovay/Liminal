@@ -32,11 +32,11 @@ export async function RunContext(rune: Rune): Promise<RunContext> {
       return this.model
     },
     state() {
-      return [this.model, ...this.relays.values(), ...this.messages]
+      return [this.model, ...this.messages]
     },
   }
 
-  for (const action of rune.using) {
+  for (const action of rune.prelude) {
     if (isMessageLike(action)) {
       ctx.messages.push(...normalizeMessageLike(action))
       continue
@@ -65,7 +65,7 @@ export async function RunContext(rune: Rune): Promise<RunContext> {
       this.messages.push(...normalized)
       await Promise.all(
         this.relays.values().flatMap(
-          (relay) => normalized.map(relay.handler),
+          (relay) => normalized.map((message) => relay.handler(message)),
         ),
       )
     }
@@ -97,7 +97,7 @@ export async function run<N extends Rune, T>(this: N): Promise<T> {
           const handler = handlers.shift()!
           thread = thread.handle(handler)
         }
-        return thread.use(...ctx.state()).run()
+        return thread.prepend(...ctx.state()).run()
       }),
     ) as never
   }
@@ -164,7 +164,7 @@ export async function run<N extends Rune, T>(this: N): Promise<T> {
             break
           }
           case "Thread": {
-            next = await rune.use(...ctx.state()).run()
+            next = await rune.prepend(...ctx.state()).run()
             break
           }
         }

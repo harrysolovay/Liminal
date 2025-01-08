@@ -13,12 +13,10 @@ export interface Rune<K extends string = string, T = any, E = any> {
   type: K
   trace: string
   annotations: Array<Annotation>
-  using: Array<Action>
+  prelude: Array<Action>
 
-  use<Y extends Array<Action>>(...actions: Y): Rune<K, T, E | ExtractEvent<Y[number]>>
-
+  prepend<Y extends Array<Action>>(...actions: Y): Rune<K, T, E | ExtractEvent<Y[number]>>
   clone(overwrite?: Partial<Omit<this, keyof Rune>>): this
-
   run(): Promise<T>
 
   [Symbol.iterator](): Iterator<RuneAction<this>, T, void>
@@ -44,7 +42,7 @@ export function Rune<N extends Rune>(
   members: Omit<N, keyof Rune>,
   trace: string = new Error().stack!,
   annotations: Array<Annotation> = [],
-  using: Array<Action> = [],
+  prelude: Array<Action> = [],
 ): N {
   return Object.assign(
     describe,
@@ -53,9 +51,9 @@ export function Rune<N extends Rune>(
       type,
       trace,
       annotations,
-      using,
-      use: (...actions: Array<Action>) => {
-        return Rune(type, members, trace, annotations, [...using, ...actions])
+      prelude,
+      prepend: (...actions: Array<Action>) => {
+        return Rune(type, members, trace, annotations, [...prelude, ...actions])
       },
       clone(overwrite: Partial<Omit<N, keyof Rune>> = {}) {
         return Rune(type, { ...members, ...overwrite }, trace, annotations)
