@@ -18,8 +18,6 @@ const PassagePoem = L.thread(function*() {
   yield* L.string
 
   yield "Use the summary to create a poem."
-
-  return yield* L.string
-})
+}, L.string)
 
 console.log(await PassagePoem.run())

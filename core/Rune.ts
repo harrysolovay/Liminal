@@ -86,7 +86,7 @@ export function Rune<T, E>(
     e0: TemplateStringsArray | AnnotationValue,
     ...rest: Array<AnnotationValue>
   ): Rune<T, E> {
-    return Rune<T, E>(
+    return Rune(
       declaration,
       [
         ...annotations,
