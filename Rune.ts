@@ -14,16 +14,23 @@ export interface Rune<K extends string = string, T = any, E = any> {
   trace: string
   annotations: Array<Annotation>
   prelude: Array<Action>
+  handlers: Handlers
 
   prepend<Y extends Array<Action>>(...actions: Y): Rune<K, T, E | ExtractEvent<Y[number]>>
   clone(overwrite?: Partial<Omit<this, keyof Rune>>): this
+  handle<Y extends Action>(
+    f: (event: E) => Iterable<Y, void> | AsyncIterable<Y, void>,
+  ): Thread<T, ExtractEvent<Y>>
+  handle<R>(
+    f: (event: E) => R,
+  ): Thread<T, Exclude<Awaited<R>, void>>
   run(): Promise<T>
 
-  [Symbol.iterator](): Iterator<RuneAction<this>, T, void>
+  [Symbol.iterator](): Iterator<Exec<this>, T, void>
 }
 
-export interface RuneAction<N extends Rune = Rune> {
-  type: "Rune"
+export interface Exec<N extends Rune = Rune> {
+  type: "Exec"
   rune: N
 }
 
@@ -59,7 +66,7 @@ export function Rune<N extends Rune>(
         return Rune(type, { ...members, ...overwrite }, trace, annotations)
       },
       run,
-      *[Symbol.iterator](): Generator<RuneAction<N>, unknown, void> {
+      *[Symbol.iterator](): Generator<Exec<N>, unknown, void> {
         return yield {
           type: "Rune",
           rune: this as never,

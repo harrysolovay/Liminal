@@ -1,4 +1,4 @@
-import type { RuneAction } from "../Rune.ts"
+import type { Exec } from "../Rune.ts"
 import type { Thread } from "../Thread/Thread.ts"
 import type { Type } from "../Type/mod.ts"
 import type { Bubble } from "./Bubble.ts"
@@ -12,6 +12,6 @@ export type Action =
   | Relay
   | MessageLike
   | Messages
-  | RuneAction<Type | Thread>
+  | Exec<Type | Thread>
   | Reducer
   | Bubble

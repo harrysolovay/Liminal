@@ -13,53 +13,14 @@ import type { Thread } from "./Thread/Thread.ts"
 import { deserialize } from "./Type/deserialize.ts"
 import type { Type } from "./Type/mod.ts"
 
-export interface RunContext {
-  messages: Array<Message>
+export class State {
+  messages: Array<Message> = []
   model?: Model
-  relays: Set<Relay>
-  onMessage(message: MessageLike): Promise<void>
-  ensureModel(): Model
-  state(): Array<Action>
-}
+  relays: Set<Relay> = new Set()
+  next: unknown
+  constructor(readonly rune: Type | Thread) {}
 
-export async function RunContext(rune: Rune): Promise<RunContext> {
-  const ctx: RunContext = {
-    messages: [],
-    relays: new Set(),
-    onMessage,
-    ensureModel() {
-      assert(this.model, "No model specified. Either yield a model or set via `Thread.use`.")
-      return this.model
-    },
-    state() {
-      return [this.model, ...this.messages]
-    },
-  }
-
-  for (const action of rune.prelude) {
-    if (isMessageLike(action)) {
-      ctx.messages.push(...normalizeMessageLike(action))
-      continue
-    }
-    switch (action.type) {
-      case "Model": {
-        ctx.model = action
-        break
-      }
-      case "Relay": {
-        ctx.relays.add(action)
-        break
-      }
-      case "Reducer": {
-        ctx.messages = normalizeMessageLike(await action.reduce(ctx.messages))
-        break
-      }
-    }
-  }
-
-  return ctx
-
-  async function onMessage(this: RunContext, message?: MessageLike): Promise<void> {
+  onMessage = async (message?: MessageLike): Promise<void> => {
     const normalized = normalizeMessageLike(message)
     if (normalized.length) {
       this.messages.push(...normalized)
@@ -70,11 +31,58 @@ export async function RunContext(rune: Rune): Promise<RunContext> {
       )
     }
   }
+
+  ingest = async (action: Action): Promise<void> => {
+    this.next = undefined
+    if (isMessageLike(action)) {
+      this.messages.push(...normalizeMessageLike(action))
+      return
+    }
+    switch (action.type) {
+      case "Model": {
+        this.model = action
+        break
+      }
+      case "Reducer": {
+        this.messages = normalizeMessageLike(await action.reduce(this.messages))
+        break
+      }
+      case "Messages": {
+        this.next = this.messages
+        break
+      }
+      case "Relay": {
+        this.next = this.relay(action)
+        break
+      }
+      case "Bubble": {
+        await this.rune.handlers.reduce(
+          (acc, cur) => acc.then(cur),
+          Promise.resolve<unknown>(value.data),
+        )
+        break
+      }
+    }
+  }
+
+  ensureModel = (): Model => {
+    assert(this.model, "No model specified. Either yield a model or set via `Thread.use`.")
+    return this.model
+  }
+
+  state = (): Array<Action> => [this.model, ...this.messages]
+
+  relay = (relay: Relay): () => void => {
+    this.relays.add(relay)
+    return () => {
+      this.relays.delete(relay)
+    }
+  }
 }
 
 export async function run<N extends Rune, T>(this: N): Promise<T> {
   const rune = this as never as Type | Thread
-  const ctx = await RunContext(this)
+  const ctx = new State()
 
   if (rune.type === "Type") {
     if (rune.kind === "string") {
@@ -112,24 +120,6 @@ export async function run<N extends Rune, T>(this: N): Promise<T> {
       return value
     }
 
-    if (!value) {
-      continue
-    }
-
-    if (typeof value === "string") {
-      ctx.onMessage({
-        role: "user",
-        body: value,
-        created: Math.floor(new Date().getTime() / 1000),
-      })
-      continue
-    }
-
-    if (Array.isArray(value) || !("type" in value)) {
-      normalizeMessageLike(value).forEach(ctx.onMessage)
-      continue
-    }
-
     switch (value.type) {
       case "Model": {
         ctx.model = value
@@ -146,7 +136,7 @@ export async function run<N extends Rune, T>(this: N): Promise<T> {
         next = ctx.messages.slice()
         break
       }
-      case "Rune": {
+      case "Exec": {
         const { rune } = value
         switch (rune.type) {
           case "Type": {

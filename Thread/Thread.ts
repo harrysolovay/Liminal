@@ -6,15 +6,6 @@ export interface Thread<T = any, E = any> extends Rune<"Thread", T, E> {
   source:
     | Array<Thread>
     | (() => Iterator<Action, T, void> | AsyncIterator<Action, T, void>)
-
-  handlers: Handlers
-
-  handle<Y extends Action>(
-    f: (event: E) => Iterable<Y, void> | AsyncIterable<Y, void>,
-  ): Thread<T, ExtractEvent<Y>>
-  handle<R>(
-    f: (event: E) => R,
-  ): Thread<T, Exclude<Awaited<R>, void>>
 }
 
 export type Handlers = Array<(event: unknown) => unknown>
