@@ -38,7 +38,7 @@
   },
   "lock": false,
   "imports": {
-    "@anthropic-ai/sdk": "npm:@anthropic-ai/sdk@^0.32.1",
+    "@anthropic-ai/sdk": "npm:@anthropic-ai/sdk@^0.33.1",
     "@cspotcode/outdent": "jsr:@cspotcode/outdent@^0.8.0",
     "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
     "@pinecone-database/pinecone": "npm:@pinecone-database/pinecone@^4.0.0",

@@ -40,7 +40,16 @@ if (false as boolean) {
 }
 
 await build({
-  entryPoints: ["./mod.ts"],
+  entryPoints: ["./mod.ts", {
+    name: "./anthropic",
+    path: "./providers/anthropic.ts",
+  }, {
+    name: "./ollama",
+    path: "./providers/ollama.ts",
+  }, {
+    name: "./openai",
+    path: "./providers/openai.ts",
+  }],
   outDir,
   shims: {},
   scriptModule: false,
