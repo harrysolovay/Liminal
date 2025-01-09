@@ -72,8 +72,8 @@ export function Rune<T, E>(
         }
         return segments.length ? segments.join(" ") : undefined
       },
-      run() {
-        return (this as Rune).consume(new Context()) as never
+      async run() {
+        return (this as Rune).consume(await Context.make(this as never)) as never
       },
       *[Symbol.iterator](): Generator<Rune<T, E>, T> {
         return yield this as never

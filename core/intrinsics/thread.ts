@@ -14,8 +14,15 @@ export function thread<Y extends Action, T = never>(
     args: [f, final],
     phantom: true,
     async consume(ctx) {
-      const childCtx = new Context(ctx.model, [...ctx.messages])
-      await childCtx.applyPrelude(this)
+      const childCtx = await Context.make(this, ctx)
+      const description = this.description()
+      if (description) {
+        childCtx.onMessage({
+          role: "system",
+          body: description,
+          created: new Date(),
+        })
+      }
       const iter = f()
       while (true) {
         const { next } = childCtx

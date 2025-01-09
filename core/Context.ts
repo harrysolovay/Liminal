@@ -6,19 +6,20 @@ import type { Relayer } from "./Action/Relayer.ts"
 import type { Rune } from "./Rune.ts"
 
 export class Context {
-  initialized: boolean = false
+  static async make(rune: Rune, parent?: Context): Promise<Context> {
+    const ctx = new Context(parent?.model, [...parent?.messages ?? []])
+    for (const action of rune.prelude) {
+      await ctx.apply(action)
+    }
+    return ctx
+  }
+
   constructor(
     public model?: Model,
     public messages: Array<Message> = [],
     readonly relayers: Set<Relayer> = new Set(),
     public next?: unknown,
   ) {}
-
-  applyPrelude = async (rune: Rune): Promise<void> => {
-    for (const action of rune.prelude) {
-      await this.apply(action)
-    }
-  }
 
   onMessage = async (messageLike: MessageLike): Promise<void> => {
     const messages = normalizeMessageLike(messageLike)

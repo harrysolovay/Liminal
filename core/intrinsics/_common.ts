@@ -6,7 +6,6 @@ export async function consumeType(this: Rune, ctx: Context) {
   if (!ctx.model) {
     throw new ModelNotFoundError()
   }
-  await ctx.applyPrelude(this)
   if (this.kind === "string") {
     ctx.onMessage(this.description())
   }
