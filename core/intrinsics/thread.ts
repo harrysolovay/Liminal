@@ -22,11 +22,17 @@ export function thread<Y extends Action, T = never>(
         delete childCtx.next
         const { done, value } = await iter.next(next as never)
         if (done) {
+          let result: unknown
           if (final) {
             await childCtx.apply(final)
-            return childCtx.next
+            result = childCtx.next
+          } else {
+            result = value
           }
-          return value
+          if (result !== undefined) {
+            ctx.onMessage(JSON.stringify(result))
+          }
+          return result
         }
         await childCtx.apply(value)
       }

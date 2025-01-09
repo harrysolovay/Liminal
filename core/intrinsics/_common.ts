@@ -11,6 +11,7 @@ export async function consumeType(this: Rune, ctx: Context) {
     ctx.onMessage(this.description())
   }
   const message = await ctx.model.complete(ctx, this)
+  ctx.onMessage(message)
   if (this.kind === "string") {
     return message.body
   }

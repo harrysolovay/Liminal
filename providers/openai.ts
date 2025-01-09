@@ -2,7 +2,7 @@ import { assert } from "@std/assert"
 import { encodeBase32 } from "@std/encoding"
 import type OpenAI from "openai"
 import type { ChatModel } from "openai/resources/chat/chat"
-import { type Model, type Rune, schema as schema_, signature } from "../mod.ts"
+import { type Model, type Rune, schema, signature } from "../mod.ts"
 import { WeakMemo } from "../util/WeakMemo.ts"
 
 export function model(client: OpenAI, model: (string & {}) | ChatModel): Model {
@@ -13,7 +13,7 @@ export function model(client: OpenAI, model: (string & {}) | ChatModel): Model {
         type: "json_schema" as const,
         json_schema: {
           name: await nameMemo.getOrInit(rune),
-          schema: schema_(rune),
+          schema: schema(rune),
           strict: true,
         },
       }
