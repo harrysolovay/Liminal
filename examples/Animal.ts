@@ -1,23 +1,11 @@
-import { L, type Rune, Schema } from "liminal"
+import { L, type Rune } from "liminal"
 
-interface Animal {
+export interface Animal {
   a: string
   b: string
-  c: Animal
-  d: {
-    e: string
-  }
 }
 
-const Animal: Rune<Animal, never> = L.object({
+export const Animal: Rune<Animal, never> = L.object({
   a: L.string,
   b: L.string,
-  c: L.deferred(() => Animal),
-  d: L.object({
-    e: L.string,
-  }),
 })
-
-const schema = Schema(Animal)
-
-console.log(schema.json)

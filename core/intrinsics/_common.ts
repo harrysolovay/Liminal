@@ -1,15 +1,22 @@
+import type { Context } from "../Context.ts"
 import { ModelNotFoundError } from "../errors.ts"
-import type { State } from "../State.ts"
+import type { Rune } from "../Rune.ts"
 
-export async function consumeType(state: State) {
-  if (!state.model) {
+export async function consumeType(this: Rune, ctx: Context) {
+  if (!ctx.model) {
     throw new ModelNotFoundError()
   }
-  if (state.rune.kind === "string") {
-    state.onMessage(state.rune.description())
-    const message = await state.model.complete(state.messages, undefined)
-    state.onMessage(message)
+  await ctx.applyPrelude(this)
+  if (this.kind === "string") {
+    ctx.onMessage(this.description())
+  }
+  const message = await ctx.model.complete(ctx, this)
+  if (this.kind === "string") {
     return message.body
   }
-  return undefined!
+  let parsed = JSON.parse(message.body)
+  if (this.kind !== "object") {
+    parsed = parsed._lmnl
+  }
+  return parsed
 }

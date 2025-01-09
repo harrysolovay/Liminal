@@ -1,22 +1,20 @@
+import { WeakMemo } from "../util/WeakMemo.ts"
+import { object } from "./intrinsics/mod.ts"
 import type { JSONType } from "./JSONType.ts"
 import type { Rune } from "./Rune.ts"
-import { Visitor } from "./RuneVisitor.ts"
-import { signature } from "./signature.ts"
+import { RecursiveVisitorState, Visitor } from "./Visitor.ts"
 
-export interface Schema {
-  rune: Rune
-  name: string
-  json: JSONType
+export function schema(rune: Rune): JSONType {
+  return schemaMemo.getOrInit(rune)!
 }
 
-export function Schema(rune: Rune): Schema {
-  const state = new SchemaState(rune, new Map(), {})
-  const json = visit(state, rune)!
-  return {
-    rune: rune,
-    name: signature(rune),
-    json,
-  }
+const schemaMemo = new WeakMemo<Rune, JSONType>((rune) => {
+  const root = rune.kind === "object" ? rune : object({ _lmnl: rune })
+  return visit(new SchemaState(root, new Map()), root)!
+})
+
+class SchemaState extends RecursiveVisitorState {
+  $defs: Record<string, undefined | JSONType> = {}
 }
 
 const visit: Visitor<SchemaState, JSONType | void> = Visitor({
@@ -62,20 +60,3 @@ const visit: Visitor<SchemaState, JSONType | void> = Visitor({
   },
   thread() {},
 })
-
-class SchemaState {
-  constructor(
-    readonly root: Rune,
-    readonly ids: Map<Rune, string>,
-    readonly $defs: Record<string, undefined | JSONType>,
-  ) {}
-
-  id(rune: Rune): string {
-    let id = this.ids.get(rune)
-    if (id === undefined) {
-      id = this.ids.size.toString()
-      this.ids.set(rune, id)
-    }
-    return id
-  }
-}

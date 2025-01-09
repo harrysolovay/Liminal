@@ -1,13 +1,20 @@
 import type * as I from "./intrinsics/mod.ts"
 import type { Rune } from "./Rune.ts"
-import { Visitor } from "./RuneVisitor.ts"
+import { RecursiveVisitorState, Visitor } from "./Visitor.ts"
 
 type I = typeof I
 
 export function signature(rune: Rune): string {
-  const state = new SignatureState(new Map(), {})
+  const state = new SignatureState(rune, new Map())
   visit(state, rune)
-  return JSON.stringify(state.visited)
+  return Object
+    .entries(state.visited)
+    .reduce<string>((acc, [key, signature]) => `${acc}${key}:${signature},`, "")
+    .slice(0, -1)
+}
+
+class SignatureState extends RecursiveVisitorState {
+  visited: Record<string, undefined | string> = {}
 }
 
 const visit: Visitor<SignatureState, void | string> = Visitor({
@@ -15,10 +22,10 @@ const visit: Visitor<SignatureState, void | string> = Visitor({
     if (["object"].includes(rune.kind)) {
       const id = state.id(rune)
       if (id in state.visited) {
-        return `ref(${id})`
+        return c.ref + `(${id})`
       }
       state.visited[id] = undefined
-      const signature = visit(state, rune)
+      const signature = next(state, rune)
       state.visited[id] = signature!
       return signature
     }
@@ -31,43 +38,25 @@ const visit: Visitor<SignatureState, void | string> = Visitor({
     return c.object + `(${
       Object
         .entries(fields)
-        .reduce<string>(
-          (acc, [key, rune]) =>
-            rune.phantom ? acc : `${acc}${escapeDoubleQuotes(key)}:${visit(state, rune)},`,
-          "",
-        )
+        .reduce<string>((acc, [key, rune]) =>
+          rune.phantom ? acc : `${acc}${escapeDoubleQuotes(key)}:${visit(state, rune)},`, "")
         .slice(0, -1)
     })`
   },
-  const(_0, _1, _2, value) {
-    return c.const + `(${JSON.stringify(value, null, 0)})`
-  },
+  const() {},
   deferred(state, _1, get) {
     return visit(state, get())
   },
   thread() {},
 })
 
-class SignatureState {
-  constructor(
-    readonly ids: Map<Rune, string>,
-    readonly visited: Record<string, undefined | string>,
-  ) {}
-
-  id(rune: Rune): string {
-    let id = this.ids.get(rune)
-    if (id === undefined) {
-      id = this.ids.size.toString()
-      this.ids.set(rune, id)
-    }
-    return id
-  }
-}
-
-const c: { [K in Exclude<keyof I, "deferred" | "thread">]: string } = {
+const c: { [K in Exclude<keyof I, "deferred" | "thread">]: string } & {
+  ref: "r"
+} = {
   string: "s",
   object: "o",
   const: "c",
+  ref: "r",
 }
 
 function escapeDoubleQuotes(value: string): string {

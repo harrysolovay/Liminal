@@ -1,4 +1,5 @@
 import type { Action } from "../Action/Action.ts"
+import { Context } from "../Context.ts"
 import { Rune } from "../Rune.ts"
 
 export function thread<Y extends Action, T = never>(
@@ -12,21 +13,22 @@ export function thread<Y extends Action, T = never>(
     self: () => thread,
     args: [f, final],
     phantom: true,
-    async consume(state) {
-      await state.applyPrelude()
+    async consume(ctx) {
+      const childCtx = new Context(ctx.model, [...ctx.messages])
+      await childCtx.applyPrelude(this)
       const iter = f()
       while (true) {
-        const { next } = state
-        delete state.next
+        const { next } = childCtx
+        delete childCtx.next
         const { done, value } = await iter.next(next as never)
         if (done) {
           if (final) {
-            await state.apply(final)
-            return state.next
+            await childCtx.apply(final)
+            return childCtx.next
           }
           return value
         }
-        await state.apply(value)
+        await childCtx.apply(value)
       }
     },
   })

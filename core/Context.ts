@@ -5,18 +5,17 @@ import type { Model } from "./Action/Model.ts"
 import type { Relayer } from "./Action/Relayer.ts"
 import type { Rune } from "./Rune.ts"
 
-export class State {
+export class Context {
   initialized: boolean = false
   constructor(
-    public rune: Rune,
     public model?: Model,
     public messages: Array<Message> = [],
     readonly relayers: Set<Relayer> = new Set(),
     public next?: unknown,
   ) {}
 
-  applyPrelude = async (): Promise<void> => {
-    for (const action of this.rune.prelude) {
+  applyPrelude = async (rune: Rune): Promise<void> => {
+    for (const action of rune.prelude) {
       await this.apply(action)
     }
   }

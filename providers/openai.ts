@@ -1,12 +1,22 @@
 import { assert } from "@std/assert"
+import { encodeBase32 } from "@std/encoding"
 import type OpenAI from "openai"
 import type { ChatModel } from "openai/resources/chat/chat"
-import type { Model } from "../mod.ts"
+import { type Model, type Rune, schema as schema_, signature } from "../mod.ts"
+import { WeakMemo } from "../util/WeakMemo.ts"
 
 export function model(client: OpenAI, model: (string & {}) | ChatModel): Model {
   return {
     action: "Model",
-    complete: async (messages, schema) => {
+    complete: async ({ messages }, rune) => {
+      const response_format = rune.kind === "string" ? undefined : {
+        type: "json_schema" as const,
+        json_schema: {
+          name: await nameMemo.getOrInit(rune),
+          schema: schema_(rune),
+          strict: true,
+        },
+      }
       const { choices, created } = await client.chat.completions.create({
         model,
         messages: messages.map(({ role, body }) => ({
@@ -16,16 +26,7 @@ export function model(client: OpenAI, model: (string & {}) | ChatModel): Model {
             text: body,
           }],
         })),
-        response_format: schema
-          ? {
-            type: "json_schema",
-            json_schema: {
-              name: schema.name,
-              schema: schema.json,
-              strict: true,
-            },
-          }
-          : undefined,
+        response_format,
       })
       const [choice0] = choices
       assert(choice0 !== undefined)
@@ -39,3 +40,8 @@ export function model(client: OpenAI, model: (string & {}) | ChatModel): Model {
     },
   }
 }
+
+const nameMemo = new WeakMemo<Rune, Promise<string>>(async (rune) => {
+  const data = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(signature(rune)))
+  return encodeBase32(data).slice(0, -4)
+})

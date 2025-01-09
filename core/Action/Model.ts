@@ -1,4 +1,5 @@
-import type { Schema } from "../Schema.ts"
+import type { Context } from "../Context.ts"
+import type { Rune } from "../Rune.ts"
 import type { Message } from "./Message.ts"
 
 export interface Model {
@@ -6,4 +7,4 @@ export interface Model {
   complete: Complete
 }
 
-export type Complete = (messages: Array<Message>, schema?: Schema) => Promise<Message>
+export type Complete = (state: Context, rune: Rune) => Promise<Message>

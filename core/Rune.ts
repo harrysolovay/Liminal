@@ -2,7 +2,7 @@ import type { Falsy } from "@std/assert"
 import { isTemplateStringsArray } from "../util/isTemplateStringsArray.ts"
 import { recombine } from "../util/recombine.ts"
 import type { Action } from "./Action/Action.ts"
-import { State } from "./State.ts"
+import { Context } from "./Context.ts"
 
 export interface Rune<T = any, E = any> extends Declaration {
   (template: TemplateStringsArray, ...substitutions: Array<string>): this
@@ -29,7 +29,7 @@ export interface Declaration {
   self: () => Rune | ((...args: any) => Rune)
   args?: Array<unknown>
   phantom?: boolean
-  consume(this: Rune, state: State): Promise<unknown>
+  consume(this: Rune, ctx: Context): Promise<unknown>
 }
 
 export type AnnotationValue = Falsy | string | Metadata
@@ -73,7 +73,7 @@ export function Rune<T, E>(
         return segments.length ? segments.join(" ") : undefined
       },
       run() {
-        return (this as Rune).consume(new State(this as never)) as never
+        return (this as Rune).consume(new Context()) as never
       },
       *[Symbol.iterator](): Generator<Rune<T, E>, T> {
         return yield this as never
