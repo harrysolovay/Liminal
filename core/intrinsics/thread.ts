@@ -11,6 +11,7 @@ export function thread<Y extends Action, T = never>(
     kind: "thread",
     self: () => thread,
     args: [f, final],
+    phantom: true,
     async consume(state) {
       await state.applyPrelude()
       const iter = f()

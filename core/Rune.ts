@@ -28,6 +28,7 @@ export interface Declaration {
   kind: string
   self: () => Rune | ((...args: any) => Rune)
   args?: Array<unknown>
+  phantom?: boolean
   consume(this: Rune, state: State): Promise<unknown>
 }
 

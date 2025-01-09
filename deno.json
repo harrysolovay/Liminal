@@ -6,7 +6,7 @@
   "tasks": {
     "mod": {
       "description": "Regenerate barrels and run formatting.",
-      "command": "deno run -A https://deno.land/x/moderate@0.0.5/mod.ts --exclude .liminal --exclude '*.eg.ts' --exclude '*.test.ts' --exclude '*.node.ts' && dprint fmt"
+      "command": "deno run -A https://deno.land/x/moderate@0.0.5/mod.ts --exclude .liminal --exclude '*.eg.ts' --exclude '*.test.ts' --exclude '*.node.ts' --exclude '_*' && dprint fmt"
     },
     "check": {
       "description": "Ensure all TypeScript files pass typechecking and linting.",

@@ -4,47 +4,42 @@ import type { Rune } from "./Rune.ts"
 
 type I = typeof I
 
-export function Visitor<V, R>(arms: VisitorArms<V, R>): (value: V, rune: Rune) => R {
+export type Visitor<S, R> = (state: S, rune: Rune) => R
+
+export function Visitor<S, R>(arms: VisitorArms<S, R>): (state: S, rune: Rune) => R {
   const { hook } = arms
   if (hook) {
-    return (value, rune) => hook(next, value, rune)
+    return (state, rune) => hook(next, state, rune)
   }
   return next
 
-  function next(value: V, rune: Rune): R {
+  function next(state: S, rune: Rune): R {
     const { kind, args } = rune
     return (arms[kind as keyof I] ?? arms.fallback!)(
-      value,
+      state,
       rune as never,
       ...(args ?? []) as Array<never>,
     )
   }
 }
 
-export type VisitorArms<V, R> = Expand<
+export type VisitorArms<S, R> = Expand<
   & {
-    hook?: (next: (value: V, rune: Rune) => R, value: V, rune: Rune) => R
+    hook?: (next: (state: S, rune: Rune) => R, state: S, rune: Rune) => R
   }
   & (
-    | ({ fallback?: never } & IntrinsicVisitorArms<V, R>)
+    | ({ fallback?: never } & IntrinsicVisitorArms<S, R>)
     | (
-      & { fallback: (value: V, rune: Rune, ...args: Array<unknown>) => R }
-      & Partial<IntrinsicVisitorArms<V, R>>
+      & { fallback: (state: S, rune: Rune, ...args: Array<unknown>) => R }
+      & Partial<IntrinsicVisitorArms<S, R>>
     )
   )
 >
 
-export type IntrinsicVisitorArms<V, R> = {
+export type IntrinsicVisitorArms<S, R> = {
   [K in keyof I]: (
-    value: V,
+    state: S,
     ...rest: I[K] extends Rune ? [rune: I[K]]
       : [rune: ReturnType<I[K]>, ...args: Parameters<I[K]>]
   ) => R
-}
-
-export class Path {
-  constructor(readonly inner: string) {}
-
-  next = (junction?: number | string): Path =>
-    new Path(junction ? `${this.inner}.${junction}` : this.inner)
 }

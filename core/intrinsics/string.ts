@@ -1,4 +1,8 @@
-import type { Rune } from "../Rune.ts"
-import { Type } from "../Type.ts"
+import { Rune } from "../Rune.ts"
+import { consumeType } from "./_common.ts"
 
-export const string: Rune<string, never> = Type("string", () => string)
+export const string: Rune<string, never> = Rune({
+  kind: "string",
+  self: () => string,
+  consume: consumeType,
+})
