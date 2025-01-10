@@ -28,9 +28,9 @@ function* PassagePoem() {
   return yield* L.string
 }
 
-const x = await Thread(
+const x = Thread(
   model(new OpenAI(), "gpt-4o-mini"),
   "",
-  PassagePoem(),
   L.object({ a: L.string }),
-).exec()
+  PassagePoem(),
+)
