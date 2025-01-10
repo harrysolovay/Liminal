@@ -6,85 +6,71 @@ title: Overview
 
 # Liminal <Badge type="warning" text="beta" />
 
-Liminal is a library for modeling types for and with LLMs.
+Liminal is a TypeScript library for integrating with LLMs. It provides a clean way to manage
+conversations through an immutable message system, where each message is a self-contained unit that
+can include text, structured data, or media. This approach makes it easy to track conversation
+history, branch conversations, and maintain state without side effects. You can build anything from
+simple one-off queries to complex multi-turn conversations with structured outputs. Liminal works
+with models that support JSON-schema-based function calling, including leading models like GPT-4,
+Claude 3, and others.
 
-The initial aim is to simplify declaring and refining structured outputs. A possible aim of Liminal
-is to enable LLMs to take part in the declaration and evolution of type contexts, from which values
-can be generated and better-understood. The unit of composition in Liminal is a
-[`Type`](./types/index.md), which can be used with any model that support JSON-schema-based
-tool-calling (such as [gpt-4o](https://openai.com/index/hello-gpt-4o/),
-[claude 3.5 Sonnet](https://www.anthropic.com/news/claude-3-5-sonnet),
-[Llama 3.3](https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_3/) and
-[Grok 2 Beta](https://x.ai/blog/grok-2)).
+## Type-Safe Outputs
+
+Define precise schemas for LLM output using Liminal's expressive type system, getting full
+TypeScript inference and runtime validation.
+
+## Stateful Conversations
+
+Model complex dialogue flows with built-in support for branching logic, state management, and
+contextual memory.
+
+## Composable Design
+
+Build sophisticated interactions by combining simple types and annotations, making even complex LLM
+applications maintainable and type-safe.
+
+The following sections demonstrate how to leverage these capabilities in your applications.
 
 ## [Model Types and Generate Values](./types/index.md)
 
 Use Liminal types as structured output schemas. Static types are inferred.
 
 ```ts
-import { L, OpenAIAdapter } from "liminal"
-
-const $ = L(OpenAIAdapter({
-  openai: new OpenAI(),
-}))
+import { L } from "liminal"
+import { model } from "liminal/openai"
+import OpenAI from "openai"
 
 const Coordinates = L.Tuple(
   L.number`Latitude`,
   L.number`Longitude`,
 )
 
-const [
-  latitude,
-  longitude,
-] = await $`Somewhere futuristic.`(Coordinates)
+const coordinates = await L
+  .thread(
+    "Somewhere tropical.",
+    Coordinates,
+  )
+  .run(model(new OpenAI(), "gpt-4o-mini"))
 ```
 
 ## [Annotate Types](./annotations/index.md)
 
-Compose types with annotations––such as [descriptions](./annotations/descriptions.md),
-[assertions](./annotations/assertions.md) and [pins](./annotations/pins.md)––which serve as
-additional context to improve the quality of outputs.
+Compose types with annotations––such as [descriptions](./annotations/descriptions.md) and
+[pins](./annotations/pins.md)––which serve as additional context to improve the quality of outputs.
 
 ```ts
-const RGBColorChannel = L.number(
-  min(0),
-  max(255),
-)`A channel of an RGB color triple.`
+const RGBColorChannel = L.number(min(0), max(255))`A channel of an RGB color triple.`
 ```
 
-## [Iterative Refinement](./concepts/iterative-refinement.md)
-
-Assertion annotations can contain runtime assertion functions. Upon receiving structured outputs,
-clients can run these assertion functions and collect exceptions into diagnostic lists, to be sent
-along with followup requests for corrections. This process can loop until all assertions pass,
-iteratively piecing in valid data.
-
-```ts
-import { L, Liminal } from "liminal"
-import { refine } from "liminal/openai"
-
-const T = L.object({
-  a: L.string,
-  b: L.string,
-})(L.assert(({ a, b }) => a.length > b.length, "`a` must be longer than `b`."))
-
-const refined = await refine(openai, T, {
-  max: 4,
-})
-```
-
-> Here we specify a maximum of 4 iterations.
-
-## [Transform Types](./types/transform.md)
+## [Codec Types](./types/transform.md)
 
 Abstract over complex intermediate states.
 
 ```ts
 const HexColor = L.transform(
   L.Tuple(RGBColorChannel, RGBColorChannel, RGBColorChannel),
-  (rgb) => {
-    return rgb.map((channel) => channel.toString(16).padStart(2, "0")).join("")
-  },
+  (rgb) => rgb.map((channel) => channel.toString(16).padStart(2, "0")).join(""),
+  (hex) => hex.match(/.{2}/g).map((channel) => parseInt(channel, 16)),
 )
 ```
 
