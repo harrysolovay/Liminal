@@ -1,15 +1,7 @@
-import { Rune } from "./Rune.ts"
+import { Rune } from "../Rune.ts"
 import type { Type } from "./Type.ts"
 
-export const string: Type<string> = declare(() => string)
-
-export function object<F extends Record<string, Type>>(
-  fields: F,
-): Type<{ [K in keyof F]: F[K]["T"] }> {
-  return declare(() => object, [fields])
-}
-
-function declare<T>(
+export function declare<T>(
   self: () => Type | ((...args: any) => Type),
   args?: Array<unknown>,
 ): Type<T> {

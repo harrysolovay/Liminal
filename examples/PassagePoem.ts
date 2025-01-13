@@ -1,4 +1,4 @@
-import { L, Thread } from "liminal"
+import { Thread, Type as T } from "liminal"
 import { model } from "liminal/openai"
 import OpenAI from "openai"
 
@@ -25,12 +25,25 @@ function* PassagePoem() {
 
   yield "Use the summary to create a poem."
 
-  return yield* L.string
+  const x = yield* Thread(child()).handle(function*(e) {
+    return e
+  })
+
+  return yield* T.string
 }
 
-const x = Thread(
+function* child() {
+  yield 10
+  yield "HELLO!"
+  yield {
+    IT_IS_BEAUTIFUL: true,
+  }
+  return yield* T.string
+}
+
+const result = Thread(
   model(new OpenAI(), "gpt-4o-mini"),
-  "",
-  L.object({ a: L.string }),
   PassagePoem(),
-)
+)`
+  System message here.
+`

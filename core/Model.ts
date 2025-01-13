@@ -1,5 +1,5 @@
 import type { Message } from "./Message.ts"
-import type { Type } from "./Type.ts"
+import type { Type } from "./Type/mod.ts"
 
 export interface Model {
   kind: "Model"

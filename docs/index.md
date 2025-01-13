@@ -2,20 +2,20 @@
 title: Overview
 ---
 
-<!--@include: ./fragments.md-->
-
 # Liminal <Badge type="warning" text="beta" />
 
-Liminal is a library for modeling types for and with LLMs.
+Liminal is a TypeScript library for integrating with LLMs. It provides a clean way to manage
+conversations through an immutable message system, where each message is a self-contained unit that
+can include text, structured data, or media. This approach makes it easy to track conversation
+history, branch conversations, and maintain state without side effects. You can build anything from
+simple one-off queries to complex multi-turn conversations with structured outputs. Liminal works
+with models that support JSON-schema-based function calling, including leading models like GPT-4,
+Claude 3, and others.
 
-The initial aim is to simplify declaring and refining structured outputs. A possible aim of Liminal
-is to enable LLMs to take part in the declaration and evolution of type contexts, from which values
-can be generated and better-understood. The unit of composition in Liminal is a
-[`Type`](./types/index.md), which can be used with any model that support JSON-schema-based
-tool-calling (such as [gpt-4o](https://openai.com/index/hello-gpt-4o/),
-[claude 3.5 Sonnet](https://www.anthropic.com/news/claude-3-5-sonnet),
-[Llama 3.3](https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_3/) and
-[Grok 2 Beta](https://x.ai/blog/grok-2)).
+## Stateful Conversations
+
+Model complex dialogue flows with built-in support for branching logic, state management, and
+contextual memory.
 
 ## [Model Types and Generate Values](./types/index.md)
 

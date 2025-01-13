@@ -8,6 +8,7 @@ cspotcode
 deno
 denoland
 dprint
+effectful
 egts
 esbenp
 harrysolovay
@@ -31,6 +32,7 @@ subassert
 subpaths
 subschema
 subschemas
+subthreads
 subvalue
 supervillain
 tsconfigure

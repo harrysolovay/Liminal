@@ -7,13 +7,19 @@ import { Rune } from "./Rune.ts"
 export interface Thread<T = any, E = any> extends Rune<"Thread", T> {
   E: E
   handlers: Array<(event: unknown) => unknown>
-  handle<R>(f: (event: E) => R): Thread<T, ExtractE<R>>
+  handle<R>(f: (event: E) => R): Thread<T, Thread.E<R>>
 }
 
-export function Thread<A extends Array<unknown>>(...actions: A): ThreadFrom<A> {
-  return make([])
-
-  function make(handlers: Array<(event: unknown) => unknown>): ThreadFrom<A> {
+export function Thread<A extends Array<unknown>>(
+  ...actions: A
+): Thread<
+  Last<A> extends infer F ? F extends Rune<string, infer T> ? T
+    : F extends IterableLike<any, infer T> ? T
+    : undefined
+    : never,
+  Thread.E<A[number]>
+> {
+  return (function make(handlers: Array<(event: unknown) => unknown>) {
     return Rune(
       {
         kind: "Thread",
@@ -32,21 +38,13 @@ export function Thread<A extends Array<unknown>>(...actions: A): ThreadFrom<A> {
       },
       [],
     )
-  }
+  })([])
 }
 
-type ThreadFrom<A extends Array<unknown>> = [
-  Thread<
-    Last<A> extends infer L ? L extends Rune<string, infer T> ? T
-      : L extends IterableLike<any, infer T> ? T
-      : undefined
-      : undefined,
-    ExtractE<A[number]>
-  >,
-][0]
-
-export type ExtractE<Y> = Exclude<Y, Falsy | Model | string> extends infer Z
-  ? Z extends Rune ? Extract<Z, Thread>["E"]
-  : Z extends IterableLike<infer Y2> ? ExtractE<Y2>
-  : Z
-  : never
+export declare namespace Thread {
+  export type E<Y> = Exclude<Y, void | Falsy | Model | string> extends infer Z
+    ? Z extends Rune ? Extract<Z, Thread>["E"]
+    : Z extends IterableLike<infer Y2> ? E<Y2>
+    : Z
+    : never
+}

@@ -1,6 +1,6 @@
 {
   "name": "@crosshatch/liminal",
-  "description": "A library for modeling types for and with LLMs",
+  "description": "A library for modeling types and conversations for and with LLMs",
   "version": "0.0.0-local.0",
   "exports": "./mod.ts",
   "tasks": {

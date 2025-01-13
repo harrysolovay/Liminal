@@ -1,5 +1,7 @@
 # Types Overview
 
+TODO: Assert
+
 The core construct of Structured Outputs TypeScript is a `Type`.
 
 Types and type factories can be accessed off of the root export `T`.
