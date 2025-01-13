@@ -14,6 +14,40 @@ deno add jsr:@crosshatch/liminal
 
 :::
 
+## Debate
+
+```ts
+import { E, iter, T } from "liminal"
+
+for await (const event of iter(Main())) {
+  console.log(event)
+
+  event satisfies {
+    type: "topic" | "opening stance" | "opening argument" | "B's argument" | "A's argument"
+    value: string
+  }
+}
+
+function* Main() {
+  yield "What is the topic of debate?"
+  yield E("topic", yield* T.string)
+
+  yield "What is the opening stance on this topic?"
+  yield E("opening stance", yield* T.string)
+
+  yield "What is the opening argument for this stance?"
+  yield E("opening argument", yield* T.string)
+
+  while (true) {
+    yield "What is debater B's counter-argument?"
+    yield E("B's argument", yield* T.string)
+
+    yield "What is debater A's counter-argument?"
+    yield E("A's argument", yield* T.string)
+  }
+}
+```
+
 ## Declare Types
 
 ```ts twoslash include supe
