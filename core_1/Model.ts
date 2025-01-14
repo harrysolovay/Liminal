@@ -1,10 +1,7 @@
-import type { Context } from "./Context.ts"
 import type { Message } from "./Message.ts"
-import type { Type } from "./Type/Type.ts"
+import type { Type } from "./Type/mod.ts"
 
 export interface Model {
-  action: "Model"
-  complete: Complete
+  kind: "Model"
+  complete(messages: Array<Message>, type: Type): Promise<Message>
 }
-
-export type Complete = (state: Context, type: Type) => Promise<Message>

@@ -1,52 +1,53 @@
 import type { Falsy } from "@std/assert"
 import { isTemplateStringsArray } from "../util/isTemplateStringsArray.ts"
+import type { State } from "./State.ts"
 
-export interface Rune<K extends string = string, T = any> extends Declaration<K> {
+export interface Rune<K extends string = string, T = any> extends RuneBase<T>, Declaration<K, T> {
   (template: TemplateStringsArray, ...substitutions: Array<AnnotationSubstitution>): this
   (...annotations: Array<AnnotationValue>): this
-
   T: T
+}
 
-  action: "Rune"
-  kind: K
+export interface RuneBase<T> {
   annotations: Array<Annotation>
-
   [Symbol.iterator](): Iterator<this, T, void>
 }
 
-export interface Declaration<K extends string = string> {
+export interface Declaration<K extends string, T> {
   kind: K
   self: () => Rune | ((...args: any) => Rune)
   args?: Array<unknown>
+  exec(this: Rune, state?: State): Promise<T>
 }
 
+export type AnnotationSubstitution = string | Rune
 export type AnnotationValue = Falsy | string | Metadata
 export interface Metadata {
   type: "Metadata"
+  key: symbol
   value: unknown
 }
-
 export type Annotation = AnnotationValue | AnnotationTemplate
 export interface AnnotationTemplate {
   template: TemplateStringsArray
   substitutions: Array<AnnotationSubstitution>
 }
-export type AnnotationSubstitution = string | Rune
 
 export function Rune<X extends Rune>(
-  declaration: Declaration<X["kind"]>,
-  annotations: Array<Annotation> = [],
+  declaration: Declaration<X["kind"], X["T"]>,
+  members: Omit<X, keyof Rune> & ThisType<X>,
+  annotations: Array<Annotation>,
 ): X {
   return Object.assign(
     annotate,
     declaration,
+    members,
     {
-      action: "Rune",
       annotations,
       *[Symbol.iterator]() {
         return yield this as never
       },
-    } satisfies Omit<Rune, keyof Declaration | "T">,
+    } satisfies RuneBase<X["T"]>,
   ) as never
 
   function annotate(
@@ -58,8 +59,7 @@ export function Rune<X extends Rune>(
     e0: TemplateStringsArray | AnnotationValue,
     ...rest: Array<AnnotationSubstitution | AnnotationValue>
   ): X {
-    return Rune(declaration, [
-      ...annotations,
+    return Rune(declaration, members, [
       ...isTemplateStringsArray(e0)
         ? [{
           template: e0,

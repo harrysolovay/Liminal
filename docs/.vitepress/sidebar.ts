@@ -20,7 +20,7 @@ export const MANUAL_SIDEBAR: DefaultTheme.SidebarMulti[string] = {
         { text: "Messages", link: "/messages" },
         { text: "Branches", link: "/branches" },
         { text: "Models", link: "/models" },
-        { text: "Events", link: "/events" },
+        { text: "Effects", link: "/effects" },
         { text: "Tools", link: "/tools" },
         { text: "Stepping", link: "/stepping" },
       ],
