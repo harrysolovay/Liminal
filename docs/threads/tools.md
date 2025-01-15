@@ -1,18 +1,20 @@
 # Tools
 
 ```ts
-import { system, T, tool } from "liminal"
+import { L } from "liminal"
 
 function* WeatherDescription(city: string) {
-  yield* tool(T.string, coordinates)`Get the coordinates of the specified city name.`
+  yield* L.tool(L.string, coordinates)`
+    Get the coordinates of the specified city name.
+  `
 
-  yield* tool(T.Tuple(T.number, T.number), weather)`
+  yield* L.tool(L.Tuple(L.number, L.number), weather)`
     Get weather data based on the city's latitude and longitude.
   `
 
   yield `What is the temperature in ${city}?`
 
-  return yield* T.string
+  return yield* L.string
 }
 
 declare function coordinates(city: string): Promise<[number, number]>

@@ -76,7 +76,8 @@ interface Message {
 type Role = "system" | "user" | "assistant" | "reducer"
 ```
 
-Hydrating messages into a thread is straightforward.
+Liminal supports yielding arrays of message-like objects, which enables for hydrating thread
+messages as follows.
 
 ```ts
 async function* Main() {

@@ -4,16 +4,24 @@
 
 ```ts
 function* Hello() {
-  yield "Hello, how are you today?" // User.
+  // System.
+  yield system`You are a cheery assistant.`
 
-  const reply = yield* T.string // Assistant.
+  // User.
+  yield "Hello, how are you today?"
 
-  reply satisfies string
+  // Assistant.
+  const reply = yield* T.string
 }
 ```
 
 ```json
 [
+  {
+    "role": "system",
+    "body": "You are a cheery assistant."
+    // ...
+  },
   {
     "role": "user",
     "body": "Hello, how are you today?"

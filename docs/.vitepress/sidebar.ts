@@ -22,7 +22,6 @@ export const MANUAL_SIDEBAR: DefaultTheme.SidebarMulti[string] = {
         { text: "Models", link: "/models" },
         { text: "Effects", link: "/effects" },
         { text: "Tools", link: "/tools" },
-        { text: "Stepping", link: "/stepping" },
       ],
     },
     {
