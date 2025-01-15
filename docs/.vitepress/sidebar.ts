@@ -18,9 +18,9 @@ export const MANUAL_SIDEBAR: DefaultTheme.SidebarMulti[string] = {
       link: "/",
       items: [
         { text: "Messages", link: "/messages" },
-        { text: "Branches", link: "/branches" },
         { text: "Models", link: "/models" },
-        { text: "Effects", link: "/effects" },
+        { text: "Branches", link: "/branches" },
+        { text: "Events", link: "/events" },
         { text: "Tools", link: "/tools" },
       ],
     },
