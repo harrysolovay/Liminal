@@ -42,7 +42,7 @@ Conversation iterables can also produce events, which simplify how parent thread
 observe the conversation.
 
 ```ts
-yield L.event("completion", { A, B })
+yield emit("completion", { A, B })
 ```
 
 When we execute our conversation iterator, we can use `exec`.
