@@ -5,9 +5,9 @@ title: Overview
 # Liminal <Badge type="warning" text="beta" />
 
 Liminal is a TypeScript library that manages conversation state without obscuring underlying
-structures (namely message lists). Conversations are modeled as pure generator functions, which can
-contain local state, branching, parallelized child threads and other useful directives. One such
-directive is `Type`, which can be yielded to generate and parse assistant messages into
+structures (namely message lists). Conversations ("threads") are modeled as pure generator
+functions, which can contain local state, branching, concurrent child threads and actions. One such
+action is a `Type`, which can be yielded to generate and parse assistant messages into
 statically-typed values.
 
 ```ts
@@ -38,11 +38,58 @@ When executed, we can expect an underlying message list similar to the following
 ]
 ```
 
-The conversation can be further controlled by yielding actions.
+Conversation iterables can also produce events, which simplify how parent threads and outside code
+observe the conversation.
 
-## Set Provider/Model
+```ts
+yield L.event("completion", { A, B })
+```
 
-We can set the model at any point in a conversation.
+When we execute our conversation iterator, we can use `exec`.
+
+```ts
+for await (const event of exec(Conversation())) {
+  event satisfies {
+    type: "completion"
+    value: { A: string; B: string }
+  }
+}
+```
+
+Events can serve as waypoints, enabling us to observe and manage the conversation loop. They can
+also be used to trigger external actions, such as adjusting UI or integrating with external
+services.
+
+## Messages
+
+Messages are the core of any conversation. Liminal's `Message` type is a general-purpose shape,
+intended to be interoperable with any LLM provider, including Ollama, OpenAI and Anthropic and
+others.
+
+```ts
+interface Message {
+  role: Role
+  created: Date
+  body: string
+}
+
+type Role = "system" | "user" | "assistant" | "reducer"
+```
+
+Hydrating messages into a thread is straightforward.
+
+```ts
+async function* Main() {
+  yield await fetchMessages()
+}
+
+// Your message-list fetcher.
+declare function fetchMessages(): Promise<Array<Message>>
+```
+
+## Multi-Provider/Model Support
+
+We can set the provider and model whenever we so choose.
 
 ```ts
 import { L } from "liminal"
@@ -57,7 +104,7 @@ function* Main() {
 }
 ```
 
-## Create Child Threads
+## Child Threads
 
 We can create child threads by yielding the result of `Thread.new`.
 
@@ -174,10 +221,10 @@ function* Main() {
 // ...
 ```
 
-## Effects
+## Events
 
-Effects provide ancestor threads with the ability to observe waypoints in child threads. They also
-allow for early termination in the case that the child thread's fulfillment is not required.
+Ancestor threads can observe events emitted by child threads. They also allow for early termination
+in the case that the child thread's continuation is not required.
 
 ```ts
 import { E, exec } from "liminal"
@@ -195,7 +242,7 @@ function* Main() {
 for await (const e of exec(Main())) {
   e satisfies {
     type: "First"
-    value?: undefined
+    value?: never
   } | {
     type: "Second"
     value: { B: number }
@@ -218,62 +265,24 @@ const Coordinates = L.Tuple(
   L.number`Longitude`,
 )
 
-const [
-  latitude,
-  longitude,
-] = await $`Somewhere futuristic.`(Coordinates)
+function* Main() {
+  const [latitude, longitude] = yield* Coordinates
+}
 ```
 
-## [Annotate Types](./annotations/index.md)
-
-Compose types with annotations––such as [descriptions](./annotations/descriptions.md),
-[assertions](./annotations/assertions.md) and [pins](./annotations/pins.md)––which serve as
-additional context to improve the quality of outputs.
-
-```ts
-const RGBColorChannel = L.number(
-  min(0),
-  max(255),
-)`A channel of an RGB color triple.`
-```
-
-## [Iterative Refinement](./concepts/iterative-refinement.md)
-
-Assertion annotations can contain runtime assertion functions. Upon receiving structured outputs,
-clients can run these assertion functions and collect exceptions into diagnostic lists, to be sent
-along with followup requests for corrections. This process can loop until all assertions pass,
-iteratively piecing in valid data.
-
-```ts
-import { L, Liminal } from "liminal"
-import { refine } from "liminal/openai"
-
-const T = L.object({
-  a: L.string,
-  b: L.string,
-})(L.assert(({ a, b }) => a.length > b.length, "`a` must be longer than `b`."))
-
-const refined = await refine(openai, T, {
-  max: 4,
-})
-```
-
-> Here we specify a maximum of 4 iterations.
-
-## [Transform Types](./types/transform.md)
+## [Codec Types](./types/transform.md)
 
 Abstract over complex intermediate states.
 
 ```ts
-const HexColor = L.transform(
+const HexColor = L.codec(
   L.Tuple(RGBColorChannel, RGBColorChannel, RGBColorChannel),
-  (rgb) => {
-    return rgb.map((channel) => channel.toString(16).padStart(2, "0")).join("")
-  },
+  (rgb) => rgb.map((channel) => channel.toString(16).padStart(2, "0")).join(""),
+  (hex) => hex.match(/.{1,2}/g)!.map((channel) => parseInt(channel, 16)),
 )
 ```
 
-> We could use `L.Tuple.N(RGBColorChannel, 3)` for brevity.
+> We could also use `L.Tuple.N(RGBColorChannel, 3)` for brevity.
 
 ## [Type Libraries](./libraries/index)
 
