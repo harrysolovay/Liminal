@@ -1,11 +1,11 @@
 # All
 
 ```ts
-import { all, branch } from "liminal"
+import { branch, join } from "liminal"
 
 function* Parent() {
   yield "How are you today?"
-  const [happy, sad] = yield* all(
+  const [happy, sad] = yield* join(
     branch("happy", Child()),
     branch("sad", Child()),
   )

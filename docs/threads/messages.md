@@ -32,6 +32,8 @@ function* Hello() {
 ## Relay Messages
 
 ```ts
+import { type Message, relay } from "liminal"
+
 function* Relayed() {
   yield* relay(save)
 }
@@ -74,17 +76,17 @@ function* LongThread() {
 ### Common Reducer Patterns
 
 ```ts
-import { branch, reduce, T } from "liminal"
+import { branch, L, reduce } from "liminal"
 
 function* Main() {
   // ... messages ...
   yield reduce(function*(messages) {
     yield "Synthesize the following texts into a single concise yet detailed text."
-    yield* all(...messages.map((message, i) =>
+    yield* join(...messages.map((message, i) =>
       thread(i, function*() {
         yield "Extract key information from the following text."
         yield message
-        return yield* T.string
+        return yield* L.string
       })
     ))
     return yield* L.string
@@ -99,7 +101,7 @@ import { clear } from "liminal"
 
 function* Main() {
   // ... messages ...
-  clear()
+  yield* clear()
 }
 ```
 
