@@ -1,17 +1,5 @@
-export type ET<E> = [
-  {
-    [K in keyof E]: E[K] extends ThreadE<infer E2> ? {
-        type: K
-        value: ET<E2>
-      }
-      : {
-        type: K
-        value: E[K]
-      }
-  }[keyof E],
-][0]
+import type { Rune } from "./Rune.ts"
 
-declare const ThreadE_: unique symbol
-export interface ThreadE<E> {
-  [ThreadE_]: E
-}
+export * as Thread from "./_threads/mod.ts"
+
+export interface Thread<T = any> extends Rune<"Thread", T> {}

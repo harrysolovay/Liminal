@@ -16,6 +16,7 @@ harrysolovay
 inspectable
 liminals
 llava
+lmnl
 logits
 metatype
 mirostat

@@ -1,19 +1,22 @@
-import type { Falsy } from "../util/Falsy.ts"
-import type { Rune } from "./Rune.ts"
+import type { Falsy } from "@std/assert"
 
-export * as Type from "./_types/mod.ts"
+export * as Type from "./Type/mod.ts"
 
-export interface Type<T = any> extends Rune<"Type", T>, TypeMembers {
+export interface Type<T = any> extends Iterable<void, T> {
   (template: TemplateStringsArray, ...substitutions: Array<AnnotationSubstitution>): this
   (...values: Array<AnnotationValue>): this
-}
 
-export interface TypeMembers {
+  kind: "Type"
+
+  self(): Type
+  args?: Array<unknown>
+
   annotations: Array<Annotation>
+
   description(): undefined | string
 }
 
-export type AnnotationSubstitution = string
+export type AnnotationSubstitution = string | Type
 export type AnnotationValue = Falsy | string
 export type Annotation = AnnotationValue | AnnotationTemplate
 export interface AnnotationTemplate {
