@@ -1,11 +1,13 @@
 import { isTemplateStringsArray } from "../../util/isTemplateStringsArray.ts"
 import { declareRune } from "../_declareRune.ts"
+import type { Runic } from "../_Rune.ts"
 import type { Annotation, Type, TypeMembers } from "../Type.ts"
 import type { AnnotationValue } from "../Type.ts"
 import type { AnnotationSubstitution } from "../Type.ts"
+import { schema } from "./methods/schema.ts"
 
 export function declareType<T>(
-  self: () => Type | ((...args: any) => Type),
+  self: () => Runic<Type<T>>,
   args?: Array<unknown>,
   annotations: Array<Annotation> = [],
 ): Type<T> {
@@ -26,6 +28,9 @@ export function declareType<T>(
           }
         }
         return segments.length ? segments.join(" ") : undefined
+      },
+      schema() {
+        return schema(this as never)
       },
     } satisfies TypeMembers,
   ) as never

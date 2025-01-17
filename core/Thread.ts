@@ -1,4 +1,4 @@
-import type { Rune } from "./Rune.ts"
+import type { Rune } from "./_Rune.ts"
 
 export * as Thread from "./_threads/mod.ts"
 

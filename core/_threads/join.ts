@@ -4,5 +4,5 @@ import { declareThread } from "./_declareThread.ts"
 export function join<A extends Array<Thread>>(
   ...threads: A
 ): Thread<{ [K in keyof A]: A[K]["T"] }> {
-  return declareThread(() => join, threads)
+  return declareThread(() => join<A>, threads)
 }

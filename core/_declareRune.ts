@@ -1,8 +1,8 @@
-import type { Rune } from "./Rune.ts"
+import type { Rune, Runic } from "./_Rune.ts"
 
 export function declareRune<K extends string, T>(
   kind: K,
-  self: () => Rune | ((...args: any) => Rune),
+  self: () => Runic<Rune<K, T>>,
   args?: Array<unknown>,
 ): Rune<K, T> {
   return {

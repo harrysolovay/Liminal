@@ -1,5 +1,6 @@
 import type { Falsy } from "../util/Falsy.ts"
-import type { Rune } from "./Rune.ts"
+import type { Rune } from "./_Rune.ts"
+import type { JSONType } from "./JSONType.ts"
 
 export * as Type from "./_types/mod.ts"
 
@@ -11,6 +12,7 @@ export interface Type<T = any> extends Rune<"Type", T>, TypeMembers {
 export interface TypeMembers {
   annotations: Array<Annotation>
   description(): undefined | string
+  schema(): JSONType
 }
 
 export type AnnotationSubstitution = string
