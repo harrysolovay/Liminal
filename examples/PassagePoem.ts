@@ -1,49 +1,42 @@
-// import { Thread, Type as T } from "liminal"
-// import { model } from "liminal/openai"
-// import OpenAI from "openai"
+import { E, Exec, ExtractEvent, System, Thread, Type as L } from "liminal"
+import { model } from "liminal/openai"
+import OpenAI from "openai"
 
-// const text = await Deno.readTextFile(new URL("dracula.txt", import.meta.url))
-// const SAMPLE_LENGTH = 1000
+const text = await Deno.readTextFile(new URL("dracula.txt", import.meta.url))
+const SAMPLE_LENGTH = 1000
 
-// function* PassagePoem() {
-//   yield "Summarize the following passage from Bram Stoker's Dracula."
+for await (const _ of Exec(Main())) {}
 
-//   const start = Math.floor(Math.random() * (text.length - SAMPLE_LENGTH + 1))
-//   yield text.slice(start, start + SAMPLE_LENGTH)
+function* Main() {
+  const x = yield* Thread.join(
+    Thread.new("A", PassagePoem()),
+    Thread.new("B", PassagePoem()),
+    Thread.new("C", PassagePoem()),
+  )
+  // console.log(A, B, C)
+}
 
-//   yield {
-//     something: "here",
-//   }
+function* PassagePoem() {
+  yield model(new OpenAI(), "gpt-4o-mini")
 
-//   yield {
-//     another: "here",
-//   }
+  yield* System`You are a helpful assistant.`
 
-//   yield true && {
-//     test: "yo",
-//   }
+  yield "Summarize the following passage from Bram Stoker's Dracula."
 
-//   yield "Use the summary to create a poem."
+  const start = Math.floor(Math.random() * (text.length - SAMPLE_LENGTH + 1))
+  yield text.slice(start, start + SAMPLE_LENGTH)
 
-//   const x = yield* Thread(child()).handle(function*(e) {
-//     return e
-//   })
+  yield L.string
 
-//   return yield* T.string
-// }
+  yield "Use the summary to create a poem."
 
-// function* child() {
-//   yield 10
-//   yield "HELLO!"
-//   yield {
-//     IT_IS_BEAUTIFUL: true,
-//   }
-//   return yield* T.string
-// }
+  const poem = yield* L.string
 
-// const result = Thread(
-//   model(new OpenAI(), "gpt-4o-mini"),
-//   PassagePoem(),
-// )`
-//   System message here.
-// `
+  const x = yield* Thread.branch("something", Inner())
+
+  yield E("PassagePoem", poem)
+}
+
+function* Inner() {
+  yield E("another", 2)
+}
